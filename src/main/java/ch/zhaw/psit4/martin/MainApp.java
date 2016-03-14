@@ -9,6 +9,6 @@ public class MainApp {
 
       HelloMartin obj = (HelloMartin) context.getBean("helloMartin");
 
-      obj.getMessage();
+      obj.getMessagePrint();
     }
 }
