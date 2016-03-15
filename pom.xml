@@ -58,7 +58,14 @@
         <version>2.1.1</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
-          <webXml>src\main\webapp\WEB-INF\glassfish-web.xml</webXml>
+          <!-- <webXml>src\main\webapp\WEB-INF\web.xml</webXml> -->
+          <modules>
+             <webModule>
+               <groupId>artifactGroupId</groupId>
+               <artifactId>artifactId</artifactId>
+               <contextRoot>/custom-context-root</contextRoot>
+             </webModule>
+          </modules>
         </configuration>
       </plugin>
 
