@@ -58,7 +58,7 @@
         <version>2.1.1</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
-          <!-- <webXml>src\main\webapp\WEB-INF\web.xml</webXml> -->
+          <webXml>src\main\webapp\WEB-INF\glassfish-web.xml</webXml>
         </configuration>
       </plugin>
 
@@ -76,7 +76,7 @@
           <adminPassword>student</adminPassword>
           <domain>
             <name>domain1</name>
-            <httpPort>7070</httpPort>
+            <httpPort>4040</httpPort>
             <adminPort>4848</adminPort>
           </domain>
           <components>

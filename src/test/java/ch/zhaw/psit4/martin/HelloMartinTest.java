@@ -20,7 +20,8 @@ public class HelloMartinTest {
        HelloMartin obj = (HelloMartin) context.getBean("helloMartin");
        obj.setMessage("Scheiss die Wand an!!");
 
-       assertTrue(obj.getMessage().equals(mess));      
+       assertTrue(obj.getMessage().equals(mess));    
+       
     }
 
 
