@@ -15,3 +15,9 @@ hs_err_pid*
 .vagrant/
 *.swp
 /target/
+
+
+# Eclipse
+.classpath
+.project
+.settings/
