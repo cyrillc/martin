@@ -23,10 +23,11 @@ for filename in ${BASH_SOURCE%/*}/jobs/*.xml; do
     java -jar ${BASH_SOURCE%/*}/jenkins-cli.jar -s http://localhost:8080/ create-job $(basename "$filename" .xml) < $filename
 done
 
-
 # Start initial build
 echo "Starting initial build & deployment"
-for filename in ${BASH_SOURCE%/*}/jobs/*.xml; do
-	echo "    Kick off build for $(basename "$filename" .xml)"
-    java -jar ${BASH_SOURCE%/*}/jenkins-cli.jar -s http://localhost:8080/ build $(basename "$filename" .xml)
-done
+while read p; do
+	echo "    Kick off build for $p"
+  	java -jar ${BASH_SOURCE%/*}/jenkins-cli.jar -s http://localhost:8080/ build "$p"
+done < ${BASH_SOURCE%/*}/jobs/startup.conf 
+
+java -jar ${BASH_SOURCE%/*}/jenkins-cli.jar -s http://localhost:8080/ build $(basename "$filename" .xml)
