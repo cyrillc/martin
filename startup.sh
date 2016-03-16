@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-/home/vagrant/glassfish4/bin/asadmin --passwordfile /home/vagrant/pwdfile start-domain
+# Start and configure Glassfish
+/vagrant/config/vagrant_config/glassfish/init_glassfish.sh
 
 
 # Start and Configure Jenkins service

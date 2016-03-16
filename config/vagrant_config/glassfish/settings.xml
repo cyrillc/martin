@@ -10,9 +10,9 @@
                 <local.glassfish.user>admin</local.glassfish.user>
                 <local.glassfish.password>student</local.glassfish.password>
                 <local.glassfish.domain>domain1</local.glassfish.domain>
-                <local.glassfish.passfile>
-                     ${local.glassfish.home}/domains/${local.glassfish.domain}/config/domain-passwords
-                </local.glassfish.passfile>
+                <local.glassfish.port>4040</local.glassfish.port>
+                <local.glassfish.adminport>4848</local.glassfish.adminport>
+                <local.glassfish.passfile>/home/vagrant/pwdfile</local.glassfish.passfile>
             </properties>
         </profile>
     </profiles>

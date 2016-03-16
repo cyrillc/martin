@@ -58,7 +58,7 @@
         <version>2.1.1</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
-          <!-- <webXml>src\main\webapp\WEB-INF\web.xml</webXml> -->
+          <webXml>src\main\webapp\WEB-INF\web.xml</webXml>
           <modules>
              <webModule>
                <groupId>artifactGroupId</groupId>
@@ -74,17 +74,13 @@
         <artifactId>maven-glassfish-plugin</artifactId>
         <version>2.1</version>
         <configuration>
-          <!-- ToDo: Environment-Variabeleln wären eigentlich auf dem Server unter /home/vagrant/.m2/settings.xml
-               Jenkins ignoriert diese jedoch. -->
           <glassfishDirectory>${local.glassfish.home}</glassfishDirectory>
-          <glassfishDirectory>/home/vagrant/glassfish4/glassfish</glassfishDirectory>
-          <user>admin</user>
-          <!-- <adminPassword>${local.glassfish.password}</adminPassword> -->
-          <adminPassword>student</adminPassword>
+          <user>${local.glassfish.user}</user>
+          <adminPassword>${local.glassfish.password}</adminPassword>
           <domain>
-            <name>domain1</name>
-            <httpPort>4040</httpPort>
-            <adminPort>4848</adminPort>
+            <name>${local.glassfish.domain}</name>
+            <httpPort>${local.glassfish.port}</httpPort>
+            <adminPort>${local.glassfish.adminport}</adminPort>
           </domain>
           <components>
             <component>
@@ -92,7 +88,7 @@
           <artifact>target/${project.build.finalName}.war</artifact>
             </component>
           </components>
-          <debug>true</debug>
+          <debug>false</debug>
           <terse>false</terse>
           <echo>true</echo>
           <force>true</force>
