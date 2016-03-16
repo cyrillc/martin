@@ -23,6 +23,7 @@
       <string>*.txt</string>
       <string>*.swp</string>
       <string>**/target/**</string>
+      <string>**/.vagrant/**</string>
     </filters>
   </scm>
   <canRoam>true</canRoam>

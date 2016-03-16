@@ -47,7 +47,7 @@
     <groupId>ch.zhaw.psit4</groupId>
     <artifactId>MArtIn</artifactId>
   </rootModule>
-  <goals>glassfish:deploy -e -Dmaven.test.skip=true --debug</goals>
+  <goals>glassfish:deploy -e -Dmaven.test.skip=true</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <ignoreUpstremChanges>false</ignoreUpstremChanges>
@@ -67,7 +67,7 @@
   <buildWrappers/>
   <prebuilders>
     <hudson.tasks.Shell>
-      <command>mvn glassfish:undeploy -e -Dmaven.test.skip=true --debug || true</command>
+      <command>mvn glassfish:undeploy -e -Dmaven.test.skip=true || true</command>
     </hudson.tasks.Shell>
   </prebuilders>
   <postbuilders/>
