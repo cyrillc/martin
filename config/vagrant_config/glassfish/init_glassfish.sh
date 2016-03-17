@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Copy settings for maven-build and depoly
 sudo cp ${BASH_SOURCE%/*}/settings.xml /var/lib/jenkins/.m2/settings.xml
