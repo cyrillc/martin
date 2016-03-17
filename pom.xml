@@ -76,7 +76,7 @@
         <configuration>
           <glassfishDirectory>${local.glassfish.home}</glassfishDirectory>
           <user>${local.glassfish.user}</user>
-          <adminPassword>${local.glassfish.password}</adminPassword>
+          <passwordFile>${local.glassfish.passfile}</passwordFile>
           <domain>
             <name>${local.glassfish.domain}</name>
             <httpPort>${local.glassfish.port}</httpPort>
