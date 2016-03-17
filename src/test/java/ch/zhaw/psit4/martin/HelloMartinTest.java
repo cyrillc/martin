@@ -15,6 +15,7 @@ public class HelloMartinTest {
     @Test
     public void test() {
        String mess = "Hello World";
+       
 
        ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
        HelloMartin obj = (HelloMartin) context.getBean("helloMartin");
