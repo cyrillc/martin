@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Stop jenkins if running
 sudo /etc/init.d/jenkins stop
