@@ -4,7 +4,7 @@ public class HelloMartin {
 	private String message;
 
 	public void setMessage(String message) {
-		this.message = message;
+	    this.message = message;
 	}
 
 	public void getMessagePrint() {

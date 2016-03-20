@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="0" name="ch.zhaw.psit4.martin.HelloMartinTest" time="1.699" errors="0" skipped="0">
+<testsuite tests="1" failures="0" name="ch.zhaw.psit4.martin.HelloMartinTest" time="1.034" errors="0" skipped="0">
   <properties>
     <property name="java.vendor" value="Oracle Corporation"/>
     <property name="JOB_NAME" value="TestJob"/>
@@ -9,19 +9,19 @@
     <property name="JENKINS_HOME" value="/var/lib/jenkins"/>
     <property name="PATH" value="/usr/lib/jvm/java-8-oracle//bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"/>
     <property name="HUDSON_SERVER_COOKIE" value="fd87bacd327108e7"/>
-    <property name="POM_ARTIFACTID" value="MArtIn"/>
+    <property name="POM_ARTIFACTID" value="ProjectMartin"/>
     <property name="os.name" value="Linux"/>
     <property name="sun.boot.class.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/resources.jar:/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar:/usr/lib/jvm/java-8-oracle/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jsse.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jce.jar:/usr/lib/jvm/java-8-oracle/jre/lib/charsets.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jfr.jar:/usr/lib/jvm/java-8-oracle/jre/classes"/>
     <property name="EXECUTOR_NUMBER" value="1"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="POM_DISPLAYNAME" value="MArtIn Maven Webapp"/>
+    <property name="POM_DISPLAYNAME" value="Learning Maven"/>
     <property name="XDG_RUNTIME_DIR" value="/run/user/109"/>
     <property name="NODE_LABELS" value="master"/>
     <property name="java.runtime.version" value="1.8.0_74-b02"/>
     <property name="user.name" value="jenkins"/>
     <property name="guice.disable.misplaced.annotation.check" value="true"/>
     <property name="user.language" value="en"/>
-    <property name="BUILD_DISPLAY_NAME" value="#10"/>
+    <property name="BUILD_DISPLAY_NAME" value="#11"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/amd64"/>
     <property name="java.version" value="1.8.0_74"/>
     <property name="user.timezone" value="Etc/UTC"/>
@@ -30,7 +30,7 @@
     <property name="TERM" value="linux"/>
     <property name="NLSPATH" value="/usr/dt/lib/nls/msg/%L/%N.cat"/>
     <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/endorsed"/>
-    <property name="BUILD_ID" value="10"/>
+    <property name="BUILD_ID" value="11"/>
     <property name="sun.cpu.isalist" value=""/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
     <property name="file.encoding.pkg" value="sun.io"/>
@@ -55,11 +55,11 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
     <property name="LOGNAME" value="jenkins"/>
-    <property name="POM_PACKAGING" value="war"/>
+    <property name="POM_PACKAGING" value="jar"/>
     <property name="HOME" value="/var/lib/jenkins"/>
-    <property name="POM_GROUPID" value="ch.zhaw.psit4"/>
+    <property name="POM_GROUPID" value="com.zhaw.martin"/>
     <property name="user.home" value="/var/lib/jenkins"/>
-    <property name="BUILD_TAG" value="jenkins-TestJob-10"/>
+    <property name="BUILD_TAG" value="jenkins-TestJob-11"/>
     <property name="JENKINS_SERVER_COOKIE" value="fd87bacd327108e7"/>
     <property name="HUDSON_URL" value="http://localhost:8080/"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
@@ -70,7 +70,7 @@
     <property name="java.vm.vendor" value="Oracle Corporation"/>
     <property name="maven.home" value="/home/vagrant/apache-maven-3.3.9"/>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
-    <property name="sun.java.command" value="jenkins.maven3.agent.Maven32Main /home/vagrant/apache-maven-3.3.9/ /var/cache/jenkins/war/WEB-INF/lib/remoting-2.53.3.jar /var/lib/jenkins/plugins/maven-plugin/WEB-INF/lib/maven32-interceptor-1.7.jar /var/lib/jenkins/plugins/maven-plugin/WEB-INF/lib/maven3-interceptor-commons-1.7.jar 49842"/>
+    <property name="sun.java.command" value="jenkins.maven3.agent.Maven32Main /home/vagrant/apache-maven-3.3.9/ /var/cache/jenkins/war/WEB-INF/lib/remoting-2.53.3.jar /var/lib/jenkins/plugins/maven-plugin/WEB-INF/lib/maven32-interceptor-1.7.jar /var/lib/jenkins/plugins/maven-plugin/WEB-INF/lib/maven3-interceptor-commons-1.7.jar 55353"/>
     <property name="java.class.path" value="/var/lib/jenkins/plugins/maven-plugin/WEB-INF/lib/maven32-agent-1.7.jar:/home/vagrant/apache-maven-3.3.9/boot/plexus-classworlds-2.5.2.jar:/home/vagrant/apache-maven-3.3.9/conf/logging"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="PATH+JDK" value="/usr/lib/jvm/java-8-oracle//bin"/>
@@ -82,7 +82,7 @@
     <property name="java.io.tmpdir" value="/tmp"/>
     <property name="HUDSON_HOME" value="/var/lib/jenkins"/>
     <property name="PATH+MAVEN" value="/home/vagrant/apache-maven-3.3.9//bin"/>
-    <property name="BUILD_URL" value="http://localhost:8080/job/TestJob/10/"/>
+    <property name="BUILD_URL" value="http://localhost:8080/job/TestJob/11/"/>
     <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
     <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
     <property name="os.arch" value="amd64"/>
@@ -93,7 +93,7 @@
 "/>
     <property name="MAVEN_HOME" value="/home/vagrant/apache-maven-3.3.9/"/>
     <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
-    <property name="BUILD_NUMBER" value="10"/>
+    <property name="BUILD_NUMBER" value="11"/>
     <property name="JENKINS_URL" value="http://localhost:8080/"/>
     <property name="file.encoding" value="UTF-8"/>
     <property name="LANG" value="en_US.UTF-8"/>
@@ -104,5 +104,5 @@
     <property name="USER" value="jenkins"/>
     <property name="XFILESEARCHPATH" value="/usr/dt/app-defaults/%L/Dt"/>
   </properties>
-  <testcase classname="ch.zhaw.psit4.martin.HelloMartinTest" name="test" time="1.699"/>
+  <testcase classname="ch.zhaw.psit4.martin.HelloMartinTest" name="test" time="1.034"/>
 </testsuite>

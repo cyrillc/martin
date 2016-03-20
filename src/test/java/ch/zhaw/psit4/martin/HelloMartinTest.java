@@ -14,13 +14,15 @@ public class HelloMartinTest {
 
     @Test
     public void test() {
-       String mess = "Scheiss die Wand an!!";
+       String mess = "Hello World";
+       
 
        ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
        HelloMartin obj = (HelloMartin) context.getBean("helloMartin");
-       obj.setMessage("Scheiss die Wand an!!");
+       obj.setMessage("Hello World");
 
-       assertTrue(obj.getMessage().equals(mess));      
+       assertTrue(obj.getMessage().equals(mess));    
+       
     }
 
 
