@@ -10,3 +10,4 @@
 echo "Visit http://localhost:8080 for Jenkins"
 echo "Visit http://localhost:4848 for GlassFish"
 echo "Visit http://localhost:4040 for Project-Site"
+echo "MySQL is Running on Port 3306 - To connect you can use something like MySQL Workbench"
