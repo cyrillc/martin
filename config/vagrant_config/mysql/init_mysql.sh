@@ -18,6 +18,6 @@ sudo /etc/init.d/mysql start
 
 # Anders funktioniert es nicht - sorry
 sudo /etc/init.d/mysql stop
-sudo initclt --system stop mysql
+sudo initctl --system stop mysql
 sudo /etc/init.d/mysql start
 
