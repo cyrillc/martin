@@ -7,6 +7,10 @@
 # Start and Configure Jenkins service
 /vagrant/config/vagrant_config/jenkins/init_jenkins.sh
 
+# Start MySQL Service
+/vagrant/config/vagrant_config/mysql/init_mysql.sh
+
+
 echo "Visit http://localhost:8080 for Jenkins"
 echo "Visit http://localhost:4848 for GlassFish"
 echo "Visit http://localhost:4040 for Project-Site"
