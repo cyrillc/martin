@@ -34,6 +34,19 @@
 			<version>4.2.5.RELEASE</version>
     	</dependency>
 
+		<dependency>
+			<groupId>net.sf.jpf</groupId>
+			<artifactId>jpf</artifactId>
+			<version>1.5</version>
+			<scope>provided</scope>
+		</dependency>
+	
+		<dependency>
+			<groupId>net.sf.jpf</groupId>
+			<artifactId>jpf-boot</artifactId>
+			<version>1.5</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<properties>
