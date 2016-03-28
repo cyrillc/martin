@@ -22,10 +22,6 @@ import ch.zhaw.psit4.martin.modulelib.PluginLibraryBootstrap;
 public class MartinBoot {
 
     /*
-     * The martin booter singleton
-     */
-    private static MartinBoot booter;
-    /*
      * The martin library singleton
      */
     private static IPluginLibrary library;
@@ -41,17 +37,13 @@ public class MartinBoot {
      *            Command line arguments (unused)
      */
     public static void main(String[] args) {
-        booter = new MartinBoot(args);
-    }
-
-    private MartinBoot(String[] args) {
         // boot Spring
         SpringApplication.run(MartinBoot.class, args);
         // boot library
-        library = (new PluginLibraryBootstrap()).boot();
+        //library = (new PluginLibraryBootstrap()).boot();
         // boot frontend controller
-        frontendController = (IFrontendController) new FrontendController();
-        frontendController.start();
+        //frontendController = (IFrontendController) new FrontendController();
+        //frontendController.start();
         // TODO: Boot other components
     }
 
