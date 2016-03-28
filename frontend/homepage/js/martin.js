@@ -1,9 +1,16 @@
 $(function() {
-    $("#commandInput").keyup(function(event) {
+    $("#commandInput").keydown(function(event) {
         if (event.which == 13) {
+            visuallyPressButton();
             $("#sendCommand").click();
         }
     });
+    $("#commandInput").keyup(function(event) {
+        if (event.which == 13) {
+            visuallyUnpressButton();
+        }
+    });
+
 });
 
 var visuallyPressButton = function() {
@@ -15,7 +22,5 @@ var visuallyUnpressButton = function() {
 };
 
 var sendCommand = function() {
-    visuallyPressButton();
-    setTimeout(visuallyUnpressButton, 100);
 
 };
