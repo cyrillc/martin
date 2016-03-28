@@ -14,6 +14,6 @@ $(function() {
         $('html, body').stop().animate({
             scrollTop: $($anchor.attr('href')).offset().top
         }, 1500, 'easeInOutExpo');
-        event.preventDefault();
+        event.preventDefault(); //prevents URL in address bar from changing
     });
 });
