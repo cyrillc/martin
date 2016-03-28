@@ -29,8 +29,12 @@ var sendCommand = function() {
     // create object to send to MArtIn
     var command = { command: textInput };
 
+    // create request URL from current URL
+    var url = window.location.href;
+    url = url.split(':')[0] + ":" + url.split(':')[1] + ":4040/command";
+
     // send GET request with data and show response on page
-    $.get("http://localhost:4040/command", command, function( data ) {
+    $.get(url, command, function(data) {
         $("#response").append(JSON.stringify(data) + '<br>');
     });
 };
