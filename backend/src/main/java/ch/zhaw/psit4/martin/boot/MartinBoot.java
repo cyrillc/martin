@@ -3,6 +3,11 @@
  */
 package ch.zhaw.psit4.martin.boot;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import ch.zhaw.psit4.martin.frontend.FrontendController;
+import ch.zhaw.psit4.martin.frontend.IFrontendController;
 import ch.zhaw.psit4.martin.modulelib.IPluginLibrary;
 import ch.zhaw.psit4.martin.modulelib.PluginLibraryBootstrap;
 
@@ -13,6 +18,7 @@ import ch.zhaw.psit4.martin.modulelib.PluginLibraryBootstrap;
  * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
+@SpringBootApplication
 public class MartinBoot {
 
     /*
@@ -23,6 +29,10 @@ public class MartinBoot {
      * The martin library singleton
      */
     private static IPluginLibrary library;
+    /*
+     * The frontend controller singleton
+     */
+    private static IFrontendController frontendController;
 
     /**
      * Main application entry point launches MArtIn and used components.
@@ -31,15 +41,25 @@ public class MartinBoot {
      *            Command line arguments (unused)
      */
     public static void main(String[] args) {
-        booter = new MartinBoot();
+        booter = new MartinBoot(args);
     }
 
-    private MartinBoot() {
+    private MartinBoot(String[] args) {
+        // boot Spring
+        SpringApplication.run(MartinBoot.class, args);
         // boot library
         library = (new PluginLibraryBootstrap()).boot();
+        // boot frontend controller
+        frontendController = (IFrontendController) new FrontendController();
+        frontendController.start();
+        // TODO: Boot other components
     }
 
     public static IPluginLibrary getPluginLibrary() {
         return library;
+    }
+    
+    public static IFrontendController getFrontendController() {
+        return frontendController;
     }
 }

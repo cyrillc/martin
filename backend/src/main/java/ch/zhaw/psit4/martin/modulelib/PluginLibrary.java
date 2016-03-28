@@ -18,8 +18,7 @@ import org.java.plugin.registry.PluginDescriptor;
  * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
-public class PluginLibrary extends Plugin
-        implements IPluginLibrary {
+public class PluginLibrary extends Plugin implements IPluginLibrary {
 
     /**
      * Path to folder where plugins reside (either zipped, or unpacked as a
@@ -35,15 +34,25 @@ public class PluginLibrary extends Plugin
      */
     public static final String EXTPOINT_ID_MENUBAR = "PluginService";
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.java.plugin.Plugin#doStart()
+     */
     @Override
     protected void doStart() throws Exception {
-        // TODO Auto-generated method stub
+        // nothing to do here
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.java.plugin.Plugin#doStop()
+     */
     @Override
     protected void doStop() throws Exception {
-        // TODO Auto-generated method stub
+        // nothing to do here
 
     }
 
@@ -52,50 +61,38 @@ public class PluginLibrary extends Plugin
      */
     public void start() {
         // Get plugins
-        List<PluginService> plugins =  new LinkedList<PluginService>();
+        List<PluginService> plugins = new LinkedList<PluginService>();
         try {
-            plugins = PluginLibrary
-                    .fetchPlugins(this, this.getDescriptor().getId(),
-                            EXTPOINT_ID_MENUBAR);
+            plugins = fetchPlugins(EXTPOINT_ID_MENUBAR);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Hello World\n" + plugins.size() + " plugins loaded.");
+        System.out
+                .println("Hello World\n" + plugins.size() + " plugins loaded.");
     }
 
-    /**
-     * overloaded method setting default "class" attribute name
+    /*
+     * Fetches all extensions for the given extension point qualifiers.
      * 
-     * @see #fetchPlugins(Plugin,String,String,String)
-     */
-    public static <T> List<T> fetchPlugins(final Plugin plugin,
-            final String extPointPluginId, final String extPointId)
-            throws Exception {
-        return fetchPlugins(plugin, extPointPluginId, extPointId, "class");
-    }
-
-    /**
-     * fetches all extensions for the given extension point qualifiers
+     * @param extPointId The extension point id to gather plugins for
+     * 
+     * @return The gathered plugins in a LinkedList
      */
     @SuppressWarnings("unchecked")
-    public static <T> List<T> fetchPlugins(final Plugin plugin,
-            final String extPointPluginId, final String extPointId,
-            final String attributeName) throws Exception {
+    public <T> List<T> fetchPlugins(final String extPointId) throws Exception {
 
         final List<T> plugins = new LinkedList<T>();
-        final PluginManager manager = plugin.getManager();
+        final PluginManager manager = this.getManager();
 
         final ExtensionPoint extPoint = manager.getRegistry()
-                .getExtensionPoint(extPointPluginId, extPointId);
+                .getExtensionPoint(this.getDescriptor().getId(), extPointId);
         for (final Extension extension : extPoint.getConnectedExtensions()) {
-            // LOG.info("Processing extension point: " + extension);
-
             final PluginDescriptor extensionDescriptor = extension
                     .getDeclaringPluginDescriptor();
             manager.activatePlugin(extensionDescriptor.getId());
             final ClassLoader classLoader = manager
                     .getPluginClassLoader(extensionDescriptor);
-            final String pluginClassName = extension.getParameter(attributeName)
+            final String pluginClassName = extension.getParameter("class")
                     .valueAsString();
             final Class<T> pluginClass = (Class<T>) classLoader
                     .loadClass(pluginClassName);

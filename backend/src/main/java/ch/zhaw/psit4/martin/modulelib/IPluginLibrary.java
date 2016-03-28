@@ -1,5 +1,7 @@
 package ch.zhaw.psit4.martin.modulelib;
 
+import java.util.List;
+
 /**
  * Interface for class <code>PluginLibrary</code>.
  *
@@ -8,5 +10,6 @@ package ch.zhaw.psit4.martin.modulelib;
  */
 public interface IPluginLibrary {
     void start();
-}
 
+    <T> List<T> fetchPlugins(final String extPointId) throws Exception;
+}
