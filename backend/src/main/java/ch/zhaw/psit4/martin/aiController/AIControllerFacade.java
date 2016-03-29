@@ -1,6 +1,11 @@
 package ch.zhaw.psit4.martin.aiController;
 
 /**
+ * This class represents the AIControllerFacade The class follows the Facade
+ * Pattern and should wrap the whole subsystem of AIController. This offers an
+ * unique Interface to the outside.
+ * 
+ * @version 1.0
  * @author marco
  *
  */
@@ -31,8 +36,5 @@ public class AIControllerFacade {
     public void setModul(Modul modul) {
         this.modul = modul;
     }
-    
-    
-    
 
 }

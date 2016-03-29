@@ -5,7 +5,8 @@ import java.sql.Date;
 /**
  * This class represents User's specific informations.
  * 
- * @ version 1.0
+ * @version 1.0
+ * @author marco
  */
 public class User {
 
