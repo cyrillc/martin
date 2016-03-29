@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
-public class FrontendController {
+public class FrontendController implements IFrontendController {
+
     
     /*
      * Start the module and initially gather all plugins.
