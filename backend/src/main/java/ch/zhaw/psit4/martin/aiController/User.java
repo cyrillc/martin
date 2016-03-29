@@ -1,4 +1,4 @@
-package aiController;
+package ch.zhaw.psit4.martin.aiController;
 
 import java.sql.Date;
 
