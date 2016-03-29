@@ -59,7 +59,7 @@
   <reporters/>
   <publishers>
     <hudson.tasks.BuildTrigger>
-      <childProjects>nodetest</childProjects>
+      <childProjects>node_deploy</childProjects>
       <threshold>
         <name>FAILURE</name>
         <ordinal>2</ordinal>
@@ -69,8 +69,16 @@
     </hudson.tasks.BuildTrigger>
   </publishers>
   <buildWrappers/>
-  <prebuilders/>
-  <postbuilders/>
+  <prebuilders>
+    <hudson.tasks.Shell>
+      <command>sudo stop martinbackend</command>
+    </hudson.tasks.Shell>
+  </prebuilders>
+  <postbuilders>
+    <hudson.tasks.Shell>
+      <command>sudo start martinbackend</command>
+    </hudson.tasks.Shell>
+  </postbuilders>
   <runPostStepsIfResult>
     <name>SUCCESS</name>
     <ordinal>0</ordinal>
