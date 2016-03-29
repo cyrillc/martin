@@ -5,6 +5,7 @@ package ch.zhaw.psit4.martin.boot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 import ch.zhaw.psit4.martin.frontend.FrontendController;
 import ch.zhaw.psit4.martin.frontend.IFrontendController;
@@ -18,6 +19,7 @@ import ch.zhaw.psit4.martin.modulelib.PluginLibraryBootstrap;
  * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
+@ComponentScan("ch.zhaw.psit4.martin.frontend")
 @SpringBootApplication
 public class MartinBoot {
 
