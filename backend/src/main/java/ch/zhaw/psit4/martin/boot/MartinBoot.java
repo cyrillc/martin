@@ -40,9 +40,9 @@ public class MartinBoot {
         // boot Spring
         SpringApplication.run(MartinBoot.class, args);
         // boot library
-        library = (new PluginLibraryBootstrap()).boot();
+        //library = (new PluginLibraryBootstrap()).boot();
         // boot frontend controller
-        frontendController = (IFrontendController) new FrontendController();
+        frontendController = new FrontendController();
         frontendController.start();
         // TODO: Boot other components
     }
