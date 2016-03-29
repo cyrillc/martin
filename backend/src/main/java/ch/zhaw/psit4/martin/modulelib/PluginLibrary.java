@@ -24,7 +24,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * Path to folder where plugins reside (either zipped, or unpacked as a
      * simple folder)
      */
-    public static final String PLUGINS_REPOSITORY = "./plugins";
+    public static final String PLUGINS_REPOSITORY = "../plugins";
     /**
      * Plugin id of the core module, defined in it's plugin.xml class attribute
      */
