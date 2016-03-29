@@ -7,4 +7,5 @@
 
 	<!-- SAMPLE BEAN <bean id="helloWorld" class="com.tutorialspoint.HelloWorld"> 
 		<property name="message" value="Hello World!"/> </bean> -->
+
 </beans>

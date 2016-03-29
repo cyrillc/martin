@@ -45,6 +45,7 @@ public class MartinBoot {
         frontendController = new FrontendController();
         frontendController.start();
         // TODO: Boot other components
+        
     }
 
     public static IPluginLibrary getPluginLibrary() {
