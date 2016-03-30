@@ -19,8 +19,8 @@ import ch.zhaw.psit4.martin.modulelib.PluginLibraryBootstrap;
  * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
-@SpringBootApplication
 @ComponentScan("ch.zhaw.psit4.martin.frontend")
+@SpringBootApplication
 public class MartinBoot {
 
     /*
@@ -47,6 +47,7 @@ public class MartinBoot {
         frontendController = new FrontendController();
         frontendController.start();
         // TODO: Boot other components
+        
     }
 
     public static IPluginLibrary getPluginLibrary() {
