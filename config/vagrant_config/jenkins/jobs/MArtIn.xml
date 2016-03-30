@@ -71,12 +71,12 @@
   <buildWrappers/>
   <prebuilders>
     <hudson.tasks.Shell>
-      <command>sudo stop martinbackend</command>
+      <command>sudo stop martinbackend || echo &apos;There was no active Service&apos;</command>
     </hudson.tasks.Shell>
   </prebuilders>
   <postbuilders>
     <hudson.tasks.Shell>
-      <command>sudo start martinbackend</command>
+      <command>sudo start martinbackend || echo &apos;Failed to start the Service - Contact your Sysadmin&apos;</command>
     </hudson.tasks.Shell>
   </postbuilders>
   <runPostStepsIfResult>
