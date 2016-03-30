@@ -6,7 +6,7 @@
 		<import plugin-id="ch.zhaw.psit4.martin.api" />
 	</requires>
 	<runtime>
-		<library id="core" path="classes/" type="code">
+		<library id="test_plugin" path="classes/" type="code">
 			<doc caption="API documentation">
 				<doc-ref path="doc/index.html" caption="javadoc" />
 			</doc>
@@ -18,6 +18,8 @@
 		<parameter id="class"
 			value="ch.zhaw.psit4.martin.testplugin.TestPlugin" />
 		<parameter id="name" value="Test Plugin" />
+		<parameter id="arguments" value="value" />
+		<parameter id="argument-types" value="Integer" />
 		<parameter id="description"
 			value="A plugin to test the pPlugin system." />
 		<parameter id="author" value="Daniel Fabian" />
