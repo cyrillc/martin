@@ -25,3 +25,7 @@ hs_err_pid*
 
 # NodeJS
 frontend/node_modules/
+
+# Plugin Exceptions
+!distributable/target/*.jar
+!backend/plugins/
