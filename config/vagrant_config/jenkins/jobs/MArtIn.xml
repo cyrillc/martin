@@ -14,7 +14,7 @@
     </jenkins.model.BuildDiscarderProperty>
   </properties>
   <scm class="hudson.plugins.filesystem_scm.FSSCM" plugin="filesystem_scm@1.20">
-    <path>/vagrant</path>
+    <path>/vagrant/backend</path>
     <clearWorkspace>false</clearWorkspace>
     <copyHidden>false</copyHidden>
     <filterEnabled>true</filterEnabled>
@@ -32,14 +32,14 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
     <hudson.triggers.SCMTrigger>
-      <spec>* * * * *</spec>
+      <spec>H/15 * * * *</spec>
       <ignorePostCommitHooks>false</ignorePostCommitHooks>
     </hudson.triggers.SCMTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <rootModule>
-    <groupId>ch.zhaw.psit4</groupId>
-    <artifactId>MArtIn</artifactId>
+    <groupId>ch.zhaw.psit4.martin</groupId>
+    <artifactId>martin-backend</artifactId>
   </rootModule>
   <goals>clean install</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
@@ -59,11 +59,11 @@
   <reporters/>
   <publishers>
     <hudson.tasks.BuildTrigger>
-      <childProjects>MArtIn-Deployment</childProjects>
+      <childProjects>node_deploy</childProjects>
       <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
+        <name>FAILURE</name>
+        <ordinal>2</ordinal>
+        <color>RED</color>
         <completeBuild>true</completeBuild>
       </threshold>
     </hudson.tasks.BuildTrigger>
@@ -71,11 +71,14 @@
   <buildWrappers/>
   <prebuilders>
     <hudson.tasks.Shell>
-      <command>rm -rf target/*
-</command>
+      <command>sudo stop martinbackend || echo &apos;There was no active Service&apos;</command>
     </hudson.tasks.Shell>
   </prebuilders>
-  <postbuilders/>
+  <postbuilders>
+    <hudson.tasks.Shell>
+      <command>sudo start martinbackend || echo &apos;Failed to start the Service - Contact your Sysadmin&apos;</command>
+    </hudson.tasks.Shell>
+  </postbuilders>
   <runPostStepsIfResult>
     <name>SUCCESS</name>
     <ordinal>0</ordinal>

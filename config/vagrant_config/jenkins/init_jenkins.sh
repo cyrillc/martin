@@ -7,6 +7,8 @@ sudo /etc/init.d/jenkins stop
 sudo rm -rf /var/lib/jenkins/jobs/
 sudo rm -rf /var/lib/jenkins/workspace/
 
+sudo cp /vagrant/config/vagrant_config/jenkins/jenkins.war /usr/share/jenkins/jenkins.war
+
 # Start Jenkins service
 sudo /etc/init.d/jenkins start
 

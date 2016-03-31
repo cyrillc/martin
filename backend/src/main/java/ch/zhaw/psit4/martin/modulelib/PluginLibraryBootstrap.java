@@ -9,6 +9,8 @@ import org.java.plugin.PluginManager.PluginLocation;
 import org.java.plugin.boot.DefaultPluginsCollector;
 import org.java.plugin.util.ExtendedProperties;
 
+import ch.zhaw.psit4.martin.api.MartinContext;
+
 /**
  * Entry point for the module library to bootstrap jpf and invoke
  * <code>PluginLibrary.start()</code>.
@@ -41,8 +43,8 @@ public class PluginLibraryBootstrap {
 
             // finally retrieve the core plugin and start it up
             lib = (IPluginLibrary) manager
-                    .getPlugin(PluginLibrary.CORE_PLUGIN_ID);
-            lib.start();
+                    .getPlugin(MartinContext.CORE_PLUGIN_ID);
+            lib.startLibrary();
         } catch (Exception e) {
             e.printStackTrace();
             lib = null;

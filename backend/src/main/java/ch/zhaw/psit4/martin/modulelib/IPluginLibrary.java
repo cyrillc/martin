@@ -9,7 +9,7 @@ import java.util.List;
  * @version 0.0.1-SNAPSHOT
  */
 public interface IPluginLibrary {
-    void start();
+    void startLibrary();
 
-    <T> List<T> fetchPlugins(final String extPointId) throws Exception;
+    <T> List<T> fetchPlugins(final String extPointId);
 }

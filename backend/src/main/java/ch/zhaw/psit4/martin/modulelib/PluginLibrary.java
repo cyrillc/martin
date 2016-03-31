@@ -4,11 +4,17 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.java.plugin.Plugin;
 import org.java.plugin.PluginManager;
 import org.java.plugin.registry.Extension;
 import org.java.plugin.registry.ExtensionPoint;
 import org.java.plugin.registry.PluginDescriptor;
+import org.java.plugin.registry.Extension.Parameter;
+
+import ch.zhaw.psit4.martin.api.MartinContext;
+import ch.zhaw.psit4.martin.api.PluginService;
 
 /**
  * PluginLibrary logic entry point.
@@ -24,15 +30,15 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * Path to folder where plugins reside (either zipped, or unpacked as a
      * simple folder)
      */
-    public static final String PLUGINS_REPOSITORY = "./plugins";
-    /**
-     * Plugin id of the core module, defined in it's plugin.xml class attribute
-     */
-    public static final String CORE_PLUGIN_ID = "ch.zhaw.psit4.martin.modulelib";
+    public static final String PLUGINS_REPOSITORY = "../plugins";
     /*
-     * Plugin extention point that is distributed to module programmers
+     * List of all the plugins currently registered
      */
-    public static final String EXTPOINT_ID_MENUBAR = "PluginService";
+    private List<PluginService> pluginExtentions;
+    /*
+     * Log from the common logging api
+     */
+    private Log log;
 
     /*
      * (non-Javadoc)
@@ -59,16 +65,13 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     /*
      * Start the module and initially gather all plugins.
      */
-    public void start() {
+    public void startLibrary() {
+        // Get the log
+        log = LogFactory.getLog(PluginLibrary.class);
         // Get plugins
-        List<PluginService> plugins = new LinkedList<PluginService>();
-        try {
-            plugins = fetchPlugins(EXTPOINT_ID_MENUBAR);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out
-                .println("Hello World\n" + plugins.size() + " plugins loaded.");
+        pluginExtentions = fetchPlugins(MartinContext.EXTPOINT_ID);
+        log.info("Plugin library booted, " + pluginExtentions.size()
+                + " plugins loaded.");
     }
 
     /*
@@ -79,25 +82,31 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @return The gathered plugins in a LinkedList
      */
     @SuppressWarnings("unchecked")
-    public <T> List<T> fetchPlugins(final String extPointId) throws Exception {
+    public <T> List<T> fetchPlugins(final String extPointId) {
 
-        final List<T> plugins = new LinkedList<T>();
-        final PluginManager manager = this.getManager();
+        List<T> plugins = new LinkedList<T>();
+        PluginManager manager = this.getManager();
 
-        final ExtensionPoint extPoint = manager.getRegistry()
+        ExtensionPoint extPoint = manager.getRegistry()
                 .getExtensionPoint(this.getDescriptor().getId(), extPointId);
-        for (final Extension extension : extPoint.getConnectedExtensions()) {
-            final PluginDescriptor extensionDescriptor = extension
-                    .getDeclaringPluginDescriptor();
-            manager.activatePlugin(extensionDescriptor.getId());
-            final ClassLoader classLoader = manager
-                    .getPluginClassLoader(extensionDescriptor);
-            final String pluginClassName = extension.getParameter("class")
-                    .valueAsString();
-            final Class<T> pluginClass = (Class<T>) classLoader
-                    .loadClass(pluginClassName);
-            final T pluginInstance = pluginClass.newInstance();
-            plugins.add(pluginInstance);
+        for (Extension extension : extPoint.getConnectedExtensions()) {
+            try {
+                PluginDescriptor extensionDescriptor = extension
+                        .getDeclaringPluginDescriptor();
+                manager.activatePlugin(extensionDescriptor.getId());
+                ClassLoader classLoader = manager
+                        .getPluginClassLoader(extensionDescriptor);
+                Parameter pluginClassName = extension.getParameter("class");
+                Class<T> pluginClass = (Class<T>) classLoader
+                        .loadClass(pluginClassName.valueAsString());
+                T pluginInstance = pluginClass.newInstance();
+                plugins.add(pluginInstance);
+                log.info("Plugin \""
+                        + extension.getParameter("name").valueAsString()
+                        + "\" loaded");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return Collections.unmodifiableList(plugins);
