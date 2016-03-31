@@ -18,5 +18,6 @@ public interface IMartinType {
     /**Serialize this Object into a string in JSON format.
      * @return The serialized {@link String}.
      */
+    @Override
     public String toString();
 }

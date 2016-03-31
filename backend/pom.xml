@@ -43,13 +43,10 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- <dependency>
-			<groupId>ch.zhaw.psit4.martin.api</groupId>
-			<artifactId>martin-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/../distributable/target/martin-api-0.0.1-SNAPSHOT.jar</systemPath>
-		</dependency> -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+		</dependency>
 	</dependencies>
 
 	<properties>
