@@ -15,10 +15,14 @@ public class FrontendController implements IFrontendController {
     public void start() {
         // TODO: initialize
     }
-
+   
     @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141"})
     @RequestMapping("/command")
-    public Command greeting(@RequestParam(value="command") String command) {
-        return new Command("Command: '" + command + "' received!");
+    public Response launchCommand(@RequestParam(value="command") String command) {
+        Request request = new Request(command);
+        //TODO send request to AI
+        return new Response("Command: '" + command + "' received!");
     }
+    
+    
 }
