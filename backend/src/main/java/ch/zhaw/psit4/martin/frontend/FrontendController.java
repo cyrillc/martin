@@ -3,6 +3,10 @@ package ch.zhaw.psit4.martin.frontend;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import ch.zhaw.psit4.martin.common.Request;
+import ch.zhaw.psit4.martin.common.Response;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController

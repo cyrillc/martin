@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.frontend;
+package ch.zhaw.psit4.martin.common;
 
 public class Response {
 
