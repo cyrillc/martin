@@ -12,4 +12,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public interface IFrontendController {
     public void start();
+    public Response launchCommand(String command);
 }
