@@ -11,7 +11,6 @@ package ch.zhaw.psit4.martin.aiController;
  */
 public class AIControllerFacade {
     private Request request;
-    private RequestAnalyzer resquestAnalyzer;
     private Modul modul;
 
     /**

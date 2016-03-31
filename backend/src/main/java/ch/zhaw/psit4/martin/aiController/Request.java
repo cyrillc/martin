@@ -10,7 +10,6 @@ import java.sql.Date;
 public class Request {
 
     private String request;
-    private User user;
     private Date date;
 
     public Request() {
