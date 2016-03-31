@@ -16,7 +16,7 @@ public class FrontendController implements IFrontendController {
         // TODO: initialize
     }
 
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141"})
+    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141","http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping("/command")
     public Command greeting(@RequestParam(value="command") String command) {
         return new Command("Command: '" + command + "' received!");
