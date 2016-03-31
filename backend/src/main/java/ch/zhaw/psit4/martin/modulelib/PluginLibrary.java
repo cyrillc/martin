@@ -13,7 +13,7 @@ import org.java.plugin.registry.ExtensionPoint;
 import org.java.plugin.registry.PluginDescriptor;
 import org.java.plugin.registry.Extension.Parameter;
 
-import ch.zhaw.psit4.martin.api.MartinContext;
+import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.PluginService;
 
 /**
@@ -69,7 +69,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         // Get the log
         log = LogFactory.getLog(PluginLibrary.class);
         // Get plugins
-        pluginExtentions = fetchPlugins(MartinContext.EXTPOINT_ID);
+        pluginExtentions = fetchPlugins(IMartinContext.EXTPOINT_ID);
         log.info("Plugin library booted, " + pluginExtentions.size()
                 + " plugins loaded.");
     }

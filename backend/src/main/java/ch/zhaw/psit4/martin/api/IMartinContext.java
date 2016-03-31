@@ -10,7 +10,7 @@ package ch.zhaw.psit4.martin.api;
  * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
-public class MartinContext {
+public interface IMartinContext {
     /**
      * Plugin id of the core module, defined in it's plugin.xml class attribute
      */
@@ -19,4 +19,10 @@ public class MartinContext {
      * Plugin extention point that is distributed to module programmers
      */
     public static final String EXTPOINT_ID = "PluginService";
+    
+    
+    /**Registers a work item in the context.
+     * @param item The item to register.
+     */
+    public void registerWorkItem(WorkItem item);
 }

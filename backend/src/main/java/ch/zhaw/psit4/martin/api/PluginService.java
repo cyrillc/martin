@@ -20,7 +20,7 @@ public interface PluginService {
     
     /**
      * Provides the plugin with the MArtIn context for API access.
-     * @param context The MArtIn context of type {@link MartinContext}
+     * @param context The MArtIn context of type {@link IMartinContext}
      */
-    void contextualize(MartinContext context);
+    void contextualize(IMartinContext context);
 }
