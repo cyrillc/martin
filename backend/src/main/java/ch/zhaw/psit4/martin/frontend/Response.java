@@ -1,10 +1,10 @@
 package ch.zhaw.psit4.martin.frontend;
 
-public class Command {
+public class Response {
 
     private final String content;
 
-    public Command(String content) {
+    public Response(String content) {
         this.content = content;
     }
 
