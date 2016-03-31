@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
 
@@ -11,6 +12,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 public class FrontendController implements IFrontendController {
+    
+    private AIControllerFacade aiController;
+    
+    public FrontendController(){
+        this.aiController = new AIControllerFacade();
+    }
 
     
     /*
@@ -24,8 +31,8 @@ public class FrontendController implements IFrontendController {
     @RequestMapping("/command")
     public Response launchCommand(@RequestParam(value="command") String command) {
         Request request = new Request(command);
-        //TODO send request to AI
-        return new Response("Command: '" + command + "' received!");
+        Response response = this.aiController.elaborateRequest(request);
+        return response;
     }
     
     
