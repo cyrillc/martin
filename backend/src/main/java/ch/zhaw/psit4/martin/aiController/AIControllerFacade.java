@@ -15,6 +15,6 @@ import ch.zhaw.psit4.martin.common.Response;
 public class AIControllerFacade {
     
     public Response elaborateRequest(Request request){
-        return new Response("Command: '" + request.getCommand() + "' received!");
+        return new Response("Command: '" + request.getCommand() + "' received in AIController!");
     }    
 }
