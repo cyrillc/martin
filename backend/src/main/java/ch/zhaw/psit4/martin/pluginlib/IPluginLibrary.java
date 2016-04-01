@@ -3,6 +3,11 @@ package ch.zhaw.psit4.martin.pluginlib;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.ldap.ExtendedRequest;
+
+import ch.zhaw.psit4.martin.api.util.Pair;
+import ch.zhaw.psit4.martin.common.Response;
+
 /**
  * Interface for class <code>PluginLibrary</code>.
  *
@@ -15,34 +20,31 @@ public interface IPluginLibrary {
      */
     void startLibrary();
 
+    // TODO: use ExtendedRequest from MArtin package
+    public Response executeRequest(ExtendedRequest req);
+
     /**
      * Querry all plugins by keyword and return matching pluginIDs.
      * 
      * @param keyword
      *            The keyword to search.
-     * @return {@link ArrayList} of found plugins sorted by probability (highest
-     *         first).
+     * @return {@link Pair} of found plugins sorted by probability (highest
+     *         first). The first element is the Plugin ID the second is the
+     *         feature ID
      */
-    List<String> queryPluginsByKeyword(String keyword);
+    public List<Pair<String, String>> queryFunctionsByKeyword(String keyword);
 
     /**
      * Get a {@link Map} filled with all required parameters for a plugin and
      * the argument types.
      * 
-     * @param pluginID
+     * @param plugin
      *            The pluginID to querry.
+     * @param The
+     *            feature designator to querry.
      * @return A {@link Map} of arguments with key = ({@link String}) argument
      *         name and value = ({@link String}) Argument type (from
      *         {@link ch.zhaw.psit4.martin.api.types})
      */
-    <T> Map<String, String> queryPluginArguments(String pluginID);
-
-    /*
-     * Fetches all extensions for the given extension point qualifiers.
-     * 
-     * @param extPointId The extension point id to gather plugins for
-     * 
-     * @return The gathered plugins in a LinkedList
-     */
-    <T> List<T> fetchPlugins(final String extPointId);
+    public Map<String, String> queryFunctionArguments(String plugin, String feature);
 }

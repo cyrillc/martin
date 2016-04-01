@@ -14,7 +14,7 @@ import ch.zhaw.psit4.martin.api.types.IMartinType;
  * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
-public abstract class WorkItem {
+public class Feature {
 
     /**
      * The unique ID of this item. The id is distributed by the
@@ -26,6 +26,16 @@ public abstract class WorkItem {
      * {@link IPluginContext} implementation.
      */
     private Long requestID;
+
+    /**
+     * Private empty constructor to force plugin implementations to set the ID
+     */
+    @SuppressWarnings("unused")
+    private Feature() {}
+
+    public Feature(long requestID) {
+        setRequestID(requestID);
+    }
 
     /**
      * Set the unique id of this WorkItem. The id can only be set once, if it's
@@ -70,8 +80,7 @@ public abstract class WorkItem {
      * @throws Exception
      *             An excpetion occured during work start.
      */
-    public abstract void onWorkStart(final Map<String, IMartinType> args)
-            throws Exception;
+    public void start(final Map<String, IMartinType> args) throws Exception {}
 
     /**
      * Main method called by MArtIn.
@@ -79,7 +88,7 @@ public abstract class WorkItem {
      * @throws Exception
      *             An excpetion occured during work.
      */
-    public abstract void doWork() throws Exception;
+    public void run() throws Exception {}
 
     /**
      * Called if the work has ended.
@@ -88,5 +97,7 @@ public abstract class WorkItem {
      * @throws Exception
      *             An excpetion occured during work end.
      */
-    public abstract String onWorkDone() throws Exception;
+    public String stop() throws Exception {
+        return null;
+    }
 }

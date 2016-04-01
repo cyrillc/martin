@@ -12,6 +12,8 @@ public interface PluginService {
     /**
      * Initializes the plugin with the MArtIn context for API access.
      * @param context The MArtIn context of type {@link IMartinContext}
+     * @param feature The feature designation in Form of a String
+     * @param requestID The unique ID of the request
      */
-    void init(IMartinContext context);
+    void init(IMartinContext context, String feature, long requestID);
 }

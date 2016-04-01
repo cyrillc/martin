@@ -19,8 +19,6 @@
 		<parameter id="class"
 			value="ch.zhaw.psit4.martin.testplugin.TestPlugin" />
 		<parameter id="name" value="Test Plugin" />
-		<parameter id="arguments" value="name" />
-		<parameter id="argument-types" value="Text" />
 		<parameter id="description"
 			value="A plugin to test the pPlugin system." />
 		<parameter id="author" value="Daniel Fabian" />

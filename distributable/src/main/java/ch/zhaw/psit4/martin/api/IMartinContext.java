@@ -24,5 +24,5 @@ public interface IMartinContext {
     /**Registers a work item in the context.
      * @param item The item to register.
      */
-    public void registerWorkItem(WorkItem item);
+    public void registerWorkItem(Feature item);
 }
