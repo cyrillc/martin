@@ -9,8 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 import ch.zhaw.psit4.martin.frontend.FrontendController;
 import ch.zhaw.psit4.martin.frontend.IFrontendController;
-import ch.zhaw.psit4.martin.modulelib.IPluginLibrary;
-import ch.zhaw.psit4.martin.modulelib.PluginLibraryBootstrap;
+import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
+import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
 
 /**
  * Entry point for the application to bootstrap jpf, SPRING and invoke

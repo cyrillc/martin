@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ch.zhaw.psit4.martin.modulelib;
+package ch.zhaw.psit4.martin.pluginlib;
 
 import org.java.plugin.ObjectFactory;
 import org.java.plugin.PluginManager;

@@ -21,22 +21,43 @@ public abstract class WorkItem {
      * {@link IPluginContext} implementation.
      */
     private Long id;
+    /**
+     * The unique requestID of this item. The id is distributed by the
+     * {@link IPluginContext} implementation.
+     */
+    private Long requestID;
 
     /**
      * Set the unique id of this WorkItem. The id can only be set once, if it's
-     * set a secont time that will result in a runtime-exception.
+     * set a second time that will result in a runtime-exception.
      * 
-     * @param id the new id of this Item.
+     * @param id
+     *            the new id of this Item.
      */
     public void setID(long id) {
         this.id = (this.id == null) ? id : throwIDSetException();
     }
 
-
     public long getID() {
         return this.id;
     }
-    
+
+    /**
+     * Set the unique requestID of this WorkItem. It associates the Wortitem
+     * with a request. The id can only be set once, if it's set a second time
+     * that will result in a runtime-exception.
+     * 
+     * @param id
+     *            the new id of this Item.
+     */
+    public void setRequestID(long id) {
+        this.requestID = (this.requestID == null) ? id : throwIDSetException();
+    }
+
+    public long getRequestID() {
+        return this.requestID;
+    }
+
     private int throwIDSetException() {
         throw new RuntimeException("ERROR: id is already set.");
     }
@@ -44,11 +65,13 @@ public abstract class WorkItem {
     /**
      * Called if the work is started by MArtIn.
      * 
-     * @param args {@link HashMap} filled with initialization arguments.
+     * @param args
+     *            {@link HashMap} filled with initialization arguments.
      * @throws Exception
      *             An excpetion occured during work start.
      */
-    public abstract void onWorkStart(final Map<String, IMartinType> args) throws Exception;
+    public abstract void onWorkStart(final Map<String, IMartinType> args)
+            throws Exception;
 
     /**
      * Main method called by MArtIn.
@@ -61,8 +84,9 @@ public abstract class WorkItem {
     /**
      * Called if the work has ended.
      * 
+     * @return The answer in String format.
      * @throws Exception
      *             An excpetion occured during work end.
      */
-    public abstract void onWorkDone() throws Exception;
+    public abstract String onWorkDone() throws Exception;
 }

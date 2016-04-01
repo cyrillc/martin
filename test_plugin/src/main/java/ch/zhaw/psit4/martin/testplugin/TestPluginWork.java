@@ -8,9 +8,12 @@ import ch.zhaw.psit4.martin.api.types.Text;
 
 public class TestPluginWork extends WorkItem{
 
+    private String name;
+    
     @Override
     public void onWorkStart(Map<String, IMartinType> args) throws Exception {
         Text text = (Text)args.get("name");
+        name = text.getValue();
     }
 
     @Override
@@ -20,8 +23,8 @@ public class TestPluginWork extends WorkItem{
     }
 
     @Override
-    public void onWorkDone() throws Exception {
-        // Do nothing
+    public String onWorkDone() throws Exception {
+        return "Hi " + name + "!";
     }
 
 }

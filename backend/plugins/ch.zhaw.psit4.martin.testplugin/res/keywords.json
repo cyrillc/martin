@@ -6,5 +6,9 @@
 			"howdy",
 			"hi-ya",
 			"whazzup"
+	],
+	"example_calls": [
+			"Hello MArtIn!",
+			"Howdy partner!"
 	]
 }
