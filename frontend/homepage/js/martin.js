@@ -1,3 +1,4 @@
+// enabling *RETURN* to submit command
 $(function() {
     $("#commandInput").keydown(function(event) {
         if (event.which == 13) {
@@ -13,14 +14,15 @@ $(function() {
 
 });
 
+// make submit button look pressed for visual feedback
 var visuallyPressButton = function() {
     $('#sendCommand').addClass('active');
 };
-
 var visuallyUnpressButton = function() {
     $('#sendCommand').removeClass('active');
 };
 
+// sending a command to the backend of MArtIn using an Ajax request
 var sendCommand = function() {
     // get and clear text input
     var textInput = $('#commandInput').val();
