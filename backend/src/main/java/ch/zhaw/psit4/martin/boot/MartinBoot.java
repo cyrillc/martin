@@ -6,6 +6,8 @@ package ch.zhaw.psit4.martin.boot;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import ch.zhaw.psit4.martin.frontend.FrontendController;
 import ch.zhaw.psit4.martin.frontend.IFrontendController;
@@ -19,10 +21,10 @@ import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
  * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
-@ComponentScan("ch.zhaw.psit4.martin.frontend")
+@ComponentScan({"ch.zhaw.psit4.martin.frontend", "ch.zhaw.psit4.martin.pluginlib.db"})
 @SpringBootApplication
 public class MartinBoot {
-
+    
     /*
      * The martin library singleton
      */
@@ -39,6 +41,8 @@ public class MartinBoot {
      *            Command line arguments (unused)
      */
     public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+        
         // boot Spring
         SpringApplication.run(MartinBoot.class, args);
         // boot library
