@@ -28,6 +28,7 @@ public class AIControllerFacade {
     public List<ExampleCall> getExampleCalls(){
         PluginLibrary pluginLibrary = new PluginLibrary();
         return pluginLibrary.getExampleCalls();
+    }
 
     /**
      * This method respond to a request with a response. Try to understand what

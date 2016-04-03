@@ -13,17 +13,14 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-<<<<<<< HEAD
 import ch.zhaw.psit4.martin.pluginlib.db.*;
 
-=======
 /**
  * This class connect the Frontend with the AI using REST.
  * 
  * @version 0.0.1-SNAPSHOT
  *
  */
->>>>>>> dev
 @RestController
 public class FrontendController implements IFrontendController {
 
