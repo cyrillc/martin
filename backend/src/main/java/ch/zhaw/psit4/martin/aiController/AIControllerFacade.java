@@ -12,15 +12,11 @@ import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
  * Pattern and should wrap the whole subsystem of AIController. This offers an
  * unique Interface to the outside.
  * 
- * @version 1.0
+ * @version 0.0.1-SNAPSHOT
  * @author marco
  *
  */
 public class AIControllerFacade {
-    
-    public Response elaborateRequest(Request request){
-        return new Response("Command: '" + request.getCommand() + "' received in AIController!");
-    }
     
     /**
      * Returns a list of example calls from the plugin library. Is usually
@@ -32,5 +28,16 @@ public class AIControllerFacade {
     public List<ExampleCall> getExampleCalls(){
         PluginLibrary pluginLibrary = new PluginLibrary();
         return pluginLibrary.getExampleCalls();
+
+    /**
+     * This method respond to a request with a response. Try to understand what
+     * it requested and elaborate an appropiate response for the request.
+     * 
+     * @param request
+     * @return the response of the AI.
+     */
+    public Response elaborateRequest(Request request) {
+        return new Response("Command: '" + request.getCommand()
+                + "' received in AIController!");
     }
 }

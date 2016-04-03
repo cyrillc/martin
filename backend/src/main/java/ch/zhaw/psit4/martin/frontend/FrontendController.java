@@ -13,8 +13,17 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+<<<<<<< HEAD
 import ch.zhaw.psit4.martin.pluginlib.db.*;
 
+=======
+/**
+ * This class connect the Frontend with the AI using REST.
+ * 
+ * @version 0.0.1-SNAPSHOT
+ *
+ */
+>>>>>>> dev
 @RestController
 public class FrontendController implements IFrontendController {
 
@@ -37,7 +46,8 @@ public class FrontendController implements IFrontendController {
      * querys the AI controller to get an answer for the command. It then
      * returns that answer to the origin of the request.
      * 
-     * @return An answer to an incoming command
+     * @param command
+     * @return the response of the AI
      */
     @CrossOrigin(origins = { "http://localhost:4141",
             "http://srv-lab-t-825:4141" })
