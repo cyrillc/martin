@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import ch.zhaw.psit4.martin.api.types.IMartinType;
 import ch.zhaw.psit4.martin.api.types.*;
 import ch.zhaw.psit4.martin.api.util.Pair;
+import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
@@ -30,7 +31,7 @@ public class RequestProcessor implements IRequestProcessor {
 	public void setLibrary(IPluginLibrary library) {
 		this.library = library;
 	}
-
+	
 	/**
 	 * Searches the plugin-library for matching plugin features for a list of
 	 * keywords.
@@ -129,16 +130,19 @@ public class RequestProcessor implements IRequestProcessor {
 		if (pluginFeature != null) {
 			String plugin = pluginFeature.first;
 			String feature = pluginFeature.second;
-
-			extendedRequest.setPlugin(plugin);
-			extendedRequest.setFeature(feature);
-
+			
+			Call call = new Call();
+			call.setFeature(feature);
+			call.setPlugin(plugin);
+		
 			Map<String, String> parameters = this.library.queryFunctionArguments(plugin, feature);
 
 			for (String key : parameters.keySet()) {
-				extendedRequest.addRequiredArgument(key,
+				call.addRequiredArgument(key,
 						this.getParameterFromCommand(key, request.getCommand(), parameters.get(key)));
 			}
+			
+			extendedRequest.addCall(call);
 		} else {
 			throw new Exception("No module found for this command.");
 		}
