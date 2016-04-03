@@ -8,21 +8,21 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema plugins
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema plugins
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
-USE `mydb` ;
+CREATE SCHEMA IF NOT EXISTS `plugins` DEFAULT CHARACTER SET utf8 ;
+USE `plugins` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`author`
+-- Table `plugins`.`author`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`author` ;
+DROP TABLE IF EXISTS `plugins`.`author` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`author` (
+CREATE TABLE IF NOT EXISTS `plugins`.`author` (
   `author_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   `email` VARCHAR(45) NULL,
@@ -32,11 +32,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`plugin`
+-- Table `plugins`.`plugin`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`plugin` ;
+DROP TABLE IF EXISTS `plugins`.`plugin` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`plugin` (
+CREATE TABLE IF NOT EXISTS `plugins`.`plugin` (
   `plugin_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `description` VARCHAR(600) NOT NULL,
@@ -47,18 +47,18 @@ CREATE TABLE IF NOT EXISTS `mydb`.`plugin` (
   INDEX `fk_plugin_author_idx` (`author_id` ASC),
   CONSTRAINT `fk_plugin_author`
     FOREIGN KEY (`author_id`)
-    REFERENCES `mydb`.`author` (`author_id`)
+    REFERENCES `plugins`.`author` (`author_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`function`
+-- Table `plugins`.`function`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`function` ;
+DROP TABLE IF EXISTS `plugins`.`function` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`function` (
+CREATE TABLE IF NOT EXISTS `plugins`.`function` (
   `function_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `description` VARCHAR(400) NOT NULL,
@@ -67,39 +67,39 @@ CREATE TABLE IF NOT EXISTS `mydb`.`function` (
   INDEX `fk_function_plugin1_idx` (`plugin_id` ASC),
   CONSTRAINT `fk_function_plugin1`
     FOREIGN KEY (`plugin_id`)
-    REFERENCES `mydb`.`plugin` (`plugin_id`)
+    REFERENCES `plugins`.`plugin` (`plugin_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`example_call`
+-- Table `plugins`.`example_call`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`example_call` ;
+DROP TABLE IF EXISTS `plugins`.`example_call` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`example_call` (
+CREATE TABLE IF NOT EXISTS `plugins`.`example_call` (
   `example_call_id` INT NOT NULL AUTO_INCREMENT,
-  `call` VARCHAR(100) NOT NULL,
+  `example_call` VARCHAR(100) NOT NULL,
   `description` VARCHAR(400) NULL,
   `function_id` INT NOT NULL,
   PRIMARY KEY (`example_call_id`),
-  UNIQUE INDEX `call_UNIQUE` (`call` ASC),
+  UNIQUE INDEX `example_call_UNIQUE` (`example_call` ASC),
   INDEX `fk_example_call_function1_idx` (`function_id` ASC),
   CONSTRAINT `fk_example_call_function1`
     FOREIGN KEY (`function_id`)
-    REFERENCES `mydb`.`function` (`function_id`)
+    REFERENCES `plugins`.`function` (`function_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`option`
+-- Table `plugins`.`option`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`option` ;
+DROP TABLE IF EXISTS `plugins`.`option` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`option` (
+CREATE TABLE IF NOT EXISTS `plugins`.`option` (
   `option_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `description` VARCHAR(200) NULL,
@@ -108,11 +108,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`parameter`
+-- Table `plugins`.`parameter`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`parameter` ;
+DROP TABLE IF EXISTS `plugins`.`parameter` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`parameter` (
+CREATE TABLE IF NOT EXISTS `plugins`.`parameter` (
   `parameter_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `type` VARCHAR(45) NOT NULL,
@@ -123,23 +123,23 @@ CREATE TABLE IF NOT EXISTS `mydb`.`parameter` (
   INDEX `fk_parameter_option1_idx` (`option_id` ASC),
   CONSTRAINT `fk_parameter_function1`
     FOREIGN KEY (`function_id`)
-    REFERENCES `mydb`.`function` (`function_id`)
+    REFERENCES `plugins`.`function` (`function_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_parameter_option1`
     FOREIGN KEY (`option_id`)
-    REFERENCES `mydb`.`option` (`option_id`)
+    REFERENCES `plugins`.`option` (`option_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`keyword`
+-- Table `plugins`.`keyword`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`keyword` ;
+DROP TABLE IF EXISTS `plugins`.`keyword` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`keyword` (
+CREATE TABLE IF NOT EXISTS `plugins`.`keyword` (
   `keyword_id` INT NOT NULL AUTO_INCREMENT,
   `keyword` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`keyword_id`),
@@ -148,11 +148,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`function_has_keyword`
+-- Table `plugins`.`function_has_keyword`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`function_has_keyword` ;
+DROP TABLE IF EXISTS `plugins`.`function_has_keyword` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`function_has_keyword` (
+CREATE TABLE IF NOT EXISTS `plugins`.`function_has_keyword` (
   `function_id` INT NOT NULL,
   `keyword_id` INT NOT NULL,
   `description` VARCHAR(200) NULL,
@@ -161,23 +161,23 @@ CREATE TABLE IF NOT EXISTS `mydb`.`function_has_keyword` (
   INDEX `fk_function_has_keyword_function1_idx` (`function_id` ASC),
   CONSTRAINT `fk_function_has_keyword_function1`
     FOREIGN KEY (`function_id`)
-    REFERENCES `mydb`.`function` (`function_id`)
+    REFERENCES `plugins`.`function` (`function_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_function_has_keyword_keyword1`
     FOREIGN KEY (`keyword_id`)
-    REFERENCES `mydb`.`keyword` (`keyword_id`)
+    REFERENCES `plugins`.`keyword` (`keyword_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`parameter_has_keyword`
+-- Table `plugins`.`parameter_has_keyword`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`parameter_has_keyword` ;
+DROP TABLE IF EXISTS `plugins`.`parameter_has_keyword` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`parameter_has_keyword` (
+CREATE TABLE IF NOT EXISTS `plugins`.`parameter_has_keyword` (
   `parameter_id` INT NOT NULL,
   `keyword_id` INT NOT NULL,
   `description` VARCHAR(200) NULL,
@@ -186,12 +186,12 @@ CREATE TABLE IF NOT EXISTS `mydb`.`parameter_has_keyword` (
   INDEX `fk_parameter_has_keyword_parameter1_idx` (`parameter_id` ASC),
   CONSTRAINT `fk_parameter_has_keyword_parameter1`
     FOREIGN KEY (`parameter_id`)
-    REFERENCES `mydb`.`parameter` (`parameter_id`)
+    REFERENCES `plugins`.`parameter` (`parameter_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_parameter_has_keyword_keyword1`
     FOREIGN KEY (`keyword_id`)
-    REFERENCES `mydb`.`keyword` (`keyword_id`)
+    REFERENCES `plugins`.`keyword` (`keyword_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
