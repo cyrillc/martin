@@ -16,7 +16,7 @@ import javax.persistence.Table;
  * @version 0.0.1-SNAPSHOT
  */
 @Entity
-@Table(name = "plugins")
+@Table(name = "example_call")
 public class ExampleCall {
 
     public ExampleCall() {}
@@ -26,7 +26,7 @@ public class ExampleCall {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "call")
+    @Column(name = "example_call")
     private String call;
 
     @Column(name = "description")

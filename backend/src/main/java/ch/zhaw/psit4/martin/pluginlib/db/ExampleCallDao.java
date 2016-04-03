@@ -33,7 +33,7 @@ public class ExampleCallDao {
     @SuppressWarnings("unchecked")
     public List<ExampleCall> listExampleCalls() {
         Session session = this.sessionFactory.getCurrentSession();
-        return session.createQuery("from plugins").list();
+        return session.createQuery("from ExampleCall").list();
     }
     
     public ExampleCall getById(int id) {

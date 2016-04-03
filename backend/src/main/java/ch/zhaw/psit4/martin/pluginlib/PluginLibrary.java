@@ -3,6 +3,7 @@ package ch.zhaw.psit4.martin.pluginlib;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,8 @@ import org.java.plugin.registry.Extension.Parameter;
 
 import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.PluginService;
+import ch.zhaw.psit4.martin.boot.MartinBoot;
+import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 
 /**
  * PluginLibrary logic entry point.
@@ -179,7 +182,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     /**
      * Reads the content of a File by URL and returns it as a string. Warning:
      * Only {@link KEYWORDS_JSON_MAXLEN} bytes can be read!
@@ -209,5 +212,18 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             if (reader != null)
                 reader.close();
         }
+    }
+
+    /**
+     * Returns a list of example calls read from the plugin database. Is usually
+     * only called from the AI controller when the user first loads the MArtIn
+     * frontend.
+     * 
+     * @return a list of example calls
+     */
+    public List<ExampleCall> getExampleCalls() {
+        List<ExampleCall> exampleCallList = new ArrayList<ExampleCall>();
+        exampleCallList = MartinBoot.exampleCallService.listExampleCalls();
+        return exampleCallList;
     }
 }

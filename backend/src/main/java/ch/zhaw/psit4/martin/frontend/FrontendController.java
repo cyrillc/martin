@@ -61,7 +61,7 @@ public class FrontendController implements IFrontendController {
             "http://srv-lab-t-825:4141" })
     @RequestMapping("/exampleCommands")
     public List<ExampleCall> sendExampleCommands() {
-        ArrayList<ExampleCall> exampleCallList = new ArrayList<ExampleCall>();
+        List<ExampleCall> exampleCallList = new ArrayList<ExampleCall>();
 
         ExampleCall test1 = new ExampleCall();
         test1.setCall("test example 1");
@@ -69,6 +69,9 @@ public class FrontendController implements IFrontendController {
         test2.setCall("test example2");
         exampleCallList.add(test1);
         exampleCallList.add(test2);
+        
+        AIControllerFacade aiController = new AIControllerFacade();
+        exampleCallList = aiController.getExampleCalls();
 
         return exampleCallList;
     }

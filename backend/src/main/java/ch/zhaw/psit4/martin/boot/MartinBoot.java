@@ -34,6 +34,10 @@ public class MartinBoot {
      * The frontend controller singleton
      */
     private static IFrontendController frontendController;
+    /*
+     * Service to access example calls in database
+     */
+    public static ExampleCallService exampleCallService;
 
     /**
      * Main application entry point launches MArtIn and used components.
@@ -43,8 +47,7 @@ public class MartinBoot {
      */
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
-        ExampleCallService exampleCallService = (ExampleCallService) context
-                .getBean("exampleCallService");
+        exampleCallService = (ExampleCallService) context.getBean("exampleCallService");
         
         // boot Spring
         SpringApplication.run(MartinBoot.class, args);
