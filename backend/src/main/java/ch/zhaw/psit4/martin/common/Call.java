@@ -1,5 +1,6 @@
 package ch.zhaw.psit4.martin.common;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import ch.zhaw.psit4.martin.api.types.IMartinType;
@@ -15,6 +16,11 @@ public class Call {
 	private String feature;
 	private Map<String, IMartinType> requiredArguments;
 	private Map<String, IMartinType> optionalArguments;
+	
+	public Call(){
+		this.requiredArguments = new HashMap<String, IMartinType>();
+		this.optionalArguments = new HashMap<String, IMartinType>();
+	}
 
 	public String getPlugin() {
 		return this.plugin;

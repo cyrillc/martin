@@ -97,13 +97,13 @@ public class RequestProcessor implements IRequestProcessor {
 	 * @return
 	 */
 	private IMartinType getParameterFromCommand(String parameterName, String command, String martinType) {
-		Pattern pattern = Pattern.compile("/" + parameterName + " ([A-z]+)/");
+		Pattern pattern = Pattern.compile("(" + parameterName +")\\s([^\\s]+)");
 		Matcher matcher = pattern.matcher(command.toLowerCase());
 
 		if (matcher.find()) {
 			// ToDo: Return corresponding martinType. At the moment only Text
 			// elements are returned.
-			return new Text(matcher.group(0));
+			return new Text(matcher.group(2));
 		} else {
 			return null;
 		}
