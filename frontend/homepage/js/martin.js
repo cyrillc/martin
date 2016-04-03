@@ -40,3 +40,14 @@ var sendCommand = function() {
         $("#response").append(JSON.stringify(data) + '<br>');
     });
 };
+
+$(document).ready(function() {
+        // create request URL from current URL
+    var url = window.location.href;
+    url = url.split(':')[0] + ":" + url.split(':')[1] + ":4040/exampleCommands";
+
+    // send GET request with data and show response on page
+    $.get(url, function(data) {
+        $("#possibleCommands").append(JSON.stringify(data) + '<br>');
+    });
+});

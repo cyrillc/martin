@@ -13,6 +13,7 @@ import ch.zhaw.psit4.martin.frontend.FrontendController;
 import ch.zhaw.psit4.martin.frontend.IFrontendController;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
+import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
 
 /**
  * Entry point for the application to bootstrap jpf, SPRING and invoke
@@ -42,6 +43,8 @@ public class MartinBoot {
      */
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+        ExampleCallService exampleCallService = (ExampleCallService) context
+                .getBean("exampleCallService");
         
         // boot Spring
         SpringApplication.run(MartinBoot.class, args);
