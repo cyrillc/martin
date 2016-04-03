@@ -12,28 +12,28 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 public class FrontendController implements IFrontendController {
-    
+
     private AIControllerFacade aiController;
-    
-    public FrontendController(){
+
+    public FrontendController() {
         this.aiController = new AIControllerFacade();
     }
 
-    
     /*
      * Start the module and initially gather all plugins.
      */
     public void start() {
         // TODO: initialize
     }
-   
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141"})
+
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141" })
     @RequestMapping("/command")
-    public Response launchCommand(@RequestParam(value="command") String command) {
+    public Response launchCommand(
+            @RequestParam(value = "command") String command) {
         Request request = new Request(command);
         Response response = this.aiController.elaborateRequest(request);
         return response;
     }
-    
-    
+
 }
