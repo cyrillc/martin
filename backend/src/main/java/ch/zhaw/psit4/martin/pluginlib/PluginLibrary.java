@@ -3,13 +3,13 @@ package ch.zhaw.psit4.martin.pluginlib;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.ldap.ExtendedRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,6 +24,7 @@ import org.java.plugin.registry.Extension.Parameter;
 import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.PluginService;
 import ch.zhaw.psit4.martin.api.util.Pair;
+import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Response;
 
 /**
@@ -115,7 +116,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      *         feature ID
      */
     public List<Pair<String, String>> queryFunctionsByKeyword(String keyword) {
-        return null;
+    	return null;
     }
 
     /**
@@ -131,7 +132,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      *         {@link ch.zhaw.psit4.martin.api.types})
      */
     public Map<String, String> queryFunctionArguments(String plugin, String feature) {
-        return null;
+    	return null;
     }
     
 

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
+import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 
@@ -14,9 +15,15 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 public class FrontendController implements IFrontendController {
     
     private AIControllerFacade aiController;
+    private IPluginLibrary library;
     
     public FrontendController(){
         this.aiController = new AIControllerFacade();
+    }
+    
+    public void setLibrary(IPluginLibrary library){
+    	this.library = library;
+    	this.aiController.setLibrary(library);
     }
 
     

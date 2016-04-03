@@ -3,9 +3,8 @@ package ch.zhaw.psit4.martin.pluginlib;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.ldap.ExtendedRequest;
-
 import ch.zhaw.psit4.martin.api.util.Pair;
+import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Response;
 
 /**
@@ -39,9 +38,9 @@ public interface IPluginLibrary {
      * the argument types.
      * 
      * @param plugin
-     *            The pluginID to querry.
+     *            The pluginID to query.
      * @param The
-     *            feature designator to querry.
+     *            feature designator to query.
      * @return A {@link Map} of arguments with key = ({@link String}) argument
      *         name and value = ({@link String}) Argument type (from
      *         {@link ch.zhaw.psit4.martin.api.types})
