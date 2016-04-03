@@ -16,19 +16,19 @@ import ch.zhaw.psit4.martin.api.util.Pair;
 * @version 0.1
 **/
 public class ExtendedRequest {
-	private String command;
+	private Request input;
 	private List<Call> calls;
 	
 	public ExtendedRequest() {
 		this.calls = new ArrayList<Call>();
 	}
 
-	public String getCommand() {
-		return this.command;
+	public Request getInput() {
+		return this.input;
 	}
 
-	public void setCommand(String command) {
-		this.command = command;
+	public void setInput(Request input) {
+		this.input = input;
 	}
 
 	public void addCall(Call call){

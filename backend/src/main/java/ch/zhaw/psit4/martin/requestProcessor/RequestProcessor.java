@@ -121,7 +121,7 @@ public class RequestProcessor implements IRequestProcessor {
 	@Override
 	public ExtendedRequest extend(Request request) throws Exception {
 		ExtendedRequest extendedRequest = new ExtendedRequest();
-		extendedRequest.setCommand(request.getCommand());
+		extendedRequest.setInput(request);
 
 		String[] keywords = request.getCommand().toLowerCase().split(" ");
 
