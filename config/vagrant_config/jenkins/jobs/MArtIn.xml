@@ -76,7 +76,7 @@
   </prebuilders>
   <postbuilders>
     <hudson.tasks.Shell>
-      <command>sudo start martinbackend || echo &apos;Failed to start the Service - Contact your Sysadmin&apos;</command>
+      <command>sudo start martinbackend</command>
     </hudson.tasks.Shell>
   </postbuilders>
   <runPostStepsIfResult>
