@@ -148,6 +148,55 @@
             
         </li>
         
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>ask the backend for example commands to show on the homepage</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>$(<span class="hljs-built_in">document</span>).ready(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>create request URL from current URL</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> url = <span class="hljs-built_in">window</span>.location.href;
+    url = url.split(<span class="hljs-string">':'</span>)[<span class="hljs-number">0</span>] + <span class="hljs-string">":"</span> + url.split(<span class="hljs-string">':'</span>)[<span class="hljs-number">1</span>] + <span class="hljs-string">":4040/exampleCommands"</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>send GET request with data and show response on page</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $.get(url, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+        $(<span class="hljs-string">"#possibleCommands"</span>).append(<span class="hljs-built_in">JSON</span>.stringify(data) + <span class="hljs-string">'&lt;br&gt;'</span>);
+    });
+});</pre></div></div>
+            
+        </li>
+        
     </ul>
   </div>
 </body>

@@ -41,8 +41,9 @@ var sendCommand = function() {
     });
 };
 
+// ask the backend for example commands to show on the homepage
 $(document).ready(function() {
-        // create request URL from current URL
+    // create request URL from current URL
     var url = window.location.href;
     url = url.split(':')[0] + ":" + url.split(':')[1] + ":4040/exampleCommands";
 
