@@ -39,7 +39,7 @@ public class FrontendController implements IFrontendController {
     }
 
     /**
-     * Returns the answer to a command to the frontend. When a request to the
+     * Returns the answer to a command to the Frontend. When a request to the
      * API at /command comes in, the method
      * querys the AI controller to get an answer for the command. It then
      * returns that answer to the origin of the request.
