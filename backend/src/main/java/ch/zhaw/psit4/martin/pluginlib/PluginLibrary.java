@@ -4,10 +4,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.naming.ldap.ExtendedRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,15 +22,16 @@ import org.java.plugin.registry.Extension.Parameter;
 
 import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.PluginService;
-import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
+import ch.zhaw.psit4.martin.api.util.Pair;
+import ch.zhaw.psit4.martin.boot.MartinBoot;
+import ch.zhaw.psit4.martin.common.Response;
 
 /**
  * PluginLibrary logic entry point.
  * 
  * This class handles Plugin-communication and discovery.
  *
- * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
 public class PluginLibrary extends Plugin implements IPluginLibrary {
@@ -47,10 +49,15 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * The maximum number of characters that can be read from JSON file
      */
     public static final int KEYWORDS_JSON_MAXLEN = 2048;
+    /**
+     * The context of MArtIn, allows communication with plugins
+     */
+    @SuppressWarnings("unused")
+    private MartinContextAccessor context;
     /*
      * List of all the plugins currently registered
      */
-    private List<PluginService> pluginExtentions;
+    private Map<String,PluginService> pluginExtentions;
     /*
      * Log from the common logging api
      */
@@ -83,6 +90,8 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public void startLibrary() {
+        // create the context
+        context = new MartinContextAccessor();
         // Get the log
         log = LogFactory.getLog(PluginLibrary.class);
         // Get plugins
@@ -90,7 +99,57 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         log.info("Plugin library booted, " + pluginExtentions.size()
                 + " plugins loaded.");
     }
+    
+    // TODO: use ExtendedRequest from MArtin package
+    @Override
+    public Response executeRequest(ExtendedRequest req) {
+        return null;
+    }
+    
+    /**
+     * Querry all plugins by keyword and return matching pluginIDs.
+     * 
+     * @param keyword
+     *            The keyword to search.
+     * @return {@link Pair} of found plugins sorted by probability (highest
+     *         first). The first element is the Plugin ID the second is the
+     *         feature ID
+     */
+    public List<Pair<String, String>> queryFunctionsByKeyword(String keyword) {
+        return null;
+    }
 
+    /**
+     * Get a {@link Map} filled with all required parameters for a plugin and
+     * the argument types.
+     * 
+     * @param plugin
+     *            The pluginID to querry.
+     * @param The
+     *            feature designator to querry.
+     * @return A {@link Map} of arguments with key = ({@link String}) argument
+     *         name and value = ({@link String}) Argument type (from
+     *         {@link ch.zhaw.psit4.martin.api.types})
+     */
+    public Map<String, String> queryFunctionArguments(String plugin, String feature) {
+        return null;
+    }
+
+
+    /**
+     * Returns a list of example calls read from the plugin database. Is usually
+     * only called from the AI controller when the user first loads the MArtIn
+     * frontend.
+     * 
+     * @return a list of example calls
+     */
+    @Override
+    public List<ExampleCall> getExampleCalls() {
+        List<ExampleCall> exampleCallList = new ArrayList<ExampleCall>();
+        exampleCallList = MartinBoot.exampleCallService.listExampleCalls();
+        return exampleCallList;
+    } 
+    
     /*
      * Fetches all extensions for the given extension point qualifiers.
      * 
@@ -98,11 +157,10 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * 
      * @return The gathered plugins in a LinkedList
      */
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> List<T> fetchPlugins(final String extPointId) {
+    @SuppressWarnings({"unchecked", "unused"})
+    private <T> Map<String,T> fetchPlugins(final String extPointId) {
 
-        List<T> plugins = new LinkedList<T>();
+        Map<String,T> plugins = new HashMap<String,T>();
         PluginManager manager = this.getManager();
 
         ExtensionPoint extPoint = manager.getRegistry()
@@ -116,13 +174,12 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 manager.activatePlugin(extensionDescriptor.getId());
                 ClassLoader classLoader = manager
                         .getPluginClassLoader(extensionDescriptor);
+                
+                String id = extension.getExtendedPointId().toString();
 
                 // metadata-parsing (mandatory)
                 Parameter pluginClassName = extension.getParameter("class");
                 Parameter pluginNAme = extension.getParameter("name");
-                Parameter pluginArgNAmes = extension.getParameter("arguments");
-                Parameter pluginArgTypes = extension
-                        .getParameter("argument-types");
 
                 // metadata-parsing (optional)
                 Parameter pluginDesctibtion = extension
@@ -140,7 +197,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 Class<T> pluginClass = (Class<T>) classLoader
                         .loadClass(pluginClassName.valueAsString());
                 T pluginInstance = pluginClass.newInstance();
-                plugins.add(pluginInstance);
+                plugins.put(id,pluginInstance);
                 log.info("Plugin \""
                         + extension.getParameter("name").valueAsString()
                         + "\" loaded");
@@ -150,37 +207,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             }
         }
 
-        return Collections.unmodifiableList(plugins);
-    }
-
-    /**
-     * Querry all plugins by keyword and return matching pluginIDs.
-     * 
-     * @param keyword
-     *            The keyword to search.
-     * @return {@link ArrayList} of found plugins sorted by probability (highest
-     *         first).
-     */
-    @Override
-    public List<String> queryPluginsByKeyword(String keyword) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * Get a {@link Map} filled with all required parameters for a plugin and
-     * the argument types.
-     * 
-     * @param pluginID
-     *            The pluginID to querry.
-     * @return A {@link Map} of arguments with key = ({@link String}) argument
-     *         name and value = ({@link String}) Argument type (from
-     *         {@link ch.zhaw.psit4.martin.api.types})
-     */
-    @Override
-    public <T> Map<String, String> queryPluginArguments(String pluginID) {
-        // TODO Auto-generated method stub
-        return null;
+        return plugins;
     }
 
     /**
@@ -212,18 +239,5 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             if (reader != null)
                 reader.close();
         }
-    }
-
-    /**
-     * Returns a list of example calls read from the plugin database. Is usually
-     * only called from the AI controller when the user first loads the MArtIn
-     * frontend.
-     * 
-     * @return a list of example calls
-     */
-    public List<ExampleCall> getExampleCalls() {
-        List<ExampleCall> exampleCallList = new ArrayList<ExampleCall>();
-        exampleCallList = MartinBoot.exampleCallService.listExampleCalls();
-        return exampleCallList;
     }
 }

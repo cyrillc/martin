@@ -1,14 +1,14 @@
 package ch.zhaw.psit4.martin.pluginlib;
 
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
-import ch.zhaw.psit4.martin.api.WorkItem;
 
 /**
  * The MArtIn Context Access object hidden from MArtIn plugins.
@@ -17,14 +17,13 @@ import ch.zhaw.psit4.martin.api.WorkItem;
  * providing the application with an object, that MArtIn is aware of. This
  * implementation of the Context has full access rights to the queue.
  *
- * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
 public class MartinContextAccessor implements IMartinContext {
     /*
      * the work list.
      */
-    private Queue<WorkItem> queue;
+    private List<Feature> queue;
     /*
      * The id-counter of this class
      */
@@ -36,7 +35,7 @@ public class MartinContextAccessor implements IMartinContext {
 
 
     public MartinContextAccessor() {
-        queue = new PriorityQueue<WorkItem>();
+        queue = new LinkedList<Feature>();
         idCounter = new AtomicLong();
         log = LogFactory.getLog(MartinContextAccessor.class);
     }
@@ -47,7 +46,7 @@ public class MartinContextAccessor implements IMartinContext {
      * @param item
      *            The {@link WorkItem} to register.
      */
-    public void registerWorkItem(WorkItem item) {
+    public void registerWorkItem(Feature item) {
         try {
             item.setID(getnextID());
             queue.add(item);
@@ -70,8 +69,12 @@ public class MartinContextAccessor implements IMartinContext {
      * @return the head of the {@link WorkItem} queue, or {@code null} if this
      *         queue is empty
      */
-    public WorkItem fetchWorkItem() {
-        return queue.poll();
+    public Feature fetchWorkItem(long requestID) {
+        for(int i = 0; i < queue.size(); i++) {
+            if(queue.get(i).getRequestID() == requestID)
+                return queue.remove(i);
+        }
+        return null;
     }
     
     private long getnextID() {

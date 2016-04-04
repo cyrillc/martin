@@ -18,8 +18,6 @@
 		<parameter-def id="class" />
 		<!-- Optional extension point declarations follow here -->
 		<parameter-def id="name" />
-		<parameter-def id="arguments" />
-		<parameter-def id="argument-types" />
 		<parameter-def id="description" multiplicity="none-or-one" />
 		<parameter-def id="author" multiplicity="none-or-one" />
 		<parameter-def id="e-mail" multiplicity="none-or-one" />

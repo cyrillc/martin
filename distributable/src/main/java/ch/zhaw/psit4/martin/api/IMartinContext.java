@@ -7,7 +7,6 @@ package ch.zhaw.psit4.martin.api;
  * application by providing the application with an 
  * object, that MArtIn is aware of.
  *
- * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
 public interface IMartinContext {
@@ -24,5 +23,5 @@ public interface IMartinContext {
     /**Registers a work item in the context.
      * @param item The item to register.
      */
-    public void registerWorkItem(WorkItem item);
+    public void registerWorkItem(Feature item);
 }

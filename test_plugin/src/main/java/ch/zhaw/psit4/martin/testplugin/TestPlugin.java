@@ -5,8 +5,9 @@ import ch.zhaw.psit4.martin.api.PluginService;
 
 public class TestPlugin implements PluginService{
 
-    public void init(IMartinContext context) {
-        TestPluginWork workItem = new TestPluginWork();
-        context.registerWorkItem(workItem);
+    public void init(IMartinContext context, String feature, long requestID) {
+        TestPluginWork feature1 = new TestPluginWork(requestID);
+        context.registerWorkItem(feature1);
     }
+
 }

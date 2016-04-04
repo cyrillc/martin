@@ -6,7 +6,6 @@ package ch.zhaw.psit4.martin.api.types;
  * Martin wraps Objects, that are passed on to plugins in this container for
  * easy handling.
  *
- * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
 public interface IMartinType {

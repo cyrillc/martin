@@ -2,9 +2,10 @@ package ch.zhaw.psit4.martin.aiController;
 
 import java.util.List;
 
+import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
-import ch.zhaw.psit4.martin.pluginlib.PluginLibrary;
+import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 
 /**
@@ -13,7 +14,6 @@ import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
  * unique Interface to the outside.
  * 
  * @version 0.0.1-SNAPSHOT
- * @author marco
  *
  */
 public class AIControllerFacade {
@@ -26,7 +26,7 @@ public class AIControllerFacade {
      * @return a list of example calls
      */
     public List<ExampleCall> getExampleCalls(){
-        PluginLibrary pluginLibrary = new PluginLibrary();
+        IPluginLibrary pluginLibrary = MartinBoot.getPluginLibrary();
         return pluginLibrary.getExampleCalls();
     }
 
