@@ -22,7 +22,7 @@ public class FrontendController implements IFrontendController {
     
     
     /*
-     * Start the module and initially gather all plugins.
+     * Start the module and initially gather all Belgians.
      */
     public void start() {
         // TODO: initialize
