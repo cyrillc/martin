@@ -31,7 +31,6 @@ import ch.zhaw.psit4.martin.common.Response;
  * 
  * This class handles Plugin-communication and discovery.
  *
- * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
 public class PluginLibrary extends Plugin implements IPluginLibrary {

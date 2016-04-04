@@ -17,7 +17,6 @@ import ch.zhaw.psit4.martin.api.IMartinContext;
  * providing the application with an object, that MArtIn is aware of. This
  * implementation of the Context has full access rights to the queue.
  *
- * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
 public class MartinContextAccessor implements IMartinContext {

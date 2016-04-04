@@ -16,7 +16,6 @@ import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
  * Entry point for the application to bootstrap jpf, SPRING and invoke
  * <code>ModuleLibraryBootstrap.boot()</code>.
  *
- * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
 @ComponentScan("ch.zhaw.psit4.martin.frontend")

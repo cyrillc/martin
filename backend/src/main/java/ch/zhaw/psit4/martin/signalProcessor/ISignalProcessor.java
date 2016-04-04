@@ -6,7 +6,6 @@ package ch.zhaw.psit4.martin.signalProcessor;
  * @version 1.0
  *
  */
-
 public interface ISignalProcessor {
 
     public String getInput();

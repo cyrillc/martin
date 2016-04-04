@@ -4,7 +4,6 @@ package ch.zhaw.psit4.martin.api;
  * It is used by application plugin library to call
  * and communicate with plugins.
  *
- * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
 public interface PluginService {

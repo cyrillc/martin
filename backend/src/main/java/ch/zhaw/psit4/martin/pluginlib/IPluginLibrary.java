@@ -11,7 +11,6 @@ import ch.zhaw.psit4.martin.common.Response;
 /**
  * Interface for class <code>PluginLibrary</code>.
  *
- * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
 public interface IPluginLibrary {
@@ -20,7 +19,7 @@ public interface IPluginLibrary {
      */
     void startLibrary();
 
-    // TODO: use ExtendedRequest from MArtin package
+    // TODO: use ExtendedRequest from MArtin common package
     public Response executeRequest(ExtendedRequest req);
 
     /**

@@ -11,7 +11,6 @@ import ch.zhaw.psit4.martin.api.types.IMartinType;
  * allocates a timeslot for them. Workitems allow a plugin to do work
  * asynchronously.
  *
- * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
 public class Feature {
