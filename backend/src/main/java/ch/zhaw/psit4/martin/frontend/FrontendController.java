@@ -15,17 +15,11 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 public class FrontendController implements IFrontendController {
     
     private AIControllerFacade aiController;
-    private IPluginLibrary library;
     
     public FrontendController(){
         this.aiController = new AIControllerFacade();
     }
     
-    public void setLibrary(IPluginLibrary library){
-    	this.library = library;
-    	this.aiController.setLibrary(library);
-    }
-
     
     /*
      * Start the module and initially gather all plugins.

@@ -1,5 +1,6 @@
 package ch.zhaw.psit4.martin.aiController;
 
+import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
@@ -22,11 +23,7 @@ public class AIControllerFacade {
 	
 	public AIControllerFacade(){
 		this.requestProcessor = new RequestProcessor();
-	}
-	
-	public void setLibrary(IPluginLibrary library){
-		this.library = library;
-		this.requestProcessor.setLibrary(library);
+		this.requestProcessor.setLibrary(MartinBoot.getPluginLibrary());
 	}
 	
     
