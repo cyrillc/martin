@@ -13,14 +13,17 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+<<<<<<< HEAD
 import ch.zhaw.psit4.martin.pluginlib.db.*;
 
+=======
 /**
  * This class connect the Frontend with the AI using REST.
  * 
  * @version 0.0.1-SNAPSHOT
  *
  */
+>>>>>>> dev
 @RestController
 public class FrontendController implements IFrontendController {
 
@@ -38,13 +41,20 @@ public class FrontendController implements IFrontendController {
     }
 
     /**
+<<<<<<< HEAD
      * Returns the answer to a command to the frontend. When a request to the
      * API at /command comes in, the method
      * querys the AI controller to get an answer for the command. It then
      * returns that answer to the origin of the request.
      * 
+     * @return An answer to an incoming command
+=======
+     * This method receive via a GET Request a command to forward to the AI. The
+     * AI will give back a Response a this will be sent to Frontend.
+     * 
      * @param command
      * @return the response of the AI
+>>>>>>> dev
      */
     @CrossOrigin(origins = { "http://localhost:4141",
             "http://srv-lab-t-825:4141" })
@@ -56,6 +66,7 @@ public class FrontendController implements IFrontendController {
         return response;
     }
 
+<<<<<<< HEAD
     /**
      * Returns a list of example commands to the frontend. When a request to the
      * API at /exampleCommands comes in (usually on page load), the method
@@ -83,4 +94,6 @@ public class FrontendController implements IFrontendController {
         return exampleCallList;
     }
 
+=======
+>>>>>>> dev
 }

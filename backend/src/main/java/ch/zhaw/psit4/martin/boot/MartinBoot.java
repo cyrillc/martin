@@ -6,11 +6,14 @@ package ch.zhaw.psit4.martin.boot;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import ch.zhaw.psit4.martin.frontend.FrontendController;
 import ch.zhaw.psit4.martin.frontend.IFrontendController;
-import ch.zhaw.psit4.martin.modulelib.IPluginLibrary;
-import ch.zhaw.psit4.martin.modulelib.PluginLibraryBootstrap;
+import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
+import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
+import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
 
 /**
  * Entry point for the application to bootstrap jpf, SPRING and invoke
@@ -19,10 +22,10 @@ import ch.zhaw.psit4.martin.modulelib.PluginLibraryBootstrap;
  * @author Daniel Fabian
  * @version 0.0.1-SNAPSHOT
  */
-@ComponentScan("ch.zhaw.psit4.martin.frontend")
+@ComponentScan({"ch.zhaw.psit4.martin.frontend", "ch.zhaw.psit4.martin.pluginlib.db"})
 @SpringBootApplication
 public class MartinBoot {
-
+    
     /*
      * The martin library singleton
      */
@@ -31,6 +34,10 @@ public class MartinBoot {
      * The frontend controller singleton
      */
     private static IFrontendController frontendController;
+    /*
+     * Service to access example calls in database
+     */
+    public static ExampleCallService exampleCallService;
 
     /**
      * Main application entry point launches MArtIn and used components.
@@ -39,6 +46,9 @@ public class MartinBoot {
      *            Command line arguments (unused)
      */
     public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+        exampleCallService = (ExampleCallService) context.getBean("exampleCallService");
+        
         // boot Spring
         SpringApplication.run(MartinBoot.class, args);
         // boot library

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+
+	<!-- SAMPLE BEAN <bean id="helloWorld" class="com.tutorialspoint.HelloWorld"> 
+		<property name="message" value="Hello World!"/> </bean> -->
+
+	<!-- DATASOURCE -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://127.0.0.1:3306/plugins" />
+		<property name="username" value="devuser" />
+		<property name="password" value="devuser" />
+	</bean>
+
+	<!-- Hibernate 5 SessionFactory Bean definition -->
+	<bean id="HibernateSessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses">
+			<list>
+				<value>ch.zhaw.psit4.martin.pluginlib.db.ExampleCall</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect
+				</prop>
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="exampleCallDao" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallDao">
+		<property name="sessionFactory" ref="HibernateSessionFactory" />
+	</bean>
+	<bean id="exampleCallService" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService">
+		<property name="exampleCallDao" ref="exampleCallDao"></property>
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="HibernateSessionFactory" />
+	</bean>
+
+</beans>

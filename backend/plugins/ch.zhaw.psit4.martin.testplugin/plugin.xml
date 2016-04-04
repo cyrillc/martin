@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 1.0" "http://jpf.sourceforge.net/plugin_1_0.dtd">
+<!-- DTD available under MArtIn\distributable\plugin.dtd -->
+<plugin id="ch.zhaw.psit4.martin.testplugin" version="0.0.1">
+ 	<requires>
+		<import plugin-id="ch.zhaw.psit4.martin.api" />
+	</requires>
+	<runtime>
+		<library id="test_plugin" path="classes/" type="code">
+			<doc caption="API documentation">
+				<doc-ref path="doc/index.html" caption="javadoc" />
+			</doc>
+		</library>
+		<library type="resources" path="res/" id="resources" />
+	</runtime>
+ 
+	<extension plugin-id="ch.zhaw.psit4.martin.api" point-id="PluginService"
+		id="testPlugin">
+		<parameter id="class"
+			value="ch.zhaw.psit4.martin.testplugin.TestPlugin" />
+		<parameter id="name" value="Test Plugin" />
+		<parameter id="arguments" value="name" />
+		<parameter id="argument-types" value="Text" />
+		<parameter id="description"
+			value="A plugin to test the pPlugin system." />
+		<parameter id="author" value="Daniel Fabian" />
+		<parameter id="e-mail" value="jtek.fdlt@gmail.com" />
+		<parameter id="date" value="30.03.2016" />
+	</extension>
+</plugin>
