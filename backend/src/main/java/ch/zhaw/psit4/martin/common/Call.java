@@ -41,7 +41,7 @@ public class Call {
 	 * @param key the argument name
 	 * @param value the argument content packed into a IMartinType
 	 */
-	public void addrgument(String key, IMartinType value){
+	public void addArgument(String key, IMartinType value){
 		this.arguments.put(key, value);
 	}
 	

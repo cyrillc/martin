@@ -21,11 +21,12 @@ import org.java.plugin.registry.Extension.Parameter;
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.PluginService;
-import ch.zhaw.psit4.martin.api.types.IMartinType;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 import ch.zhaw.psit4.martin.api.util.Pair;
+
 import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.Call;
+
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Response;
 
@@ -112,7 +113,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public Response executeRequest(ExtendedRequest req) {
-        Call call = req.getCall();
+        Call call = req.getCalls().get(0);
         String pluginID = call.getPlugin();
         String featureID = call.getFeature();
         PluginService service = pluginExtentions.get(pluginID);
@@ -139,7 +140,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      *         feature ID
      */
     public List<Pair<String, String>> queryFunctionsByKeyword(String keyword) {
-        return null;
+    	return null;
     }
 
     /**
@@ -154,9 +155,8 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      *         name and value = ({@link String}) Argument type (from
      *         {@link ch.zhaw.psit4.martin.api.types})
      */
-    public Map<String, String> queryFunctionArguments(String plugin,
-            String feature) {
-        return null;
+    public Map<String, String> queryFunctionArguments(String plugin, String feature) {
+    	return null;
     }
 
     /**

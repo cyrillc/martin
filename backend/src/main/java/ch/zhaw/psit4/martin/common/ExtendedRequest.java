@@ -1,5 +1,13 @@
 package ch.zhaw.psit4.martin.common;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import ch.zhaw.psit4.martin.api.types.IMartinType;
+import ch.zhaw.psit4.martin.api.util.Pair;
+
 /**
 * This class holds extended information about the request. It holds a possible 
 * function call along with the required and optional arguments used to call 
@@ -9,9 +17,10 @@ package ch.zhaw.psit4.martin.common;
 **/
 public class ExtendedRequest {
 	private Request input;
-	private Call call;
+	private List<Call> calls;
 	
 	public ExtendedRequest() {
+		this.calls = new ArrayList<Call>();
 	}
 
 	public Request getInput() {
@@ -22,11 +31,11 @@ public class ExtendedRequest {
 		this.input = input;
 	}
 
-	public void setCall(Call call){
-		this.call = call;
+	public void addCall(Call call){
+		this.calls.add(call);
 	}
 	
-	public Call getCall(){
-		return this.call;
+	public List<Call> getCalls(){
+		return this.calls;
 	}
 }

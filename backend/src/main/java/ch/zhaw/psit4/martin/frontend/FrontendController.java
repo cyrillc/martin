@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
+import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +30,9 @@ public class FrontendController implements IFrontendController {
     public FrontendController() {
         this.aiController = new AIControllerFacade();
     }
-
+    
     /*
-     * Start the module and initially gather all plugins.
+     * Start the module and initially gather all Belgians.
      */
     public void start() {
         // TODO: initialize
