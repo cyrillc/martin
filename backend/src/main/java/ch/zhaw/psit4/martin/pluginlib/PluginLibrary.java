@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.ldap.ExtendedRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.java.plugin.Plugin;
@@ -20,11 +18,15 @@ import org.java.plugin.registry.PluginDescriptor;
 import org.json.JSONObject;
 import org.java.plugin.registry.Extension.Parameter;
 
+import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.PluginService;
+import ch.zhaw.psit4.martin.api.types.IMartinType;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 import ch.zhaw.psit4.martin.api.util.Pair;
 import ch.zhaw.psit4.martin.boot.MartinBoot;
+import ch.zhaw.psit4.martin.common.Call;
+import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Response;
 
 /**
@@ -52,12 +54,11 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     /**
      * The context of MArtIn, allows communication with plugins
      */
-    @SuppressWarnings("unused")
     private MartinContextAccessor context;
     /*
      * List of all the plugins currently registered
      */
-    private Map<String,PluginService> pluginExtentions;
+    private Map<String, PluginService> pluginExtentions;
     /*
      * Log from the common logging api
      */
@@ -99,13 +100,35 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         log.info("Plugin library booted, " + pluginExtentions.size()
                 + " plugins loaded.");
     }
-    
-    // TODO: use ExtendedRequest from MArtin package
+
+    /**
+     * Answer a request by searching plugin-library for function and executing
+     * them.
+     * 
+     * @param req
+     *            The {@link ExtendedQequest} to answer.
+     * 
+     * @return The generated {@link Response}.
+     */
     @Override
     public Response executeRequest(ExtendedRequest req) {
-        return null;
+        Call call = req.getCall();
+        String pluginID = call.getPlugin();
+        String featureID = call.getFeature();
+        PluginService service = pluginExtentions.get(pluginID);
+        
+        // if service exists, execute call
+        if(service != null) {
+            service.init(context, featureID, 0);
+
+            Response response = new Response(executeCall(call, 0));
+            return response;
+        } else {
+            log.error("Could not find a plugin that matches request call.");
+            return new Response("ERROR: no plugin found!");
+        }
     }
-    
+
     /**
      * Querry all plugins by keyword and return matching pluginIDs.
      * 
@@ -131,10 +154,10 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      *         name and value = ({@link String}) Argument type (from
      *         {@link ch.zhaw.psit4.martin.api.types})
      */
-    public Map<String, String> queryFunctionArguments(String plugin, String feature) {
+    public Map<String, String> queryFunctionArguments(String plugin,
+            String feature) {
         return null;
     }
-
 
     /**
      * Returns a list of example calls read from the plugin database. Is usually
@@ -148,8 +171,8 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         List<ExampleCall> exampleCallList = new ArrayList<ExampleCall>();
         exampleCallList = MartinBoot.exampleCallService.listExampleCalls();
         return exampleCallList;
-    } 
-    
+    }
+
     /*
      * Fetches all extensions for the given extension point qualifiers.
      * 
@@ -157,10 +180,10 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * 
      * @return The gathered plugins in a LinkedList
      */
-    @SuppressWarnings({"unchecked", "unused"})
-    private <T> Map<String,T> fetchPlugins(final String extPointId) {
+    @SuppressWarnings({ "unchecked", "unused" })
+    private <T> Map<String, T> fetchPlugins(final String extPointId) {
 
-        Map<String,T> plugins = new HashMap<String,T>();
+        Map<String, T> plugins = new HashMap<String, T>();
         PluginManager manager = this.getManager();
 
         ExtensionPoint extPoint = manager.getRegistry()
@@ -174,7 +197,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 manager.activatePlugin(extensionDescriptor.getId());
                 ClassLoader classLoader = manager
                         .getPluginClassLoader(extensionDescriptor);
-                
+
                 String id = extension.getExtendedPointId().toString();
 
                 // metadata-parsing (mandatory)
@@ -197,7 +220,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 Class<T> pluginClass = (Class<T>) classLoader
                         .loadClass(pluginClassName.valueAsString());
                 T pluginInstance = pluginClass.newInstance();
-                plugins.put(id,pluginInstance);
+                plugins.put(id, pluginInstance);
                 log.info("Plugin \""
                         + extension.getParameter("name").valueAsString()
                         + "\" loaded");
@@ -239,5 +262,47 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             if (reader != null)
                 reader.close();
         }
+    }
+
+    /**
+     * Executes the feature of a call by passing call arguments
+     * 
+     * @param call
+     *            The call to execute features for.
+     * @return The return value as string.
+     */
+    private String executeCall(Call call, long requestID) {
+        Feature feature = context.fetchWorkItem(requestID);
+        String ret = "";
+        while (feature != null) {
+            try {
+                feature.start(call.getArguments());
+            } catch (Exception e) {
+                log.error("Could not start plugin feature.");
+                ret += "ERROR at start()! ";
+                break;
+            }
+
+            try {
+                feature.run();
+            } catch (Exception e) {
+                log.error("Could not run plugin feature.");
+                ret += "ERROR during run()! ";
+                break;
+            }
+
+            try {
+                ret += feature.stop();
+            } catch (Exception e) {
+                log.error("Could not stop plugin feature.");
+                ret += "ERROR at stop()";
+                break;
+            }
+            
+            ret += "\n";
+            feature = context.fetchWorkItem(requestID);
+        }
+
+        return ret;
     }
 }

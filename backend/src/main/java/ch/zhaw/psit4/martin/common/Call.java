@@ -14,12 +14,10 @@ import ch.zhaw.psit4.martin.api.types.IMartinType;
 public class Call {
 	private String plugin;
 	private String feature;
-	private Map<String, IMartinType> requiredArguments;
-	private Map<String, IMartinType> optionalArguments;
+	private Map<String, IMartinType> arguments;
 	
 	public Call(){
-		this.requiredArguments = new HashMap<String, IMartinType>();
-		this.optionalArguments = new HashMap<String, IMartinType>();
+		this.arguments = new HashMap<String, IMartinType>();
 	}
 
 	public String getPlugin() {
@@ -39,36 +37,19 @@ public class Call {
 	}
 	
 	/**
-	 * Adds a required argument. 
+	 * Adds an argument. 
 	 * @param key the argument name
 	 * @param value the argument content packed into a IMartinType
 	 */
-	public void addRequiredArgument(String key, IMartinType value){
-		this.requiredArguments.put(key, value);
+	public void addrgument(String key, IMartinType value){
+		this.arguments.put(key, value);
 	}
 	
 	/**
-	 * @return A map of all required arguments.
+	 * @return A map of all arguments.
 	 */
-	public Map<String, IMartinType> getRequiredArguments(){
-		return requiredArguments;
-	}
-	
-	/**
-	 * Adds an optional argument.
-	 * @param key the argument name
-	 * @param value the argument content packed into a IMartinType
-	 */
-	public void addOptionalArgument(String key, IMartinType value){
-		this.optionalArguments.put(key, value);
-	}
-	
-	/**
-	 * 
-	 * @return A map of all optional arguments.
-	 */
-	public Map<String, IMartinType> getOptionalArguments(){
-		return requiredArguments;
+	public Map<String, IMartinType> getArguments(){
+		return arguments;
 	}
 
 }

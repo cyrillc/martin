@@ -3,9 +3,8 @@ package ch.zhaw.psit4.martin.pluginlib;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.ldap.ExtendedRequest;
-
 import ch.zhaw.psit4.martin.api.util.Pair;
+import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Response;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 
@@ -20,7 +19,14 @@ public interface IPluginLibrary {
      */
     void startLibrary();
 
-    // TODO: use ExtendedRequest from MArtin common package
+    /**
+     * Answer a request by searching plugin-library for function and executing
+     * them.
+     * 
+     * @param req The {@link ExtendedQequest} to answer.
+     * 
+     * @return The generated {@link Response}.
+     */
     public Response executeRequest(ExtendedRequest req);
 
     /**
@@ -46,8 +52,9 @@ public interface IPluginLibrary {
      *         name and value = ({@link String}) Argument type (from
      *         {@link ch.zhaw.psit4.martin.api.types})
      */
-    public Map<String, String> queryFunctionArguments(String plugin, String feature);
-    
+    public Map<String, String> queryFunctionArguments(String plugin,
+            String feature);
+
     /**
      * Returns a list of example calls read from the plugin database. Is usually
      * only called from the AI controller when the user first loads the MArtIn
