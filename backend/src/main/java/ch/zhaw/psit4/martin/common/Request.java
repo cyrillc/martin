@@ -1,13 +1,34 @@
 package ch.zhaw.psit4.martin.common;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "request")
 public class Request {
     
     public Request(String command){
         setCommand(command);
     }
     
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    
+    @Column(name ="command")
+    @NotNull
     private String command;
 
+    public int getId(){
+        return this.id;
+    }
+    
     public String getCommand() {
         return command;
     }
