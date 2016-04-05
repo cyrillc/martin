@@ -11,24 +11,24 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "request")
 public class Request {
-    
-    public Request(String command){
-        setCommand(command);
-    }
-    
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
-    @Column(name ="command")
+
+    @Column(name = "command")
     @NotNull
     private String command;
 
-    public int getId(){
+    public Request(String command) {
+        setCommand(command);
+    }
+
+    public int getId() {
         return this.id;
     }
-    
+
     public String getCommand() {
         return command;
     }
