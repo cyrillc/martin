@@ -16,11 +16,4 @@ public class HistoryItemDAOTest {
         this.historyItemDAO = new HistoryItemDAO();
     }
 
-    @Test
-    public void testAdd(){
-        Request request = new Request("testRequest");
-        Response response = new Response("testResponse");
-        this.historyItemDAO.add(new HistoryItem(request, response));
-    }
-
 }
