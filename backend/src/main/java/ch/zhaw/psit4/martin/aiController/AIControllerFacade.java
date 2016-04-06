@@ -66,7 +66,9 @@ public class AIControllerFacade {
         try {
             ExtendedRequest extendedRequest = this.requestProcessor
                     .extend(request);
-            return library.executeRequest(extendedRequest);
+            Response response = library.executeRequest(extendedRequest);
+            this.saveHistoryItem(new HistoryItem(request, response));
+            return response;
         } catch (Exception e) {
             return new Response("Sorry, I cant't understand you.");
         }
@@ -74,6 +76,6 @@ public class AIControllerFacade {
 
     @Transactional
     private void saveHistoryItem(HistoryItem historyItem) {
-
+        this.historyItemDAO.add(historyItem);
     }
 }
