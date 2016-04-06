@@ -51,6 +51,13 @@
 	<bean id="exampleCallService" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService">
 		<property name="exampleCallDao" ref="exampleCallDao"></property>
 	</bean>
+  
+    <bean id="historyItemDao" class="ch.zhaw.psit4.martin.common.dao.HistoryItemDAO">
+        <property name="sessionFactory" ref="HibernateSessionFactory" />
+    </bean>
+    <bean id="aiControllerFacade" class="ch.zhaw.psit4.martin.aiController.AIControllerFacade">
+        <property name="historyItemDAO" ref="historyItemDao"></property>
+    </bean>
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
