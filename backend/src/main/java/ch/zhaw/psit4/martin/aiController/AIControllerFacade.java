@@ -70,7 +70,9 @@ public class AIControllerFacade {
             this.saveHistoryItem(new HistoryItem(request, response));
             return response;
         } catch (Exception e) {
-            return new Response("Sorry, I cant't understand you.");
+            Response response = new Response("Sorry, I cant't understand you.");
+            this.saveHistoryItem(new HistoryItem(request, response));
+            return response;
         }
     }
 
