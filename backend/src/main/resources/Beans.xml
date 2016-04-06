@@ -26,6 +26,9 @@
 		<property name="annotatedClasses">
 			<list>
 				<value>ch.zhaw.psit4.martin.pluginlib.db.ExampleCall</value>
+                <value>ch.zhaw.psit4.martin.common.Request</value>
+                <value>ch.zhaw.psit4.martin.common.Response</value>
+                <value>ch.zhaw.psit4.martin.common.HistoryItem</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">
@@ -37,12 +40,12 @@
 		</property>
 	</bean>
 
-	<bean id="exampleCallDao" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallDao">
-		<property name="sessionFactory" ref="HibernateSessionFactory" />
-	</bean>
-	<bean id="exampleCallService" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService">
-		<property name="exampleCallDao" ref="exampleCallDao"></property>
-	</bean>
+    <bean id="exampleCallDao" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallDao">
+        <property name="sessionFactory" ref="HibernateSessionFactory" />
+    </bean>
+    <bean id="exampleCallService" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService">
+        <property name="exampleCallDao" ref="exampleCallDao"></property>
+    </bean>
   
     <bean id="historyItemDao" class="ch.zhaw.psit4.martin.common.dao.HistoryItemDAO">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
