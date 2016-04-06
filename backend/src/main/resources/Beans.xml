@@ -50,7 +50,7 @@
     <bean id="historyItemDao" class="ch.zhaw.psit4.martin.common.dao.HistoryItemDAO">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
-    <bean id="aiControllerFacade" class="ch.zhaw.psit4.martin.aiController.AIControllerFacade">
+    <bean id="historyItemService" class="ch.zhaw.psit4.martin.common.service.HistoryItemService">
         <property name="historyItemDAO" ref="historyItemDao"></property>
     </bean>
 
