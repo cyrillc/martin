@@ -27,19 +27,10 @@ public class AIControllerFacade {
 
     private RequestProcessor requestProcessor;
     private IPluginLibrary library;
-    private HistoryItemDAO historyItemDAO;
 
     public AIControllerFacade() {
         this.requestProcessor = new RequestProcessor();
         this.requestProcessor.setLibrary(MartinBoot.getPluginLibrary());
-    }
-
-    /**
-     * 
-     * @param historyItemDAO
-     */
-    public void setHistoryItemDAO(HistoryItemDAO historyItemDAO) {
-        this.historyItemDAO = historyItemDAO;
     }
 
     /**
@@ -78,6 +69,6 @@ public class AIControllerFacade {
 
     @Transactional
     private void saveHistoryItem(HistoryItem historyItem) {
-        this.historyItemDAO.add(historyItem);
+        // TODO
     }
 }
