@@ -33,10 +33,6 @@ public class MartinBoot {
      * The frontend controller singleton
      */
     private static IFrontendController frontendController;
-    /*
-     * Service to access example calls in database
-     */
-    public static ExampleCallService exampleCallService;
     
     public static ApplicationContext context;
 
@@ -47,13 +43,18 @@ public class MartinBoot {
      *            Command line arguments (unused)
      */
     public static void main(String[] args) {
+        
+        
         context = new ClassPathXmlApplicationContext("Beans.xml");
-        exampleCallService = (ExampleCallService) context.getBean("exampleCallService");
+
+        // boot library
+        library = (new PluginLibraryBootstrap()).boot();
         
         // boot Spring
         SpringApplication.run(MartinBoot.class, args);
-        // boot library
-        library = (new PluginLibraryBootstrap()).boot();
+        
+
+        
         // boot frontend controller
         frontendController = new FrontendController();
         frontendController.start();

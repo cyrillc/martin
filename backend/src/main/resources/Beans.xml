@@ -50,36 +50,34 @@
 		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
 		<property name="sessionFactory" ref="HibernateSessionFactory" />
 	</bean>
-	
+
 	<!-- JAVA CLASSES -->
-	
+
 	<!-- package aiController -->
-	<bean id="AIControllerFacade" 
-		class="ch.zhaw.psit4.martin.aiController.AIControllerFacade">
-	</bean> 
-	
+	<bean id="AIControllerFacade" class="ch.zhaw.psit4.martin.aiController.AIControllerFacade">
+        <property name="requestProcessor" ref="RequestProcessor"></property>
+	</bean>
+
 	<!-- package boot -->
-	
-	
+
+
 	<!-- package common -->
-	
-	
-	
+
+
+
 	<!-- package Frontend -->
-	<bean id="FrontendController" 
-		class="ch.zhaw.psit4.martin.frontend.FrontendController">
-	</bean> 		
-	
-	
-	
+	<bean id="FrontendController" class="ch.zhaw.psit4.martin.frontend.FrontendController">
+	</bean>
+
+
+
 	<!-- package pluginlib -->
-	
+
 	<!-- package requestProcessor -->
-	<bean id="RequestProcessor" 
-		class="ch.zhaw.psit4.martin.requestProcessor.RequestProcessor.">
-	</bean> 
+	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestProcessor.RequestProcessor">
+	</bean>
 
 
-	
+
 
 </beans>

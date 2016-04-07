@@ -22,6 +22,7 @@ import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.PluginService;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
+import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
 import ch.zhaw.psit4.martin.api.util.Pair;
 
 import ch.zhaw.psit4.martin.boot.MartinBoot;
@@ -168,8 +169,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public List<ExampleCall> getExampleCalls() {
+        ExampleCallService exampleCallService = (ExampleCallService) MartinBoot.context.getBean("exampleCallService");
         List<ExampleCall> exampleCallList = new ArrayList<ExampleCall>();
-        exampleCallList = MartinBoot.exampleCallService.listExampleCalls();
+        exampleCallList = exampleCallService.listExampleCalls();
         return exampleCallList;
     }
 

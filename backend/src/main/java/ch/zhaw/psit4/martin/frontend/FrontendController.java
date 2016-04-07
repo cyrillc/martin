@@ -74,15 +74,8 @@ public class FrontendController implements IFrontendController {
     public List<ExampleCall> sendExampleCommands() {
         List<ExampleCall> exampleCallList = new ArrayList<ExampleCall>();
 
-        ExampleCall test1 = new ExampleCall();
-        test1.setCall("test example 1");
-        ExampleCall test2 = new ExampleCall();
-        test2.setCall("test example2");
-        exampleCallList.add(test1);
-        exampleCallList.add(test2);
-
-        AIControllerFacade aiController = new AIControllerFacade();
-        exampleCallList = aiController.getExampleCalls();
+        
+        this.aiController.getExampleCalls();
 
         return exampleCallList;
     }

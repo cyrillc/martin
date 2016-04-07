@@ -26,8 +26,8 @@ public class AIControllerFacade {
 	private IPluginLibrary library;
 	
 	public AIControllerFacade(){
-		requestProcessor = (RequestProcessor) MartinBoot.context.getBean("RequestProcessor");
-		this.requestProcessor.setLibrary(MartinBoot.getPluginLibrary());
+	    this.library = MartinBoot.getPluginLibrary();
+		this.requestProcessor.setLibrary(this.library);
 	}
 	
     
@@ -39,8 +39,7 @@ public class AIControllerFacade {
      * @return a list of example calls
      */
     public List<ExampleCall> getExampleCalls(){
-        IPluginLibrary pluginLibrary = MartinBoot.getPluginLibrary();
-        return pluginLibrary.getExampleCalls();
+        return library.getExampleCalls();
     }
 
     /**
