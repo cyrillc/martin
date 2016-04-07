@@ -7,10 +7,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
-import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
-import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,17 +28,18 @@ public class FrontendController implements IFrontendController {
 
     private AIControllerFacade aiController;
 
-    public FrontendController() {
-      aiController = (AIControllerFacade) MartinBoot.context.getBean("AIControllerFacade");
-    }
-
     /*
      * Start the module and initially gather all Belgians.
      */
     public void start() {
         // TODO: initialize
     }
-
+    
+    public FrontendController() {
+        // quick fix until beans work
+        aiController = new AIControllerFacade();
+    }
+    
     /**
      * Returns the answer to a command to the Frontend. When a request to the
      * API at /command comes in, the method
@@ -72,12 +71,17 @@ public class FrontendController implements IFrontendController {
             "http://srv-lab-t-825:4141","http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/exampleCommands")
     public List<ExampleCall> sendExampleCommands() {
-        List<ExampleCall> exampleCallList = new ArrayList<ExampleCall>();
 
-        
-        this.aiController.getExampleCalls();
+        return aiController.getExampleCalls();
 
-        return exampleCallList;
+    }
+    
+    public AIControllerFacade getAiController() {
+        return aiController;
+    }
+
+    public void setAiController(AIControllerFacade aiController) {
+        this.aiController = aiController;
     }
 
 }

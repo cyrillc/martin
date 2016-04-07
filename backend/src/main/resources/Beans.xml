@@ -67,6 +67,7 @@
 
 	<!-- package Frontend -->
 	<bean id="FrontendController" class="ch.zhaw.psit4.martin.frontend.FrontendController">
+	        <property name="aiController" ref="AIControllerFacade"></property>
 	</bean>
 
 

@@ -44,20 +44,19 @@ public class MartinBoot {
      */
     public static void main(String[] args) {
         
-        
         context = new ClassPathXmlApplicationContext("Beans.xml");
-
+        
         // boot library
         library = (new PluginLibraryBootstrap()).boot();
-        
+                
         // boot Spring
         SpringApplication.run(MartinBoot.class, args);
         
 
         
         // boot frontend controller
-        frontendController = new FrontendController();
-        frontendController.start();
+        //frontendController = new FrontendController();
+        //frontendController.start();
         // TODO: Boot other components
         
     }
