@@ -26,7 +26,7 @@
         <property name="username" value="devuser" />
         <property name="password" value="devuser" />
     </bean>
-
+    
 	<!-- Hibernate 5 SessionFactory Bean definition -->
 	<bean id="HibernateSessionFactory"
 		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
@@ -58,5 +58,36 @@
 		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
 		<property name="sessionFactory" ref="HibernateSessionFactory" />
 	</bean>
+	
+	<!-- JAVA CLASSES -->
+	
+	<!-- package aiController -->
+	<bean id="AIControllerFacade" 
+		class="ch.zhaw.psit4.martin.aiController.AIControllerFacade">
+	</bean> 
+	
+	<!-- package boot -->
+	
+	
+	<!-- package common -->
+	
+	
+	
+	<!-- package Frontend -->
+	<bean id="FrontendController" 
+		class="ch.zhaw.psit4.martin.frontend.FrontendController">
+	</bean> 		
+	
+	
+	
+	<!-- package pluginlib -->
+	
+	<!-- package requestProcessor -->
+	<bean id="RequestProcessor" 
+		class="ch.zhaw.psit4.martin.requestProcessor.RequestProcessor.">
+	</bean> 
+
+
+	
 
 </beans>

@@ -26,7 +26,7 @@ public class AIControllerFacade {
 	private IPluginLibrary library;
 	
 	public AIControllerFacade(){
-		this.requestProcessor = new RequestProcessor();
+		requestProcessor = (RequestProcessor) MartinBoot.context.getBean("RequestProcessor");
 		this.requestProcessor.setLibrary(MartinBoot.getPluginLibrary());
 	}
 	

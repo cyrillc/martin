@@ -37,6 +37,8 @@ public class MartinBoot {
      * Service to access example calls in database
      */
     public static ExampleCallService exampleCallService;
+    
+    public static ApplicationContext context;
 
     /**
      * Main application entry point launches MArtIn and used components.
@@ -45,7 +47,7 @@ public class MartinBoot {
      *            Command line arguments (unused)
      */
     public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+        context = new ClassPathXmlApplicationContext("Beans.xml");
         exampleCallService = (ExampleCallService) context.getBean("exampleCallService");
         
         // boot Spring
