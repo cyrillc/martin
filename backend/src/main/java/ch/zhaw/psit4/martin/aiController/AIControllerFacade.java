@@ -64,9 +64,4 @@ public class AIControllerFacade {
             return response;
         }
     }
-
-    @Transactional
-    private void saveHistoryItem(HistoryItem historyItem) {
-        // TODO
-    }
 }
