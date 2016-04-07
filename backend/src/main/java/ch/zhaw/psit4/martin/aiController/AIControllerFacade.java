@@ -58,11 +58,9 @@ public class AIControllerFacade {
             ExtendedRequest extendedRequest = this.requestProcessor
                     .extend(request);
             Response response = library.executeRequest(extendedRequest);
-            this.saveHistoryItem(new HistoryItem(request, response));
             return response;
         } catch (Exception e) {
             Response response = new Response("Sorry, I cant't understand you.");
-            this.saveHistoryItem(new HistoryItem(request, response));
             return response;
         }
     }
