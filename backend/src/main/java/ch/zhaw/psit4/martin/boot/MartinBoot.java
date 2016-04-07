@@ -3,6 +3,8 @@
  */
 package ch.zhaw.psit4.martin.boot;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,6 +14,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ch.zhaw.psit4.martin.frontend.FrontendController;
 import ch.zhaw.psit4.martin.frontend.IFrontendController;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
+import ch.zhaw.psit4.martin.pluginlib.PluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
 
@@ -46,7 +49,7 @@ public class MartinBoot {
      * @param args
      *            Command line arguments (unused)
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) {        
         context = new ClassPathXmlApplicationContext("Beans.xml");
         exampleCallService = (ExampleCallService) context.getBean("exampleCallService");
         
@@ -57,8 +60,6 @@ public class MartinBoot {
         // boot frontend controller
         frontendController = new FrontendController();
         frontendController.start();
-        // TODO: Boot other components
-        
     }
 
     public static IPluginLibrary getPluginLibrary() {
