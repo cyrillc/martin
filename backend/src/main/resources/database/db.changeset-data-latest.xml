@@ -7,17 +7,9 @@
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
 
-   <!-- Includes all database-versions -->
+   <!-- Includes the latest version of the database-data -->
 
-   <!-- If you want to change the database schema or data, please create a new file
-   called db.changeset-{type}-{version}.xml and include it here. -->
-
-   <include file="src/main/resources/database/db.changeset-schema-1.0.xml"/> 
    <include file="src/main/resources/database/db.changeset-data-1.0.xml"/> 
 
-   <!-- To be continued ... -->
-
-   <!-- <include file="src/main/resources/database/db.changeset-schema-1.1.xml"/> 
-   <include file="src/main/resources/database/db.changeset-data-1.1.xml"/> -->
 
 </databaseChangeLog>
