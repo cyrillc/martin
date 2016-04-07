@@ -1,4 +1,4 @@
-USE plugins;
+USE martin_dev;
 
 -- disable all constraints
 SET FOREIGN_KEY_CHECKS = 0;
