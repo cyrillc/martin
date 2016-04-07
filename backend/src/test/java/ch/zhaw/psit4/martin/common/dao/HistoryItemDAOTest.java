@@ -21,7 +21,7 @@ public class HistoryItemDAOTest extends DatabaseTest{
     @Before
     public void setUp() throws ClassNotFoundException, SQLException, LiquibaseException, Exception {
     	// Set the database-version to use
-    	super.setChangeset("src/main/resources/database/db.dev.xml");
+    	super.setChangeset("src/main/resources/database/db.changeset-schema-latest.xml");
     	super.setUp();
     	
         this.historyItemDAO = new HistoryItemDAO();
