@@ -83,6 +83,14 @@
 			<artifactId>json</artifactId>
 		</dependency>
 
+		<!-- LIQUIBASE -->
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>3.4.2</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- UNIT TESTING -->
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -108,6 +116,24 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<!-- LIQUIBASE -->
+			<plugin>
+			   <groupId>org.liquibase</groupId>
+			   <artifactId>liquibase-maven-plugin</artifactId>
+			   <version>3.0.5</version>
+			   <configuration>                  
+				  <propertyFile>src/main/resources/liquibase/liquibase.properties</propertyFile>
+			   </configuration>                
+			   <executions>
+				 <execution>
+				   <phase>process-resources</phase>                                                                  
+				   <goals>
+					 <goal>update</goal>
+				   </goals>
+				 </execution>
+			   </executions>
+			</plugin> 
 		</plugins>
 	</build>
 
