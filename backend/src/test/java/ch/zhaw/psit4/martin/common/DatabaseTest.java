@@ -3,8 +3,6 @@ package ch.zhaw.psit4.martin.common;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -15,22 +13,35 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.FileSystemResourceAccessor;
 
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.junit.After;
+
+
+import org.hibernate.cfg.Configuration;
 
 /**
  * This class can be used to create database-tests. 
  */
 public abstract class DatabaseTest {
-	protected static Connection connection;
-	protected static Liquibase liquibase;
+	private Connection connection;
+	private Liquibase liquibase;
+	private SessionFactory hibernateSessionFactory;
+	
+	private static final String DATABASE_USER = "sa";
+	private static final String DATABASE_PASSWORD = "sa";
+	private static final String DATABASE_DRIVER = "org.h2.Driver";
+	private static final String DATABASE_DIALECT = "org.hibernate.dialect.H2Dialect";
+	private static final String DATABASE_DIRECTORY = "tmp";
 	
 	private String databaseFile;
 	private String databaseName;
+	private String databaseURL;
 	private String changeset;
+	
+	
 	
 	/**
 	 * Sets the environment up: Creates a new H2 in-memory database with the provided chanteset.
@@ -44,19 +55,31 @@ public abstract class DatabaseTest {
 	@Before
 	public void setUp() throws SQLException, ClassNotFoundException, LiquibaseException, Exception {
 		this.databaseName = UUID.randomUUID().toString();
-		this.databaseFile = "tmp/" + this.databaseName + ".db";
+		this.databaseFile = DatabaseTest.DATABASE_DIRECTORY + "/" + this.databaseName + ".db";
+		this.databaseURL = "jdbc:h2:file:" + this.databaseFile;
+	
 		
-		File dir = new File("tmp");
+		File dir = new File(DatabaseTest.DATABASE_DIRECTORY);
 		dir.mkdir();
 		
 		// Create H2 Database
-		Class.forName("org.h2.Driver");
-		connection = DriverManager.getConnection("jdbc:h2:file:" + this.databaseFile, "sa", "sa");
+		Class.forName(DatabaseTest.DATABASE_DRIVER);
+		connection = DriverManager.getConnection(this.databaseURL, DatabaseTest.DATABASE_USER, DatabaseTest.DATABASE_PASSWORD);
 		Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
 		
 		// Inserts the provided changeset into the database
 		liquibase = new Liquibase(changeset, new FileSystemResourceAccessor(), database);
 		liquibase.update("");
+		
+		// Create Hibernate Session
+		Configuration hibernateConfiguration = new Configuration()
+				.setProperty("hibernate.dialect", DatabaseTest.DATABASE_DIALECT)
+				.setProperty("hibernate.connection.driver_class", DatabaseTest.DATABASE_DRIVER)
+				.setProperty("hibernate.connection.url", this.databaseURL)
+				.setProperty("hibernate.connection.username", DatabaseTest.DATABASE_USER)
+				.setProperty("hibernate.connection.password", DatabaseTest.DATABASE_PASSWORD)
+				.setProperty("hibernate.current_session_context_class", "thread");
+		hibernateSessionFactory = hibernateConfiguration.buildSessionFactory();
 	}
 
 	/**
@@ -68,18 +91,26 @@ public abstract class DatabaseTest {
 	public void tearDown() throws LiquibaseException, SQLException {
 		connection.close();
 		try {
-			FileUtils.deleteDirectory(new File("tmp"));	
+			FileUtils.deleteDirectory(new File(DatabaseTest.DATABASE_DIRECTORY));	
 		} catch(Exception e){
 			
 		}
 	}
 	
 	protected Connection getConnection(){
-		return DatabaseTest.connection;
+		return connection;
 	}
 	
 	protected Liquibase getLiquibase(){
-		return DatabaseTest.liquibase;
+		return liquibase;
+	}
+	
+	protected Session getHibernateSession(){
+		return hibernateSessionFactory.getCurrentSession();
+	}
+	
+	protected SessionFactory getHibernateSessionFactory(){
+		return hibernateSessionFactory;
 	}
 	
 	protected void setChangeset(String changeset){
