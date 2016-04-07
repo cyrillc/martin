@@ -20,12 +20,12 @@ public class HistoryItemServiceTest {
                 .getBean("historyItemService");
     }
 
-    @Test
-    public void testAdd() {
-        Request request = new Request("testRequest");
-        Response response = new Response("testResponse");
-        HistoryItem hs = new HistoryItem(request, response);
-        this.historyItemService.addHistoryItem(hs);
-    }
+//    @Test
+//    public void testAdd() {
+//        Request request = new Request("testRequest");
+//        Response response = new Response("testResponse");
+//        HistoryItem hs = new HistoryItem(request, response);
+//        this.historyItemService.addHistoryItem(hs);
+//    }
 
 }
