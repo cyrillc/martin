@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+   <!-- Includes all database-versions -->
+
+   <!-- If you want to change the database schema or data, please create a new file
+   called db.changeset-{type}-{version}.xml and include it here. -->
+
+   <include file="src/main/resources/database/db.changeset-schema-1.0.xml"/> 
+   <include file="src/main/resources/database/db.changeset-data-1.0.xml"/> 
+
+   <!-- To be continued ... -->
+
+   <!-- <include file="src/main/resources/database/db.changeset-schema-1.1.xml"/> 
+   <include file="src/main/resources/database/db.changeset-data-1.1.xml"/> -->
+
+</databaseChangeLog>

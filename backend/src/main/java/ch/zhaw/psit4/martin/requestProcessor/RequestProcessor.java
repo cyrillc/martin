@@ -25,7 +25,6 @@ import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 public class RequestProcessor implements IRequestProcessor {
 	private IPluginLibrary library;
 
-
 	/**
 	 * Sets the library to be queried.
 	 */
