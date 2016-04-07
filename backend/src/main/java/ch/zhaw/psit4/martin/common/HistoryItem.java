@@ -3,13 +3,17 @@ package ch.zhaw.psit4.martin.common;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
 
 /**
  * A HistoryItem is used to keep track of the Requests sent to Martin and the
@@ -30,12 +34,12 @@ public class HistoryItem {
     @NotNull
     private Timestamp date;
 
-    @Column(name = "request")
-    @NotNull
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="request")
     private Request request;
 
-    @Column
-    @NotNull
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="response")
     private Response response;
 
     public HistoryItem(Request request, Response response) {

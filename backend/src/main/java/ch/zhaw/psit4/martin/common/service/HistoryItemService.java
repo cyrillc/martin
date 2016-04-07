@@ -1,6 +1,7 @@
 package ch.zhaw.psit4.martin.common.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ch.zhaw.psit4.martin.common.HistoryItem;
 import ch.zhaw.psit4.martin.common.dao.HistoryItemDAO;
@@ -19,6 +20,7 @@ public class HistoryItemService {
         this.historyItemDAO = historyItemDAO;
     }
     
+    @Transactional
     public void addHistoryItem(HistoryItem historyItem){
         this.historyItemDAO.add(historyItem);
     }
