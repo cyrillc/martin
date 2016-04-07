@@ -10,7 +10,6 @@ import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;

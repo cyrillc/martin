@@ -3,7 +3,6 @@ package ch.zhaw.psit4.martin.pluginlib;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -170,9 +169,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     @Override
     public List<ExampleCall> getExampleCalls() {
         ExampleCallService exampleCallService = (ExampleCallService) MartinBoot.context.getBean("exampleCallService");
-        List<ExampleCall> exampleCallList = new ArrayList<ExampleCall>();
-        exampleCallList = exampleCallService.listExampleCalls();
-        return exampleCallList;
+        return exampleCallService.listExampleCalls();
     }
 
     /*

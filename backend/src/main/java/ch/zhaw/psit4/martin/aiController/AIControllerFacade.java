@@ -1,20 +1,16 @@
 package ch.zhaw.psit4.martin.aiController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import org.springframework.transaction.annotation.Transactional;
 
 import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
-import ch.zhaw.psit4.martin.common.dao.HistoryItemDAO;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
-import ch.zhaw.psit4.martin.common.HistoryItem;
 import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
 
 /**
