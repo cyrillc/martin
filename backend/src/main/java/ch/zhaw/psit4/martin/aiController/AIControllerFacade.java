@@ -2,15 +2,18 @@ package ch.zhaw.psit4.martin.aiController;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
+import ch.zhaw.psit4.martin.common.dao.HistoryItemDAO;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
+import ch.zhaw.psit4.martin.common.HistoryItem;
 import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
-
 
 /**
  * This class represents the AIControllerFacade The class follows the Facade
@@ -21,24 +24,23 @@ import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
  *
  */
 public class AIControllerFacade {
-	
-	private RequestProcessor requestProcessor;
-	private IPluginLibrary library;
-	
-	public AIControllerFacade(){
-		requestProcessor = (RequestProcessor) MartinBoot.context.getBean("RequestProcessor");
-		this.requestProcessor.setLibrary(MartinBoot.getPluginLibrary());
-	}
-	
-    
+
+    private RequestProcessor requestProcessor;
+    private IPluginLibrary library;
+
+    public AIControllerFacade() {
+        this.requestProcessor = new RequestProcessor();
+        this.requestProcessor.setLibrary(MartinBoot.getPluginLibrary());
+    }
+
     /**
-     * Returns a list of example calls from the plugin library. Is usually
-     * only called from the frontend controller when the user first loads the MArtIn
+     * Returns a list of example calls from the plugin library. Is usually only
+     * called from the frontend controller when the user first loads the MArtIn
      * frontend.
      * 
      * @return a list of example calls
      */
-    public List<ExampleCall> getExampleCalls(){
+    public List<ExampleCall> getExampleCalls() {
         IPluginLibrary pluginLibrary = MartinBoot.getPluginLibrary();
         return pluginLibrary.getExampleCalls();
     }
@@ -50,7 +52,6 @@ public class AIControllerFacade {
      * @param request Request containing a string command
      * @return the response of the AI.
      */
-
     public Response elaborateRequest(Request request){
     	try {
     		ExtendedRequest extendedRequest = this.requestProcessor.extend(request);
