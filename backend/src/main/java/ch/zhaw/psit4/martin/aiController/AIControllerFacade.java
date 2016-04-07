@@ -47,7 +47,7 @@ public class AIControllerFacade {
      * This method respond to a request with a response. Try to understand what
      * it requested and elaborate an appropiate response for the request.
      * 
-     * @param request
+     * @param request Request containing a string command
      * @return the response of the AI.
      */
 
@@ -56,7 +56,7 @@ public class AIControllerFacade {
     		ExtendedRequest extendedRequest = this.requestProcessor.extend(request);
     		return library.executeRequest(extendedRequest);
     	} catch(Exception e){
-    		return new Response("Sorry, I cant't understand you.");
+    		return new Response("Sorry, I can't understand you.");
     	}
     }    
 }
