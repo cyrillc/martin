@@ -21,7 +21,7 @@ import ch.zhaw.psit4.martin.pluginlib.db.*;
 
 /**
  * This class connect the Frontend with the AI using REST.
- * 
+ *
  * @version 0.0.1-SNAPSHOT
  *
  */
@@ -33,7 +33,7 @@ public class FrontendController implements IFrontendController {
     public FrontendController() {
       aiController = (AIControllerFacade) MartinBoot.context.getBean("AIControllerFacade");
     }
-    
+
     /*
      * Start the module and initially gather all Belgians.
      */
@@ -46,12 +46,12 @@ public class FrontendController implements IFrontendController {
      * API at /command comes in, the method
      * querys the AI controller to get an answer for the command. It then
      * returns that answer to the origin of the request.
-     * 
+     *
      * @param command
      * @return the response of the AI
      */
     @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141" })
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/command")
     public Response launchCommand(
             @RequestParam(value = "command") String command) {
@@ -65,11 +65,11 @@ public class FrontendController implements IFrontendController {
      * API at /exampleCommands comes in (usually on page load), the method
      * querys the AI controller to get a list of possible commands. It then
      * returns that list to the origin of the request.
-     * 
+     *
      * @return A list of possible commands
      */
     @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141" })
+            "http://srv-lab-t-825:4141","http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/exampleCommands")
     public List<ExampleCall> sendExampleCommands() {
         List<ExampleCall> exampleCallList = new ArrayList<ExampleCall>();
@@ -80,7 +80,7 @@ public class FrontendController implements IFrontendController {
         test2.setCall("test example2");
         exampleCallList.add(test1);
         exampleCallList.add(test2);
-        
+
         AIControllerFacade aiController = new AIControllerFacade();
         exampleCallList = aiController.getExampleCalls();
 
