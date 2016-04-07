@@ -2,11 +2,9 @@ package ch.zhaw.psit4.martin.common;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
-import ch.zhaw.psit4.martin.api.types.IMartinType;
-import ch.zhaw.psit4.martin.api.util.Pair;
 
 /**
 * This class holds extended information about the request. It holds a possible 
@@ -16,12 +14,33 @@ import ch.zhaw.psit4.martin.api.util.Pair;
 * @version 0.1
 **/
 public class ExtendedRequest {
+	/**
+     * The unique ID of this item. The id is distributed by the
+     * {@link UUID} implementation.
+     */
+	private UUID id;
+	/**
+	 * The raw Request containing a command string.
+	 */
 	private Request input;
+	/**
+	 * List of possible Calls for the request ordered by possibility.
+	 */
 	private List<Call> calls;
 	
+
 	public ExtendedRequest() {
 		this.calls = new ArrayList<Call>();
+		this.id = UUID.randomUUID();
 	}
+
+    public UUID getID() {
+        return this.id;
+    }
+    
+    public void setID(UUID id){
+    	this.id = id;
+    }
 
 	public Request getInput() {
 		return this.input;
