@@ -22,16 +22,8 @@ import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
  *
  */
 public class AIControllerFacade {
-
-	
-	private RequestProcessor requestProcessor;
-    private IPluginLibrary library;
-	
-	@PostConstruct
-	public void postAIControllerFacade(){
-	    this.library = MartinBoot.getPluginLibrary();
-        this.requestProcessor.setLibrary(this.library);
-	}
+    @PostConstruct
+    public void postAIControllerFacade() { }
 
     /**
      * Returns a list of example calls from the plugin library. Is usually only
@@ -42,7 +34,8 @@ public class AIControllerFacade {
      */
 
     public List<ExampleCall> getExampleCalls() {
-        ExampleCallService exampleCallService = (ExampleCallService) MartinBoot.context.getBean("exampleCallService");
+        ExampleCallService exampleCallService = (ExampleCallService) MartinBoot.context
+                .getBean("exampleCallService");
         return exampleCallService.listExampleCalls();
     }
 
@@ -50,26 +43,21 @@ public class AIControllerFacade {
      * This method respond to a request with a response. Try to understand what
      * it requested and elaborate an appropiate response for the request.
      * 
-     * @param request Request containing a string command
+     * @param request
+     *            Request containing a string command
      * @return the response of the AI.
      */
-    public Response elaborateRequest(Request request){
-    	try {
-    		ExtendedRequest extendedRequest = this.requestProcessor.extend(request);
-    		return MartinBoot.getPluginLibrary().executeRequest(extendedRequest);
-    	} catch(Exception e){
-    		return new Response("Sorry, I can't understand you.");
-    	}
-    }  
-    
-    
-
-    public RequestProcessor getRequestProcessor() {
-        return requestProcessor;
+    public Response elaborateRequest(Request request) {
+        try {
+            IPluginLibrary lib = (IPluginLibrary) MartinBoot.context
+                    .getBean("IPluginLibrary");
+            RequestProcessor requestProcessor = (RequestProcessor) MartinBoot.context
+                    .getBean("RequestProcessor");
+            ExtendedRequest extendedRequest = requestProcessor
+                    .extend(request);
+            return lib.executeRequest(extendedRequest);
+        } catch (Exception e) {
+            return new Response("Sorry, I can't understand you.");
+        }
     }
-
-    public void setRequestProcessor(RequestProcessor requestProcessor) {
-        this.requestProcessor = requestProcessor;
-    }
-
 }
