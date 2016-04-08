@@ -29,3 +29,6 @@ frontend/node_modules/
 # Plugin Exceptions
 !distributable/target/*.jar
 !backend/plugins/
+
+# Temporary Database Files
+*.db
