@@ -54,6 +54,7 @@ $(document).ready(function() {
     // create request URL from current URL
     var url = window.location.href;
 
+    // ask server for port where backend runs
     url = createRequestURL(url, 4141, "backendPort");
     $.get(url, function(data) {
 
@@ -62,7 +63,8 @@ $(document).ready(function() {
         url = createRequestURL(url, backendPort, "exampleCommands");
         // send GET request with data and show response on page
         $.get(url, function(data) {
-            $("#possibleCommands").append(JSON.stringify(data) + '<br>');
+            var exampleCommandsRenderer = new ExampleCommandsRenderer(data);
+            exampleCommandsRenderer.renderCommands();
         });
     });
 

@@ -34,9 +34,9 @@ public class AIControllerFacade {
      */
 
     public List<ExampleCall> getExampleCalls() {
-        ExampleCallService exampleCallService = (ExampleCallService) MartinBoot.context
-                .getBean("exampleCallService");
-        return exampleCallService.listExampleCalls();
+
+        IPluginLibrary library = (IPluginLibrary) MartinBoot.context.getBean("IPluginLibrary");
+        return library.getExampleCalls();
     }
 
     /**
