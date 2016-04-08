@@ -9,11 +9,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import ch.zhaw.psit4.martin.frontend.FrontendController;
 import ch.zhaw.psit4.martin.frontend.IFrontendController;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
-import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
 
 /**
  * Entry point for the application to bootstrap jpf, SPRING and invoke
@@ -21,7 +19,7 @@ import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
  *
  * @version 0.0.1-SNAPSHOT
  */
-@ComponentScan({"ch.zhaw.psit4.martin.frontend", "ch.zhaw.psit4.martin.pluginlib.db"})
+@ComponentScan({"ch.zhaw.psit4.martin.frontend"})
 @SpringBootApplication
 public class MartinBoot {
     
@@ -33,10 +31,6 @@ public class MartinBoot {
      * The frontend controller singleton
      */
     private static IFrontendController frontendController;
-    /*
-     * Service to access example calls in database
-     */
-    public static ExampleCallService exampleCallService;
     
     public static ApplicationContext context;
 
@@ -46,17 +40,16 @@ public class MartinBoot {
      * @param args
      *            Command line arguments (unused)
      */
-    public static void main(String[] args) {    
-        // boot Spring
-        SpringApplication.run(MartinBoot.class, args);
+    public static void main(String[] args) {
+        
+        context = new ClassPathXmlApplicationContext("Beans.xml");
         // boot library
         library = (new PluginLibraryBootstrap()).boot();
-        // create context
-        context = new ClassPathXmlApplicationContext("Beans.xml");
-        exampleCallService = (ExampleCallService) context.getBean("exampleCallService");
+        // boot Spring
+        SpringApplication.run(MartinBoot.class, args);
         // boot frontend controller
-        frontendController = new FrontendController();
-        frontendController.start();
+        //frontendController = new FrontendController();
+        //frontendController.start();
         // TODO: Boot other components
         
     }

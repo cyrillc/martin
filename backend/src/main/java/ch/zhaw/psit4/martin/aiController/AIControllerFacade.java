@@ -2,17 +2,15 @@ package ch.zhaw.psit4.martin.aiController;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
+import javax.annotation.PostConstruct;
 
 import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
-import ch.zhaw.psit4.martin.common.dao.HistoryItemDAO;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
-
+import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
-import ch.zhaw.psit4.martin.common.HistoryItem;
 import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
 
 /**
@@ -25,11 +23,15 @@ import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
  */
 public class AIControllerFacade {
 
-    private RequestProcessor requestProcessor;
-
-    public AIControllerFacade() {
-        this.requestProcessor = new RequestProcessor();
-    }
+	
+	private RequestProcessor requestProcessor;
+    private IPluginLibrary library;
+	
+	@PostConstruct
+	public void postAIControllerFacade(){
+	    this.library = MartinBoot.getPluginLibrary();
+        this.requestProcessor.setLibrary(this.library);
+	}
 
     /**
      * Returns a list of example calls from the plugin library. Is usually only
@@ -38,9 +40,10 @@ public class AIControllerFacade {
      * 
      * @return a list of example calls
      */
+
     public List<ExampleCall> getExampleCalls() {
-        IPluginLibrary pluginLibrary = MartinBoot.getPluginLibrary();
-        return pluginLibrary.getExampleCalls();
+        ExampleCallService exampleCallService = (ExampleCallService) MartinBoot.context.getBean("exampleCallService");
+        return exampleCallService.listExampleCalls();
     }
 
     /**
@@ -57,5 +60,16 @@ public class AIControllerFacade {
     	} catch(Exception e){
     		return new Response("Sorry, I can't understand you.");
     	}
-    }    
+    }  
+    
+    
+
+    public RequestProcessor getRequestProcessor() {
+        return requestProcessor;
+    }
+
+    public void setRequestProcessor(RequestProcessor requestProcessor) {
+        this.requestProcessor = requestProcessor;
+    }
+
 }
