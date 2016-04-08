@@ -7,7 +7,7 @@
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
 
-	<!-- SAMPLE BEAN <bean id="helloWorld" class="com.tutorialspoint.HelloWorld"> 
+	<!-- SAMPLE BEAN <bean id="helloWorld" class="com.tutorialspoint.HelloWorld">
 		<property name="message" value="Hello World!"/> </bean> -->
 
 	<!-- DATASOURCE -->
@@ -46,7 +46,7 @@
     <bean id="exampleCallService" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService">
         <property name="exampleCallDao" ref="exampleCallDao"></property>
     </bean>
-  
+
     <bean id="historyItemDao" class="ch.zhaw.psit4.martin.common.dao.HistoryItemDAO">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
