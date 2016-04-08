@@ -86,7 +86,7 @@
 	
 	<!-- package requestProcessor -->
 	<bean id="RequestProcessor" 
-		class="ch.zhaw.psit4.martin.requestProcessor.RequestProcessor.">
+		class="ch.zhaw.psit4.martin.requestProcessor.RequestProcessor">
 	</bean> 
 
 
