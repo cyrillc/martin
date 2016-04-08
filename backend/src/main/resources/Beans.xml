@@ -65,7 +65,6 @@
 
 	<!-- package aiController -->
 	<bean id="AIControllerFacade" class="ch.zhaw.psit4.martin.aiController.AIControllerFacade">
-        <property name="requestProcessor" ref="RequestProcessor"></property>
 	</bean>
 
 	<!-- package boot -->
@@ -74,11 +73,9 @@
 	<!-- package common -->
 
 
-
 	<!-- package Frontend -->
 	<bean id="FrontendController" class="ch.zhaw.psit4.martin.frontend.FrontendController">
 	</bean>
-
 
 
 	<!-- package pluginlib -->

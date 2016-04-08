@@ -12,8 +12,10 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.context.support.GenericApplicationContext;
 
 import ch.zhaw.psit4.martin.api.util.Pair;
+import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.pluginlib.PluginLibrary;
@@ -23,8 +25,13 @@ public class RequestProcessorTest {
 
 	@Before
 	public void setUp() {
-		// Create Mock for plugin library
-		library = Mockito.mock(PluginLibrary.class);
+	    // Create Mock for plugin library
+        library = Mockito.mock(PluginLibrary.class);
+	    GenericApplicationContext mockContext = new GenericApplicationContext();
+        mockContext.getBeanFactory().registerSingleton("IPluginLibrary",
+                library);
+        mockContext.refresh();
+        MartinBoot.context = mockContext;
 		
 		// Results for function queries
 		List<Pair<String, String>> result0 = new ArrayList<Pair<String, String>>();
@@ -65,9 +72,7 @@ public class RequestProcessorTest {
 
 	@Test
 	public void testExtendRequestPluginAndFeature() throws Exception {
-		RequestProcessor requestProcessor = new RequestProcessor();
-		requestProcessor.setLibrary(library);
-		
+		RequestProcessor requestProcessor = new RequestProcessor();		
 		
 		Request request0 = new Request("Weather for time tomorrow location Zürich");
 		ExtendedRequest extRequest0 = requestProcessor.extend(request0);
@@ -99,7 +104,8 @@ public class RequestProcessorTest {
 		
 		Request request3 = new Request("Can you tell me the next president of the united states?");
 		try {
-			ExtendedRequest extRequest3 = requestProcessor.extend(request3);
+			@SuppressWarnings("unused")
+            ExtendedRequest extRequest3 = requestProcessor.extend(request3);
 		    fail("Method didn't throw when I expected it to");
 		} catch (Exception e) {
 			assertEquals(e.getMessage(), "No module found for this command.");

@@ -2,7 +2,6 @@ package ch.zhaw.psit4.martin.requestProcessor;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Request;
-import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 
 /**
  * This Interface represents the Interface to Request Processor.
@@ -19,11 +18,5 @@ public interface IRequestProcessor {
      * @return Returns an ExtendedRequest with original-request and a possible executable function calls.
      */
 	public ExtendedRequest extend(Request request) throws Exception;
-   
-    /**
-     * Sets the plugin-library.
-     * @param library
-     */
-	public void setLibrary(IPluginLibrary library);
 
 }
