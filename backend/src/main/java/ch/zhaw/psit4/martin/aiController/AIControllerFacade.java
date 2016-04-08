@@ -42,6 +42,7 @@ public class AIControllerFacade {
      */
 
     public List<ExampleCall> getExampleCalls() {
+        library = MartinBoot.getPluginLibrary();
         return library.getExampleCalls();
     }
 
