@@ -26,11 +26,9 @@ import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
 public class AIControllerFacade {
 
     private RequestProcessor requestProcessor;
-    private IPluginLibrary library;
 
     public AIControllerFacade() {
         this.requestProcessor = new RequestProcessor();
-        this.requestProcessor.setLibrary(MartinBoot.getPluginLibrary());
     }
 
     /**
@@ -55,7 +53,7 @@ public class AIControllerFacade {
     public Response elaborateRequest(Request request){
     	try {
     		ExtendedRequest extendedRequest = this.requestProcessor.extend(request);
-    		return library.executeRequest(extendedRequest);
+    		return MartinBoot.getPluginLibrary().executeRequest(extendedRequest);
     	} catch(Exception e){
     		return new Response("Sorry, I can't understand you.");
     	}

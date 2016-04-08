@@ -46,14 +46,14 @@ public class MartinBoot {
      * @param args
      *            Command line arguments (unused)
      */
-    public static void main(String[] args) {
-        context = new ClassPathXmlApplicationContext("Beans.xml");
-        exampleCallService = (ExampleCallService) context.getBean("exampleCallService");
-        
+    public static void main(String[] args) {    
         // boot Spring
         SpringApplication.run(MartinBoot.class, args);
         // boot library
         library = (new PluginLibraryBootstrap()).boot();
+        // create context
+        context = new ClassPathXmlApplicationContext("Beans.xml");
+        exampleCallService = (ExampleCallService) context.getBean("exampleCallService");
         // boot frontend controller
         frontendController = new FrontendController();
         frontendController.start();
