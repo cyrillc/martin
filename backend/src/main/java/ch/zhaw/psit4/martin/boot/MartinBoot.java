@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import ch.zhaw.psit4.martin.frontend.IFrontendController;
+import ch.zhaw.psit4.martin.frontend.FrontendController;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
 
@@ -30,7 +30,7 @@ public class MartinBoot {
     /*
      * The frontend controller singleton
      */
-    private static IFrontendController frontendController;
+    private static FrontendController frontendController;
     
     public static ApplicationContext context;
 
@@ -51,10 +51,6 @@ public class MartinBoot {
         SpringApplication.run(MartinBoot.class, args);
         
 
-        
-        // boot frontend controller
-        //frontendController = new FrontendController();
-        //frontendController.start();
         // TODO: Boot other components
         
     }
@@ -63,7 +59,7 @@ public class MartinBoot {
         return library;
     }
     
-    public static IFrontendController getFrontendController() {
+    public static FrontendController getFrontendController() {
         return frontendController;
     }
 }

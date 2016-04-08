@@ -1,4 +1,4 @@
-var backendPort = 4040;
+var backendPort = 4242;
 
 // enabling *RETURN* to submit command
 $(function() {
