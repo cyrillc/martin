@@ -41,7 +41,7 @@
     <groupId>ch.zhaw.psit4.martin</groupId>
     <artifactId>martin-backend</artifactId>
   </rootModule>
-  <goals>clean install</goals>
+  <goals>liquibase:dropAll liquibase:update clean install</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <ignoreUpstremChanges>false</ignoreUpstremChanges>

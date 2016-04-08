@@ -25,14 +25,13 @@ import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 public class RequestProcessor implements IRequestProcessor {
 	private IPluginLibrary library;
 
-
 	/**
 	 * Sets the library to be queried.
 	 */
 	public void setLibrary(IPluginLibrary library) {
 		this.library = library;
 	}
-	
+
 	/**
 	 * Searches the plugin-library for matching plugin features for a list of
 	 * keywords.
@@ -98,7 +97,7 @@ public class RequestProcessor implements IRequestProcessor {
 	 * @return
 	 */
 	private IMartinType getParameterFromCommand(String parameterName, String command, String martinType) {
-		Pattern pattern = Pattern.compile("(" + parameterName +")\\s([^\\s]+)");
+		Pattern pattern = Pattern.compile("(" + parameterName + ")\\s([^\\s]+)");
 		Matcher matcher = pattern.matcher(command.toLowerCase());
 
 		if (matcher.find()) {
@@ -131,18 +130,17 @@ public class RequestProcessor implements IRequestProcessor {
 		if (pluginFeature != null) {
 			String plugin = pluginFeature.first;
 			String feature = pluginFeature.second;
-			
+
 			Call call = new Call();
 			call.setFeature(feature);
 			call.setPlugin(plugin);
-		
+
 			Map<String, String> parameters = this.library.queryFunctionArguments(plugin, feature);
 
 			for (String key : parameters.keySet()) {
-				call.addArgument(key,
-						this.getParameterFromCommand(key, request.getCommand(), parameters.get(key)));
+				call.addArgument(key, this.getParameterFromCommand(key, request.getCommand(), parameters.get(key)));
 			}
-			
+
 			extendedRequest.addCall(call);
 		} else {
 			throw new Exception("No module found for this command.");

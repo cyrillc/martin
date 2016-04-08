@@ -7,7 +7,7 @@
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
 
-	<!-- SAMPLE BEAN <bean id="helloWorld" class="com.tutorialspoint.HelloWorld"> 
+	<!-- SAMPLE BEAN <bean id="helloWorld" class="com.tutorialspoint.HelloWorld">
 		<property name="message" value="Hello World!"/> </bean> -->
 
 	<!-- DATASOURCE -->
@@ -46,7 +46,7 @@
     <bean id="exampleCallService" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService">
         <property name="exampleCallDao" ref="exampleCallDao"></property>
     </bean>
-  
+
     <bean id="historyItemDao" class="ch.zhaw.psit4.martin.common.dao.HistoryItemDAO">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
@@ -60,36 +60,35 @@
 		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
 		<property name="sessionFactory" ref="HibernateSessionFactory" />
 	</bean>
-	
+
 	<!-- JAVA CLASSES -->
-	
+
 	<!-- package aiController -->
-	<bean id="AIControllerFacade" 
-		class="ch.zhaw.psit4.martin.aiController.AIControllerFacade">
-	</bean> 
-	
+	<bean id="AIControllerFacade" class="ch.zhaw.psit4.martin.aiController.AIControllerFacade">
+        <property name="requestProcessor" ref="RequestProcessor"></property>
+	</bean>
+
 	<!-- package boot -->
-	
-	
+
+
 	<!-- package common -->
-	
-	
-	
+
+
+
 	<!-- package Frontend -->
-	<bean id="FrontendController" 
-		class="ch.zhaw.psit4.martin.frontend.FrontendController">
-	</bean> 		
-	
-	
-	
+	<bean id="FrontendController" class="ch.zhaw.psit4.martin.frontend.FrontendController">
+	        <property name="aiController" ref="AIControllerFacade"></property>
+	</bean>
+
+
+
 	<!-- package pluginlib -->
-	
+
 	<!-- package requestProcessor -->
-	<bean id="RequestProcessor" 
-		class="ch.zhaw.psit4.martin.requestProcessor.RequestProcessor.">
-	</bean> 
+	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestProcessor.RequestProcessor">
+	</bean>
 
 
-	
+
 
 </beans>

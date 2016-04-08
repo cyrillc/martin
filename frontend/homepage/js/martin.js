@@ -1,3 +1,5 @@
+var backendPort = 4040;
+
 // enabling *RETURN* to submit command
 $(function() {
     $("#commandInput").keydown(function(event) {
@@ -22,6 +24,12 @@ var visuallyUnpressButton = function() {
     $('#sendCommand').removeClass('active');
 };
 
+// create URL for Ajax request
+var createRequestURL = function(url, port, endpoint) {
+    url = url.split(':')[0] + ":" + url.split(':')[1] + ":" + port + "/" + endpoint;
+    return url;
+};
+
 // sending a command to the backend of MArtIn using an Ajax request
 var sendCommand = function() {
     // get and clear text input
@@ -33,7 +41,7 @@ var sendCommand = function() {
 
     // create request URL from current URL
     var url = window.location.href;
-    url = url.split(':')[0] + ":" + url.split(':')[1] + ":4040/command";
+    url = createRequestURL(url, backendPort, "command");
 
     // send GET request with data and show response on page
     $.get(url, command, function(data) {
@@ -45,7 +53,7 @@ var sendCommand = function() {
 $(document).ready(function() {
     // create request URL from current URL
     var url = window.location.href;
-    url = url.split(':')[0] + ":" + url.split(':')[1] + ":4040/exampleCommands";
+    url = createRequestURL(url, backendPort, "exampleCommands");
 
     // send GET request with data and show response on page
     $.get(url, function(data) {
