@@ -29,6 +29,7 @@
                 <value>ch.zhaw.psit4.martin.common.Request</value>
                 <value>ch.zhaw.psit4.martin.common.Response</value>
                 <value>ch.zhaw.psit4.martin.common.HistoryItem</value>
+                <value>ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">
@@ -40,13 +41,22 @@
 		</property>
 	</bean>
 
+	<!--  Plugin Library Tables -->
     <bean id="exampleCallDao" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallDao">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
     <bean id="exampleCallService" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService">
         <property name="exampleCallDao" ref="exampleCallDao"></property>
     </bean>
+
+    <bean id="keywordDao" class="ch.zhaw.psit4.martin.pluginlib.db.KeywordDao">
+        <property name="sessionFactory" ref="HibernateSessionFactory" />
+    </bean>
+    <bean id="keywordService" class="ch.zhaw.psit4.martin.pluginlib.db.KeywordService">
+        <property name="keywordDao" ref="keywordDao"></property>
+    </bean>
   
+  	<!--  History Tables -->
     <bean id="historyItemDao" class="ch.zhaw.psit4.martin.common.dao.HistoryItemDAO">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>

@@ -14,6 +14,7 @@ import ch.zhaw.psit4.martin.frontend.IFrontendController;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
+import ch.zhaw.psit4.martin.pluginlib.db.keyword.KeywordService;
 
 /**
  * Entry point for the application to bootstrap jpf, SPRING and invoke
@@ -38,6 +39,11 @@ public class MartinBoot {
      */
     public static ExampleCallService exampleCallService;
     
+    /*
+     * Service to access Keywords in DB
+     */
+    public static KeywordService keywordService;
+    
     public static ApplicationContext context;
 
     /**
@@ -49,6 +55,7 @@ public class MartinBoot {
     public static void main(String[] args) {
         context = new ClassPathXmlApplicationContext("Beans.xml");
         exampleCallService = (ExampleCallService) context.getBean("exampleCallService");
+        keywordService = (KeywordService) context.getBean("keywordService");
         
         // boot Spring
         SpringApplication.run(MartinBoot.class, args);
