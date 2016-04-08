@@ -94,9 +94,36 @@ textarea {
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
+h1 {
+    margin-bottom: 20px;
+}
 
+#possibleCommandsContainer{
+    margin-top: 20px;
+}
 
+.exampleCommand {
+    text-align: left;
+    font-weight: bold;
+    font-size: 16px;
 
+    margin-bottom: 5px;
+}
+
+.callDescription {
+    text-align: right;
+    font-size: 16px;
+    color: #555;
+
+    margin-bottom: 20px;
+}
+
+.callDescription:not(:last-of-type):after {
+    content: '';
+    display: block;
+    border: 1px #cacaca dashed;
+    margin-top: 20px;
+}
 
 
 
