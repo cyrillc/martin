@@ -1,5 +1,7 @@
 package ch.zhaw.psit4.martin.common.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,5 +25,14 @@ public class HistoryItemService {
     @Transactional
     public void addHistoryItem(HistoryItem historyItem){
         this.historyItemDAO.add(historyItem);
+    }
+    
+    /**
+     * 
+     * @return A list of all History
+     */
+    @Transactional
+    public List<HistoryItem> getHistory(){
+        return this.historyItemDAO.getAll();
     }
 }
