@@ -52,7 +52,7 @@ public class HistoryItemDAO {
     @SuppressWarnings("unchecked")
     public List<HistoryItem> getAll(){
         Session session = this.sessionFactory.getCurrentSession();
-        return session.createQuery("from historyItem").list();
+        return session.createQuery("from HistoryItem").list();
     }
     
     /**
