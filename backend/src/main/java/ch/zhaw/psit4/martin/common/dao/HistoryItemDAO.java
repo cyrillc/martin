@@ -32,9 +32,7 @@ public class HistoryItemDAO {
      */
     public void add(HistoryItem historyItem) {
         Session session = this.sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
         session.persist(historyItem);
-        transaction.commit();
     }
     
     /**
