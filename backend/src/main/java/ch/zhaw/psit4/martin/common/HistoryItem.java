@@ -24,6 +24,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "historyItem")
 public class HistoryItem {
+    
+    public HistoryItem(){}
 
     @Id
     @Column(name = "id")
