@@ -11,6 +11,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "request")
 public class Request {
+    
+    public Request(){}
 
     @Id
     @Column(name = "id")

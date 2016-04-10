@@ -11,6 +11,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "response")
 public class Response {
+    
+    public Response(){}
 
     @Id
     @Column(name = "id")
@@ -19,7 +21,7 @@ public class Response {
 
     @Column(name = "responsetext")
     @NotNull
-    private final String content;
+    private String content;
 
     public Response(String content) {
         this.content = content;
