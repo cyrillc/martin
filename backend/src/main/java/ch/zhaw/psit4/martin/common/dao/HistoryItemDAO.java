@@ -36,16 +36,6 @@ public class HistoryItemDAO {
     }
     
     /**
-     * @param <id> of the item to find
-     * @return the item with the given id
-     */
-    public HistoryItem getbyId(int id){
-        Session session = this.sessionFactory.getCurrentSession();
-        HistoryItem historyItem = (HistoryItem) session.get(HistoryItem.class, id);
-        return historyItem;
-    }
-    
-    /**
      * 
      * @return a list with all the items saved
      */
@@ -53,27 +43,5 @@ public class HistoryItemDAO {
     public List<HistoryItem> getAll(){
         Session session = this.sessionFactory.getCurrentSession();
         return session.createQuery("from HistoryItem").list();
-    }
-    
-    /**
-     * 
-     * @param <historyItem> to update
-     */
-    public void update(HistoryItem historyItem){
-        Session session = this.sessionFactory.getCurrentSession();
-        session.update(historyItem);
-    }
-    
-    /**
-     * remove the item with the given id
-     * 
-     * @param <id> of the item to remove
-     */
-    public void remove(int id){
-        Session session = this.sessionFactory.getCurrentSession();
-        HistoryItem historyItem = this.getbyId(id);
-        if(historyItem != null){
-            session.delete(historyItem);
-        }
     }
 }
