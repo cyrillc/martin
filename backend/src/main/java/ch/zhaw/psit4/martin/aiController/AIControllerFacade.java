@@ -7,10 +7,12 @@ import javax.annotation.PostConstruct;
 import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
+import ch.zhaw.psit4.martin.common.service.HistoryItemService;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
+import ch.zhaw.psit4.martin.common.HistoryItem;
 import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
 
 /**
@@ -23,7 +25,7 @@ import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
  */
 public class AIControllerFacade {
     @PostConstruct
-    public void postAIControllerFacade() { }
+    public void postAIControllerFacade() {}
 
     /**
      * Returns a list of example calls from the plugin library. Is usually only
@@ -35,7 +37,8 @@ public class AIControllerFacade {
 
     public List<ExampleCall> getExampleCalls() {
 
-        IPluginLibrary library = (IPluginLibrary) MartinBoot.context.getBean("IPluginLibrary");
+        IPluginLibrary library = (IPluginLibrary) MartinBoot.context
+                .getBean("IPluginLibrary");
         return library.getExampleCalls();
     }
 
@@ -53,9 +56,12 @@ public class AIControllerFacade {
                     .getBean("IPluginLibrary");
             RequestProcessor requestProcessor = (RequestProcessor) MartinBoot.context
                     .getBean("RequestProcessor");
-            ExtendedRequest extendedRequest = requestProcessor
-                    .extend(request);
-            return lib.executeRequest(extendedRequest);
+            HistoryItemService historyItemService = (HistoryItemService) MartinBoot.context
+                    .getBean("historyItemService");
+            ExtendedRequest extendedRequest = requestProcessor.extend(request);
+            Response response = lib.executeRequest(extendedRequest);
+            historyItemService.addHistoryItem(new HistoryItem(request, response));
+            return response;
         } catch (Exception e) {
             return new Response("Sorry, I can't understand you.");
         }
