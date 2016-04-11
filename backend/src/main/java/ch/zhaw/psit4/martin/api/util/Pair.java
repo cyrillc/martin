@@ -32,11 +32,11 @@ public class Pair<FIRST, SECOND> implements Comparable<Pair<FIRST, SECOND>> {
 
     @Override
     public int hashCode() {
-        return 31 * hashcode(first) + hashcode(second);
+        return 31 * hashCode(first) + hashCode(second);
     }
 
     // todo move this to a helper class.
-    private static int hashcode(Object o) {
+    private static int hashCode(Object o) {
         return o == null ? 0 : o.hashCode();
     }
 
