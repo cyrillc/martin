@@ -3,6 +3,8 @@
  */
 package ch.zhaw.psit4.martin.pluginlib;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.java.plugin.ObjectFactory;
 import org.java.plugin.PluginManager;
 import org.java.plugin.PluginManager.PluginLocation;
@@ -21,6 +23,9 @@ public class PluginLibraryBootstrap {
     /**
      * Boots up the module library
      */
+    private static final Log LOG = LogFactory
+            .getLog(PluginLibraryBootstrap.class);
+
     public IPluginLibrary boot() {
         // instantiate necessary objects
         final PluginManager manager = ObjectFactory.newInstance()
@@ -45,7 +50,7 @@ public class PluginLibraryBootstrap {
                     .getPlugin(IMartinContext.CORE_PLUGIN_ID);
             lib.startLibrary();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("An Error occured at boot()", e);
             lib = null;
         }
         return lib;
