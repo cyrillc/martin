@@ -129,9 +129,10 @@
 			<plugin>
 			   <groupId>org.liquibase</groupId>
 			   <artifactId>liquibase-maven-plugin</artifactId>
-			   <version>3.0.5</version>
+			   <version>3.4.2</version>
 			   <configuration>                  
 				  <propertyFile>src/main/resources/liquibase/liquibase-dev.properties</propertyFile>
+				  <logging>warning</logging>
 			   </configuration>                
 			</plugin>
 		</plugins>

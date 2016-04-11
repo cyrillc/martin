@@ -1,1 +1,4 @@
-example_call.csv
+example_call,description,function_id
+"Hello MArtIn","Say Hello to MArtIn",11
+"Howdy Partner","Say Hello to MArtIn",11
+"What's the weather today?","Ask for current weather updates",13
