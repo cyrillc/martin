@@ -41,7 +41,7 @@ public class FrontendController {
     public Response launchCommand(
             @RequestParam(value = "command") String command) {
         Request request = new Request(command);
-        AIControllerFacade aiController = (AIControllerFacade) MartinBoot.context.getBean("AIControllerFacade");
+        AIControllerFacade aiController = (AIControllerFacade) MartinBoot.getContext().getBean("AIControllerFacade");
         Response response = aiController.elaborateRequest(request);
         return response;
     }
@@ -59,7 +59,7 @@ public class FrontendController {
     @RequestMapping("/exampleCommands")
     public List<ExampleCall> sendExampleCommands() {
 
-        AIControllerFacade aiController = (AIControllerFacade) MartinBoot.context.getBean("AIControllerFacade");
+        AIControllerFacade aiController = (AIControllerFacade) MartinBoot.getContext().getBean("AIControllerFacade");
         return aiController.getExampleCalls();
 
     }

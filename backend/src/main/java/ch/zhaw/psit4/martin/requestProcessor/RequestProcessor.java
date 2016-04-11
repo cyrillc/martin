@@ -37,7 +37,7 @@ public class RequestProcessor implements IRequestProcessor {
         Map<String, Pair<String, String>> featureList = new HashMap<String, Pair<String, String>>();
         Map<String, Integer> featureCount = new HashMap<String, Integer>();
         List<Pair<String, String>> queryResult = new ArrayList<Pair<String, String>>();
-        IPluginLibrary library = (IPluginLibrary) MartinBoot.context
+        IPluginLibrary library = (IPluginLibrary) MartinBoot.getContext()
                 .getBean("IPluginLibrary");
 
         // Get features by keywords and count them
@@ -118,7 +118,7 @@ public class RequestProcessor implements IRequestProcessor {
      */
     @Override
     public ExtendedRequest extend(Request request) throws Exception {
-        IPluginLibrary library = (IPluginLibrary) MartinBoot.context
+        IPluginLibrary library = (IPluginLibrary) MartinBoot.getContext()
                 .getBean("IPluginLibrary");
 
         ExtendedRequest extendedRequest = new ExtendedRequest();

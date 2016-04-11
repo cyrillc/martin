@@ -41,7 +41,7 @@ public class AIControllerFacade {
 
     public List<ExampleCall> getExampleCalls() {
 
-        IPluginLibrary library = (IPluginLibrary) MartinBoot.context
+        IPluginLibrary library = (IPluginLibrary) MartinBoot.getContext()
                 .getBean("IPluginLibrary");
         return library.getExampleCalls();
     }
@@ -56,11 +56,11 @@ public class AIControllerFacade {
      */
     public Response elaborateRequest(Request request) {
         try {
-            IPluginLibrary lib = (IPluginLibrary) MartinBoot.context
+            IPluginLibrary lib = (IPluginLibrary) MartinBoot.getContext()
                     .getBean("IPluginLibrary");
-            RequestProcessor requestProcessor = (RequestProcessor) MartinBoot.context
+            RequestProcessor requestProcessor = (RequestProcessor) MartinBoot.getContext()
                     .getBean("RequestProcessor");
-            HistoryItemService historyItemService = (HistoryItemService) MartinBoot.context
+            HistoryItemService historyItemService = (HistoryItemService) MartinBoot.getContext()
                     .getBean("historyItemService");
             ExtendedRequest extendedRequest = requestProcessor.extend(request);
             Response response = lib.executeRequest(extendedRequest);

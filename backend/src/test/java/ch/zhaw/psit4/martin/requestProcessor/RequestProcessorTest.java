@@ -31,7 +31,7 @@ public class RequestProcessorTest {
         mockContext.getBeanFactory().registerSingleton("IPluginLibrary",
                 library);
         mockContext.refresh();
-        MartinBoot.context = mockContext;
+        MartinBoot.setContext(mockContext);
 		
 		// Results for function queries
 		List<Pair<String, String>> result0 = new ArrayList<Pair<String, String>>();

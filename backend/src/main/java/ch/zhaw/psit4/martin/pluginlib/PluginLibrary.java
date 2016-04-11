@@ -168,7 +168,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public List<ExampleCall> getExampleCalls() {
-        ExampleCallService exampleCallService = (ExampleCallService) MartinBoot.context.getBean("exampleCallService");
+        ExampleCallService exampleCallService = (ExampleCallService) MartinBoot.getContext().getBean("exampleCallService");
         return exampleCallService.listExampleCalls();
     }
 
