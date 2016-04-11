@@ -21,7 +21,7 @@ import liquibase.exception.LiquibaseException;
 public class LiquibaseTest extends DatabaseTest {
 	@Before
 	public void setUp() throws ClassNotFoundException, SQLException, LiquibaseException, Exception {
-		super.setChangeset("src/test/resources/LiquibaseTest/changeset.xml");
+		super.setChangesetPath("database/unit-tests/LiquiBaseTest/db.changeset-test.xml");
 		super.setUp();
 	}
 
@@ -88,6 +88,7 @@ public class LiquibaseTest extends DatabaseTest {
 	 */
 	@Test
 	public void testDatabaseDAO() {
+		@SuppressWarnings("unused")
 		Session session = super.getHibernateSession();
 		
 	}
