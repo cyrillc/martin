@@ -30,7 +30,9 @@ public class AIControllerFacade {
     private static final Log LOG = LogFactory.getLog(AIControllerFacade.class);
 
     @PostConstruct
-    public void postAIControllerFacade() {}
+    public void postAIControllerFacade() {
+        //does nothing. Is it needed b'cause of beans.xml?
+    }
 
     /**
      * Returns a list of example calls from the plugin library. Is usually only
