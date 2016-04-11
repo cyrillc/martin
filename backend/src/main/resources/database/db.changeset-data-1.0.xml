@@ -8,6 +8,7 @@
 
     <!-- Inserts initial data into the database -->
     <changeSet author="fleppsim" id="data-1.0.1">
+        <sql>SET FOREIGN_KEY_CHECKS=0</sql>
     	<loadData tableName="author" file="db.changeset-data-1.0/author.csv" relativeToChangelogFile="true"/>
     	<loadData tableName="example_call" file="db.changeset-data-1.0/example_call.csv" relativeToChangelogFile="true"/>
     	<loadData tableName="function" file="db.changeset-data-1.0/function.csv" relativeToChangelogFile="true"/>
@@ -20,6 +21,7 @@
     	<loadData tableName="plugin" file="db.changeset-data-1.0/plugin.csv" relativeToChangelogFile="true"/>
     	<loadData tableName="request" file="db.changeset-data-1.0/request.csv" relativeToChangelogFile="true"/>
     	<loadData tableName="response" file="db.changeset-data-1.0/response.csv" relativeToChangelogFile="true"/>
+        <sql>SET FOREIGN_KEY_CHECKS=1</sql>
     </changeSet>
 
 </databaseChangeLog>
