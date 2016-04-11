@@ -25,7 +25,7 @@ public class MartinBoot {
      */
     private static IPluginLibrary library;
 
-     /**
+    /**
      * The application context
      */
     private static ApplicationContext context;
@@ -44,7 +44,7 @@ public class MartinBoot {
         // boot Spring
         SpringApplication.run(MartinBoot.class, args);
     }
-    
+
     /**
      * Creates the applicationcontext and inserts custom objects.
      */
@@ -54,7 +54,7 @@ public class MartinBoot {
                 library);
         mockContext.refresh();
         setContext(new ClassPathXmlApplicationContext(
-                new String[] {"Beans.xml"}, mockContext));
+                new String[] { "Beans.xml" }, mockContext));
     }
 
     /**
@@ -65,7 +65,8 @@ public class MartinBoot {
     }
 
     /**
-     * @param context the context to set
+     * @param context
+     *            the context to set
      */
     public static void setContext(ApplicationContext context) {
         MartinBoot.context = context;
