@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
@@ -24,6 +27,7 @@ import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
  *
  */
 public class AIControllerFacade {
+    private static final Log LOG = LogFactory.getLog(AIControllerFacade.class);
     @PostConstruct
     public void postAIControllerFacade() {}
 
@@ -63,6 +67,7 @@ public class AIControllerFacade {
             historyItemService.addHistoryItem(new HistoryItem(request, response));
             return response;
         } catch (Exception e) {
+            LOG.info(e);
             return new Response("Sorry, I can't understand you.");
         }
     }
