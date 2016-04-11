@@ -132,6 +132,7 @@
 			   <version>3.4.2</version>
 			   <configuration>                  
 				  <propertyFile>src/main/resources/liquibase/liquibase-dev.properties</propertyFile>
+				  <logging>warning</logging>
 			   </configuration>                
 			</plugin>
 		</plugins>

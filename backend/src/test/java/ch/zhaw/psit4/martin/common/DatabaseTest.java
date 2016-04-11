@@ -11,6 +11,7 @@ import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
+import liquibase.logging.LogLevel;
 import liquibase.resource.FileSystemResourceAccessor;
 
 import org.junit.Before;
@@ -70,7 +71,9 @@ public abstract class DatabaseTest {
 		
 		// Inserts the provided changeset into the database
 		liquibase = new Liquibase(changeset.getPath(), new FileSystemResourceAccessor(), database);
+		liquibase.getLog().setLogLevel(LogLevel.WARNING);
 		liquibase.update("");
+
 		
 		// Create Hibernate Session
 		Configuration hibernateConfiguration = new Configuration();
