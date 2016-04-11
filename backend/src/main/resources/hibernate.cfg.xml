@@ -10,5 +10,6 @@
     <mapping class="ch.zhaw.psit4.martin.common.Response"/>
     <mapping class="ch.zhaw.psit4.martin.common.Request"/>
     <mapping class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCall"/>
+    <mapping class="ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword"/>
   </session-factory>
 </hibernate-configuration>

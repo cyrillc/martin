@@ -13,7 +13,7 @@
 
     <!-- Load test-data into table keyword -->
     <changeSet author="camenfa1" id="keyword-unitTest-1">
-        <loadData tableName="keyword" file="src/test/resources/unit-testing/keywordTest/keyword.csv" />
+        <loadData tableName="keyword" file="src/main/resources/unit-testing/keywordTest/keyword.csv" />
     </changeSet>
 
 </databaseChangeLog>

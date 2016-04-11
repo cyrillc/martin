@@ -16,6 +16,8 @@ import java.util.List;
 
 import javax.validation.constraints.AssertTrue;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,11 +25,15 @@ import org.junit.Test;
 public class KeywordServiceTest extends DatabaseTest {
 
     private KeywordService keywordService;
+    private Log log;
 
     @Before
     public void setUp() throws Exception{
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
-        keywordService = (KeywordService) context.getBean("KeywordService");
+        keywordService = (KeywordService) context.getBean("keywordService");
+        
+        log = LogFactory.getLog(KeywordServiceTest.class);
+        
         super.setChangeset("src/main/resources/unit-testing/keywordTest/db.keywordUnitTest-1.0.xml");
         super.setUp();
     }
@@ -40,18 +46,26 @@ public class KeywordServiceTest extends DatabaseTest {
     @Test
     public void testListKeywords() throws Exception {
         List<Keyword> keywords = new ArrayList<>();
-        keywords = keywordService.listKeywords();
+        keywords = (ArrayList) keywordService.listKeywords();
+        
 
-        //assertEquals(keywords.isEmpty(),false);
-        assertEquals(true,true);
+        assertEquals(false,keywords.isEmpty());
+        //assertEquals(true,true);
         
 
     }
-    /*
     @Test
     public void testAddKeyword() throws Exception {
+        Keyword newWord = new Keyword();
+        newWord.setKeyword("Hallo Welt");
+        keywordService.addKeyword(newWord);
+        
+        log.info("Added Keyword New Word");
+        log.info("Here it is: "+ keywordService.getKeywordById(20).getKeyword()+" .");
+
     }
 
+    /*
 
     @Test
     public void testGetKeywordById() throws Exception {
