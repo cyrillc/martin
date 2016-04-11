@@ -225,8 +225,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                         + "\" loaded");
 
             } catch (Exception e) {
-                LOG.info(e);
-                LOG.error("context: ", e);
+                LOG.error("An Error occured at fetchPlugins: ", e);
             }
         }
 
@@ -278,8 +277,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             try {
                 feature.start(call.getArguments());
             } catch (Exception e) {
-                LOG.info(e);
-                LOG.error("Could not start plugin feature.");
+                LOG.error("Could not start plugin feature.", e);
                 ret += "ERROR at start()! ";
                 break;
             }
@@ -287,8 +285,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             try {
                 feature.run();
             } catch (Exception e) {
-                LOG.info(e);
-                LOG.error("Could not run plugin feature.");
+                LOG.error("Could not run plugin feature.", e);
                 ret += "ERROR during run()! ";
                 break;
             }
@@ -296,8 +293,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             try {
                 ret += feature.stop();
             } catch (Exception e) {
-                LOG.info(e);
-                LOG.error("Could not stop plugin feature.");
+                LOG.error("Could not stop plugin feature.", e);
                 ret += "ERROR at stop()";
                 break;
             }

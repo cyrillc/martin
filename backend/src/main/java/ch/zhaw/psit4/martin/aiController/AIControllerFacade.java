@@ -69,7 +69,7 @@ public class AIControllerFacade {
                     .addHistoryItem(new HistoryItem(request, response));
             return response;
         } catch (Exception e) {
-            LOG.info(e);
+            LOG.error("An error occured at elaborateRequest()", e);
             return new Response("Sorry, I can't understand you.");
         }
     }

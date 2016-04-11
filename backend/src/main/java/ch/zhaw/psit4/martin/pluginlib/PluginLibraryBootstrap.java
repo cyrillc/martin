@@ -50,7 +50,7 @@ public class PluginLibraryBootstrap {
                     .getPlugin(IMartinContext.CORE_PLUGIN_ID);
             lib.startLibrary();
         } catch (Exception e) {
-            LOG.error("An Error occured at boot()", e);
+            LOG.error("An error occured at boot()", e);
             lib = null;
         }
         return lib;

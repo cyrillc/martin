@@ -50,8 +50,7 @@ public class MartinContextAccessor implements IMartinContext {
             item.setID(getnextID());
             queue.add(item);
         } catch (Exception e) {
-            LOG.info(e);
-            LOG.error(e.getMessage());
+            LOG.error("An error occured at registerWorkItem()", e);
         }
     }
 
