@@ -28,6 +28,7 @@ import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
  */
 public class AIControllerFacade {
     private static final Log LOG = LogFactory.getLog(AIControllerFacade.class);
+
     @PostConstruct
     public void postAIControllerFacade() {}
 
@@ -58,13 +59,14 @@ public class AIControllerFacade {
         try {
             IPluginLibrary lib = (IPluginLibrary) MartinBoot.getContext()
                     .getBean("IPluginLibrary");
-            RequestProcessor requestProcessor = (RequestProcessor) MartinBoot.getContext()
-                    .getBean("RequestProcessor");
-            HistoryItemService historyItemService = (HistoryItemService) MartinBoot.getContext()
-                    .getBean("historyItemService");
+            RequestProcessor requestProcessor = (RequestProcessor) MartinBoot
+                    .getContext().getBean("RequestProcessor");
+            HistoryItemService historyItemService = (HistoryItemService) MartinBoot
+                    .getContext().getBean("historyItemService");
             ExtendedRequest extendedRequest = requestProcessor.extend(request);
             Response response = lib.executeRequest(extendedRequest);
-            historyItemService.addHistoryItem(new HistoryItem(request, response));
+            historyItemService
+                    .addHistoryItem(new HistoryItem(request, response));
             return response;
         } catch (Exception e) {
             LOG.info(e);
