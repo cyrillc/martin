@@ -1,67 +1,57 @@
 package ch.zhaw.psit4.martin.pluginlib.db.keyword;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.mysql.fabric.xmlrpc.base.Array;
-
-import ch.zhaw.psit4.martin.common.DatabaseTest;
-import liquibase.exception.LiquibaseException;
+import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 
 import static org.junit.Assert.*;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.AssertTrue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class KeywordServiceTest extends DatabaseTest {
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"classpath:Beans.xml", "classpath:Beans-unit-tests.xml"})
+public class KeywordServiceTest {
+	
+	@Autowired
+	private LiquibaseTestFramework liquibase;
+
+	@Autowired
     private KeywordService keywordService;
     private Log log;
 
     @Before
-    public void setUp() throws Exception{
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
-        keywordService = (KeywordService) context.getBean("keywordService");
-        
-        log = LogFactory.getLog(KeywordServiceTest.class);
-        
-        super.setChangesetPath("database/unit-tests/keywordTest/db.keywordUnitTest-1.0.xml");
-        super.setUp();
+    public void setUp(){
+    	liquibase.createDatabase("database/unit-tests/keywordTest/db.keywordUnitTest-1.0.xml");
+        log = LogFactory.getLog(KeywordServiceTest.class);        
     }
-
-
+    
     @After
-    public void tearDown() throws LiquibaseException,SQLException {
-        super.tearDown();
+    public void tearDown(){
+    	liquibase.destroyDatabase();
     }
 
     @Test
     public void testListKeywords() throws Exception {
-        List<Keyword> keywords = new ArrayList<>();
-        keywords = (ArrayList) keywordService.listKeywords();
-        
-
+        List<Keyword> keywords = keywordService.listKeywords();
         assertEquals(false,keywords.isEmpty());
-        //assertEquals(true,true);
-        
-
     }
+    
     @Test
     public void testAddKeyword() throws Exception {
         Keyword newWord = new Keyword();
         newWord.setKeyword("Hallo Welt");
-        //keywordService.addKeyword(newWord);
-        
-
+        keywordService.addKeyword(newWord);
     }
 
     /*

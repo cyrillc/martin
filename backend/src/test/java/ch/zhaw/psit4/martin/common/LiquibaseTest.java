@@ -7,22 +7,42 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import liquibase.exception.LiquibaseException;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * This class Tests if the Database schema is correctly setup and example-data
  * is loaded. Schema-Version: 1.0 Data-Version: none
  */
-public class LiquibaseTest extends DatabaseTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"classpath:Beans.xml", "classpath:Beans-unit-tests.xml"})
+public class LiquibaseTest {
+	/**
+	 * Is used to setup the unit-test environment (setup in-memory-database and import database schema).
+	 */
+	@Autowired
+	private LiquibaseTestFramework liquibase;
+
+	/**
+	 * The class to test.
+	 */
+	@Autowired
+	private DriverManagerDataSource datasource;
+
 	@Before
-	public void setUp() throws ClassNotFoundException, SQLException, LiquibaseException, Exception {
-		super.setChangesetPath("database/unit-tests/LiquiBaseTest/db.changeset-test.xml");
-		super.setUp();
+	public void setUp() {
+		liquibase.createDatabase("database/unit-tests/LiquiBaseTest/db.changeset-test.xml");
+	}
+	
+	@After
+	public void tearDown(){
+		liquibase.destroyDatabase();
 	}
 
 	/**
@@ -32,7 +52,7 @@ public class LiquibaseTest extends DatabaseTest {
 	public void testDatabaseSchema() {
 		ArrayList<String> tables = new ArrayList<String>();
 		try {
-			PreparedStatement statement = super.getConnection()
+			PreparedStatement statement = datasource.getConnection()
 					.prepareStatement("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = SCHEMA()");
 			ResultSet result = statement.executeQuery();
 
@@ -66,7 +86,7 @@ public class LiquibaseTest extends DatabaseTest {
 	@Test
 	public void testDatabaseContent() {
 		try {
-			PreparedStatement statement = super.getConnection()
+			PreparedStatement statement = datasource.getConnection()
 					.prepareStatement("SELECT name,email FROM author WHERE author_id = 1");
 			ResultSet result = statement.executeQuery();
 			result.next();
@@ -80,22 +100,4 @@ public class LiquibaseTest extends DatabaseTest {
 			fail(e.getMessage());
 		}
 	}
-
-	/**
-	 * Tests, if the datasets inserted into the database are correct
-	 * 
-	 * @throws SQLException
-	 */
-	@Test
-	public void testDatabaseDAO() {
-		@SuppressWarnings("unused")
-		Session session = super.getHibernateSession();
-		
-	}
-	
-	@After
-	public void tearDown() throws LiquibaseException, SQLException {
-		super.tearDown();
-	}
-
 }

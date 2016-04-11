@@ -11,8 +11,7 @@
 		<property name="message" value="Hello World!"/> </bean> -->
 
 	<!-- DATASOURCE -->
-	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://127.0.0.1:3306/martin_dev" />
 		<property name="username" value="devuser" />
@@ -20,8 +19,7 @@
 	</bean>
 
 	<!-- Hibernate 5 SessionFactory Bean definition -->
-	<bean id="HibernateSessionFactory"
-		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+	<bean id="HibernateSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
 	</bean>
@@ -78,8 +76,4 @@
 	<!-- package requestProcessor -->
 	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestProcessor.RequestProcessor">
 	</bean>
-
-
-
-
 </beans>
