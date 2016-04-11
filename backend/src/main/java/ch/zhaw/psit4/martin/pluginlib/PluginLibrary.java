@@ -63,7 +63,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     /*
      * Log from the common logging api
      */
-    private Log log;
+    private static final Log LOG = LogFactory.getLog(PluginLibrary.class);
 
     /*
      * (non-Javadoc)
@@ -94,11 +94,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     public void startLibrary() {
         // create the context
         context = new MartinContextAccessor();
-        // Get the log
-        log = LogFactory.getLog(PluginLibrary.class);
         // Get plugins
         pluginExtentions = fetchPlugins(IMartinContext.EXTPOINT_ID);
-        log.info("Plugin library booted, " + pluginExtentions.size()
+        LOG.info("Plugin library booted, " + pluginExtentions.size()
                 + " plugins loaded.");
     }
 
@@ -117,15 +115,15 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         String pluginID = call.getPlugin();
         String featureID = call.getFeature();
         PluginService service = pluginExtentions.get(pluginID);
-        
+
         // if service exists, execute call
-        if(service != null) {
+        if (service != null) {
             service.init(context, featureID, 0);
 
             Response response = new Response(executeCall(call, 0));
             return response;
         } else {
-            log.error("Could not find a plugin that matches request call.");
+            LOG.error("Could not find a plugin that matches request call.");
             return new Response("ERROR: no plugin found!");
         }
     }
@@ -140,7 +138,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      *         feature ID
      */
     public List<Pair<String, String>> queryFunctionsByKeyword(String keyword) {
-    	return null;
+        return null;
     }
 
     /**
@@ -155,8 +153,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      *         name and value = ({@link String}) Argument type (from
      *         {@link ch.zhaw.psit4.martin.api.types})
      */
-    public Map<String, String> queryFunctionArguments(String plugin, String feature) {
-    	return null;
+    public Map<String, String> queryFunctionArguments(String plugin,
+            String feature) {
+        return null;
     }
 
     /**
@@ -168,7 +167,8 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public List<ExampleCall> getExampleCalls() {
-        ExampleCallService exampleCallService = (ExampleCallService) MartinBoot.getContext().getBean("exampleCallService");
+        ExampleCallService exampleCallService = (ExampleCallService) MartinBoot
+                .getContext().getBean("exampleCallService");
         return exampleCallService.listExampleCalls();
     }
 
@@ -220,12 +220,13 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                         .loadClass(pluginClassName.valueAsString());
                 T pluginInstance = pluginClass.newInstance();
                 plugins.put(id, pluginInstance);
-                log.info("Plugin \""
+                LOG.info("Plugin \""
                         + extension.getParameter("name").valueAsString()
                         + "\" loaded");
 
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.info(e);
+                LOG.error("context: ", e);
             }
         }
 
@@ -277,7 +278,8 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             try {
                 feature.start(call.getArguments());
             } catch (Exception e) {
-                log.error("Could not start plugin feature.");
+                LOG.info(e);
+                LOG.error("Could not start plugin feature.");
                 ret += "ERROR at start()! ";
                 break;
             }
@@ -285,7 +287,8 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             try {
                 feature.run();
             } catch (Exception e) {
-                log.error("Could not run plugin feature.");
+                LOG.info(e);
+                LOG.error("Could not run plugin feature.");
                 ret += "ERROR during run()! ";
                 break;
             }
@@ -293,11 +296,12 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             try {
                 ret += feature.stop();
             } catch (Exception e) {
-                log.error("Could not stop plugin feature.");
+                LOG.info(e);
+                LOG.error("Could not stop plugin feature.");
                 ret += "ERROR at stop()";
                 break;
             }
-            
+
             ret += "\n";
             feature = context.fetchWorkItem(requestID);
         }
