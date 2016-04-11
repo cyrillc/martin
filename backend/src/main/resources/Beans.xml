@@ -26,6 +26,7 @@
 		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
 	</bean>
 
+	<!--  Plugin Library Tables -->
     <bean id="exampleCallDao" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallDao">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
@@ -33,6 +34,14 @@
         <property name="exampleCallDao" ref="exampleCallDao"></property>
     </bean>
 
+    <bean id="keywordDao" class="ch.zhaw.psit4.martin.pluginlib.db.keyword.KeywordDao">
+        <property name="sessionFactory" ref="HibernateSessionFactory" />
+    </bean>
+    <bean id="keywordService" class="ch.zhaw.psit4.martin.pluginlib.db.keyword.KeywordService">
+        <property name="keywordDao" ref="keywordDao"></property>
+    </bean>
+  
+  	<!--  History Tables -->
     <bean id="historyItemDao" class="ch.zhaw.psit4.martin.common.dao.HistoryItemDAO">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>

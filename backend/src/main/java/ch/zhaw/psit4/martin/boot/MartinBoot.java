@@ -10,29 +10,30 @@ import org.springframework.context.support.GenericApplicationContext;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
 
+import ch.zhaw.psit4.martin.pluginlib.db.keyword.KeywordService;
+
 /**
  * Entry point for the application to bootstrap jpf, SPRING and invoke
  * <code>ModuleLibraryBootstrap.boot()</code>.
  *
  * @version 0.0.1-SNAPSHOT
  */
-@ComponentScan({ "ch.zhaw.psit4.martin.frontend" })
+@ComponentScan({"ch.zhaw.psit4.martin.frontend", "ch.zhaw.psit4.martin.pluginlib.db"})
 @SpringBootApplication
 public class MartinBoot {
-
+    
     /*
      * The martin library singleton
      */
     private static IPluginLibrary library;
-
-     /**
+    /**
      * The application context
      */
     public static ApplicationContext context;
 
     /**
      * Main application entry point launches MArtIn and used components.
-     * 
+     *
      * @param args
      *            Command line arguments (unused)
      */
@@ -44,7 +45,7 @@ public class MartinBoot {
         // boot Spring
         SpringApplication.run(MartinBoot.class, args);
     }
-    
+
     /**
      * Creates the applicationcontext and inserts custom objects.
      */
