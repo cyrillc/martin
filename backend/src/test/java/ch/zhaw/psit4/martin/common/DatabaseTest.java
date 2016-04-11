@@ -35,11 +35,12 @@ public abstract class DatabaseTest {
 	private static final String DATABASE_DRIVER = "org.h2.Driver";
 	private static final String DATABASE_DIALECT = "org.hibernate.dialect.H2Dialect";
 	private static final String DATABASE_DIRECTORY = "tmp";
+	private static final String HIBERNATE_CONFIG = "hibernate.cfg.xml";
 	
 	private String databaseFile;
 	private String databaseName;
 	private String databaseURL;
-	private String changeset;
+	private File changeset;
 	
 	
 	
@@ -68,11 +69,13 @@ public abstract class DatabaseTest {
 		Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
 		
 		// Inserts the provided changeset into the database
-		liquibase = new Liquibase(changeset, new FileSystemResourceAccessor(), database);
+		liquibase = new Liquibase(changeset.getPath(), new FileSystemResourceAccessor(), database);
 		liquibase.update("");
 		
 		// Create Hibernate Session
-		Configuration hibernateConfiguration = new Configuration()
+		Configuration hibernateConfiguration = new Configuration();
+		hibernateConfiguration.configure(DatabaseTest.HIBERNATE_CONFIG);
+		hibernateConfiguration
 				.setProperty("hibernate.dialect", DatabaseTest.DATABASE_DIALECT)
 				.setProperty("hibernate.connection.driver_class", DatabaseTest.DATABASE_DRIVER)
 				.setProperty("hibernate.connection.url", this.databaseURL)
@@ -81,7 +84,7 @@ public abstract class DatabaseTest {
 				.setProperty("hibernate.current_session_context_class", "thread");
 		hibernateSessionFactory = hibernateConfiguration.buildSessionFactory();
 	}
-
+	
 	/**
 	 * Cleans up the database.
 	 * @throws LiquibaseException
@@ -113,8 +116,9 @@ public abstract class DatabaseTest {
 		return hibernateSessionFactory;
 	}
 	
-	protected void setChangeset(String changeset){
-		this.changeset = changeset;
+	protected void setChangesetPath(String changeSetPath){
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		this.changeset = new File(classLoader.getResource(changeSetPath).getPath());
 	}
 
 }
