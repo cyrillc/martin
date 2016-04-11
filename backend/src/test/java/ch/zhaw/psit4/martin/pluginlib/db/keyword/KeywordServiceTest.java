@@ -34,9 +34,10 @@ public class KeywordServiceTest extends DatabaseTest {
         
         log = LogFactory.getLog(KeywordServiceTest.class);
         
-        super.setChangeset("src/main/resources/unit-testing/keywordTest/db.keywordUnitTest-1.0.xml");
+        super.setChangesetPath("database/unit-tests/keywordTest/db.keywordUnitTest-1.0.xml");
         super.setUp();
     }
+
 
     @After
     public void tearDown() throws LiquibaseException,SQLException {
@@ -58,10 +59,8 @@ public class KeywordServiceTest extends DatabaseTest {
     public void testAddKeyword() throws Exception {
         Keyword newWord = new Keyword();
         newWord.setKeyword("Hallo Welt");
-        keywordService.addKeyword(newWord);
+        //keywordService.addKeyword(newWord);
         
-        log.info("Added Keyword New Word");
-        log.info("Here it is: "+ keywordService.getKeywordById(20).getKeyword()+" .");
 
     }
 
