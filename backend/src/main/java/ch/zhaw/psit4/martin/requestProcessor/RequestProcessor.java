@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ch.zhaw.psit4.martin.api.types.IMartinType;
 import ch.zhaw.psit4.martin.api.types.*;
 import ch.zhaw.psit4.martin.api.util.Pair;
@@ -24,7 +27,9 @@ import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
  * @version 0.1
  **/
 public class RequestProcessor implements IRequestProcessor {
-    
+
+    private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
+
     /**
      * Searches the plugin-library for matching plugin features for a list of
      * keywords.
@@ -46,6 +51,7 @@ public class RequestProcessor implements IRequestProcessor {
             try {
                 queryResult = library.queryFunctionsByKeyword(keyword);
             } catch (Exception e) {
+                LOG.error("An error occured at getFeatureByKeywords()", e);
                 continue;
             }
 
