@@ -66,4 +66,14 @@ public class AIControllerFacade {
             return new Response("Sorry, I can't understand you.");
         }
     }
+    
+    /**
+     * 
+     * @return all the history of requests with the relative responses
+     */
+    public List<HistoryItem> getHistory(){
+        HistoryItemService historyItemService = (HistoryItemService) MartinBoot.context
+                .getBean("historyItemService");
+        return historyItemService.getHistory();
+    }
 }
