@@ -32,21 +32,18 @@ public class KeywordServiceTest {
     private Log log;
 
     @Before
-    @Transactional
     public void setUp(){
     	liquibase.createDatabase("database/unit-tests/keywordTest/db.keywordUnitTest-1.0.xml");
         log = LogFactory.getLog(KeywordServiceTest.class);        
     }
     
     @Test
-    @Transactional
     public void testListKeywords() throws Exception {
         List<Keyword> keywords = keywordService.listKeywords();
         assertEquals(false,keywords.isEmpty());
     }
     
     @Test
-    @Transactional
     public void testAddKeyword() throws Exception {
         Keyword newWord = new Keyword();
         newWord.setKeyword("Hallo Welt");
