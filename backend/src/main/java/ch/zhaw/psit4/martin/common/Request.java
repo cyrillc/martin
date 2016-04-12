@@ -15,7 +15,7 @@ public class Request {
     public Request(){}
 
     @Id
-    @Column(name = "id")
+    @Column(name = "request_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 

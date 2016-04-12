@@ -15,7 +15,7 @@ public class Response {
     public Response(){}
 
     @Id
-    @Column(name = "id")
+    @Column(name = "response_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
