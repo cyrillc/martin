@@ -2,47 +2,60 @@ package ch.zhaw.psit4.martin.common.dao;
 
 import static org.junit.Assert.*;
 
-import java.sql.SQLException;
+import javax.transaction.Transactional;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.After;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import ch.zhaw.psit4.martin.common.DatabaseTest;
 import ch.zhaw.psit4.martin.common.HistoryItem;
+import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
-import liquibase.exception.LiquibaseException;
 
-public class HistoryItemDAOTest extends DatabaseTest{
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"classpath:Beans.xml", "classpath:Beans-unit-tests.xml"})
+public class HistoryItemDAOTest {
+	
+	/**
+	 * Is used to setup the unit-test environment (setup in-memory-database and import database schema).
+	 */
+	@Autowired
+	private LiquibaseTestFramework liquibase;
 
-    public HistoryItemDAO historyItemDAO;
+	/**
+	 * The class to test.
+	 */
+	@Autowired
+	private HistoryItemDAO historyItemDAO;
 
-    @Before
-    public void setUp() throws ClassNotFoundException, SQLException, LiquibaseException, Exception {
-    	// Set the database-version to use
-    	super.setChangesetPath("database/db.changeset-schema-latest.xml");
-    	super.setUp();
+	@Before
+	public void setUp() {
+		liquibase.createDatabase("database/db.changeset-schema-latest.xml");
+	}
+	
+	@Test
+	@Transactional
+	public void test1() throws Exception {
+		// ToDo: Implement something
     	
-        this.historyItemDAO = new HistoryItemDAO();
-        this.historyItemDAO.setSessionFactory(super.getHibernateSessionFactory());
-    }
-    
-    @Test
-    public void someTest(){
-    	// ToDo: Implement something
+    	Request request = new Request("test");
+    	Response response = new Response("test");
+    	HistoryItem historyItem = new HistoryItem(request, response);
+    	this.historyItemDAO.add(historyItem);
     	
-    	//Request request = new Request("test");
-    	//Response response = new Response("test");
-    	//HistoryItem historyItem = new HistoryItem(request, response);
-    	//this.historyItemDAO.add(historyItem);
+    	assertEquals(this.historyItemDAO.getAll().size(), 1);
+	}
+	
+	@Test
+	@Transactional
+	public void test2() throws Exception {
+		// ToDo: Implement something else
     	
-    	assertTrue(true);
-    }
-    
-    @After
-    public void tearDown() throws LiquibaseException, SQLException{
-    	super.tearDown();
-    }
-
+    	assertEquals(this.historyItemDAO.getAll().size(), 0);
+	}
 }
