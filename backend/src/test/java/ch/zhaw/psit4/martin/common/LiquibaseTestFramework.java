@@ -29,24 +29,13 @@ public class LiquibaseTestFramework {
 			connection = dataSource.getConnection();
 			liquibase = new Liquibase(changeset, new ClassLoaderResourceAccessor(), new HsqlConnection(connection));
 			liquibase.getLog().setLogLevel(LogLevel.WARNING);
+			liquibase.dropAll();
 			liquibase.update("");
+			connection.close();
 		} catch(Exception e){
 			System.err.println(e.getMessage());
 		}
 		
-	}
-	
-	/**
-	 * Destroys all objects in the database.
-	 */
-	public void destroyDatabase(){
-		try {
-			Statement statement = dataSource.getConnection().createStatement();
-			statement.executeUpdate("DROP ALL OBJECTS");
-			connection.close();
-		} catch(Exception e){
-			System.err.println(e.getMessage());
-		}			
 	}
 	
 	public void setDataSource(DataSource dataSource) {

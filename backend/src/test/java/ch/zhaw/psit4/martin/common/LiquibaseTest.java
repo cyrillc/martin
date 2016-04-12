@@ -39,11 +39,6 @@ public class LiquibaseTest {
 	public void setUp() {
 		liquibase.createDatabase("database/unit-tests/LiquiBaseTest/db.changeset-test.xml");
 	}
-	
-	@After
-	public void tearDown(){
-		liquibase.destroyDatabase();
-	}
 
 	/**
 	 * Tests, if the database schema is correct.
