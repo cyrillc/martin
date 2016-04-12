@@ -51,19 +51,21 @@ public class AIControllerFacade {
      * @return the response of the AI.
      */
     public Response elaborateRequest(Request request) {
+        HistoryItemService historyItemService = (HistoryItemService) MartinBoot.context
+                .getBean("historyItemService");
         try {
             IPluginLibrary lib = (IPluginLibrary) MartinBoot.context
                     .getBean("IPluginLibrary");
             RequestProcessor requestProcessor = (RequestProcessor) MartinBoot.context
                     .getBean("RequestProcessor");
-            HistoryItemService historyItemService = (HistoryItemService) MartinBoot.context
-                    .getBean("historyItemService");
             ExtendedRequest extendedRequest = requestProcessor.extend(request);
             Response response = lib.executeRequest(extendedRequest);
             historyItemService.addHistoryItem(new HistoryItem(request, response));
             return response;
         } catch (Exception e) {
-            return new Response("Sorry, I can't understand you.");
+            Response response = new Response("Sorry, I can't understand you.");
+            historyItemService.addHistoryItem(new HistoryItem(request, response));
+            return response;
         }
     }
     
