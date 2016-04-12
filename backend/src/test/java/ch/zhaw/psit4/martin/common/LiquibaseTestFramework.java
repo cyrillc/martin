@@ -30,7 +30,6 @@ public class LiquibaseTestFramework {
 			liquibase = new Liquibase(changeset, new ClassLoaderResourceAccessor(), new HsqlConnection(connection));
 			liquibase.getLog().setLogLevel(LogLevel.WARNING);
 			liquibase.update("");
-			connection.close();
 		} catch(Exception e){
 			System.err.println(e.getMessage());
 		}

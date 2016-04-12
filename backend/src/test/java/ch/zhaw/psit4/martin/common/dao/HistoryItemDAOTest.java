@@ -38,11 +38,6 @@ public class HistoryItemDAOTest {
 		liquibase.createDatabase("database/unit-tests/LiquiBaseTest/db.changeset-test.xml");
 	}
 	
-	@After
-	public void tearDown() {
-		liquibase.destroyDatabase();
-	}
-	
 	@Test
 	@Transactional
 	public void test1() throws Exception {
