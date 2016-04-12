@@ -40,7 +40,7 @@ public class HistoryItemDAOTest {
 	
 	@Test
 	@Transactional
-	public void test1() throws Exception {
+	public void aHistoryItemIsSaved() throws Exception {
 		// ToDo: Implement something
     	
     	Request request = new Request("test");
