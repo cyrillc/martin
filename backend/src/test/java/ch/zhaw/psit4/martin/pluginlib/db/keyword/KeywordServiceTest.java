@@ -47,8 +47,7 @@ public class KeywordServiceTest {
     
     @Test
     public void testAddKeyword() throws Exception {
-        Keyword newWord = new Keyword();
-        newWord.setKeyword("Hallo Welt");
+        Keyword newWord = new Keyword("Hallo Welt");
         keywordService.addKeyword(newWord);
         String word = keywordService.getKeywordById(7).getKeyword();
         assertEquals("Hallo Welt", word);

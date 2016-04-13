@@ -1,10 +1,19 @@
 package ch.zhaw.psit4.martin.pluginlib.db.keyword;
 
+import ch.zhaw.psit4.martin.pluginlib.db.parameter.*;
+
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 /**
@@ -27,11 +36,17 @@ public class Keyword {
     @Column(name = "keyword")
     private String keyword;
 
+    // mapped by set in Parameter.java
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "parameterKeywords")
+    private Set<Parameter> parameter;
 
     public Keyword(int id) {
         this.setId(id);
     }
 
+    public Keyword(String keyword ) {
+        this.setKeyword(keyword);
+    }
     public int getId() {
         return id;
     }
@@ -46,6 +61,10 @@ public class Keyword {
 
     public String getKeyword() {
         return keyword;
+    }
+    
+    public Set<Parameter> getParentParameter() {
+        return this.parameter;
     }
 
 }
