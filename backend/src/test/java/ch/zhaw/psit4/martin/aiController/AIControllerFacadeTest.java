@@ -37,7 +37,7 @@ public class AIControllerFacadeTest {
         mockContext.getBeanFactory().registerSingleton("historyItemService",
                 historyItemServiceMock);
         mockContext.refresh();
-        MartinBoot.context = mockContext;
+        MartinBoot.setContext(mockContext);
     }
 
     @Test
