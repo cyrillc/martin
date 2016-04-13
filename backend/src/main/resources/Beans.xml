@@ -50,7 +50,7 @@
 	<!-- JAVA CLASSES -->
 
 	<!-- package aiController -->
-	<bean id="AIControllerFacade" class="ch.zhaw.psit4.martin.aiController.AIControllerFacade">
+	<bean id="AIControllerFacade" class="ch.zhaw.psit4.martin.aiController.AIControllerFacade" scope="singleton">
 	</bean>
 
 	<!-- package boot -->
@@ -65,9 +65,11 @@
 
 
 	<!-- package pluginlib -->
+	<bean id="MartinContextAccessor" class="ch.zhaw.psit4.martin.pluginlib.MartinContextAccessor" scope="singleton">
+	</bean>
 
 	<!-- package requestProcessor -->
-	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestProcessor.RequestProcessor">
+	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestProcessor.RequestProcessor" scope="singleton">
 	</bean>
 
 

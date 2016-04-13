@@ -52,10 +52,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * The maximum number of characters that can be read from JSON file
      */
     public static final int KEYWORDS_JSON_MAXLEN = 2048;
-    /**
-     * The context of MArtIn, allows communication with plugins
-     */
-    private MartinContextAccessor context;
     /*
      * List of all the plugins currently registered
      */
@@ -63,7 +59,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     /*
      * Log from the common logging api
      */
-    private Log log;
+    private static Log log = LogFactory.getLog(PluginLibrary.class);
 
     /*
      * (non-Javadoc)
@@ -92,10 +88,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public void startLibrary() {
-        // create the context
-        context = new MartinContextAccessor();
-        // Get the log
-        log = LogFactory.getLog(PluginLibrary.class);
         // Get plugins
         pluginExtentions = fetchPlugins(IMartinContext.EXTPOINT_ID);
         log.info("Plugin library booted, " + pluginExtentions.size()
@@ -117,10 +109,11 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         String pluginID = call.getPlugin();
         String featureID = call.getFeature();
         PluginService service = pluginExtentions.get(pluginID);
-        
+
         // if service exists, execute call
-        if(service != null) {
-            service.init(context, featureID, 0);
+        if (service != null) {
+            service.init((MartinContextAccessor) MartinBoot.context
+                    .getBean("MartinContextAccessor"), featureID, 0);
 
             Response response = new Response(executeCall(call, 0));
             return response;
@@ -140,7 +133,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      *         feature ID
      */
     public List<Pair<String, String>> queryFunctionsByKeyword(String keyword) {
-    	return null;
+        return null;
     }
 
     /**
@@ -155,8 +148,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      *         name and value = ({@link String}) Argument type (from
      *         {@link ch.zhaw.psit4.martin.api.types})
      */
-    public Map<String, String> queryFunctionArguments(String plugin, String feature) {
-    	return null;
+    public Map<String, String> queryFunctionArguments(String plugin,
+            String feature) {
+        return null;
     }
 
     /**
@@ -168,8 +162,17 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public List<ExampleCall> getExampleCalls() {
-        ExampleCallService exampleCallService = (ExampleCallService) MartinBoot.context.getBean("exampleCallService");
+        ExampleCallService exampleCallService = (ExampleCallService) MartinBoot.context
+                .getBean("exampleCallService");
         return exampleCallService.listExampleCalls();
+    }
+    
+    public Map<String, PluginService> getPluginExtentions() {
+        return pluginExtentions;
+    }
+
+    public void setPluginExtentions(Map<String, PluginService> pluginExtentions) {
+        this.pluginExtentions = pluginExtentions;
     }
 
     /*
@@ -180,9 +183,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @return The gathered plugins in a LinkedList
      */
     @SuppressWarnings({ "unchecked", "unused" })
-    private <T> Map<String, T> fetchPlugins(final String extPointId) {
+    protected Map<String, PluginService> fetchPlugins(final String extPointId) {
 
-        Map<String, T> plugins = new HashMap<String, T>();
+        Map<String, PluginService> plugins = new HashMap<String, PluginService>();
         PluginManager manager = this.getManager();
 
         ExtensionPoint extPoint = manager.getRegistry()
@@ -216,9 +219,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 JSONObject jsonKeywords = new JSONObject(readUrl(keywordsUrl));
 
                 // plugin loading
-                Class<T> pluginClass = (Class<T>) classLoader
+                Class<PluginService> pluginClass = (Class<PluginService>) classLoader
                         .loadClass(pluginClassName.valueAsString());
-                T pluginInstance = pluginClass.newInstance();
+                PluginService pluginInstance = pluginClass.newInstance();
                 plugins.put(id, pluginInstance);
                 log.info("Plugin \""
                         + extension.getParameter("name").valueAsString()
@@ -271,6 +274,8 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @return The return value as string.
      */
     private String executeCall(Call call, long requestID) {
+        MartinContextAccessor context = (MartinContextAccessor) MartinBoot.context
+                .getBean("MartinContextAccessor");
         Feature feature = context.fetchWorkItem(requestID);
         String ret = "";
         while (feature != null) {
@@ -297,7 +302,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 ret += "ERROR at stop()";
                 break;
             }
-            
+
             ret += "\n";
             feature = context.fetchWorkItem(requestID);
         }

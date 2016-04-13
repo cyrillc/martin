@@ -31,13 +31,12 @@ public class MartinContextAccessor implements IMartinContext {
     /*
      * Log from the common logging api
      */
-    private Log log;
+    private static final Log log = LogFactory.getLog(MartinContextAccessor.class);
 
 
     public MartinContextAccessor() {
         queue = new LinkedList<Feature>();
         idCounter = new AtomicLong();
-        log = LogFactory.getLog(MartinContextAccessor.class);
     }
 
     /**
@@ -75,6 +74,10 @@ public class MartinContextAccessor implements IMartinContext {
                 return queue.remove(i);
         }
         return null;
+    }
+    
+    public int getNumberOfFeatures() {
+        return queue.size();
     }
     
     private long getnextID() {
