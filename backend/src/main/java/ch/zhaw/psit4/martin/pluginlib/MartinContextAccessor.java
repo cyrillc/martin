@@ -31,8 +31,8 @@ public class MartinContextAccessor implements IMartinContext {
     /*
      * Log from the common logging api
      */
-    private static final Log log = LogFactory.getLog(MartinContextAccessor.class);
-
+    private static final Log LOG = LogFactory
+            .getLog(MartinContextAccessor.class);
 
     public MartinContextAccessor() {
         queue = new LinkedList<Feature>();
@@ -50,7 +50,7 @@ public class MartinContextAccessor implements IMartinContext {
             item.setID(getnextID());
             queue.add(item);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            LOG.error("An error occured at registerWorkItem()", e);
         }
     }
 
@@ -69,8 +69,8 @@ public class MartinContextAccessor implements IMartinContext {
      *         queue is empty
      */
     public Feature fetchWorkItem(long requestID) {
-        for(int i = 0; i < queue.size(); i++) {
-            if(queue.get(i).getRequestID() == requestID)
+        for (int i = 0; i < queue.size(); i++) {
+            if (queue.get(i).getRequestID() == requestID)
                 return queue.remove(i);
         }
         return null;

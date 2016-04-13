@@ -34,7 +34,7 @@ public class PluginLibraryTest {
         mockContext.getBeanFactory().registerSingleton("MartinContextAccessor",
                 context);
         mockContext.refresh();
-        MartinBoot.context = mockContext;
+        MartinBoot.setContext(mockContext);
 
         // Create request mocks
         uuid = UUID.randomUUID();
