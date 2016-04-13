@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ch.zhaw.psit4.martin.api.types.IMartinType;
 import ch.zhaw.psit4.martin.api.types.*;
 import ch.zhaw.psit4.martin.api.util.Pair;
@@ -24,7 +27,9 @@ import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
  * @version 0.1
  **/
 public class RequestProcessor implements IRequestProcessor {
-    
+
+    private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
+
     /**
      * Searches the plugin-library for matching plugin features for a list of
      * keywords.
@@ -37,7 +42,7 @@ public class RequestProcessor implements IRequestProcessor {
         Map<String, Pair<String, String>> featureList = new HashMap<String, Pair<String, String>>();
         Map<String, Integer> featureCount = new HashMap<String, Integer>();
         List<Pair<String, String>> queryResult = new ArrayList<Pair<String, String>>();
-        IPluginLibrary library = (IPluginLibrary) MartinBoot.context
+        IPluginLibrary library = (IPluginLibrary) MartinBoot.getContext()
                 .getBean("IPluginLibrary");
 
         // Get features by keywords and count them
@@ -46,6 +51,7 @@ public class RequestProcessor implements IRequestProcessor {
             try {
                 queryResult = library.queryFunctionsByKeyword(keyword);
             } catch (Exception e) {
+                LOG.error("An error occured at getFeatureByKeywords()", e);
                 continue;
             }
 
@@ -118,7 +124,7 @@ public class RequestProcessor implements IRequestProcessor {
      */
     @Override
     public ExtendedRequest extend(Request request) throws Exception {
-        IPluginLibrary library = (IPluginLibrary) MartinBoot.context
+        IPluginLibrary library = (IPluginLibrary) MartinBoot.getContext()
                 .getBean("IPluginLibrary");
 
         ExtendedRequest extendedRequest = new ExtendedRequest();

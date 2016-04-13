@@ -15,13 +15,17 @@ public class Response {
     public Response(){}
 
     @Id
-    @Column(name = "id")
+    @Column(name = "response_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "responsetext")
     @NotNull
     private String content;
+    
+    public int getId() {
+        return this.id;
+    }
 
     public Response(String content) {
         this.content = content;
@@ -29,5 +33,21 @@ public class Response {
 
     public String getContent() {
         return content;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!HistoryItem.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        final Response r = (Response) obj;
+        if (this.getId() != r.getId()
+                || !this.getContent().equals(r.getContent())) {
+            return false;
+        }
+        return true;
     }
 }

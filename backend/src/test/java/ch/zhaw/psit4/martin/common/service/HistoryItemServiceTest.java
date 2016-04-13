@@ -1,46 +1,67 @@
 package ch.zhaw.psit4.martin.common.service;
 
-import java.util.List;
+import static org.junit.Assert.*;
 
-import javax.validation.constraints.AssertTrue;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.common.HistoryItem;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
+import ch.zhaw.psit4.martin.common.dao.HistoryItemDAO;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({ "classpath:Beans.xml",
+        "classpath:Beans-unit-tests.xml" })
 public class HistoryItemServiceTest {
+
+    class DaoStub extends HistoryItemDAO {
+        public boolean addIsCalled = false;
+        public boolean getAllIsCalled = false;
+
+        public void add(HistoryItem historyItem) {
+            this.addIsCalled = true;
+        }
+
+        public List<HistoryItem> getAll() {
+            this.getAllIsCalled = true;
+            return new ArrayList<>();
+        }
+    }
+
+    @Autowired
     private HistoryItemService historyItemService;
+    private DaoStub daoStub;
 
     @Before
     public void setUp() {
-        ApplicationContext context = new ClassPathXmlApplicationContext(
-                "Beans.xml");
-        historyItemService = (HistoryItemService) context
-                .getBean("historyItemService");
+        daoStub = new DaoStub();
+        historyItemService.setHistoryItemDAO(daoStub);
     }
 
-//    @Test
-//    public void testAdd() {
-//        Request request = new Request("testRequest");
-//        Response response = new Response("testResponse");
-//        HistoryItem hs = new HistoryItem(request, response);
-//        this.historyItemService.addHistoryItem(hs);
-//    }
-    
-//    @Test
-//    public void testGetHistory(){
-//        List<HistoryItem> history = this.historyItemService.getHistory();
-//        Assert.assertTrue(history.size() > 0);
-//        for(HistoryItem item : history){
-//            System.out.println(item.getRequest().getCommand());
-//        }
-//    }
-    
+    @Test
+    public void addHistoryItemUsingDAO() {
+
+        Request request = new Request("testRequest");
+        Response response = new Response("testResponse");
+        HistoryItem hs = new HistoryItem(request, response);
+        historyItemService.addHistoryItem(hs);
+
+        assertTrue(this.daoStub.addIsCalled);
+    }
+
+    @Test
+    public void canGetAHistoryItemListUsingDAO() {
+        this.historyItemService.getHistory();
+        Assert.assertTrue(this.daoStub.getAllIsCalled);
+    }
 
 }

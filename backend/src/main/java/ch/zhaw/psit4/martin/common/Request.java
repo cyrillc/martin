@@ -11,11 +11,11 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "request")
 public class Request {
-    
-    public Request(){}
+
+    public Request() {}
 
     @Id
-    @Column(name = "id")
+    @Column(name = "request_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
@@ -37,5 +37,21 @@ public class Request {
 
     public void setCommand(String command) {
         this.command = command;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!HistoryItem.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        final Request r = (Request) obj;
+        if (this.getId() != r.getId()
+                || !this.getCommand().equals(r.getCommand())) {
+            return false;
+        }
+        return true;
     }
 }

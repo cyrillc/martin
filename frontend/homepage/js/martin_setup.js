@@ -60,11 +60,18 @@ $(document).ready(function() {
 
         backendPort = data.backendPort;
 
-        url = createRequestURL(url, backendPort, "exampleCommands");
+        exampleCommandsUrl = createRequestURL(url, backendPort, "exampleCommands");
         // send GET request with data and show response on page
-        $.get(url, function(data) {
+        $.get(exampleCommandsUrl, function(data) {
             var exampleCommandsRenderer = new ExampleCommandsRenderer(data);
             exampleCommandsRenderer.renderCommands();
+        });
+        
+        HistoryUrl = createRequestURL(url, backendPort, "history");
+        // send GET request with data and show response on page
+        $.get(HistoryUrl, function(data) {
+            var historyRenderer = new HistoryRenderer(data);
+            historyRenderer.render();
         });
     });
 

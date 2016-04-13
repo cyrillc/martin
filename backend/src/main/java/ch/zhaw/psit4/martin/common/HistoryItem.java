@@ -14,7 +14,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-
 /**
  * A HistoryItem is used to keep track of the Requests sent to Martin and the
  * relative Responses.
@@ -24,8 +23,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "historyItem")
 public class HistoryItem {
-    
-    public HistoryItem(){}
+
+    public HistoryItem() {}
 
     @Id
     @Column(name = "id")
@@ -37,11 +36,11 @@ public class HistoryItem {
     private Timestamp date;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="request")
+    @JoinColumn(name = "request")
     private Request request;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="response")
+    @JoinColumn(name = "response")
     private Response response;
 
     public HistoryItem(Request request, Response response) {
@@ -76,5 +75,21 @@ public class HistoryItem {
 
     public void setResponse(Response response) {
         this.response = response;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!HistoryItem.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        final HistoryItem item = (HistoryItem) obj;
+        if (this.id != item.id || this.request.equals(item.getRequest())
+                || this.response.equals(item.getResponse())) {
+            return false;
+        }
+        return true;
     }
 }
