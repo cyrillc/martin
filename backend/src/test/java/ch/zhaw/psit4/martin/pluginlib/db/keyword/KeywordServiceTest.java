@@ -3,7 +3,8 @@ package ch.zhaw.psit4.martin.pluginlib.db.keyword;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
+
+import com.mysql.jdbc.AssertionFailedException;
 
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 
@@ -37,10 +38,17 @@ public class KeywordServiceTest {
         log = LogFactory.getLog(KeywordServiceTest.class);        
     }
     
+//    @After
+//    public void tearDown() {
+//        liquibase.destroyDatabase();
+//    }
+    
     @Test
     public void testListKeywords() throws Exception {
         List<Keyword> keywords = keywordService.listKeywords();
+        keywords.stream().forEach(keyword -> log.info(keyword.getId()+", "+keyword.getKeyword()));
         assertEquals(false,keywords.isEmpty());
+        assertEquals(6,keywords.size());
     }
     
     @Test
@@ -48,20 +56,40 @@ public class KeywordServiceTest {
         Keyword newWord = new Keyword();
         newWord.setKeyword("Hallo Welt");
         keywordService.addKeyword(newWord);
+        String word = keywordService.getKeywordById(7).getKeyword();
+        assertEquals("Hallo Welt", word);
+        keywordService.removeKeyword(7);
     }
 
-    /*
 
     @Test
     public void testGetKeywordById() throws Exception {
+        assertEquals("weather", keywordService.getKeywordById(1).getKeyword());
+        assertEquals(1, keywordService.getKeywordById(1).getId());
+        assertEquals("Sunday", keywordService.getKeywordById(6).getKeyword());
+        
+        assertEquals(null, keywordService.getKeywordById(10));
     }
 
     @Test
     public void testUpdateKeyword() throws Exception {
+        Keyword toChange = keywordService.getKeywordById(3);
+        toChange.setKeyword("there");
+        keywordService.updateKeyword(toChange);
+        assertEquals("there", keywordService.getKeywordById(3).getKeyword());
     }
 
     @Test
     public void testRemoveKeyword() throws Exception {
+        //remove 2 & 6
+        keywordService.removeKeyword(2);
+        keywordService.removeKeyword(6);
+        
+        //check
+        List<Keyword> keywords = keywordService.listKeywords();
+        keywords.stream().forEach(keyword -> log.info(keyword.getId()+", "+keyword.getKeyword()));
+        assertEquals(4, keywords.size());
+        assertEquals(null, keywordService.getKeywordById(6));
+        
     }
-*/
 }
