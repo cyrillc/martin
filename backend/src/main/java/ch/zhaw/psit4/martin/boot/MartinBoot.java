@@ -25,10 +25,10 @@ public class MartinBoot {
      */
     private static IPluginLibrary library;
 
-     /**
+    /**
      * The application context
      */
-    public static ApplicationContext context;
+    private static ApplicationContext context;
 
     /**
      * Main application entry point launches MArtIn and used components.
@@ -44,7 +44,7 @@ public class MartinBoot {
         // boot Spring
         SpringApplication.run(MartinBoot.class, args);
     }
-    
+
     /**
      * Creates the applicationcontext and inserts custom objects.
      */
@@ -53,7 +53,22 @@ public class MartinBoot {
         mockContext.getBeanFactory().registerSingleton("IPluginLibrary",
                 library);
         mockContext.refresh();
-        context = new ClassPathXmlApplicationContext(
-                new String[] {"Beans.xml"}, mockContext);
+        setContext(new ClassPathXmlApplicationContext(
+                new String[] { "Beans.xml" }, mockContext));
+    }
+
+    /**
+     * @return the context
+     */
+    public static ApplicationContext getContext() {
+        return context;
+    }
+
+    /**
+     * @param context
+     *            the context to set
+     */
+    public static void setContext(ApplicationContext context) {
+        MartinBoot.context = context;
     }
 }

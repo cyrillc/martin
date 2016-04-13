@@ -42,7 +42,7 @@ public class FrontendController {
     public Response launchCommand(
             @RequestParam(value = "command") String command) {
         Request request = new Request(command);
-        AIControllerFacade aiController = (AIControllerFacade) MartinBoot.context.getBean("AIControllerFacade");
+        AIControllerFacade aiController = (AIControllerFacade) MartinBoot.getContext().getBean("AIControllerFacade");
         Response response = aiController.elaborateRequest(request);
         return response;
     }
@@ -60,7 +60,7 @@ public class FrontendController {
     @RequestMapping("/exampleCommands")
     public List<ExampleCall> sendExampleCommands() {
 
-        AIControllerFacade aiController = (AIControllerFacade) MartinBoot.context.getBean("AIControllerFacade");
+        AIControllerFacade aiController = (AIControllerFacade) MartinBoot.getContext().getBean("AIControllerFacade");
         return aiController.getExampleCalls();
 
     }
@@ -73,7 +73,7 @@ public class FrontendController {
             "http://srv-lab-t-825:4141","http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/history")
     public List<HistoryItem> getHistory() {
-        AIControllerFacade aiController = (AIControllerFacade) MartinBoot.context.getBean("AIControllerFacade");
+        AIControllerFacade aiController = (AIControllerFacade) MartinBoot.getContext().getBean("AIControllerFacade");
         return aiController.getHistory();
     }
 }
