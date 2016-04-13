@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,11 +36,6 @@ public class KeywordServiceTest {
     	liquibase.createDatabase("database/unit-tests/keywordTest/db.keywordUnitTest-1.0.xml");
         log = LogFactory.getLog(KeywordServiceTest.class);        
     }
-    
-//    @After
-//    public void tearDown() {
-//        liquibase.destroyDatabase();
-//    }
     
     @Test
     public void testListKeywords() throws Exception {
