@@ -44,7 +44,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * Path to folder where plugins reside (either zipped, or unpacked as a
      * simple folder)
      */
-    public static final String[] PLUGINS_REPOSITORY = {"/var/lib/jenkins/workspace/MArtIn/plugins", "classpath:../plugins", "classpath:./plugins", "./plugins", "../plugins"};
+    public static final String[] PLUGINS_REPOSITORY = {"/var/lib/jenkins/jobs/MArtIn/workspace/backend/plugins", "/var/lib/jenkins/workspace/MArtIn/plugins", "classpath:../plugins", "classpath:./plugins", "./plugins", "../plugins"};
     /**
      * File name of the plugin keywords JSON.
      */
