@@ -70,6 +70,7 @@ public class AIControllerFacade {
                     .addHistoryItem(new HistoryItem(request, response));
             return response;
         } catch (Exception e) {
+        	LOG.info(e.getMessage());
             Response response = new Response("Sorry, I can't understand you.");
             historyItemService
                     .addHistoryItem(new HistoryItem(request, response));
