@@ -46,7 +46,7 @@ public class Author {
     @Column(name = "email")
     private String email;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="author")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="author")
     private Set<Plugin> plugins;
     
    public Author() {}

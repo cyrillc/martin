@@ -37,7 +37,7 @@ public class ParameterServiceTest {
         List<Parameter> parameter = parameterService.listParameters();
         parameter.stream().forEach(param -> printParam(param));
         assertEquals(false,parameter.isEmpty());
-        assertEquals(6,parameter.size());
+        assertEquals(4,parameter.size());
 
     }
 

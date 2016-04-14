@@ -44,14 +44,14 @@ public class Parameter {
     @Column(name = "type")
     private String type;
     
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "parameter_has_keyword", joinColumns = { 
             @JoinColumn(name = "parameter_id", nullable = false, updatable = false) }, 
             inverseJoinColumns = { @JoinColumn(name = "keyword_id", 
                     nullable = false, updatable = false) })
     private Set<Keyword> parameterKeywords;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "function_id", nullable = false)
     private Function function;
 

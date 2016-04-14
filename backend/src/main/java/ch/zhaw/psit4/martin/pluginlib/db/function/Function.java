@@ -46,18 +46,18 @@ public class Function {
     @Column(name = "description")
     private String description;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "function")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "function")
     private Set<Parameter> parameter;
     
     
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "function_has_keyword", joinColumns = { 
             @JoinColumn(name = "function_id", nullable = false, updatable = false) }, 
             inverseJoinColumns = { @JoinColumn(name = "keyword_id", 
                     nullable = false, updatable = false) })
     private Set<Keyword> functionKeywords;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "plugin_id", nullable = false)
     private Plugin plugin;
 

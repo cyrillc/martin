@@ -13,6 +13,11 @@
     <!-- Load test-data into table keyword -->
     <changeSet author="camenfa1" id="parameter-unitTest-1">
         <loadData tableName="keyword" relativeToChangelogFile="true" file="keyword.csv" />
+        <loadData tableName="option" relativeToChangelogFile="true" file="option.csv" />
+        <loadData tableName="author" relativeToChangelogFile="true" file="author.csv" />
+        <loadData tableName="plugin" relativeToChangelogFile="true" file="plugin.csv" />
+        <loadData tableName="function" relativeToChangelogFile="true" file="function.csv" />
+        <loadData tableName="function_has_keyword" relativeToChangelogFile="true" file="function_has_keyword.csv" />
         <loadData tableName="parameter" relativeToChangelogFile="true" file="parameter.csv" />
         <loadData tableName="parameter_has_keyword" relativeToChangelogFile="true" file="parameter_has_keyword.csv" />
     </changeSet>

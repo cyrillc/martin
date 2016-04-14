@@ -98,7 +98,7 @@
 
     <!-- Table options -->
     <changeSet author="fleppsim" id="schema-1.0.6">
-        <createTable tableName="options">
+        <createTable tableName="option">
             <column autoIncrement="true" name="option_id" type="INT">
                 <constraints primaryKey="true"/>
             </column>
@@ -289,7 +289,7 @@
         <addForeignKeyConstraint baseColumnNames="parameter_id" baseTableName="parameter_has_keyword" constraintName="fk_parameter_has_keyword_parameter1" deferrable="false" initiallyDeferred="false" referencedColumnNames="parameter_id" referencedTableName="parameter"/>
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.37">
-        <addForeignKeyConstraint baseColumnNames="option_id" baseTableName="parameter" constraintName="fk_parameter_option1" deferrable="false" initiallyDeferred="false" referencedColumnNames="option_id" referencedTableName="options"/>
+        <addForeignKeyConstraint baseColumnNames="option_id" baseTableName="parameter" constraintName="fk_parameter_option1" deferrable="false" initiallyDeferred="false" referencedColumnNames="option_id" referencedTableName="option"/>
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.38">
         <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="plugin" constraintName="fk_plugin_author" deferrable="false" initiallyDeferred="false" referencedColumnNames="author_id" referencedTableName="author"/>

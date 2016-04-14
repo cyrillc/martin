@@ -1,5 +1,6 @@
 package ch.zhaw.psit4.martin.pluginlib.db.plugin;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Set;
 
@@ -49,14 +50,14 @@ public class Plugin {
     private String description;
     
     @Column(name = "date")
-    private Timestamp date;
+    private Date date;
     
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "plugin")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plugin")
     private Set<Function> functions;
     
     
