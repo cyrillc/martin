@@ -3,6 +3,7 @@ package ch.zhaw.psit4.martin.pluginlib;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.java.plugin.registry.Extension;
 import org.java.plugin.registry.ExtensionPoint;
 import org.java.plugin.registry.PluginDescriptor;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.java.plugin.registry.Extension.Parameter;
 
 import ch.zhaw.psit4.martin.api.Feature;
@@ -24,7 +26,6 @@ import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
 import ch.zhaw.psit4.martin.api.util.Pair;
 
-import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.Call;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
@@ -43,7 +44,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * Path to folder where plugins reside (either zipped, or unpacked as a
      * simple folder)
      */
-    public static final String PLUGINS_REPOSITORY = "../plugins";
+    public static final String[] PLUGINS_REPOSITORY = {"../plugins", "./plugins"};
     /**
      * File name of the plugin keywords JSON.
      */
@@ -60,6 +61,12 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * Log from the common logging api
      */
     private static final Log LOG = LogFactory.getLog(PluginLibrary.class);
+    
+    @Autowired
+    private MartinContextAccessor martinContextAccessor;
+    
+    @Autowired
+    private ExampleCallService exampleCallService;
 
     /*
      * (non-Javadoc)
@@ -112,8 +119,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
         // if service exists, execute call
         if (service != null) {
-            service.init((MartinContextAccessor) MartinBoot.getContext()
-                    .getBean("MartinContextAccessor"), featureID, 0);
+            service.init(martinContextAccessor, featureID, 0);
 
             Response response = new Response(executeCall(call, 0));
             return response;
@@ -133,7 +139,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      *         feature ID
      */
     public List<Pair<String, String>> queryFunctionsByKeyword(String keyword) {
-        return null;
+        return new ArrayList<Pair<String, String>>();
     }
 
     /**
@@ -150,7 +156,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     public Map<String, String> queryFunctionArguments(String plugin,
             String feature) {
-        return null;
+        return new HashMap<String, String>();
     }
 
     /**
@@ -162,8 +168,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public List<ExampleCall> getExampleCalls() {
-        ExampleCallService exampleCallService = (ExampleCallService) MartinBoot
-                .getContext().getBean("exampleCallService");
         return exampleCallService.listExampleCalls();
     }
 
@@ -275,9 +279,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @return The return value as string.
      */
     private String executeCall(Call call, long requestID) {
-        MartinContextAccessor context = (MartinContextAccessor) MartinBoot.getContext()
-                .getBean("MartinContextAccessor");
-        Feature feature = context.fetchWorkItem(requestID);
+        Feature feature = martinContextAccessor.fetchWorkItem(requestID);
         String ret = "";
         while (feature != null) {
             try {
@@ -305,7 +307,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             }
 
             ret += "\n";
-            feature = context.fetchWorkItem(requestID);
+            feature = martinContextAccessor.fetchWorkItem(requestID);
         }
 
         return ret;

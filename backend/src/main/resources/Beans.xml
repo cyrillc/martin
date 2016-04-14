@@ -6,7 +6,6 @@
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
-
 	<!-- SAMPLE BEAN <bean id="helloWorld" class="com.tutorialspoint.HelloWorld">
 		<property name="message" value="Hello World!"/> </bean> -->
 
@@ -60,13 +59,17 @@
 
 
 	<!-- package Frontend -->
-	<bean id="FrontendController" class="ch.zhaw.psit4.martin.frontend.FrontendController">
+	<bean id="FrontendController" class="ch.zhaw.psit4.martin.frontend.FrontendController" scope="singleton">
 	</bean>
 
 
 	<!-- package pluginlib -->
 	<bean id="MartinContextAccessor" class="ch.zhaw.psit4.martin.pluginlib.MartinContextAccessor" scope="singleton">
 	</bean>
+
+	<bean id="PluginLibraryBootstrap" class="ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap" scope="singleton"/>
+
+	<bean id="IPluginLibrary" factory-bean="PluginLibraryBootstrap" factory-method="boot" class="ch.zhaw.psit4.martin.pluginlib.IPluginLibrary" scope="singleton"/>
 
 	<!-- package requestProcessor -->
 	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestProcessor.RequestProcessor" scope="singleton">

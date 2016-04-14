@@ -1,7 +1,6 @@
 package ch.zhaw.psit4.martin.common;
 
 import java.sql.Connection;
-import java.sql.Statement;
 
 import javax.sql.DataSource;
 

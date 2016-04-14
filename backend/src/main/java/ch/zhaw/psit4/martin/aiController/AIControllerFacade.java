@@ -6,14 +6,13 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
 import ch.zhaw.psit4.martin.common.service.HistoryItemService;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
-import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.HistoryItem;
 import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
@@ -28,6 +27,15 @@ import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
  */
 public class AIControllerFacade {
     private static final Log LOG = LogFactory.getLog(AIControllerFacade.class);
+    
+    @Autowired
+    private IPluginLibrary library;
+    
+    @Autowired
+    private HistoryItemService historyItemService;
+    
+    @Autowired
+    private RequestProcessor requestProcessor;
 
     @PostConstruct
     public void postAIControllerFacade() {
@@ -43,9 +51,6 @@ public class AIControllerFacade {
      */
 
     public List<ExampleCall> getExampleCalls() {
-
-        IPluginLibrary library = (IPluginLibrary) MartinBoot.getContext()
-                .getBean("IPluginLibrary");
         return library.getExampleCalls();
     }
 
@@ -58,20 +63,13 @@ public class AIControllerFacade {
      * @return the response of the AI.
      */
     public Response elaborateRequest(Request request) {
-        HistoryItemService historyItemService = (HistoryItemService) MartinBoot
-                .getContext().getBean("historyItemService");
-        try {
-            IPluginLibrary lib = (IPluginLibrary) MartinBoot.getContext()
-                    .getBean("IPluginLibrary");
-            RequestProcessor requestProcessor = (RequestProcessor) MartinBoot
-                    .getContext().getBean("RequestProcessor");
+        try { 
             ExtendedRequest extendedRequest = requestProcessor.extend(request);
-            Response response = lib.executeRequest(extendedRequest);
+            Response response = library.executeRequest(extendedRequest);
             historyItemService
                     .addHistoryItem(new HistoryItem(request, response));
             return response;
         } catch (Exception e) {
-            LOG.error("An error occured at elaborateRequest()", e);
             Response response = new Response("Sorry, I can't understand you.");
             historyItemService
                     .addHistoryItem(new HistoryItem(request, response));
@@ -84,8 +82,6 @@ public class AIControllerFacade {
      * @return all the history of requests with the relative responses
      */
     public List<HistoryItem> getHistory() {
-        HistoryItemService historyItemService = (HistoryItemService) MartinBoot
-                .getContext().getBean("historyItemService");
         return historyItemService.getHistory();
     }
 }

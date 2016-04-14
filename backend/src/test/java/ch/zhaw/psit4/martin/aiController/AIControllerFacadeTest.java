@@ -9,13 +9,13 @@ import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.HistoryItem;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
@@ -29,11 +29,16 @@ import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
 public class AIControllerFacadeTest {
 	
+	@Mock
     private HistoryItemService historyItemServiceMock;
+	
+	@Mock
     private RequestProcessor requestProcessorMock;
+    
+    @Mock
     private IPluginLibrary pluginLibraryMock;
 
-    @Autowired
+    @InjectMocks
     private AIControllerFacade aiController;
     
     @Autowired
@@ -43,22 +48,7 @@ public class AIControllerFacadeTest {
     public void setUp() {
     	liquibase.createDatabase("database/db.changeset-schema-latest.xml");
     	
-        historyItemServiceMock = Mockito.mock(HistoryItemService.class);
-        requestProcessorMock = Mockito.mock(RequestProcessor.class);
-        pluginLibraryMock = Mockito.mock(IPluginLibrary.class);
-        
-        GenericApplicationContext mockContext = new GenericApplicationContext();
-        
-        mockContext.getBeanFactory().registerSingleton("historyItemService",
-                historyItemServiceMock);
-        mockContext.getBeanFactory().registerSingleton("RequestProcessor",
-                requestProcessorMock);
-        mockContext.getBeanFactory().registerSingleton("IPluginLibrary",
-                pluginLibraryMock);
-        
-        mockContext.refresh();
-        MartinBoot.setContext(mockContext);
-    
+    	MockitoAnnotations.initMocks(this);
     }
 
     @Test
