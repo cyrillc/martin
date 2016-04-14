@@ -93,4 +93,10 @@ public class HistoryItem {
         }
         return true;
     }
+
+    @Override
+    public int hashCode() {
+        return this.id + this.getDate().hashCode()
+                * this.getRequest().hashCode() * this.getResponse().hashCode();
+    }
 }
