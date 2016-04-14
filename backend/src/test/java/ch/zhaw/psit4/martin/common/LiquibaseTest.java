@@ -60,7 +60,7 @@ public class LiquibaseTest {
 			assertTrue(tables.contains("FUNCTION_HAS_KEYWORD"));
 			assertTrue(tables.contains("HISTORYITEM"));
 			assertTrue(tables.contains("KEYWORD"));
-			assertTrue(tables.contains("OPTIONS"));
+			assertTrue(tables.contains("OPTION"));
 			assertTrue(tables.contains("PARAMETER"));
 			assertTrue(tables.contains("PARAMETER_HAS_KEYWORD"));
 			assertTrue(tables.contains("PLUGIN"));
