@@ -3,8 +3,13 @@
  */
 package ch.zhaw.psit4.martin.pluginlib;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.Iterator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.aspectj.weaver.Iterators;
 import org.java.plugin.ObjectFactory;
 import org.java.plugin.PluginManager;
 import org.java.plugin.PluginManager.PluginLocation;
@@ -32,10 +37,19 @@ public class PluginLibraryBootstrap {
                 .createManager();
         final DefaultPluginsCollector collector = new DefaultPluginsCollector();
         final ExtendedProperties props = new ExtendedProperties();
-
+        
+        
+        File file = new File(".");
+        for(String path : PluginLibrary.PLUGINS_REPOSITORY){
+        	if((new File(path)).isDirectory()){
+        		file = new File(path);
+        	}
+        }
+     
+       
+       
         // prepare configuration
-        props.setProperty("org.java.plugin.boot.pluginsRepositories",
-                PluginLibrary.PLUGINS_REPOSITORY);
+        props.setProperty("org.java.plugin.boot.pluginsRepositories",file.getPath());
 
         // try to initialize the library
         IPluginLibrary lib;

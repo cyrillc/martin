@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
-import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.HistoryItem;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import ch.zhaw.psit4.martin.pluginlib.db.*;
@@ -26,6 +26,9 @@ import ch.zhaw.psit4.martin.pluginlib.db.*;
  */
 @RestController
 public class FrontendController {
+	
+	@Autowired
+	private AIControllerFacade aiController;
 
     /**
      * Returns the answer to a command to the Frontend. When a request to the
@@ -42,7 +45,6 @@ public class FrontendController {
     public Response launchCommand(
             @RequestParam(value = "command") String command) {
         Request request = new Request(command);
-        AIControllerFacade aiController = (AIControllerFacade) MartinBoot.getContext().getBean("AIControllerFacade");
         Response response = aiController.elaborateRequest(request);
         return response;
     }
@@ -59,10 +61,7 @@ public class FrontendController {
             "http://srv-lab-t-825:4141","http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/exampleCommands")
     public List<ExampleCall> sendExampleCommands() {
-
-        AIControllerFacade aiController = (AIControllerFacade) MartinBoot.getContext().getBean("AIControllerFacade");
         return aiController.getExampleCalls();
-
     }
     
     /**
@@ -73,7 +72,6 @@ public class FrontendController {
             "http://srv-lab-t-825:4141","http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/history")
     public List<HistoryItem> getHistory() {
-        AIControllerFacade aiController = (AIControllerFacade) MartinBoot.getContext().getBean("AIControllerFacade");
         return aiController.getHistory();
     }
 }

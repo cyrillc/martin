@@ -9,11 +9,11 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.api.types.IMartinType;
 import ch.zhaw.psit4.martin.api.types.*;
 import ch.zhaw.psit4.martin.api.util.Pair;
-import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Request;
@@ -27,6 +27,9 @@ import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
  * @version 0.1
  **/
 public class RequestProcessor implements IRequestProcessor {
+	
+	@Autowired
+	private IPluginLibrary library;
 
     private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
 
@@ -42,8 +45,6 @@ public class RequestProcessor implements IRequestProcessor {
         Map<String, Pair<String, String>> featureList = new HashMap<String, Pair<String, String>>();
         Map<String, Integer> featureCount = new HashMap<String, Integer>();
         List<Pair<String, String>> queryResult = new ArrayList<Pair<String, String>>();
-        IPluginLibrary library = (IPluginLibrary) MartinBoot.getContext()
-                .getBean("IPluginLibrary");
 
         // Get features by keywords and count them
         for (String keyword : keywords) {
@@ -124,9 +125,6 @@ public class RequestProcessor implements IRequestProcessor {
      */
     @Override
     public ExtendedRequest extend(Request request) throws Exception {
-        IPluginLibrary library = (IPluginLibrary) MartinBoot.getContext()
-                .getBean("IPluginLibrary");
-
         ExtendedRequest extendedRequest = new ExtendedRequest();
         extendedRequest.setInput(request);
 
