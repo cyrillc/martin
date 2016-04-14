@@ -6,8 +6,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.ApplicationContext;
 
 /**
- * Entry point for the application to bootstrap jpf, SPRING and invoke
- * <code>ModuleLibraryBootstrap.boot()</code>.
+ * Entry point for the application to bootstrap jpf, SPRING 
  *
  * @version 0.0.1-SNAPSHOT
  */
