@@ -89,7 +89,6 @@ public class AIControllerFacadeTest {
         when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);
         aiController.elaborateRequest(request);
         verify(historyItemServiceMock).addHistoryItem(historyItem);
-        
     }
 
 }

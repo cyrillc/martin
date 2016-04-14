@@ -11,8 +11,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "response")
 public class Response {
-    
-    public Response(){}
+
+    public Response() {}
 
     @Id
     @Column(name = "response_id")
@@ -22,7 +22,7 @@ public class Response {
     @Column(name = "responsetext")
     @NotNull
     private String content;
-    
+
     public int getId() {
         return this.id;
     }
@@ -34,13 +34,13 @@ public class Response {
     public String getContent() {
         return content;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }
-        if (!HistoryItem.class.isAssignableFrom(obj.getClass())) {
+        if (!(obj instanceof Response)) {
             return false;
         }
         final Response r = (Response) obj;
@@ -49,5 +49,10 @@ public class Response {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id * this.getContent().hashCode();
     }
 }

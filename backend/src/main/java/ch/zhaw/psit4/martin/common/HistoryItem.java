@@ -82,12 +82,13 @@ public class HistoryItem {
         if (obj == null) {
             return false;
         }
-        if (!HistoryItem.class.isAssignableFrom(obj.getClass())) {
+        if (!(obj instanceof HistoryItem)) {
             return false;
         }
         final HistoryItem item = (HistoryItem) obj;
-        if (this.id != item.id || this.request.equals(item.getRequest())
-                || this.response.equals(item.getResponse())) {
+        if (this.id != item.id || this.getDate().equals(item.getDate())
+                || !this.request.equals(item.getRequest())
+                || !this.response.equals(item.getResponse())) {
             return false;
         }
         return true;

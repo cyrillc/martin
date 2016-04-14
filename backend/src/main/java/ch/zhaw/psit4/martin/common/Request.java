@@ -44,7 +44,7 @@ public class Request {
         if (obj == null) {
             return false;
         }
-        if (!HistoryItem.class.isAssignableFrom(obj.getClass())) {
+        if (!(obj instanceof Request)) {
             return false;
         }
         final Request r = (Request) obj;
@@ -53,5 +53,10 @@ public class Request {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) this.id * this.getCommand().hashCode();
     }
 }
