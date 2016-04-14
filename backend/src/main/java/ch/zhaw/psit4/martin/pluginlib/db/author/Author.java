@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.ManyToAny;
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
 import ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword;
+import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
 
 /**
  * Contains a Paramter for a Plugin Function. The class
@@ -43,6 +45,9 @@ public class Author {
     
     @Column(name = "email")
     private String email;
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="author")
+    private Set<Plugin> plugins;
     
    public Author() {}
 

@@ -58,7 +58,7 @@ public class Function {
     private Set<Keyword> functionKeywords;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "plugin_id", nullable = false)
+    @JoinColumn(name = "plugin_id", nullable = false)
     private Plugin plugin;
 
     public Function() {}

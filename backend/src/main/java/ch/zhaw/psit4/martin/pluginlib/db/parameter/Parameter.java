@@ -52,7 +52,7 @@ public class Parameter {
     private Set<Keyword> parameterKeywords;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "function_id", nullable = false)
+    @JoinColumn(name = "function_id", nullable = false)
     private Function function;
 
     public Parameter() {}

@@ -53,10 +53,10 @@ public class Plugin {
     
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "function")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "plugin")
     private Set<Function> functions;
     
     
