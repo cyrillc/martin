@@ -12,5 +12,8 @@
     <mapping class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCall"/>
     <mapping class="ch.zhaw.psit4.martin.pluginlib.db.parameter.Parameter"/>
     <mapping class="ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword"/>
+    <mapping class="ch.zhaw.psit4.martin.pluginlib.db.function.Function"/>
+    <mapping class="ch.zhaw.psit4.martin.pluginlib.db.author.Author"/>
+    <mapping class="ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin"/>
   </session-factory>
 </hibernate-configuration>
