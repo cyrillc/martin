@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 1.0" "http://jpf.sourceforge.net/plugin_1_0.dtd">
 <!-- DTD available under MArtIn\distributable\plugin.dtd -->
-<plugin id="ch.zhaw.psit4.martin.api" version="0.0.1" class="ch.zhaw.psit4.martin.modulelib.PluginLibrary">
+<plugin id="ch.zhaw.psit4.martin.api" version="0.0.1" class="ch.zhaw.psit4.martin.pluginlib.PluginLibrary">
  
 	<runtime>
 		<library id="core" path="/" type="code">
@@ -18,8 +18,6 @@
 		<parameter-def id="class" />
 		<!-- Optional extension point declarations follow here -->
 		<parameter-def id="name" />
-		<parameter-def id="arguments" />
-		<parameter-def id="argument-types" />
 		<parameter-def id="description" multiplicity="none-or-one" />
 		<parameter-def id="author" multiplicity="none-or-one" />
 		<parameter-def id="e-mail" multiplicity="none-or-one" />

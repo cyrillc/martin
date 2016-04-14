@@ -11,6 +11,7 @@
 				<doc-ref path="doc/index.html" caption="javadoc" />
 			</doc>
 		</library>
+		<library type="resources" path="res/" id="resources" />
 	</runtime>
  
 	<extension plugin-id="ch.zhaw.psit4.martin.api" point-id="PluginService"
@@ -18,8 +19,6 @@
 		<parameter id="class"
 			value="ch.zhaw.psit4.martin.testplugin.TestPlugin" />
 		<parameter id="name" value="Test Plugin" />
-		<parameter id="arguments" value="value" />
-		<parameter id="argument-types" value="Integer" />
 		<parameter id="description"
 			value="A plugin to test the pPlugin system." />
 		<parameter id="author" value="Daniel Fabian" />

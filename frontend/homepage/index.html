@@ -13,6 +13,7 @@
 
     <!-- Custom CSS -->
     <link href="css/scrolling-nav.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
 
 </head>
 
@@ -81,6 +82,9 @@
                 <div class="col-lg-12">
                     <h1>Possible Commands</h1>
                 </div>
+                <div id = "possibleCommandsContainer" class="col-lg-offset-3 col-lg-6">
+                    <p id = "possibleCommands"></p>
+                </div>
             </div>
         </div>
     </section>
@@ -92,6 +96,15 @@
                 <div class="col-lg-12">
                     <h1>History</h1>
                 </div>
+                <table id = "historyItems" class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Request</th>
+                            <th>Response</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </section>
@@ -110,7 +123,9 @@
     <script src="js/scrolling-nav.js"></script>
 
     <!-- MArtIn Application -->
-    <script src="js/martin.js"></script>
+    <script src="js/martin_setup.js"></script>
+    <script src="js/example_commands.js"></script>
+    <script src="js/history.js"></script>
 
 
 </body>

@@ -41,7 +41,7 @@
     <groupId>ch.zhaw.psit4.martin</groupId>
     <artifactId>martin-backend</artifactId>
   </rootModule>
-  <goals>clean install</goals>
+  <goals>liquibase:dropAll liquibase:update clean install</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <ignoreUpstremChanges>false</ignoreUpstremChanges>
@@ -76,7 +76,7 @@
   </prebuilders>
   <postbuilders>
     <hudson.tasks.Shell>
-      <command>sudo start martinbackend || echo &apos;Failed to start the Service - Contact your Sysadmin&apos;</command>
+      <command>sudo start martinbackend</command>
     </hudson.tasks.Shell>
   </postbuilders>
   <runPostStepsIfResult>

@@ -1,24 +1,77 @@
 package ch.zhaw.psit4.martin.frontend;
 
+
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
+import ch.zhaw.psit4.martin.common.HistoryItem;
+import ch.zhaw.psit4.martin.common.Request;
+import ch.zhaw.psit4.martin.common.Response;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-@RestController
-public class FrontendController implements IFrontendController {
+import ch.zhaw.psit4.martin.pluginlib.db.*;
 
-    
-    /*
-     * Start the module and initially gather all plugins.
+/**
+ * This class connect the Frontend with the AI using REST.
+ *
+ * @version 0.0.1-SNAPSHOT
+ *
+ */
+@RestController
+public class FrontendController {
+	
+	@Autowired
+	private AIControllerFacade aiController;
+
+    /**
+     * Returns the answer to a command to the Frontend. When a request to the
+     * API at /command comes in, the method
+     * querys the AI controller to get an answer for the command. It then
+     * returns that answer to the origin of the request.
+     *
+     * @param command
+     * @return the response of the AI
      */
-    public void start() {
-        // TODO: initialize
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @RequestMapping("/command")
+    public Response launchCommand(
+            @RequestParam(value = "command") String command) {
+        Request request = new Request(command);
+        Response response = aiController.elaborateRequest(request);
+        return response;
     }
 
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141","http://srv-lab-t-825.zhaw.ch:4141"})
-    @RequestMapping("/command")
-    public Command greeting(@RequestParam(value="command") String command) {
-        return new Command("Command: '" + command + "' received!");
+    /**
+     * Returns a list of example commands to the frontend. When a request to the
+     * API at /exampleCommands comes in (usually on page load), the method
+     * querys the AI controller to get a list of possible commands. It then
+     * returns that list to the origin of the request.
+     *
+     * @return A list of possible commands
+     */
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141","http://srv-lab-t-825.zhaw.ch:4141" })
+    @RequestMapping("/exampleCommands")
+    public List<ExampleCall> sendExampleCommands() {
+        return aiController.getExampleCalls();
+    }
+    
+    /**
+     * 
+     * @return A list of HistoryItems, with all user Requests and relative Responses.
+     */
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141","http://srv-lab-t-825.zhaw.ch:4141" })
+    @RequestMapping("/history")
+    public List<HistoryItem> getHistory() {
+        return aiController.getHistory();
     }
 }
