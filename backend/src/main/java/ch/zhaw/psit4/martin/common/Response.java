@@ -53,6 +53,6 @@ public class Response {
 
     @Override
     public int hashCode() {
-        return this.id * this.getContent().hashCode();
+        return this.id + this.getContent().hashCode();
     }
 }
