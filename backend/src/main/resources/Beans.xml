@@ -39,6 +39,13 @@
         <property name="keywordDao" ref="keywordDao"></property>
     </bean>
   
+    <bean id="parameterDao" class="ch.zhaw.psit4.martin.pluginlib.db.parameter.ParameterDao">
+        <property name="sessionFactory" ref="HibernateSessionFactory" />
+    </bean>
+    <bean id="parameterService" class="ch.zhaw.psit4.martin.pluginlib.db.parameter.ParameterService">
+        <property name="parameterDao" ref="parameterDao"></property>
+    </bean>
+
   	<!--  History Tables -->
     <bean id="historyItemDao" class="ch.zhaw.psit4.martin.common.dao.HistoryItemDAO">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
