@@ -12,12 +12,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.ManyToAny;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
+import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
 import ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword;
 
 /**
@@ -48,6 +50,10 @@ public class Parameter {
             inverseJoinColumns = { @JoinColumn(name = "keyword_id", 
                     nullable = false, updatable = false) })
     private Set<Keyword> parameterKeywords;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "function_id", nullable = false)
+    private Function function;
 
     public Parameter() {}
 
@@ -81,6 +87,14 @@ public class Parameter {
 
     public Set<Keyword> getKeywords(){
         return this.parameterKeywords;
+    }
+    
+    public Function getFunction(){
+        return this.function;
+    }
+    
+    public void setFunction(Function function){
+        this.function = function;
     }
 
 }
