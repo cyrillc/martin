@@ -41,21 +41,10 @@ public class Author {
     @Column(name = "name")
     private String name;
     
-    @Column(name = "type")
-    private String type;
+    @Column(name = "email")
+    private String email;
     
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "author_has_keyword", joinColumns = { 
-            @JoinColumn(name = "author_id", nullable = false, updatable = false) }, 
-            inverseJoinColumns = { @JoinColumn(name = "keyword_id", 
-                    nullable = false, updatable = false) })
-    private Set<Keyword> authorKeywords;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "function_id", nullable = false)
-    private Function function;
-
-    public Author() {}
+   public Author() {}
 
     public Author(int id) {
         this.setId(id);
@@ -77,24 +66,13 @@ public class Author {
         return name;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getType() {
-        return type;
+    public String getEmail() {
+        return email;
     }
 
-    public Set<Keyword> getKeywords(){
-        return this.authorKeywords;
-    }
-    
-    public Function getFunction(){
-        return this.function;
-    }
-    
-    public void setFunction(Function function){
-        this.function = function;
-    }
 
 }

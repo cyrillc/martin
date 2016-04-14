@@ -36,11 +36,7 @@ public class AuthorDao {
         Session session = this.sessionFactory.getCurrentSession();
         return (Author) session.get(Author.class,id);
     }
-    
-    /**
-     * USE WITH CAUTION!!
-     * @param author
-     */
+
     public void updateAuthor(Author author) {
         Session session = this.sessionFactory.getCurrentSession();
         session.update(author);

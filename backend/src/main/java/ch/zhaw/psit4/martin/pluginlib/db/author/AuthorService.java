@@ -38,10 +38,6 @@ public class AuthorService {
        return authorDao.getById(id);
    }
 
-   /**
-    * USE WITH CAUTION!!
-    * @param author
-    */
    @Transactional
    public void updateAuthor(Author author) {
        this.authorDao.updateAuthor(author);
