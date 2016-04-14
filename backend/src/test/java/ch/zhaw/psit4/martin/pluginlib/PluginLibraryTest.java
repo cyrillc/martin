@@ -10,32 +10,30 @@ import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.api.PluginService;
-import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Response;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"classpath:Beans.xml", "classpath:Beans-unit-tests.xml"})
 public class PluginLibraryTest {
-    private PluginLibrary spyLib;
+    
     private ExtendedRequest mockedRequests[];
     private Map<String, PluginService> mockedExtensions;
     private UUID uuid;
-
+    
+    @Autowired
+    private PluginLibrary spyLib;
+ 
     @Before
-    public void setUp() {
-        // Create Mock for MartinContextAccessor
-        MartinContextAccessor context = Mockito
-                .mock(MartinContextAccessor.class);
-        GenericApplicationContext mockContext = new GenericApplicationContext();
-        mockContext.getBeanFactory().registerSingleton("MartinContextAccessor",
-                context);
-        mockContext.refresh();
-        MartinBoot.setContext(mockContext);
-
+    public void setUp() { 
         // Create request mocks
         uuid = UUID.randomUUID();
         mockedRequests = new ExtendedRequest[20];
@@ -52,6 +50,8 @@ public class PluginLibraryTest {
             Mockito.when(mockedRequests[i].getID()).thenReturn(uuid);
             Mockito.when(mockedRequests[i].getCalls()).thenReturn(calls);
         }
+        
+        
 
         // create Mocked extentions
         PluginService mockedService = Mockito.mock(PluginService.class);
@@ -59,7 +59,6 @@ public class PluginLibraryTest {
         mockedExtensions.put("TestModule", mockedService);
 
         // create library
-        spyLib = Mockito.spy(new PluginLibrary());
         spyLib.setPluginExtentions(mockedExtensions);
     }
 

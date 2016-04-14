@@ -11,27 +11,32 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.context.support.GenericApplicationContext;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.api.util.Pair;
-import ch.zhaw.psit4.martin.boot.MartinBoot;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Request;
-import ch.zhaw.psit4.martin.pluginlib.PluginLibrary;
+import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({ "classpath:Beans.xml",
+        "classpath:Beans-unit-tests.xml" })
 public class RequestProcessorTest {
-	private PluginLibrary library;
+	@Mock
+	private IPluginLibrary library;
+	
+	@InjectMocks
+	private RequestProcessor requestProcessor;
 
 	@Before
 	public void setUp() {
-	    // Create Mock for plugin library
-        library = Mockito.mock(PluginLibrary.class);
-	    GenericApplicationContext mockContext = new GenericApplicationContext();
-        mockContext.getBeanFactory().registerSingleton("IPluginLibrary",
-                library);
-        mockContext.refresh();
-        MartinBoot.setContext(mockContext);
+		MockitoAnnotations.initMocks(this);
 		
 		// Results for function queries
 		List<Pair<String, String>> result0 = new ArrayList<Pair<String, String>>();
@@ -72,8 +77,7 @@ public class RequestProcessorTest {
 
 	@Test
 	public void testExtendRequestPluginAndFeature() throws Exception {
-		RequestProcessor requestProcessor = new RequestProcessor();		
-		
+	
 		Request request0 = new Request("Weather for time tomorrow location Zürich");
 		ExtendedRequest extRequest0 = requestProcessor.extend(request0);
 		assertEquals(extRequest0.getCalls().isEmpty(), false);
