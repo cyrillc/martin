@@ -60,7 +60,7 @@ public class FrontendController {
             "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/exampleCommands")
     public List<ExampleCall> sendExampleCommands() {
-        return aiController.getExampleCalls();
+        return aiController.getRandomExampleCalls();
     }
 
     /**

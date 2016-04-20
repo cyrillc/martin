@@ -63,4 +63,13 @@ public interface IPluginLibrary {
      * @return a list of example calls
      */
     public List<ExampleCall> getExampleCalls();
+    
+    /**
+     * Returns a list of 5 randomly choosen example calls read from the plugin database. Is usually
+     * only called from the AI controller when the user first loads the MArtIn
+     * frontend.
+     * 
+     * @return a list of 5 randomly choosen example calls
+     */
+    public List<ExampleCall> getRandomExampleCalls();
 }

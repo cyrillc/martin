@@ -53,6 +53,16 @@ public class AIControllerFacade {
     public List<ExampleCall> getExampleCalls() {
         return library.getExampleCalls();
     }
+    
+    /**
+     * 
+     * @return A list of the newest History
+     *
+     * @param amount the amount of historyItems to get
+     */
+    public List<ExampleCall> getRandomExampleCalls() {
+        return library.getRandomExampleCalls();
+    }
 
     /**
      * This method respond to a request with a response. Try to understand what
