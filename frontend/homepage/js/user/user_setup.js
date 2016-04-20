@@ -37,11 +37,23 @@ var sendCommand = function () {
     var backendUrl = createRequestURL(frontendUrl, backendPort, "command");
 
     // send GET request with data and show response on page
-    $.get(backendUrl, command, function (data) {
-        $("#response").append(JSON.stringify(data) + '<br>');
+    $.get(backendUrl, command, function (response) {
+        $("#response").append(JSON.stringify(response) + '<br>');
+
+        var historyItem = {
+            date: new Date(),
+            request: command,
+            response: response
+        };
+
+        var historyRenderer = new HistoryRenderer(null);
+        historyRenderer.renderItem(historyItem);
     });
 };
 
+var addRequestToHistory = function (requestText) {
+
+};
 
 // ask the backend for example commands and history to show on the homepage after the document has loaded
 $(document).ready(function () {
@@ -62,7 +74,7 @@ $(document).ready(function () {
         // send GET request with data and show response on page
         $.get(HistoryUrl, function (receivedHistory) {
             var historyRenderer = new HistoryRenderer(receivedHistory);
-            historyRenderer.render();
+            historyRenderer.renderAll();
         });
     });
 
