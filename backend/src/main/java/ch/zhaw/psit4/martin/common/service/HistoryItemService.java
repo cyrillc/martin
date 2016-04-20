@@ -35,4 +35,15 @@ public class HistoryItemService {
     public List<HistoryItem> getHistory(){
         return this.historyItemDAO.getAll();
     }
+    
+    /**
+     * 
+     * @return A list of the newest History
+     *
+     * @param amount the amount of historyItems to get
+     */
+    @Transactional
+    public List<HistoryItem> getLimitedHistory(int amount){
+        return this.historyItemDAO.getNewsest(amount);
+    }
 }

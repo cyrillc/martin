@@ -85,4 +85,14 @@ public class AIControllerFacade {
     public List<HistoryItem> getHistory() {
         return historyItemService.getHistory();
     }
+    
+    /**
+     * 
+     * @return A list of the newest History
+     *
+     * @param amount the amount of historyItems to get
+     */
+    public List<HistoryItem> getLimitedHistory(int amount) {
+        return historyItemService.getLimitedHistory(amount);
+    }
 }

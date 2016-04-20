@@ -71,8 +71,10 @@ $(document).ready(function () {
         });
 
         HistoryUrl = createRequestURL(frontendUrl, backendPort, "history");
+        var amountOfHistoryItems = { amount: 15 };
+
         // send GET request with data and show response on page
-        $.get(HistoryUrl, function (receivedHistory) {
+        $.get(HistoryUrl,amountOfHistoryItems, function (receivedHistory) {
             var historyRenderer = new HistoryRenderer(receivedHistory);
             historyRenderer.renderAll();
         });

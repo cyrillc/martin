@@ -43,4 +43,16 @@ public class HistoryItemDAO {
         Session session = this.sessionFactory.getCurrentSession();
         return session.createQuery("from HistoryItem").list();
     }
+    
+    /**
+     * 
+     * @return a list with the newest historyItems saved
+     * 
+     * @param amount the amount of historyItems to get
+     */
+    @SuppressWarnings("unchecked")
+    public List<HistoryItem> getNewsest(int amount){
+        Session session = this.sessionFactory.getCurrentSession();
+        return session.createSQLQuery("(SELECT * FROM historyItem ORDER BY id DESC LIMIT " + amount +") ORDER BY id ASC").addEntity(HistoryItem.class).list();
+    }
 }
