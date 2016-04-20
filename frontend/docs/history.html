@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>history.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>history.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">HistoryRenderer</span>(<span class="hljs-params">history</span>)</span>{
+	<span class="hljs-keyword">this</span>.history = history;
+}
+
+HistoryRenderer.prototype.render = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+	<span class="hljs-keyword">this</span>.history.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">item</span>) </span>{
+		<span class="hljs-keyword">var</span> date = $(<span class="hljs-string">'&lt;td&gt;&lt;/td&gt;'</span>);
+		<span class="hljs-keyword">var</span> request = $(<span class="hljs-string">'&lt;td&gt;&lt;/td&gt;'</span>);
+		<span class="hljs-keyword">var</span> response = $(<span class="hljs-string">'&lt;td&gt;&lt;/td&gt;'</span>);
+		dateObj = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(item.date);
+		date.append(dateObj.getDate() + <span class="hljs-string">'.'</span> + (dateObj.getMonth() + <span class="hljs-number">1</span>) + <span class="hljs-string">'.'</span> + dateObj.getFullYear())
+		request.append(item.request.command);
+		response.append(item.response.content);
+		<span class="hljs-keyword">var</span> html = $(<span class="hljs-string">'&lt;tr&gt;&lt;/tr&gt;'</span>).append(date).append(request).append(response);
+		$(<span class="hljs-string">'#historyItems'</span>).append(html);
+	});
+};</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

@@ -43,24 +43,25 @@ var sendCommand = function () {
 };
 
 
-// ask the backend for example commands and history to show on the homepage
+// ask the backend for example commands and history to show on the homepage after the document has loaded
 $(document).ready(function () {
 
-    getPort(function (data) {
+    // ask server for port where backend runs and call callback-Function with the received data.
+    getPort(function (port) {
 
-        backendPort = data.backendPort;
+        backendPort = port;
 
         exampleCommandsUrl = createRequestURL(frontendUrl, backendPort, "exampleCommands");
         // send GET request with data and show response on page
-        $.get(exampleCommandsUrl, function (data) {
-            var exampleCommandsRenderer = new ExampleCommandsRenderer(data);
+        $.get(exampleCommandsUrl, function (receivedExampleCommands) {
+            var exampleCommandsRenderer = new ExampleCommandsRenderer(receivedExampleCommands);
             exampleCommandsRenderer.renderCommands();
         });
 
         HistoryUrl = createRequestURL(frontendUrl, backendPort, "history");
         // send GET request with data and show response on page
-        $.get(HistoryUrl, function (data) {
-            var historyRenderer = new HistoryRenderer(data);
+        $.get(HistoryUrl, function (receivedHistory) {
+            var historyRenderer = new HistoryRenderer(receivedHistory);
             historyRenderer.render();
         });
     });

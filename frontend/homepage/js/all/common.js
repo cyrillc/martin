@@ -10,10 +10,9 @@ var createRequestURL = function (url, port, endpoint) {
 // ask server for port where backend runs and call callback-Function with the received data.
 var getPort = function (callback) {
 
-
     var backendUrl = createRequestURL(frontendUrl, 4141, "backendPort");
 
-    $.get(backendUrl, function (data) {
-        callback(data);
+    $.get(backendUrl, function (portInformation) {
+        callback(portInformation.backendPort);
     });
 };
