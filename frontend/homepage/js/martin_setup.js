@@ -1,3 +1,4 @@
+// Defautl Port for the Backend is 4040. This can be changed in $(document).ready()
 var backendPort = 4040;
 
 // enabling *RETURN* to submit command
@@ -5,12 +6,12 @@ $(function() {
     $("#commandInput").keydown(function(event) {
         if (event.which == 13) {
             visuallyPressButton();
-            $("#sendCommand").click();
         }
     });
     $("#commandInput").keyup(function(event) {
         if (event.which == 13) {
             visuallyUnpressButton();
+            $("#sendCommand").click();
         }
     });
 });
@@ -40,16 +41,16 @@ var sendCommand = function() {
 
     // create request URL from current URL
     var url = window.location.href;
-    url = createRequestURL(url, backendPort, "command");
+    var backendUrl = createRequestURL(url, backendPort, "command");
 
     // send GET request with data and show response on page
-    $.get(url, command, function(data) {
+    $.get(backendUrl, command, function(data) {
         $("#response").append(JSON.stringify(data) + '<br>');
     });
 };
 
 
-// ask the backend for example commands to show on the homepage
+// ask the backend for example commands and history to show on the homepage
 $(document).ready(function() {
     // create request URL from current URL
     var url = window.location.href;
@@ -66,7 +67,7 @@ $(document).ready(function() {
             var exampleCommandsRenderer = new ExampleCommandsRenderer(data);
             exampleCommandsRenderer.renderCommands();
         });
-        
+
         HistoryUrl = createRequestURL(url, backendPort, "history");
         // send GET request with data and show response on page
         $.get(HistoryUrl, function(data) {
