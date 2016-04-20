@@ -9,6 +9,6 @@ ExampleCommandsRenderer.prototype.renderCommands = function() {
         exampleCommand.append(element.call);
         callDescription.append(element.description);
         $("#possibleCommands").append(exampleCommand).append(callDescription);
-    }, this);
+    });
 };
 
