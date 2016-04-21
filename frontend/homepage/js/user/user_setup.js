@@ -1,6 +1,3 @@
-// Defautl Port for the Backend is 4040. This can be changed in $(document).ready()
-var backendPort = 4040;
-
 // enabling *RETURN* to submit command
 $(function () {
     $("#commandInput").keydown(function (event) {
