@@ -31,15 +31,22 @@ public class PluginLibraryBootstrap {
     /**
      * The plugin Manager from org.java.plugin
      */
-    private PluginManager manager;
+    private final PluginManager manager;
     /**
      * The plugin Collector from org.java.plugin.boot
      */
-    private DefaultPluginsCollector collector;
+    private final DefaultPluginsCollector collector;
     /**
      * The ExtendedProperties object from org.java.plugin.util
      */
-    private ExtendedProperties props;
+    private final ExtendedProperties props;
+    
+    public PluginLibraryBootstrap() {
+        // instantiate necessary objects
+        manager = ObjectFactory.newInstance().createManager();
+        collector = new DefaultPluginsCollector();
+        props = new ExtendedProperties();
+    }
 
     /**
      * Boots the plugin library by calling the plugin api and returns it once
@@ -48,11 +55,6 @@ public class PluginLibraryBootstrap {
      * @return The booted plugin Library
      */
     public IPluginLibrary boot() {
-        // instantiate necessary objects
-        manager = ObjectFactory.newInstance().createManager();
-        collector = new DefaultPluginsCollector();
-        props = new ExtendedProperties();
-
         // find the plugin folder
         File file;
         try {
