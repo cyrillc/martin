@@ -2,6 +2,8 @@ package ch.zhaw.psit4.martin.common;
 
 import ch.zhaw.psit4.martin.common.FunctionInformation;
 import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
+
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -16,7 +18,7 @@ public class PluginInformation {
 
     private String name;
     private String description;
-    private Set<FunctionInformation> functionInformation;
+    private Set<FunctionInformation> functionInformation = new HashSet<>();
 
     /**
      * @param name
@@ -34,6 +36,27 @@ public class PluginInformation {
             functionInformation
                     .add(new FunctionInformation(function.getName()));
         }
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @return the functionInformation
+     */
+    public Set<FunctionInformation> getFunctionInformation() {
+        return functionInformation;
     }
 
 }
