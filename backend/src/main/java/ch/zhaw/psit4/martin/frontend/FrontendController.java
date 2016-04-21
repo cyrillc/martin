@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
 import ch.zhaw.psit4.martin.common.HistoryItem;
+import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
 
@@ -73,5 +74,20 @@ public class FrontendController {
     public List<HistoryItem> getHistory(
             @RequestParam(value = "amount") int amount) {
         return aiController.getLimitedHistory(amount);
+    }
+    
+    /**
+     * Returns the information all MArtIn plugins to the Frontend. When a request to the
+     * API at /pluginList comes in, the method querys the AI controller to get an
+     * answer for the command. It then returns that answer to the origin of the
+     * request.
+     *
+     * @return the information all MArtIn plugins
+     */
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @RequestMapping("/pluginList")
+    public PluginInformation getPluginList() {
+        return aiController.getPluginInformation();
     }
 }

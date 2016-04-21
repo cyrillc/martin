@@ -29,6 +29,7 @@ import ch.zhaw.psit4.martin.api.util.Pair;
 import ch.zhaw.psit4.martin.common.Call;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
+import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.common.Response;
 
 /**
@@ -44,7 +45,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * Path to folder where plugins reside (either zipped, or unpacked as a
      * simple folder)
      */
-    public static final String[] PLUGINS_REPOSITORY = {"/var/lib/jenkins/workspace/MArtIn/plugins", "classpath:../plugins", "classpath:./plugins", "./plugins", "../plugins"};
+    public static final String[] PLUGINS_REPOSITORY = {
+            "/var/lib/jenkins/workspace/MArtIn/plugins", "classpath:../plugins",
+            "classpath:./plugins", "./plugins", "../plugins" };
     /**
      * File name of the plugin keywords JSON.
      */
@@ -61,12 +64,15 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * Log from the common logging api
      */
     private static final Log LOG = LogFactory.getLog(PluginLibrary.class);
-    
+
     @Autowired
     private MartinContextAccessor martinContextAccessor;
-    
+
     @Autowired
     private ExampleCallService exampleCallService;
+
+    @Autowired
+    private ch.zhaw.psit4.martin.pluginlib.db.plugin.PluginService pluginService;
 
     /*
      * (non-Javadoc)
@@ -170,13 +176,11 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     public List<ExampleCall> getExampleCalls() {
         return exampleCallService.listExampleCalls();
     }
-    
+
     @Override
-    public List<ExampleCall> getRandomExampleCalls(){
+    public List<ExampleCall> getRandomExampleCalls() {
         return exampleCallService.getRandomExcampleCalls();
     }
-    
-    
 
     public Map<String, PluginService> getPluginExtentions() {
         return pluginExtentions;
@@ -318,5 +322,16 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         }
 
         return ret;
+    }
+
+    @Override
+    public PluginInformation getPluginInformation() {
+        List<ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin> pluginList = pluginService
+                .listPlugins();
+        List<PluginInformation> pluginInformationList = new ArrayList<PluginInformation>();
+        for (ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin plugin : pluginList) {
+                        pluginInformationList.add
+        }
+        return null;
     }
 }
