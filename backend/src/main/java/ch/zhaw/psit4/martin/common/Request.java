@@ -57,6 +57,6 @@ public class Request {
 
     @Override
     public int hashCode() {
-        return (int) this.id + this.getCommand().hashCode();
+        return (int) super.hashCode() * (this.id + this.getCommand().hashCode()) * 13;
     }
 }

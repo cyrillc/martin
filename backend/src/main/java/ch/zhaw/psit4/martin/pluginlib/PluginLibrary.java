@@ -1,13 +1,13 @@
 package ch.zhaw.psit4.martin.pluginlib;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.java.plugin.Plugin;
@@ -39,20 +39,10 @@ import ch.zhaw.psit4.martin.common.Response;
  * @version 0.0.1-SNAPSHOT
  */
 public class PluginLibrary extends Plugin implements IPluginLibrary {
-
-    /**
-     * Path to folder where plugins reside (either zipped, or unpacked as a
-     * simple folder)
-     */
-    public static final String[] PLUGINS_REPOSITORY = {"/var/lib/jenkins/jobs/MArtIn/workspace/backend/plugins", "/var/lib/jenkins/workspace/MArtIn/plugins", "classpath:../plugins", "classpath:./plugins", "./plugins", "../plugins"};
     /**
      * File name of the plugin keywords JSON.
      */
     public static final String PLUGIN_KEYWORDS = "keywords.json";
-    /**
-     * The maximum number of characters that can be read from JSON file
-     */
-    public static final int KEYWORDS_JSON_MAXLEN = 2048;
     /*
      * List of all the plugins currently registered
      */
@@ -228,7 +218,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
                 // keywords JSON loading
                 URL keywordsUrl = classLoader.getResource(PLUGIN_KEYWORDS);
-                JSONObject jsonKeywords = new JSONObject(readUrl(keywordsUrl));
+                InputStream is = keywordsUrl.openStream();
+                JSONObject jsonKeywords = new JSONObject(IOUtils.toString(is));
+                is.close();
 
                 // plugin loading
                 Class<PluginService> pluginClass = (Class<PluginService>) classLoader
@@ -245,37 +237,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         }
 
         return plugins;
-    }
-
-    /**
-     * Reads the content of a File by URL and returns it as a string. Warning:
-     * Only {@link KEYWORDS_JSON_MAXLEN} bytes can be read!
-     * 
-     * @param url
-     *            The URL of the file.
-     * @return The parsed string.
-     * @throws Exception
-     *             Exception if the file can't be found or the length exceeds
-     *             the limit.
-     */
-    private String readUrl(URL url) throws Exception {
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(
-                    new InputStreamReader(url.openStream()));
-            StringBuffer buffer = new StringBuffer();
-            int read;
-            char[] chars = new char[KEYWORDS_JSON_MAXLEN];
-            while ((read = reader.read(chars)) != -1) {
-                if (read == ' ' || read == '\t' || read == '\n' || read == '\r')
-                    continue;
-                buffer.append(chars, 0, read);
-            }
-            return buffer.toString();
-        } finally {
-            if (reader != null)
-                reader.close();
-        }
     }
 
     /**
