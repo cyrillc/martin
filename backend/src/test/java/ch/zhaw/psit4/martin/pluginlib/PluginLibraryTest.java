@@ -23,6 +23,8 @@ import ch.zhaw.psit4.martin.api.MartinPlugin;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Response;
+import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
+import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:Beans.xml", "classpath:Beans-unit-tests.xml"})
@@ -49,11 +51,17 @@ public class PluginLibraryTest {
         mockedRequests = new ExtendedRequest[20];
         for (int i = 0; i < mockedRequests.length; i++) {
             // Create call mocks
+        	Plugin testPlugin = Mockito.mock(Plugin.class);
+        	Mockito.when(testPlugin.getDescription()).thenReturn("TestModule");
+        
+        	Function testFunction = Mockito.mock(Function.class);
+        	Mockito.when(testFunction.getDescription()).thenReturn("testFeature");
+        	
             List<Call> calls = new ArrayList<Call>();
             Call mockedCall = Mockito.mock(Call.class);
             Mockito.when(mockedCall.getArguments()).thenReturn(null);
-            Mockito.when(mockedCall.getFeature()).thenReturn("testFeature");
-            Mockito.when(mockedCall.getPlugin()).thenReturn("TestModule");
+            Mockito.when(mockedCall.getFeature()).thenReturn(testFunction);
+            Mockito.when(mockedCall.getPlugin()).thenReturn(testPlugin);
             calls.add(mockedCall);
 
             mockedRequests[i] = Mockito.mock(ExtendedRequest.class);

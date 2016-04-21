@@ -12,12 +12,14 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.api.types.IMartinType;
+import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.types.*;
 import ch.zhaw.psit4.martin.api.util.Pair;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
+import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
 
 /**
  * This class is responible for extending a request to a computer readable
@@ -42,9 +44,9 @@ public class RequestProcessor implements IRequestProcessor {
      * @return
      */
     private Pair<String, String> getFeatureByKeywords(String[] keywords) {
-        Map<String, Pair<String, String>> featureList = new HashMap<String, Pair<String, String>>();
-        Map<String, Integer> featureCount = new HashMap<String, Integer>();
-        List<Pair<String, String>> queryResult = new ArrayList<Pair<String, String>>();
+        Map<String, Pair<Plugin, Feature>> featureList = new HashMap<>();
+        Map<String, Integer> featureCount = new HashMap<>();
+        List<Pair<Plugin, Feature>> queryResult = new ArrayList<>();
 
         // Get features by keywords and count them
         for (String keyword : keywords) {

@@ -24,6 +24,9 @@ import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.MartinPlugin;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
+import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
+import ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword;
+import ch.zhaw.psit4.martin.pluginlib.db.plugin.PluginService;
 import ch.zhaw.psit4.martin.api.util.Pair;
 
 import ch.zhaw.psit4.martin.common.Call;
@@ -39,87 +42,88 @@ import ch.zhaw.psit4.martin.common.Response;
  * @version 0.0.1-SNAPSHOT
  */
 public class PluginLibrary extends Plugin implements IPluginLibrary {
-    /**
-     * File name of the plugin keywords JSON.
-     */
-    public static final String PLUGIN_KEYWORDS = "keywords.json";
-    /*
-     * List of all the plugins currently registered
-     */
-    private Map<String, MartinPlugin> pluginExtentions;
-    /*
-     * Log from the common logging api
-     */
-    private static final Log LOG = LogFactory.getLog(PluginLibrary.class);
-    
-    @Autowired
-    private MartinContextAccessor martinContextAccessor;
-    
-    @Autowired
-    private ExampleCallService exampleCallService;
+	/**
+	 * File name of the plugin keywords JSON.
+	 */
+	public static final String PLUGIN_KEYWORDS = "keywords.json";
+	/*
+	 * List of all the plugins currently registered
+	 */
+	private Map<String, MartinPlugin> pluginExtentions;
+	/*
+	 * Log from the common logging api
+	 */
+	private static final Log LOG = LogFactory.getLog(PluginLibrary.class);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.java.plugin.Plugin#doStart()
-     */
-    @Override
-    protected void doStart() throws Exception {
-        // nothing to do here
+	@Autowired
+	private MartinContextAccessor martinContextAccessor;
 
-    }
+	@Autowired
+	private ExampleCallService exampleCallService;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.java.plugin.Plugin#doStop()
-     */
-    @Override
-    protected void doStop() throws Exception {
-        // nothing to do here
+	@Autowired
+	private PluginService pluginService;
 
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.java.plugin.Plugin#doStart()
+	 */
+	@Override
+	protected void doStart() throws Exception {
+		// nothing to do here
 
-    /*
-     * Start the module and initialize components
-     */
-    @Override
-    public void startLibrary() {
-        // Get plugins
-        pluginExtentions = fetchPlugins(IMartinContext.EXTPOINT_ID);
-        LOG.info("Plugin library booted, " + pluginExtentions.size()
-                + " plugins loaded.");
-    }
+	}
 
-    /**
-     * Answer a request by searching plugin-library for function and executing
-     * them.
-     * 
-     * @param req
-     *            The {@link ExtendedQequest} to answer.
-     * 
-     * @return The generated {@link Response}.
-     */
-    @Override
-    public Response executeRequest(ExtendedRequest req) {
-        Call call = req.getCalls().get(0);
-        String pluginID = call.getPlugin();
-        String featureID = call.getFeature();
-        MartinPlugin service = pluginExtentions.get(pluginID);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.java.plugin.Plugin#doStop()
+	 */
+	@Override
+	protected void doStop() throws Exception {
+		// nothing to do here
 
-        // if service exists, execute call
-        if (service != null) {
-            service.init(martinContextAccessor, featureID, 0);
+	}
 
-            Response response = new Response(executeCall(call, 0));
-            return response;
-        } else {
-            LOG.error("Could not find a plugin that matches request call.");
-            return new Response("ERROR: no plugin found!");
-        }
-    }
+	/*
+	 * Start the module and initialize components
+	 */
+	@Override
+	public void startLibrary() {
+		// Get plugins
+		pluginExtentions = fetchPlugins(IMartinContext.EXTPOINT_ID);
+		LOG.info("Plugin library booted, " + pluginExtentions.size() + " plugins loaded.");
+	}
 
-    /**
+	/**
+	 * Answer a request by searching plugin-library for function and executing
+	 * them.
+	 * 
+	 * @param req
+	 *            The {@link ExtendedQequest} to answer.
+	 * 
+	 * @return The generated {@link Response}.
+	 */
+	@Override
+	public Response executeRequest(ExtendedRequest req) {
+		Call call = req.getCalls().get(0);
+	
+		MartinPlugin service = pluginExtentions.get(((Integer)call.getPlugin().getId()).toString());
+
+		// if service exists, execute call
+		if (service != null) {
+			service.init(martinContextAccessor, ((Integer)call.getFeature().getId()).toString(), 0);
+
+			Response response = new Response(executeCall(call, 0));
+			return response;
+		} else {
+			LOG.error("Could not find a plugin that matches request call.");
+			return new Response("ERROR: no plugin found!");
+		}
+	}
+
+	/**
      * Querry all plugins by keyword and return matching pluginIDs.
      * 
      * @param keyword
@@ -128,156 +132,160 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      *         first). The first element is the Plugin ID the second is the
      *         feature ID
      */
-    public List<Pair<String, String>> queryFunctionsByKeyword(String keyword) {
-        return new ArrayList<Pair<String, String>>();
+    public List<Pair<ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin, Function>> queryFunctionsByKeyword(String query) {
+    	//TODO: Make it faster by using correct Hibernate query
+    	ArrayList<Pair<ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin, Function>> result = new ArrayList<>();
+    	List<ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin> allPlugins = pluginService.listPlugins();
+    	
+    	for(ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin plugin : allPlugins){
+    		for(Function function : plugin.getFunctions()){
+    			for(Keyword keyword : function.getKeywords()){
+    				if(keyword.getKeyword().equalsIgnoreCase(query)){
+    					result.add(Pair.of(plugin, function));
+    				}
+    			}
+    		}
+    	}
+    	
+        return result;
     }
 
-    /**
-     * Get a {@link Map} filled with all required parameters for a plugin and
-     * the argument types.
-     * 
-     * @param plugin
-     *            The pluginID to querry.
-     * @param The
-     *            feature designator to querry.
-     * @return A {@link Map} of arguments with key = ({@link String}) argument
-     *         name and value = ({@link String}) Argument type (from
-     *         {@link ch.zhaw.psit4.martin.api.types})
-     */
-    public Map<String, String> queryFunctionArguments(String plugin,
-            String feature) {
-        return new HashMap<String, String>();
-    }
+	/**
+	 * Get a {@link Map} filled with all required parameters for a plugin and
+	 * the argument types.
+	 * 
+	 * @param plugin
+	 *            The pluginID to querry.
+	 * @param The
+	 *            feature designator to querry.
+	 * @return A {@link Map} of arguments with key = ({@link String}) argument
+	 *         name and value = ({@link String}) Argument type (from
+	 *         {@link ch.zhaw.psit4.martin.api.types})
+	 */
+	public Map<String, String> queryFunctionArguments(String plugin, String feature) {
+		return new HashMap<String, String>();
+	}
 
-    /**
-     * Returns a list of example calls read from the plugin database. Is usually
-     * only called from the AI controller when the user first loads the MArtIn
-     * frontend.
-     * 
-     * @return a list of example calls
-     */
-    @Override
-    public List<ExampleCall> getExampleCalls() {
-        return exampleCallService.listExampleCalls();
-    }
-    
-    @Override
-    public List<ExampleCall> getRandomExampleCalls(){
-        return exampleCallService.getRandomExcampleCalls();
-    }
-    
-    
+	/**
+	 * Returns a list of example calls read from the plugin database. Is usually
+	 * only called from the AI controller when the user first loads the MArtIn
+	 * frontend.
+	 * 
+	 * @return a list of example calls
+	 */
+	@Override
+	public List<ExampleCall> getExampleCalls() {
+		return exampleCallService.listExampleCalls();
+	}
 
-    public Map<String, MartinPlugin> getPluginExtentions() {
-        return pluginExtentions;
-    }
+	@Override
+	public List<ExampleCall> getRandomExampleCalls() {
+		return exampleCallService.getRandomExcampleCalls();
+	}
 
-    public void setPluginExtentions(
-            Map<String, MartinPlugin> pluginExtentions) {
-        this.pluginExtentions = pluginExtentions;
-    }
+	public Map<String, MartinPlugin> getPluginExtentions() {
+		return pluginExtentions;
+	}
 
-    /*
-     * Fetches all extensions for the given extension point qualifiers.
-     * 
-     * @param extPointId The extension point id to gather plugins for
-     * 
-     * @return The gathered plugins in a LinkedList
-     */
-    @SuppressWarnings({ "unchecked", "unused" })
-    protected Map<String, MartinPlugin> fetchPlugins(final String extPointId) {
+	public void setPluginExtentions(Map<String, MartinPlugin> pluginExtentions) {
+		this.pluginExtentions = pluginExtentions;
+	}
 
-        Map<String, MartinPlugin> plugins = new HashMap<String, MartinPlugin>();
-        PluginManager manager = this.getManager();
+	/*
+	 * Fetches all extensions for the given extension point qualifiers.
+	 * 
+	 * @param extPointId The extension point id to gather plugins for
+	 * 
+	 * @return The gathered plugins in a LinkedList
+	 */
+	@SuppressWarnings({ "unchecked", "unused" })
+	protected Map<String, MartinPlugin> fetchPlugins(final String extPointId) {
 
-        ExtensionPoint extPoint = manager.getRegistry()
-                .getExtensionPoint(this.getDescriptor().getId(), extPointId);
+		Map<String, MartinPlugin> plugins = new HashMap<String, MartinPlugin>();
+		PluginManager manager = this.getManager();
 
-        // iterate through found plugins
-        for (Extension extension : extPoint.getConnectedExtensions()) {
-            try {
-                PluginDescriptor extensionDescriptor = extension
-                        .getDeclaringPluginDescriptor();
-                manager.activatePlugin(extensionDescriptor.getId());
-                ClassLoader classLoader = manager
-                        .getPluginClassLoader(extensionDescriptor);
+		ExtensionPoint extPoint = manager.getRegistry().getExtensionPoint(this.getDescriptor().getId(), extPointId);
 
-                String id = extension.getExtendedPointId().toString();
+		// iterate through found plugins
+		for (Extension extension : extPoint.getConnectedExtensions()) {
+			try {
+				PluginDescriptor extensionDescriptor = extension.getDeclaringPluginDescriptor();
+				manager.activatePlugin(extensionDescriptor.getId());
+				ClassLoader classLoader = manager.getPluginClassLoader(extensionDescriptor);
 
-                // metadata-parsing (mandatory)
-                Parameter pluginClassName = extension.getParameter("class");
-                Parameter pluginNAme = extension.getParameter("name");
+				String id = extension.getExtendedPointId().toString();
 
-                // metadata-parsing (optional)
-                Parameter pluginDesctibtion = extension
-                        .getParameter("description");
-                Parameter pluginAuthor = extension.getParameter("author");
-                Parameter pluginMail = extension.getParameter("e-mail");
-                Parameter pluginHomepage = extension.getParameter("homepage");
-                Parameter pluginDate = extension.getParameter("date");
+				// metadata-parsing (mandatory)
+				Parameter pluginClassName = extension.getParameter("class");
+				Parameter pluginNAme = extension.getParameter("name");
 
-                // keywords JSON loading
-                URL keywordsUrl = classLoader.getResource(PLUGIN_KEYWORDS);
-                InputStream is = keywordsUrl.openStream();
-                JSONObject jsonKeywords = new JSONObject(IOUtils.toString(is));
-                is.close();
+				// metadata-parsing (optional)
+				Parameter pluginDesctibtion = extension.getParameter("description");
+				Parameter pluginAuthor = extension.getParameter("author");
+				Parameter pluginMail = extension.getParameter("e-mail");
+				Parameter pluginHomepage = extension.getParameter("homepage");
+				Parameter pluginDate = extension.getParameter("date");
 
-                // plugin loading
-                Class<MartinPlugin> pluginClass = (Class<MartinPlugin>) classLoader
-                        .loadClass(pluginClassName.valueAsString());
-                MartinPlugin pluginInstance = pluginClass.newInstance();
-                plugins.put(id, pluginInstance);
-                LOG.info("Plugin \""
-                        + extension.getParameter("name").valueAsString()
-                        + "\" loaded");
+				// keywords JSON loading
+				URL keywordsUrl = classLoader.getResource(PLUGIN_KEYWORDS);
+				InputStream is = keywordsUrl.openStream();
+				JSONObject jsonKeywords = new JSONObject(IOUtils.toString(is));
+				is.close();
 
-            } catch (Exception e) {
-                LOG.error("An Error occured at fetchPlugins: ", e);
-            }
-        }
+				// plugin loading
+				Class<MartinPlugin> pluginClass = (Class<MartinPlugin>) classLoader
+						.loadClass(pluginClassName.valueAsString());
+				MartinPlugin pluginInstance = pluginClass.newInstance();
+				plugins.put(id, pluginInstance);
+				LOG.info("Plugin \"" + extension.getParameter("name").valueAsString() + "\" loaded");
 
-        return plugins;
-    }
+			} catch (Exception e) {
+				LOG.error("An Error occured at fetchPlugins: ", e);
+			}
+		}
 
-    /**
-     * Executes the feature of a call by passing call arguments
-     * 
-     * @param call
-     *            The call to execute features for.
-     * @return The return value as string.
-     */
-    private String executeCall(Call call, long requestID) {
-        Feature feature = martinContextAccessor.fetchWorkItem(requestID);
-        String ret = "";
-        while (feature != null) {
-            try {
-                feature.start(call.getArguments());
-            } catch (Exception e) {
-                LOG.error("Could not start plugin feature.", e);
-                ret += "ERROR at start()! ";
-                break;
-            }
+		return plugins;
+	}
 
-            try {
-                feature.run();
-            } catch (Exception e) {
-                LOG.error("Could not run plugin feature.", e);
-                ret += "ERROR during run()! ";
-                break;
-            }
+	/**
+	 * Executes the feature of a call by passing call arguments
+	 * 
+	 * @param call
+	 *            The call to execute features for.
+	 * @return The return value as string.
+	 */
+	private String executeCall(Call call, long requestID) {
+		Feature feature = martinContextAccessor.fetchWorkItem(requestID);
+		String ret = "";
+		while (feature != null) {
+			try {
+				feature.start(call.getArguments());
+			} catch (Exception e) {
+				LOG.error("Could not start plugin feature.", e);
+				ret += "ERROR at start()! ";
+				break;
+			}
 
-            try {
-                ret += feature.stop();
-            } catch (Exception e) {
-                LOG.error("Could not stop plugin feature.", e);
-                ret += "ERROR at stop()";
-                break;
-            }
+			try {
+				feature.run();
+			} catch (Exception e) {
+				LOG.error("Could not run plugin feature.", e);
+				ret += "ERROR during run()! ";
+				break;
+			}
 
-            ret += "\n";
-            feature = martinContextAccessor.fetchWorkItem(requestID);
-        }
+			try {
+				ret += feature.stop();
+			} catch (Exception e) {
+				LOG.error("Could not stop plugin feature.", e);
+				ret += "ERROR at stop()";
+				break;
+			}
 
-        return ret;
-    }
+			ret += "\n";
+			feature = martinContextAccessor.fetchWorkItem(requestID);
+		}
+
+		return ret;
+	}
 }

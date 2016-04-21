@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -22,6 +23,8 @@ import ch.zhaw.psit4.martin.api.util.Pair;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
+import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
+import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -38,18 +41,36 @@ public class RequestProcessorTest {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 		
-		// Results for function queries
-		List<Pair<String, String>> result0 = new ArrayList<Pair<String, String>>();
-		result0.add(new Pair<String, String>("Weather App", "forecast"));
-		result0.add(new Pair<String, String>("Weather App", "weather"));
+		// Mocks for Plugins and functions
+		// --> Weather App
+		Plugin weatherApp = Mockito.mock(Plugin.class);
+		when(weatherApp.getDescription()).thenReturn("Weather App");
+		Function forecastFunction = Mockito.mock(Function.class);
+		when(forecastFunction.getDescription()).thenReturn("forecast");
+		Function weatherFunction = Mockito.mock(Function.class);
+		when(weatherFunction.getDescription()).thenReturn("wheather");
+		
+		// --> Hello World App
+		Plugin helloWorldApp = Mockito.mock(Plugin.class);
+		when(helloWorldApp.getDescription()).thenReturn("HelloWorld App");
+		Function helloFunction = Mockito.mock(Function.class);
+		when(helloFunction.getDescription()).thenReturn("hello");
+		
+	
+		
+		// Mock for Plugin-Library
+		// --> Queries
+		List<Pair<Plugin, Function>> result0 = new ArrayList<Pair<Plugin, Function>>();
+		result0.add(new Pair<Plugin, Function>(weatherApp, forecastFunction));
+		result0.add(new Pair<Plugin, Function>(weatherApp, weatherFunction));
 
-		List<Pair<String, String>> result1 = new ArrayList<Pair<String, String>>();
-		result1.add(new Pair<String, String>("HelloWorld", "hello"));
+		List<Pair<Plugin, Function>> result1 = new ArrayList<>();
+		result1.add(new Pair<Plugin, Function>(helloWorldApp, helloFunction));
 		
-		List<Pair<String, String>> result2 = new ArrayList<Pair<String, String>>();
-		result2.add(new Pair<String, String>("Weather App", "forecast"));
+		List<Pair<Plugin, Function>> result2 = new ArrayList<>();
+		result2.add(new Pair<Plugin, Function>(weatherApp, forecastFunction));
 		
-		List<Pair<String, String>> result3 = new ArrayList<Pair<String, String>>();
+		List<Pair<Plugin, Function>> result3 = new ArrayList<>();
 		
 		when(library.queryFunctionsByKeyword(any(String.class))).thenReturn(result3);
 		when(library.queryFunctionsByKeyword("weather")).thenReturn(result0);
