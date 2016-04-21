@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,6 +69,10 @@ public class PluginLibraryBootstrap {
     public IPluginLibrary boot() {
         // get the plugin folder
         File file = getPluginFolder();
+        if(file == null) {
+            LOG.error("Plugin library could not be initialized!");
+            throw new PluginLibraryNotFoundException();
+        }
 
         // prepare configuration
         props.setProperty("org.java.plugin.boot.pluginsRepositories", file.getPath());
@@ -78,7 +83,7 @@ public class PluginLibraryBootstrap {
             lib = initializeLibrary();
             lib.startLibrary();
         } catch (Exception e) {
-            LOG.error("Plugin library could not be initialized, empty library returned!", e);
+            LOG.error("Plugin library could not be initialized!", e);
             throw new PluginLibraryNotFoundException(e);
         }
 
@@ -92,27 +97,61 @@ public class PluginLibraryBootstrap {
      * @return The plugin folder.
      */
     private File getPluginFolder() {
-        File out = null;
-        JSONObject libConfig;
+        File out = getFolderDynamically();
+        if(out != null)
+            return out;
+
+        // load library config json
+        JSONObject libConfig = null;
         try {
-            // load library config json
             ClassLoader classLoader = getClass().getClassLoader();
             File file = new File(classLoader.getResource(PLUGINS_CONFIG).getFile());
             InputStream is = new FileInputStream(file);
             libConfig = new JSONObject(IOUtils.toString(is));
             is.close();
         } catch (IOException e) {
-            LOG.error("Missing " + PLUGINS_CONFIG + ", empty library returned!", e);
-            throw new PluginLibraryNotFoundException(e);
+            LOG.warn("Missing " + PLUGINS_CONFIG + "!", e);
         }
-
-        // search the configured paths
-        JSONArray paths = libConfig.getJSONArray("paths");
+        
+        // search the json registered paths
+        if(libConfig != null) {
+            out = getFolderFromPaths(libConfig.getJSONArray("paths"));
+        } else {
+            LOG.error(PLUGINS_CONFIG + " can't be loaded!");
+        }
+        
+        return out;
+    }
+    
+    /**
+     * Tries to get the plugin folder dynamically
+     * @return The folder if found
+     */
+    private File getFolderDynamically() {
+        File out = null;
+        // try to get path dynamically
+        try {
+            String path = PluginLibraryBootstrap.class.getProtectionDomain()
+                    .getCodeSource().getLocation().toURI().getPath();
+            path += ".." + File.separatorChar + "..";
+            out = findFolder(new File(path).getCanonicalPath(), PLUGINS_FOLDER);
+        } catch (IOException | URISyntaxException e) {
+            LOG.warn("Could not load path dynamically, opt to json paths.", e);
+        }
+        return out;
+    }
+    
+    /**
+     * Get the plugin folder from an array of paths.
+     * @param paths The paths in a {@link JSONArray} file.
+     * @return The found file.
+     */
+    private File getFolderFromPaths(JSONArray paths) {
+        File out = null;
         for (int i = 0; i < paths.length(); i++) {
             try {
                 out = findFolder(new File(paths.get(i).toString()).getCanonicalPath(),
                         PLUGINS_FOLDER);
-                
                 // if a folder was found, return
                 if (out != null)
                     return out;
@@ -133,6 +172,7 @@ public class PluginLibraryBootstrap {
      */
     private File findFolder(String source, String folder) {
         File out = null;
+        
         String[] subFolders = (new File(source)).list();
         for (String name : subFolders) {
             // file is not a directory -> skip
