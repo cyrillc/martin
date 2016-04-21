@@ -160,6 +160,13 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     public List<ExampleCall> getExampleCalls() {
         return exampleCallService.listExampleCalls();
     }
+    
+    @Override
+    public List<ExampleCall> getRandomExampleCalls(){
+        return exampleCallService.getRandomExcampleCalls();
+    }
+    
+    
 
     public Map<String, PluginService> getPluginExtentions() {
         return pluginExtentions;

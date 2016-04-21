@@ -1,6 +1,5 @@
 package ch.zhaw.psit4.martin.frontend;
 
-
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,15 +25,15 @@ import ch.zhaw.psit4.martin.pluginlib.db.*;
  */
 @RestController
 public class FrontendController {
-	
-	@Autowired
-	private AIControllerFacade aiController;
+
+    @Autowired
+    private AIControllerFacade aiController;
 
     /**
      * Returns the answer to a command to the Frontend. When a request to the
-     * API at /command comes in, the method
-     * querys the AI controller to get an answer for the command. It then
-     * returns that answer to the origin of the request.
+     * API at /command comes in, the method querys the AI controller to get an
+     * answer for the command. It then returns that answer to the origin of the
+     * request.
      *
      * @param command
      * @return the response of the AI
@@ -58,20 +57,22 @@ public class FrontendController {
      * @return A list of possible commands
      */
     @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141","http://srv-lab-t-825.zhaw.ch:4141" })
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/exampleCommands")
     public List<ExampleCall> sendExampleCommands() {
-        return aiController.getExampleCalls();
+        return aiController.getRandomExampleCalls();
     }
-    
+
     /**
      * 
-     * @return A list of HistoryItems, with all user Requests and relative Responses.
+     * @return A list of HistoryItems, with all user Requests and relative
+     *         Responses.
      */
     @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141","http://srv-lab-t-825.zhaw.ch:4141" })
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/history")
-    public List<HistoryItem> getHistory() {
-        return aiController.getHistory();
+    public List<HistoryItem> getHistory(
+            @RequestParam(value = "amount") int amount) {
+        return aiController.getLimitedHistory(amount);
     }
 }

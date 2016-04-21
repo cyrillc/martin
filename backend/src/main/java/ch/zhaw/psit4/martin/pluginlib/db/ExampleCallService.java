@@ -32,20 +32,11 @@ public class ExampleCallService {
     public List<ExampleCall> listExampleCalls() {
         return this.exampleCallDao.listExampleCalls();
     }
-
+    
     @Transactional
-    public ExampleCall getExampleCallById(int id) {
-        return exampleCallDao.getById(id);
+    public List<ExampleCall> getRandomExcampleCalls(){
+        return this.exampleCallDao.getRandomExampleCalls();
     }
 
-    @Transactional
-    public void updateExampleCall(ExampleCall exampleCall) {
-        this.exampleCallDao.updateExampleCall(exampleCall);
-    }
-
-    @Transactional
-    public void removeExampleCall(int id) {
-        this.exampleCallDao.removeExampleCall(id);
-    }
 
 }
