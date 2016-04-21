@@ -8,9 +8,11 @@ var
     path = require('path');
 var app = express();
 
+var homepagePath = '/homepage';
+
 app.use(morgan('dev'));
 // set path to static files to deliver to client
-app.use(express.static(__dirname + '/homepage'));
+app.use(express.static(__dirname + homepagePath));
 
 // open endpoints
 app.get('/', function (req, res) {
@@ -24,9 +26,13 @@ app.get('/backendPort', function (req, res) {
     res.send({ backendPort: (process.argv[2] || 4040) });
 });
 
+app.get('/admin', function (req, res) {
+    res.sendFile(path.join(__dirname  + homepagePath + '/admin.html'));
+});
+
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function(req, res){
-    res.status(404).sendFile(path.join(__dirname  + '/homepage/' + '404.html'));
+    res.status(404).sendFile(path.join(__dirname  + homepagePath + '/404.html'));
 });
 
 // start server

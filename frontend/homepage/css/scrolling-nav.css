@@ -51,3 +51,10 @@ of those sections to manage the look and feel of the site. */
     text-align: center;
     background: #fff;
 }
+
+.pluginList-section {
+    height: 100%;
+    padding-top: 50px;
+    text-align: center;
+    background: #fff;
+}

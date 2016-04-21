@@ -44,8 +44,7 @@ public class FrontendController {
     public Response launchCommand(
             @RequestParam(value = "command") String command) {
         Request request = new Request(command);
-        Response response = aiController.elaborateRequest(request);
-        return response;
+        return aiController.elaborateRequest(request);
     }
 
     /**
