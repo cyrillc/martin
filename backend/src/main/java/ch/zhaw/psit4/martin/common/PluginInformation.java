@@ -31,7 +31,8 @@ public class PluginInformation {
         this.name = name;
         this.description = description;
         for (Function function : functions) {
-            functionInformation.add(new FunctionInformation(function.getName()));
+            functionInformation
+                    .add(new FunctionInformation(function.getName()));
         }
     }
 

@@ -6,7 +6,7 @@ package ch.zhaw.psit4.martin.api;
  *
  * @version 0.0.1-SNAPSHOT
  */
-public interface PluginService {
+public interface MartinPlugin {
     
     /**
      * Initializes the plugin with the MArtIn context for API access.

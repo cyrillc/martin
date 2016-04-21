@@ -87,7 +87,7 @@ public class FrontendController {
     @CrossOrigin(origins = { "http://localhost:4141",
             "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/pluginList")
-    public PluginInformation getPluginList() {
+    public List<PluginInformation> getPluginList() {
         return aiController.getPluginInformation();
     }
 }

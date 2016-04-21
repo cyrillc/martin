@@ -107,7 +107,7 @@ public class AIControllerFacade {
         return historyItemService.getLimitedHistory(amount);
     }
 
-    public PluginInformation getPluginInformation() {
+    public List<PluginInformation> getPluginInformation() {
         return pluginLibrary.getPluginInformation();
     }
 

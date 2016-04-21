@@ -1,13 +1,13 @@
 package ch.zhaw.psit4.martin.pluginlib;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.java.plugin.Plugin;
@@ -21,7 +21,7 @@ import org.java.plugin.registry.Extension.Parameter;
 
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
-import ch.zhaw.psit4.martin.api.PluginService;
+import ch.zhaw.psit4.martin.api.MartinPlugin;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
 import ch.zhaw.psit4.martin.api.util.Pair;
@@ -42,24 +42,13 @@ import ch.zhaw.psit4.martin.common.Response;
 public class PluginLibrary extends Plugin implements IPluginLibrary {
 
     /**
-     * Path to folder where plugins reside (either zipped, or unpacked as a
-     * simple folder)
-     */
-    public static final String[] PLUGINS_REPOSITORY = {
-            "/var/lib/jenkins/workspace/MArtIn/plugins", "classpath:../plugins",
-            "classpath:./plugins", "./plugins", "../plugins" };
-    /**
      * File name of the plugin keywords JSON.
      */
     public static final String PLUGIN_KEYWORDS = "keywords.json";
-    /**
-     * The maximum number of characters that can be read from JSON file
-     */
-    public static final int KEYWORDS_JSON_MAXLEN = 2048;
     /*
      * List of all the plugins currently registered
      */
-    private Map<String, PluginService> pluginExtentions;
+    private Map<String, MartinPlugin> pluginExtentions;
     /*
      * Log from the common logging api
      */
@@ -121,7 +110,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         Call call = req.getCalls().get(0);
         String pluginID = call.getPlugin();
         String featureID = call.getFeature();
-        PluginService service = pluginExtentions.get(pluginID);
+        MartinPlugin service = pluginExtentions.get(pluginID);
 
         // if service exists, execute call
         if (service != null) {
@@ -182,12 +171,12 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         return exampleCallService.getRandomExcampleCalls();
     }
 
-    public Map<String, PluginService> getPluginExtentions() {
+    public Map<String, MartinPlugin> getPluginExtentions() {
         return pluginExtentions;
     }
 
     public void setPluginExtentions(
-            Map<String, PluginService> pluginExtentions) {
+            Map<String, MartinPlugin> pluginExtentions) {
         this.pluginExtentions = pluginExtentions;
     }
 
@@ -199,9 +188,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @return The gathered plugins in a LinkedList
      */
     @SuppressWarnings({ "unchecked", "unused" })
-    protected Map<String, PluginService> fetchPlugins(final String extPointId) {
+    protected Map<String, MartinPlugin> fetchPlugins(final String extPointId) {
 
-        Map<String, PluginService> plugins = new HashMap<String, PluginService>();
+        Map<String, MartinPlugin> plugins = new HashMap<String, MartinPlugin>();
         PluginManager manager = this.getManager();
 
         ExtensionPoint extPoint = manager.getRegistry()
@@ -232,12 +221,14 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
                 // keywords JSON loading
                 URL keywordsUrl = classLoader.getResource(PLUGIN_KEYWORDS);
-                JSONObject jsonKeywords = new JSONObject(readUrl(keywordsUrl));
+                InputStream is = keywordsUrl.openStream();
+                JSONObject jsonKeywords = new JSONObject(IOUtils.toString(is));
+                is.close();
 
                 // plugin loading
-                Class<PluginService> pluginClass = (Class<PluginService>) classLoader
+                Class<MartinPlugin> pluginClass = (Class<MartinPlugin>) classLoader
                         .loadClass(pluginClassName.valueAsString());
-                PluginService pluginInstance = pluginClass.newInstance();
+                MartinPlugin pluginInstance = pluginClass.newInstance();
                 plugins.put(id, pluginInstance);
                 LOG.info("Plugin \""
                         + extension.getParameter("name").valueAsString()
@@ -249,37 +240,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         }
 
         return plugins;
-    }
-
-    /**
-     * Reads the content of a File by URL and returns it as a string. Warning:
-     * Only {@link KEYWORDS_JSON_MAXLEN} bytes can be read!
-     * 
-     * @param url
-     *            The URL of the file.
-     * @return The parsed string.
-     * @throws Exception
-     *             Exception if the file can't be found or the length exceeds
-     *             the limit.
-     */
-    private String readUrl(URL url) throws Exception {
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(
-                    new InputStreamReader(url.openStream()));
-            StringBuffer buffer = new StringBuffer();
-            int read;
-            char[] chars = new char[KEYWORDS_JSON_MAXLEN];
-            while ((read = reader.read(chars)) != -1) {
-                if (read == ' ' || read == '\t' || read == '\n' || read == '\r')
-                    continue;
-                buffer.append(chars, 0, read);
-            }
-            return buffer.toString();
-        } finally {
-            if (reader != null)
-                reader.close();
-        }
     }
 
     /**
@@ -325,13 +285,14 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     }
 
     @Override
-    public PluginInformation getPluginInformation() {
+    public List<PluginInformation> getPluginInformation() {
         List<ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin> pluginList = pluginService
                 .listPlugins();
         List<PluginInformation> pluginInformationList = new ArrayList<PluginInformation>();
         for (ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin plugin : pluginList) {
-                        pluginInformationList.add
+            pluginInformationList.add(new PluginInformation(plugin.getName(),
+                    plugin.getDescription(), plugin.getFunctions()));
         }
-        return null;
+        return pluginInformationList;
     }
 }

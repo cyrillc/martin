@@ -74,5 +74,5 @@ public interface IPluginLibrary {
      */
     public List<ExampleCall> getRandomExampleCalls();
 
-    public PluginInformation getPluginInformation();
+    public List<PluginInformation> getPluginInformation();
 }
