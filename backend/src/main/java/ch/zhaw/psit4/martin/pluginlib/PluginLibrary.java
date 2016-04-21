@@ -21,7 +21,7 @@ import org.java.plugin.registry.Extension.Parameter;
 
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
-import ch.zhaw.psit4.martin.api.PluginService;
+import ch.zhaw.psit4.martin.api.MartinPlugin;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
 import ch.zhaw.psit4.martin.api.util.Pair;
@@ -46,7 +46,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     /*
      * List of all the plugins currently registered
      */
-    private Map<String, PluginService> pluginExtentions;
+    private Map<String, MartinPlugin> pluginExtentions;
     /*
      * Log from the common logging api
      */
@@ -105,7 +105,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         Call call = req.getCalls().get(0);
         String pluginID = call.getPlugin();
         String featureID = call.getFeature();
-        PluginService service = pluginExtentions.get(pluginID);
+        MartinPlugin service = pluginExtentions.get(pluginID);
 
         // if service exists, execute call
         if (service != null) {
@@ -168,12 +168,12 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     
     
 
-    public Map<String, PluginService> getPluginExtentions() {
+    public Map<String, MartinPlugin> getPluginExtentions() {
         return pluginExtentions;
     }
 
     public void setPluginExtentions(
-            Map<String, PluginService> pluginExtentions) {
+            Map<String, MartinPlugin> pluginExtentions) {
         this.pluginExtentions = pluginExtentions;
     }
 
@@ -185,9 +185,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @return The gathered plugins in a LinkedList
      */
     @SuppressWarnings({ "unchecked", "unused" })
-    protected Map<String, PluginService> fetchPlugins(final String extPointId) {
+    protected Map<String, MartinPlugin> fetchPlugins(final String extPointId) {
 
-        Map<String, PluginService> plugins = new HashMap<String, PluginService>();
+        Map<String, MartinPlugin> plugins = new HashMap<String, MartinPlugin>();
         PluginManager manager = this.getManager();
 
         ExtensionPoint extPoint = manager.getRegistry()
@@ -223,9 +223,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 is.close();
 
                 // plugin loading
-                Class<PluginService> pluginClass = (Class<PluginService>) classLoader
+                Class<MartinPlugin> pluginClass = (Class<MartinPlugin>) classLoader
                         .loadClass(pluginClassName.valueAsString());
-                PluginService pluginInstance = pluginClass.newInstance();
+                MartinPlugin pluginInstance = pluginClass.newInstance();
                 plugins.put(id, pluginInstance);
                 LOG.info("Plugin \""
                         + extension.getParameter("name").valueAsString()
