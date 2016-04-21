@@ -24,6 +24,11 @@ app.get('/backendPort', function (req, res) {
     res.send({ backendPort: (process.argv[2] || 4040) });
 });
 
+//The 404 Route (ALWAYS Keep this as the last route)
+app.get('*', function(req, res){
+    res.status(404).sendFile(path.join(__dirname  + '/homepage/' + '404.html'));
+});
+
 // start server
 app.listen(4141, function () {
     console.log("ready for MArtIn operation.");
