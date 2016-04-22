@@ -29,6 +29,7 @@ import ch.zhaw.psit4.martin.api.util.Pair;
 import ch.zhaw.psit4.martin.common.Call;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
+import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.common.Response;
 
 /**
@@ -39,6 +40,7 @@ import ch.zhaw.psit4.martin.common.Response;
  * @version 0.0.1-SNAPSHOT
  */
 public class PluginLibrary extends Plugin implements IPluginLibrary {
+
     /**
      * File name of the plugin keywords JSON.
      */
@@ -51,12 +53,15 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * Log from the common logging api
      */
     private static final Log LOG = LogFactory.getLog(PluginLibrary.class);
-    
+
     @Autowired
     private MartinContextAccessor martinContextAccessor;
-    
+
     @Autowired
     private ExampleCallService exampleCallService;
+
+    @Autowired
+    private ch.zhaw.psit4.martin.pluginlib.db.plugin.PluginService pluginService;
 
     /*
      * (non-Javadoc)
@@ -160,13 +165,11 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     public List<ExampleCall> getExampleCalls() {
         return exampleCallService.listExampleCalls();
     }
-    
+
     @Override
-    public List<ExampleCall> getRandomExampleCalls(){
+    public List<ExampleCall> getRandomExampleCalls() {
         return exampleCallService.getRandomExcampleCalls();
     }
-    
-    
 
     public Map<String, MartinPlugin> getPluginExtentions() {
         return pluginExtentions;
@@ -279,5 +282,17 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         }
 
         return ret;
+    }
+
+    @Override
+    public List<PluginInformation> getPluginInformation() {
+        List<ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin> pluginList = pluginService
+                .listPlugins();
+        List<PluginInformation> pluginInformationList = new ArrayList<PluginInformation>();
+        for (ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin plugin : pluginList) {
+            pluginInformationList.add(new PluginInformation(plugin.getName(),
+                    plugin.getDescription(), plugin.getFunctions()));
+        }
+        return pluginInformationList;
     }
 }

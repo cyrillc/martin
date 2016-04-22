@@ -5,6 +5,7 @@ import java.util.Map;
 
 import ch.zhaw.psit4.martin.api.util.Pair;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
+import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.common.Response;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
@@ -73,4 +74,6 @@ public interface IPluginLibrary {
      * @return a list of 5 randomly choosen example calls
      */
     public List<ExampleCall> getRandomExampleCalls();
+
+    public List<PluginInformation> getPluginInformation();
 }

@@ -1,1 +1,5 @@
 function_id,name,description,plugin_id
+1,"getWeatherAtLocation","Gives you the weather at your location",1
+2,"whereIsCloudy","Gives you the location where it's cloudy",1
+3,"howdyPartner","Texas man",2
+4,"helloMyFriend","Polite man",2

@@ -29,7 +29,7 @@ public class PluginDao {
     @SuppressWarnings("unchecked")
     public List<Plugin> listPlugins() {
         Session session = this.sessionFactory.getCurrentSession();
-        return session.createQuery("from plugin").list();
+        return session.createQuery("from Plugin").list();
     }
     
     public Plugin getById(int id) {

@@ -15,6 +15,7 @@ import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.HistoryItem;
+import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
 
 /**
@@ -29,7 +30,7 @@ public class AIControllerFacade {
     private static final Log LOG = LogFactory.getLog(AIControllerFacade.class);
     
     @Autowired
-    private IPluginLibrary library;
+    private IPluginLibrary pluginLibrary;
     
     @Autowired
     private HistoryItemService historyItemService;
@@ -51,7 +52,7 @@ public class AIControllerFacade {
      */
 
     public List<ExampleCall> getExampleCalls() {
-        return library.getExampleCalls();
+        return pluginLibrary.getExampleCalls();
     }
     
     /**
@@ -61,7 +62,7 @@ public class AIControllerFacade {
      * @param amount the amount of historyItems to get
      */
     public List<ExampleCall> getRandomExampleCalls() {
-        return library.getRandomExampleCalls();
+        return pluginLibrary.getRandomExampleCalls();
     }
 
     /**
@@ -75,7 +76,7 @@ public class AIControllerFacade {
     public Response elaborateRequest(Request request) {
         try { 
             ExtendedRequest extendedRequest = requestProcessor.extend(request);
-            Response response = library.executeRequest(extendedRequest);
+            Response response = pluginLibrary.executeRequest(extendedRequest);
             historyItemService
                     .addHistoryItem(new HistoryItem(request, response));
             return response;
@@ -105,4 +106,10 @@ public class AIControllerFacade {
     public List<HistoryItem> getLimitedHistory(int amount) {
         return historyItemService.getLimitedHistory(amount);
     }
+
+    public List<PluginInformation> getPluginInformation() {
+        return pluginLibrary.getPluginInformation();
+    }
+
+    
 }

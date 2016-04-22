@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.net.URISyntaxException;
 
 import org.apache.commons.io.IOUtils;
@@ -14,6 +15,11 @@ import org.json.JSONObject;
 
 import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
 
+/**
+ * This class handles searching for plugins in the file-system of the backend server.
+ *
+ * @version 0.0.1-SNAPSHOT
+ */
 public class PluginFolderAccessor {
 
     /**
@@ -48,7 +54,10 @@ public class PluginFolderAccessor {
         JSONObject libConfig = null;
         try {
             ClassLoader classLoader = getClass().getClassLoader();
-            File file = new File(classLoader.getResource(configFile).getFile());
+            URL urlPath = classLoader.getResource(configFile);
+            if (urlPath == null)
+                throw new IOException("URL could not be loaded.");
+            File file = new File(urlPath.getPath());
             InputStream is = new FileInputStream(file);
             libConfig = new JSONObject(IOUtils.toString(is));
             is.close();
