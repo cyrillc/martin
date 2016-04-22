@@ -25,96 +25,100 @@ import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:Beans.xml",
-        "classpath:Beans-unit-tests.xml" })
+@ContextConfiguration({"classpath:Beans.xml", "classpath:Beans-unit-tests.xml"})
 public class RequestProcessorTest {
-	@Mock
-	private IPluginLibrary library;
-	
-	@InjectMocks
-	private RequestProcessor requestProcessor;
+    @Mock
+    private IPluginLibrary library;
 
-	@Before
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-		
-		// Results for function queries
-		List<Pair<String, String>> result0 = new ArrayList<Pair<String, String>>();
-		result0.add(new Pair<String, String>("Weather App", "forecast"));
-		result0.add(new Pair<String, String>("Weather App", "weather"));
+    @InjectMocks
+    private RequestProcessor requestProcessor;
 
-		List<Pair<String, String>> result1 = new ArrayList<Pair<String, String>>();
-		result1.add(new Pair<String, String>("HelloWorld", "hello"));
-		
-		List<Pair<String, String>> result2 = new ArrayList<Pair<String, String>>();
-		result2.add(new Pair<String, String>("Weather App", "forecast"));
-		
-		List<Pair<String, String>> result3 = new ArrayList<Pair<String, String>>();
-		
-		when(library.queryFunctionsByKeyword(any(String.class))).thenReturn(result3);
-		when(library.queryFunctionsByKeyword("weather")).thenReturn(result0);
-		when(library.queryFunctionsByKeyword("hello")).thenReturn(result1);
-		when(library.queryFunctionsByKeyword("forecast")).thenReturn(result2);
-		
-		
-		// Results for function queries
-		Map<String, String> functionResult0 = new HashMap<String, String>();
-		functionResult0.put("location", "Text");
-		
-	
-		Map<String, String> functionResult1 = new HashMap<String, String>();
-		functionResult1.put("location", "Text");
-		functionResult1.put("time", "Text");
-		
-	
-		Map<String, String> functionResult2 = new HashMap<String, String>();
-		
-		
-		when(library.queryFunctionArguments("Weather App", "weather")).thenReturn(functionResult0);
-		when(library.queryFunctionArguments("Weather App", "forecast")).thenReturn(functionResult1);
-		when(library.queryFunctionArguments("HelloWorld", "hello")).thenReturn(functionResult2);
-	}
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
 
-	@Test
-	public void testExtendRequestPluginAndFeature() throws Exception {
-	
-		Request request0 = new Request("Weather for time tomorrow location Zürich");
-		ExtendedRequest extRequest0 = requestProcessor.extend(request0);
-		assertEquals(extRequest0.getCalls().isEmpty(), false);
-		assertEquals(extRequest0.getCalls().get(0).getPlugin(), "Weather App");
-		assertEquals(extRequest0.getCalls().get(0).getFeature(), "forecast");
-		assertEquals(extRequest0.getCalls().get(0).getArguments().get("time").toString(), (new JSONObject()).put("value", "tomorrow").toString());
-		assertEquals(extRequest0.getCalls().get(0).getArguments().get("location").toString(), (new JSONObject()).put("value", "zürich").toString());
-		
-		
-		Request request1 = new Request("Hello world!");
-		ExtendedRequest extRequest1 = requestProcessor.extend(request1);
-		assertEquals(extRequest1.getCalls().isEmpty(), false);
-		assertEquals(extRequest1.getCalls().get(0).getPlugin(), "HelloWorld");
-		assertEquals(extRequest1.getCalls().get(0).getFeature(), "hello");
-		assertEquals(extRequest1.getCalls().get(0).getArguments().values().size(), 0);
-		
-		
-		
-		Request request2 = new Request("Hello, I'd like to have the weather forecast for time 2pm location Chur");
-		ExtendedRequest extRequest2 = requestProcessor.extend(request2);
-		assertEquals(extRequest2.getCalls().isEmpty(), false);
-		assertEquals(extRequest2.getCalls().get(0).getPlugin(), "Weather App");
-		assertEquals(extRequest2.getCalls().get(0).getFeature(), "forecast");
-		assertEquals(extRequest2.getCalls().get(0).getArguments().get("time").toString(), (new JSONObject()).put("value", "2pm").toString());
-		assertEquals(extRequest2.getCalls().get(0).getArguments().get("location").toString(), (new JSONObject()).put("value", "chur").toString());
-		
-		
-		
-		Request request3 = new Request("Can you tell me the next president of the united states?");
-		try {
-			@SuppressWarnings("unused")
+        // Results for function queries
+        List<Pair<String, String>> result0 = new ArrayList<Pair<String, String>>();
+        result0.add(new Pair<String, String>("Weather App", "forecast"));
+        result0.add(new Pair<String, String>("Weather App", "weather"));
+
+        List<Pair<String, String>> result1 = new ArrayList<Pair<String, String>>();
+        result1.add(new Pair<String, String>("HelloWorld", "hello"));
+
+        List<Pair<String, String>> result2 = new ArrayList<Pair<String, String>>();
+        result2.add(new Pair<String, String>("Weather App", "forecast"));
+
+        List<Pair<String, String>> result3 = new ArrayList<Pair<String, String>>();
+
+        when(library.queryFunctionsByKeyword(any(String.class))).thenReturn(result3);
+        when(library.queryFunctionsByKeyword("weather")).thenReturn(result0);
+        when(library.queryFunctionsByKeyword("hello")).thenReturn(result1);
+        when(library.queryFunctionsByKeyword("forecast")).thenReturn(result2);
+
+        // Results for function queries
+        Map<String, String> functionResult0 = new HashMap<String, String>();
+        functionResult0.put("location", "Text");
+
+        Map<String, String> functionResult1 = new HashMap<String, String>();
+        functionResult1.put("location", "Text");
+        functionResult1.put("time", "Text");
+
+        Map<String, String> functionResult2 = new HashMap<String, String>();
+
+        when(library.queryFunctionArguments("Weather App", "weather")).thenReturn(functionResult0);
+        when(library.queryFunctionArguments("Weather App", "forecast")).thenReturn(functionResult1);
+        when(library.queryFunctionArguments("HelloWorld", "hello")).thenReturn(functionResult2);
+    }
+
+    @Test
+    public void testExtendRequestPluginAndFeature() throws Exception {
+
+        Request request0 = new Request("Weather for time tomorrow location Zürich");
+        ExtendedRequest extRequest0 = requestProcessor.extend(request0);
+        assertEquals(extRequest0.getCalls().isEmpty(), false);
+        assertEquals(extRequest0.getCalls().get(0).getPlugin(), "Weather App");
+        assertEquals(extRequest0.getCalls().get(0).getFeature(), "forecast");
+        assertEquals(extRequest0.getCalls().get(0).getArguments().get("time").toString(),
+                (new JSONObject()).put("value", "tomorrow").toString());
+        assertEquals(extRequest0.getCalls().get(0).getArguments().get("location").toString(),
+                (new JSONObject()).put("value", "zürich").toString());
+
+        Request request1 = new Request("Hello world!");
+        ExtendedRequest extRequest1 = requestProcessor.extend(request1);
+        assertEquals(extRequest1.getCalls().isEmpty(), false);
+        assertEquals(extRequest1.getCalls().get(0).getPlugin(), "HelloWorld");
+        assertEquals(extRequest1.getCalls().get(0).getFeature(), "hello");
+        assertEquals(extRequest1.getCalls().get(0).getArguments().values().size(), 0);
+
+        Request request2 =
+                new Request(
+                        "Hello, I'd like to have the weather forecast for time 2pm location Chur");
+        ExtendedRequest extRequest2 = requestProcessor.extend(request2);
+        assertEquals(extRequest2.getCalls().isEmpty(), false);
+        assertEquals(extRequest2.getCalls().get(0).getPlugin(), "Weather App");
+        assertEquals(extRequest2.getCalls().get(0).getFeature(), "forecast");
+        assertEquals(extRequest2.getCalls().get(0).getArguments().get("time").toString(),
+                (new JSONObject()).put("value", "2pm").toString());
+        assertEquals(extRequest2.getCalls().get(0).getArguments().get("location").toString(),
+                (new JSONObject()).put("value", "chur").toString());
+
+        Request request3 = new Request("Can you tell me the next president of the united states?");
+        try {
+            @SuppressWarnings("unused")
             ExtendedRequest extRequest3 = requestProcessor.extend(request3);
-		    fail("Method didn't throw when I expected it to");
-		} catch (Exception e) {
-			assertEquals(e.getMessage(), "No module found for this command.");
-		}
-		
-	}
-	
+            fail("Method didn't throw when I expected it to");
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "No module found for this command.");
+        }
+    }
+
+
+    @Test
+    public void checkGettingTheRightFeature() {
+        Pair<String, String> pairExpected = new Pair<String, String>("Weather App", "forecast");
+        String[] list = {"ola", "dola", "weather"};
+        Pair<String, String> pair = requestProcessor.getFeatureByKeywords(list);
+        int value = pairExpected.compareTo(pair);
+        assertTrue(value == 0);
+    }
 }
