@@ -37,6 +37,11 @@ public class FunctionService {
    public Function getFunctionById(int id) {
        return functionDao.getById(id);
    }
+   
+   @Transactional
+   public List<Object[]> getByKeyword(String keyword){
+	   return functionDao.getByKeyword(keyword);
+   }
 
    /**
     * USE WITH CAUTION!!

@@ -39,7 +39,7 @@ public interface IPluginLibrary {
      *         first). The first element is the Plugin ID the second is the
      *         feature ID
      */
-    public List<Pair<ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin, Function>> queryFunctionsByKeyword(String keyword);
+    public List<Pair<String, String>> queryFunctionsByKeyword(String keyword);
 
     /**
      * Get a {@link Map} filled with all required parameters for a plugin and

@@ -47,6 +47,10 @@ public class Call {
 		this.arguments.put(key, value);
 	}
 	
+	public void setParameters(Map<String, IMartinType> parameters){
+		this.arguments = parameters;
+	}
+	
 	/**
 	 * @return A map of all arguments.
 	 */

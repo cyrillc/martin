@@ -10,35 +10,32 @@ import org.json.JSONObject;
  * @version 0.0.1-SNAPSHOT
  */
 public class Text implements IMartinType{
+	private boolean instance = false;
     
     private String value;
     
-    public Text() {
-        this.value = "null";
-    }
-    public Text(String value) {
-        this.value = value;
-    }
-    
-    public void setValue(String value) {
-        this.value = value;
-    }
-    public String getValue() {
-        return value;
-    }
-
     /* (non-Javadoc)
      * @see ch.zhaw.psit4.martin.api.types.IMartinType#fromString(java.lang.String)
      */
-    public void fromString(String data) {
-        this.value = (new JSONObject(data)).getString("value");
+    public void fromString(String data) throws MartinTypeInstanciationException{
+        this.value = data;
+        this.instance = true;
     }
     
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return (new JSONObject()).put("value", this.value).toString();
+        return value;
     }
+	@Override
+	public boolean isInstancaeableWith(String data) {
+		return true;
+	}
+	
+	@Override
+	public boolean isInstance() {
+		return instance;
+	}
 
 }

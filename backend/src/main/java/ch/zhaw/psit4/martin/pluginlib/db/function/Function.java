@@ -98,5 +98,9 @@ public class Function {
     public Set<Keyword> getKeywords(){
         return this.functionKeywords;
     }
+    
+    public Plugin getPlugin(){
+    	return this.plugin;
+    }
 
 }

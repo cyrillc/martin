@@ -1,0 +1,5 @@
+parameter_id,name,type,function_id,option_id
+1,Time,ch.zhaw.psit4.martin.api.types.Timestamp,1,1
+2,Location,ch.zhaw.psit4.martin.api.types.Location,1,1
+3,more,ch.zhaw.psit4.martin.api.types.Text,1,1
+4,name,ch.zhaw.psit4.martin.api.types.Text,2,1

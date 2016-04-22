@@ -121,6 +121,13 @@
 			<artifactId>commons-io</artifactId>
 			<version>1.3.2</version>
 		</dependency>
+
+		<!-- strtotime for java -->
+		<dependency>
+		    <groupId>com.github.wareninja</groupId>
+		    <artifactId>strtotime-for-java</artifactId>
+		    <version>c7a4bbd</version>
+		</dependency>
 	</dependencies>
 
 	<properties>
@@ -152,6 +159,11 @@
 		<repository>
 			<id>spring-releases</id>
 			<url>https://repo.spring.io/libs-release</url>
+		</repository>
+		<!-- For Github-Repositories -->
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
