@@ -26,19 +26,6 @@ public class PluginFolderAccessorTest {
         faultyFolderAccessor = new PluginFolderAccessor(missingFolder, missingJSON);
     }
 
-    @Test
-    public void testGetFolderDynamically() {
-        File valid = validFolderAccessor.getFolderDynamically();
-        File noJSON = noJSONFolderAccessor.getFolderDynamically();
-        File noFolder = noFolderAccessor.getFolderDynamically();
-        File faulty = faultyFolderAccessor.getFolderDynamically();
-        
-        assertNotNull(valid);
-        assertNotNull(noJSON);
-        assertNull(noFolder);
-        assertNull(faulty);
-    }
-
     public void testGetPluginFolder() {
         File valid = validFolderAccessor.getPluginFolder();
         File noJSON = noJSONFolderAccessor.getPluginFolder();

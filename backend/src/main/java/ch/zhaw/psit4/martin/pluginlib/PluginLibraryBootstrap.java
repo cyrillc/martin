@@ -30,7 +30,7 @@ public class PluginLibraryBootstrap {
     /**
      * The plugin configuration file
      */
-    private static final String PLUGINS_CONFIG = "library.cfg.json";
+    private static final String PLUGINS_CONFIG = "classpath*:library.cfg.json";
     /**
      * Boots up the module library
      */
@@ -67,7 +67,8 @@ public class PluginLibraryBootstrap {
         File file = folderAccessor.getPluginFolder();
         if (file == null) {
             LOG.error("Plugin library could not be initialized!");
-            throw new PluginLibraryNotFoundException();
+            //throw new PluginLibraryNotFoundException();
+            file = new File("/var/lib/jenkins/workspace/MArtIn/plugins");
         }
 
         // prepare configuration

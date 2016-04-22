@@ -5,15 +5,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URISyntaxException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 /**
  * This class handles searching for plugins in the file-system of the backend server.
@@ -22,6 +21,13 @@ import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
  */
 public class PluginFolderAccessor {
 
+    private static final String[] paths = {
+            "./",
+            "../",
+            "../../",
+            "../../../",
+            "/var/lib/jenkins/workspace/MArtIn/"
+            };
     /**
      * Path to folder where plugins reside (either zipped, or unpacked as a simple folder)
      */
@@ -46,21 +52,25 @@ public class PluginFolderAccessor {
      * @return The plugin folder.
      */
     public File getPluginFolder() {
-        File out = getFolderDynamically();
-        if (out != null)
-            return out;
-
+        File out = null;
         // load library config json
         JSONObject libConfig = null;
         try {
-            ClassLoader classLoader = getClass().getClassLoader();
+            Resource resource = new ClassPathResource(configFile);
+            System.out.println("---------------------------------------------" + resource.getFile());
+            InputStream resourceInputStream = resource.getInputStream();
+            /*
+            ClassLoader classLoader = PluginFolderAccessor.class.getClassLoader();
             URL urlPath = classLoader.getResource(configFile);
             if (urlPath == null)
                 throw new IOException("URL could not be loaded.");
-            File file = new File(urlPath.getPath());
+            String path = urlPath.toString().replace("jar:", "").replace("folder:", "");
+            System.out.println(path);
+            File file = new File(path);
             InputStream is = new FileInputStream(file);
-            libConfig = new JSONObject(IOUtils.toString(is));
-            is.close();
+            */
+            libConfig = new JSONObject(IOUtils.toString(resourceInputStream));
+            resourceInputStream.close();
         } catch (IOException e) {
             LOG.warn("Missing " + configFile + "!", e);
         }
@@ -76,25 +86,6 @@ public class PluginFolderAccessor {
     }
 
     /**
-     * Tries to get the plugin folder dynamically
-     * 
-     * @return The folder if found
-     */
-    File getFolderDynamically() {
-        File out = null;
-        // try to get path dynamically
-        try {
-            String path = PluginLibraryBootstrap.class.getProtectionDomain().getCodeSource()
-                    .getLocation().toURI().getPath();
-            path += ".." + File.separatorChar + "..";
-            out = findFolder(new File(path).getCanonicalPath(), folderName);
-        } catch (IOException | URISyntaxException e) {
-            LOG.warn("Could not load path dynamically, opt to json paths.", e);
-        }
-        return out;
-    }
-
-    /**
      * Get the plugin folder from an array of paths.
      * 
      * @param paths The paths in a {@link JSONArray} file.
@@ -104,7 +95,7 @@ public class PluginFolderAccessor {
         File out = null;
         for (int i = 0; i < paths.length(); i++) {
             try {
-                out = findFolder(new File(paths.get(i).toString()).getCanonicalPath(), folderName);
+                out = checkFolder(new File(paths.get(i).toString()).getCanonicalPath(), folderName);
                 // if a folder was found, return
                 if (out != null)
                     return out;
@@ -117,32 +108,17 @@ public class PluginFolderAccessor {
     }
 
     /**
-     * Find a sub-folder recursively in a given file path.
+     * Check if the folder is the searched folder.
      * 
      * @param source The source path to search.
      * @param folder The folder name to search.
      * @return The found folder or null if no folder was found.
      */
-    File findFolder(String source, String folder) {
+    File checkFolder(String source, String folder) {
         File out = null;
-
-        String[] subFolders = (new File(source)).list();
-        for (String name : subFolders) {
-            // file is not a directory -> skip
-            if (!(new File(source + File.separatorChar + name)).isDirectory())
-                continue;
-
-            // check path and recursively call this method if dir was not found
-            if (!(source + File.separatorChar + name)
-                    .equals(source + File.separatorChar + folder)) {
-                out = findFolder(source + File.separatorChar + name, folder);
-                if (out != null)
-                    return out;
-            } else {
-                return new File(source + File.separatorChar + folder);
-            }
-
-        }
+        String[] sourceParts = source.split("\\\\");
+        if(sourceParts[sourceParts.length - 1].equals(folder))
+            out = new File(source);
         return out;
     }
 
