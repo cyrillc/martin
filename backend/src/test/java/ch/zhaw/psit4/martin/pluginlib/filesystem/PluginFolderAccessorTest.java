@@ -6,12 +6,17 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class PluginFolderAccessorTest {
     
+    @Autowired
     PluginFolderAccessor validFolderAccessor;
+    @Autowired
     PluginFolderAccessor noJSONFolderAccessor;
+    @Autowired
     PluginFolderAccessor noFolderAccessor;
+    @Autowired
     PluginFolderAccessor faultyFolderAccessor;
 
     @Before
@@ -20,10 +25,18 @@ public class PluginFolderAccessorTest {
         String pluginsJSON = "library-test.cfg.json";
         String missingFolder = "missingFolder";
         String missingJSON = "missing-lib.cfg.json";
-        validFolderAccessor = new PluginFolderAccessor(pluginsFolder, pluginsJSON);
-        noJSONFolderAccessor = new PluginFolderAccessor(pluginsFolder, missingJSON);
-        noFolderAccessor = new PluginFolderAccessor(missingFolder, pluginsJSON);
-        faultyFolderAccessor = new PluginFolderAccessor(missingFolder, missingJSON);
+        
+        validFolderAccessor.setFolderName(pluginsFolder);
+        validFolderAccessor.setConfigFile(pluginsJSON);
+
+        noJSONFolderAccessor.setFolderName(pluginsFolder);
+        noJSONFolderAccessor.setConfigFile(missingJSON);
+        
+        noFolderAccessor.setFolderName(missingFolder);
+        noFolderAccessor.setConfigFile(pluginsJSON);
+        
+        faultyFolderAccessor.setFolderName(missingFolder);
+        faultyFolderAccessor.setConfigFile(missingJSON);
     }
 
     public void testGetPluginFolder() {
