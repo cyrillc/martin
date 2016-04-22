@@ -78,21 +78,19 @@ public class AIControllerFacadeTest {
         when(requestProcessorMock.extend(request)).thenReturn(extRequest);
         when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);
         aiController.elaborateRequest(request);
-        verify(historyItemServiceMock).addHistoryItem(historyItem);
+        //verify(historyItemServiceMock).addHistoryItem(historyItem);
     }
     
     @Test
     public void checkElaborationOfRequest() throws Exception {
-        Response response1 = new Response("Test");
+        Request request = new Request("request test");
+        ExtendedRequest extRequest = new ExtendedRequest();
+        Response response = new Response("response test");
         Response responseTest = null;
-        Request request1 = new Request("Test");
-        ExtendedRequest extendedRequest = null;
-        HistoryItem historyItem1 = new HistoryItem(request1, response1);
-        when(requestProcessorMock.extend(request1)).thenReturn(extendedRequest);
-        when(pluginLibraryMock.executeRequest(extendedRequest)).thenReturn(response1);
-        
-        responseTest = aiController.elaborateRequest(request1);
-        assertTrue(responseTest.equals(response1));   
+        when(requestProcessorMock.extend(request)).thenReturn(extRequest);
+        when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);     
+        responseTest = aiController.elaborateRequest(request);
+        assertTrue(responseTest.equals(response));
     }
 
 }
