@@ -3,8 +3,6 @@ package zhaw.weatherPlugin;
 import java.io.IOException;
 
 import org.bitpipeline.lib.owm.OwmClient;
-import org.bitpipeline.lib.owm.WeatherData;
-import org.bitpipeline.lib.owm.WeatherData.WeatherCondition;
 import org.bitpipeline.lib.owm.WeatherStatusResponse;
 import org.json.JSONException;
 
@@ -13,23 +11,21 @@ public class WeatherService {
     private OwmClient owmClient;
 
     public WeatherService() {
-        this.owmClient = new OwmClient();
+        owmClient = new OwmClient();
         this.owmClient.setAPPID("c4cb05905b0c1017d58221beda81460d");
     }
 
     public String getWeatherAtCity(String city) throws WeatherPluginException {
         try {
-            WeatherStatusResponse currentWeather = this.owmClient
+            WeatherStatusResponse owmResponse = this.owmClient
                     .currentWeatherAtCity(city);
-            if (currentWeather.hasWeatherStatus()) {
-                WeatherData data = currentWeather.getWeatherStatus().get(0);
-                WeatherCondition conditions = data.getWeatherConditions()
-                        .get(0);
-                float temperatureCelsius = convertKelvinToCelsius(
-                        data.getTemp());
-                String description = conditions.getDescription();
-                int rain = (data.getRain() == Integer.MIN_VALUE) ? 0
-                        : data.getRain();
+            WeatherResponseAdapter response = new WeatherResponseAdapter(
+                    owmResponse);
+            if (response.hasWeatherData()) {
+
+                float temperatureCelsius = response.getTemperature();
+                String description = response.getWeatherDescription();
+                int rain = response.getRain();
 
                 return "Weather in " + city + ": " + description
                         + " Temperature: " + temperatureCelsius + " Rain: "
@@ -44,10 +40,6 @@ public class WeatherService {
             throw new WeatherPluginException(
                     "impossible to connect with the server");
         }
-    }
-
-    public float convertKelvinToCelsius(float kelvin) {
-        return (float) (kelvin - 273.15);
     }
 
 }
