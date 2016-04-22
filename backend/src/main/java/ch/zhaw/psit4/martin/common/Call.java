@@ -19,7 +19,7 @@ public class Call {
 	private Map<String, IMartinType> arguments;
 	
 	public Call(){
-		this.arguments = new HashMap<String, IMartinType>();
+		this.arguments = new HashMap<>();
 	}
 
 	public Plugin getPlugin() {

@@ -1,6 +1,5 @@
 package ch.zhaw.psit4.martin.requestProcessor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

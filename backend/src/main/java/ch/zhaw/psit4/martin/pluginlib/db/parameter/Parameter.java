@@ -15,10 +15,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.ManyToAny;
-
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
 import ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword;
 

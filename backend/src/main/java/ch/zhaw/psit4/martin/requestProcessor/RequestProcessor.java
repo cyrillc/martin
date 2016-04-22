@@ -2,31 +2,21 @@ package ch.zhaw.psit4.martin.requestProcessor;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.api.types.IMartinType;
-import ch.zhaw.psit4.martin.api.Feature;
-import ch.zhaw.psit4.martin.api.types.*;
-import ch.zhaw.psit4.martin.api.util.Pair;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Request;
-import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
 import ch.zhaw.psit4.martin.pluginlib.db.function.FunctionService;
 import ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword;
 import ch.zhaw.psit4.martin.pluginlib.db.parameter.Parameter;
 import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
-import ch.zhaw.psit4.martin.pluginlib.db.plugin.PluginService;
 
 /**
  * This class is responible for extending a request to a computer readable
@@ -36,9 +26,6 @@ import ch.zhaw.psit4.martin.pluginlib.db.plugin.PluginService;
  * @version 0.1
  **/
 public class RequestProcessor implements IRequestProcessor {
-
-	@Autowired
-	private IPluginLibrary library;
 	
 	@Autowired
 	private FunctionService functionService;

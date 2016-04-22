@@ -1,7 +1,5 @@
 package ch.zhaw.psit4.martin.api.types;
 
-import org.json.JSONObject;
-
 /**
  * Distributed Text type for MArtIn API.
  * 

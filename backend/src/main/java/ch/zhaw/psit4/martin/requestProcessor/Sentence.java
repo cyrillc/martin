@@ -2,8 +2,6 @@ package ch.zhaw.psit4.martin.requestProcessor;
 
 import java.util.ArrayList;
 
-import antlr.collections.List;
-
 class Sentence {
 	private ArrayList<Word> sentence = new ArrayList<>();
 	

@@ -1,30 +1,19 @@
 package ch.zhaw.psit4.martin.requestProcessor;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import ch.zhaw.psit4.martin.api.util.Pair;
+
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 import ch.zhaw.psit4.martin.common.Request;
-import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
-import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
