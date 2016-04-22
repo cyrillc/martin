@@ -41,7 +41,7 @@ public class RequestProcessor implements IRequestProcessor {
      *            A list of keywords to be searched in the library.
      * @return
      */
-    private Pair<String, String> getFeatureByKeywords(String[] keywords) {
+    Pair<String, String> getFeatureByKeywords(String[] keywords) {
         Map<String, Pair<String, String>> featureList = new HashMap<String, Pair<String, String>>();
         Map<String, Integer> featureCount = new HashMap<String, Integer>();
         List<Pair<String, String>> queryResult = new ArrayList<Pair<String, String>>();
