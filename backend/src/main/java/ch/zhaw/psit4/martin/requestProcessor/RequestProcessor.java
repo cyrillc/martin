@@ -9,6 +9,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.api.types.IMartinType;
+import ch.zhaw.psit4.martin.api.types.Location;
+import ch.zhaw.psit4.martin.api.types.Timestamp;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Request;
@@ -120,19 +122,48 @@ public class RequestProcessor implements IRequestProcessor {
 					IMartinType parameterValue = Class.forName(parameter.getType()).asSubclass(IMartinType.class)
 							.newInstance();
 
-					for(Word word : sentence.getWords()) {
-						if (parameterValue.isInstancaeableWith(word.toString())) {
-							parameterValue.fromString(word.toString());
+					// Perform Name Entity Recognition
+					boolean nameEntityRecognitionSuccess = false;
+					String data = "";
+					if(Timestamp.class.getName().equals(parameter.getType())){
+						ArrayList<String> dates = (ArrayList<String>) sentence.performNameEntityRecognition("DATE");
+						ArrayList<String> times = (ArrayList<String>) sentence.performNameEntityRecognition("TIME");
+						data = (String.join(" ", dates) + " " + String.join(" ", times)).trim();
+					}
+					
+					if(Location.class.getName().equals(parameter.getType())){
+						ArrayList<String> locations = (ArrayList<String>) sentence.performNameEntityRecognition("LOCATION");
+						data = String.join(" ", locations);
+					}
+					
+					if(data != "" && parameterValue.isInstancaeableWith(data)){
+						parameterValue.fromString(data);
+						nameEntityRecognitionSuccess = true;
+						
+						LOG.info("\n Parameter " + parameter.getName() + " resolved: " + "\n { "
+								+ "\n    name:          '" + parameter.getName() + "', " + "\n    value:         '"
+								+ parameterValue.toString() + "'" + "\n    type:          '" + parameter.getType()
+								+ "',  " + "\n    originalValue: '" + sentence.getWords() + "', " + "\n }");
+					}
+					
+					
+					// Perform Brute-Force
+					if(nameEntityRecognitionSuccess == false){
+						for(Word word : sentence.getWords()) {
+							if (parameterValue.isInstancaeableWith(word.toString())) {
+								parameterValue.fromString(word.toString());
 
-							LOG.info("\n Parameter " + parameter.getName() + " resolved: " + "\n { "
-									+ "\n    name:          '" + parameter.getName() + "', " + "\n    value:         '"
-									+ parameterValue.toString() + "'" + "\n    type:          '" + parameter.getType()
-									+ "',  " + "\n    originalValue: '" + word.toString() + "', " + "\n }");
+								LOG.info("\n Parameter " + parameter.getName() + " resolved: " + "\n { "
+										+ "\n    name:          '" + parameter.getName() + "', " + "\n    value:         '"
+										+ parameterValue.toString() + "'" + "\n    type:          '" + parameter.getType()
+										+ "',  " + "\n    originalValue: '" + word.toString() + "', " + "\n }");
 
-							break;
+								break;
+							}
 						}
 					}
-
+					
+					
 					if(parameterValue.isInstance()) {
 						possibleResult.addParameter(parameter.getName(), parameterValue);
 					} else {

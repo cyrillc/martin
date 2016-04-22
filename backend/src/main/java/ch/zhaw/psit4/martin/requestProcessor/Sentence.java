@@ -43,6 +43,28 @@ class Sentence {
 	public ArrayList<Word> getWords() {
 		return sentence;
 	}
+	
+	public List<String> performNameEntityRecognition(String type){
+		Annotation document = new Annotation(rawSentence);
+		stanfordNLP.annotate(document);
+		
+		ArrayList<String> recognizedWords = new ArrayList<>();
+		
+		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+		
+		for (CoreMap sentence : sentences) {
+			// traversing the words in the current sentence
+			// a CoreLabel is a CoreMap with additional token-specific methods
+			for(CoreLabel token : sentence.get(TokensAnnotation.class)) {
+				// Get all words of type
+				if(token.get(NamedEntityTagAnnotation.class).equals(type)){
+					recognizedWords.add(token.get(TextAnnotation.class));
+				}
+			}
+		}
+		
+		return recognizedWords;
+	}
 
 	// http://corenlp.run/
 	public void analyzeWithStanfordNLP() {

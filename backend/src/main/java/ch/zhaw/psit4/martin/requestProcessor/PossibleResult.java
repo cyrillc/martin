@@ -20,6 +20,7 @@ class PossibleResult {
 	private HashMap<Integer, Keyword> matchingKeywords = new HashMap<>();
 	
 	private static final Integer RELEVANCE_WEIGHT_KEYWORD_COUNT = 10;
+	private static final Integer RELEVANCE_WEIGHT_NAME_ENTITY_RECOGNITION = 10;
 	
 	public PossibleResult(Plugin plugin, Function function){
 		this.plugin = plugin;

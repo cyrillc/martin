@@ -10,10 +10,12 @@ public class Timestamp implements IMartinType{
 	 * Number of milliseconds since 01. Jan 1970.
 	 */
 	private Date date;
+	private String data;
 	
 	@Override
 	public void fromString(String data) throws MartinTypeInstanciationException {
 		date = Str2Time.convert(data);
+		this.data = data;
 		
 		if(date == null){
 			throw new MartinTypeInstanciationException("This time / date cannot be converted to timestamp.");
@@ -29,7 +31,7 @@ public class Timestamp implements IMartinType{
 	
 	@Override
 	public String toString(){
-		return date.toString();
+		return data;
 	}
 	
 	public Long getTimestamp(){
