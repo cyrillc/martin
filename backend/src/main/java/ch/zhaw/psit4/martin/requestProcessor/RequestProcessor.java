@@ -121,7 +121,13 @@ public class RequestProcessor implements IRequestProcessor {
 						if(parameterValue.isInstancaeableWith(word.toString())){
 							parameterValue.fromString(word.toString());
 							
-							LOG.info("Parameter resolved: " + parameter.getName() + " | " + parameter.getType() + " | " + word.toString() + " | " + parameterValue.toString());
+							LOG.info( "\n Parameter " + parameter.getName() + " resolved: "
+									+ "\n { "
+									+ "\n    name:          '" + parameter.getName() + "', "
+									+ "\n    value:         '" + parameterValue.toString() + "'"
+									+ "\n    type:          '" + parameter.getType() + "',  "
+									+ "\n    originalValue: '" + word.toString() + "', "
+									+ "\n }");
 						
 							break;
 						}

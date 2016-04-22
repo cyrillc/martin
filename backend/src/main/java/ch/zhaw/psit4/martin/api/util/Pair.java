@@ -5,22 +5,23 @@ package ch.zhaw.psit4.martin.api.util;
  * 
  * @version 0.0.1-SNAPSHOT
  */
-public class Pair<FIRST, SECOND> implements Comparable<Pair<FIRST, SECOND>> {
+public class Pair<T1, T2> implements Comparable<Pair<T1, T2>> {
 
-    public final FIRST first;
-    public final SECOND second;
+    public final T1 first;
+    public final T2 second;
 
-    public Pair(FIRST first, SECOND second) {
+    public Pair(T1 first, T2 second) {
         this.first = first;
         this.second = second;
     }
 
-    public static <FIRST, SECOND> Pair<FIRST, SECOND> of(FIRST first,
-            SECOND second) {
-        return new Pair<FIRST, SECOND>(first, second);
+    public static <T1, T2> Pair<T1, T2> of(T1 first,
+            T2 second) {
+        return new Pair<>(first, second);
     }
 
-    public int compareTo(Pair<FIRST, SECOND> o) {
+    @Override
+    public int compareTo(Pair<T1, T2> o) {
         int cmp = compare(first, o.first);
         return cmp == 0 ? compare(second, o.second) : cmp;
     }
