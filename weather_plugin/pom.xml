@@ -12,9 +12,12 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>1.8</java.version>
   </properties>
 
   <repositories>
+
+    <!-- OpenWeatherMap Client -->
     <repository>
       <id>ossrh</id>
       <url>https://oss.sonatype.org/content/groups/public/</url>
@@ -22,12 +25,16 @@
   </repositories>
 
   <dependencies>
+  
+    <!-- TEST -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- OpenWeatherMap Client -->
     <dependency>
       <groupId>org.bitpipeline.lib</groupId>
       <artifactId>owm-lib</artifactId>
@@ -43,5 +50,15 @@
       <artifactId>httpclient</artifactId>
       <version>4.5.2</version>
     </dependency>
+
+    <!-- Martin -->
+    <dependency>
+      <groupId>ch.zhaw.psit4.martin.api</groupId>
+      <artifactId>martin-api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/../distributable/target/martin-api-0.0.1-SNAPSHOT.jar</systemPath>
+    </dependency>
   </dependencies>
+
 </project>
