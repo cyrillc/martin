@@ -1,33 +1,25 @@
 package ch.zhaw.psit4.martin.pluginlib.filesystem;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * This class handles searching for plugins in the file-system of the backend server.
  *
  * @version 0.0.1-SNAPSHOT
  */
-public class PluginFolderAccessor {
-
-    private static final String[] paths = {
-            "./",
-            "../",
-            "../../",
-            "../../../",
-            "/var/lib/jenkins/workspace/MArtIn/"
-            };
+public class PluginFolderAccessor implements ResourceLoaderAware {
+    private ResourceLoader resourceLoader;
     /**
      * Path to folder where plugins reside (either zipped, or unpacked as a simple folder)
      */
@@ -56,19 +48,8 @@ public class PluginFolderAccessor {
         // load library config json
         JSONObject libConfig = null;
         try {
-            Resource resource = new ClassPathResource(configFile);
-            System.out.println("---------------------------------------------" + resource.getFile());
+            Resource resource = resourceLoader.getResource(configFile);
             InputStream resourceInputStream = resource.getInputStream();
-            /*
-            ClassLoader classLoader = PluginFolderAccessor.class.getClassLoader();
-            URL urlPath = classLoader.getResource(configFile);
-            if (urlPath == null)
-                throw new IOException("URL could not be loaded.");
-            String path = urlPath.toString().replace("jar:", "").replace("folder:", "");
-            System.out.println(path);
-            File file = new File(path);
-            InputStream is = new FileInputStream(file);
-            */
             libConfig = new JSONObject(IOUtils.toString(resourceInputStream));
             resourceInputStream.close();
         } catch (IOException e) {
@@ -117,7 +98,7 @@ public class PluginFolderAccessor {
     File checkFolder(String source, String folder) {
         File out = null;
         String[] sourceParts = source.split("\\\\");
-        if(sourceParts[sourceParts.length - 1].equals(folder))
+        if (sourceParts[sourceParts.length - 1].equals(folder))
             out = new File(source);
         return out;
     }
@@ -138,4 +119,11 @@ public class PluginFolderAccessor {
         this.configFile = configFile;
     }
 
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
+
+    public Resource getResource(String location) {
+        return resourceLoader.getResource(location);
+    }
 }

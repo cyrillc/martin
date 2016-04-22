@@ -105,6 +105,11 @@
 	<bean id="PluginLibraryBootstrap" class="ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap" scope="singleton"/>
 
 	<bean id="IPluginLibrary" factory-bean="PluginLibraryBootstrap" factory-method="boot" class="ch.zhaw.psit4.martin.pluginlib.IPluginLibrary" scope="singleton"/>
+	
+	<bean id="PluginFolderAccessor" class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginFolderAccessor">
+		<constructor-arg value="plugins"/>
+		<constructor-arg value="classpath:library.cfg.json"/>
+	</bean>
 
 	<!-- package requestProcessor -->
 	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestProcessor.RequestProcessor" scope="singleton">
