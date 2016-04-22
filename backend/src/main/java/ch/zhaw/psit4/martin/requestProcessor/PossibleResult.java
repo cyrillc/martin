@@ -19,6 +19,8 @@ class PossibleResult {
 	private HashMap<String, IMartinType> parameters = new HashMap<>();
 	private HashMap<Integer, Keyword> matchingKeywords = new HashMap<>();
 	
+	private static final Integer RELEVANCE_WEIGHT_KEYWORD_COUNT = 10;
+	
 	public PossibleResult(Plugin plugin, Function function){
 		this.plugin = plugin;
 		this.function = function;
@@ -55,5 +57,9 @@ class PossibleResult {
 	
 	public Map<String, IMartinType> getParameters(){
 		return parameters;
+	}
+	
+	public Integer getRelevance(){
+		return RELEVANCE_WEIGHT_KEYWORD_COUNT * this.matchingKeywords.size();
 	}
 }

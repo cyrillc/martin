@@ -64,6 +64,8 @@ public class RequestProcessorTest {
 		
 		
 		
+		
+		
 		/*Request request3 = new Request("Can you tell me the next president of the united states?");
 		try {
 			@SuppressWarnings("unused")
@@ -72,6 +74,9 @@ public class RequestProcessorTest {
 		} catch (Exception e) {
 			assertEquals(e.getMessage(), "No module found for this command.");
 		} */
+		
+		Request request4 = new Request("Who will be the president of the United States in 2017?");
+		ExtendedRequest extRequest4 = requestProcessor.extend(request4);
 		
 	}
 	

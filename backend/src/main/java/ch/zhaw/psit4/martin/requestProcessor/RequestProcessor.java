@@ -17,6 +17,7 @@ import ch.zhaw.psit4.martin.pluginlib.db.function.FunctionService;
 import ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword;
 import ch.zhaw.psit4.martin.pluginlib.db.parameter.Parameter;
 import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
 /**
  * This class is responible for extending a request to a computer readable
@@ -26,13 +27,15 @@ import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
  * @version 0.1
  **/
 public class RequestProcessor implements IRequestProcessor {
-	
+
 	@Autowired
 	private FunctionService functionService;
+	
+	@Autowired
+	private StanfordCoreNLP stanfordNLP;
 
 	private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
-	
-	
+
 	/**
 	 * Extends a request from a basic command and tries to determine possible
 	 * module calls. In oder for this method to work, set the library beforehand
@@ -44,53 +47,52 @@ public class RequestProcessor implements IRequestProcessor {
 	 *         executable function calls.
 	 */
 	@Override
-	public ExtendedRequest extend(Request request) throws Exception {	
+	public ExtendedRequest extend(Request request) {
 		List<PossibleResult> possibleResults = new ArrayList<>();
+
+		Sentence sentence = new Sentence(request.getCommand(), stanfordNLP);
 		
-		Sentence sentence = new Sentence(request.getCommand());
+		//sentence.analyzeWithStanfordNLP();
 
 		// Find possible Plugins/Functions by keywords
-		
-
 		addPossibleRequestsWithKeywords(possibleResults, sentence.getWords());
+
+		// Resolve parameters
 		resolveParameters(possibleResults, sentence);
-		
-		
-		
-		possibleResults.sort((PossibleResult result1, PossibleResult result2) -> result1.getMatchingKeywords().size()
-				- result2.getMatchingKeywords().size());
-		
-		
-		
+
+		// Sort by relevance
+		possibleResults.sort(
+				(PossibleResult result1, PossibleResult result2) -> result1.getRelevance() - result2.getRelevance());
+
 		// Create final ExtendedRequest
 		ExtendedRequest extendedRequest = new ExtendedRequest();
 		extendedRequest.setInput(request);
-		
-		for(PossibleResult possibleResult : possibleResults){
+
+		for (PossibleResult possibleResult : possibleResults) {
 			// Create Call
 			Call call = new Call();
 			call.setPlugin(possibleResult.getPlugin());
 			call.setFeature(possibleResult.getFunction());
 			call.setParameters(possibleResult.getParameters());
-			
+
 			extendedRequest.addCall(call);
 		}
-		
+
 		return extendedRequest;
 	}
-	
 
-	private List<PossibleResult> addPossibleRequestsWithKeywords(List<PossibleResult> possibleResults, List<Word> words) {
-		
+	private List<PossibleResult> addPossibleRequestsWithKeywords(List<PossibleResult> possibleResults,
+			List<Word> words) {
+
 		for (Word word : words) {
-		
+
 			List<Object[]> functionsKeywords = functionService.getByKeyword(word.toString());
 			for (Object[] functionsKeyword : functionsKeywords) {
-				Function function = (Function)functionsKeyword[0];
+				Function function = (Function) functionsKeyword[0];
 				Plugin plugin = function.getPlugin();
 
-				Keyword keyword = (Keyword)functionsKeyword[1];
-				
+				Keyword keyword = (Keyword) functionsKeyword[1];
+
 				Optional<PossibleResult> optionalPossibleResult = possibleResults.stream()
 						.filter(o -> o.getPlugin().getId() == plugin.getId())
 						.filter(o -> o.getFunction().getId() == function.getId()).findFirst();
@@ -107,47 +109,44 @@ public class RequestProcessor implements IRequestProcessor {
 
 		return possibleResults;
 	}
-	
-	private List<PossibleResult> resolveParameters(List<PossibleResult> possibleResults, Sentence sentence){
-		for(PossibleResult possibleResult : possibleResults){
-			Function function = possibleResult.getFunction();
-			
-			for(Parameter parameter : function.getParameter()){	
-				// Create instance of IMartinType for 
-				try {
-					IMartinType parameterValue = Class.forName(parameter.getType()).asSubclass(IMartinType.class).newInstance();
 
-					for(Word word : sentence.getWords()){
-						if(parameterValue.isInstancaeableWith(word.toString())){
+	private List<PossibleResult> resolveParameters(List<PossibleResult> possibleResults, Sentence sentence) {
+		for (PossibleResult possibleResult : possibleResults) {
+			Function function = possibleResult.getFunction();
+
+			for (Parameter parameter : function.getParameter()) {
+				// Create instance of IMartinType for requested type
+				try {
+					IMartinType parameterValue = Class.forName(parameter.getType()).asSubclass(IMartinType.class)
+							.newInstance();
+
+					for(Word word : sentence.getWords()) {
+						if (parameterValue.isInstancaeableWith(word.toString())) {
 							parameterValue.fromString(word.toString());
-							
-							LOG.info( "\n Parameter " + parameter.getName() + " resolved: "
-									+ "\n { "
-									+ "\n    name:          '" + parameter.getName() + "', "
-									+ "\n    value:         '" + parameterValue.toString() + "'"
-									+ "\n    type:          '" + parameter.getType() + "',  "
-									+ "\n    originalValue: '" + word.toString() + "', "
-									+ "\n }");
-						
+
+							LOG.info("\n Parameter " + parameter.getName() + " resolved: " + "\n { "
+									+ "\n    name:          '" + parameter.getName() + "', " + "\n    value:         '"
+									+ parameterValue.toString() + "'" + "\n    type:          '" + parameter.getType()
+									+ "',  " + "\n    originalValue: '" + word.toString() + "', " + "\n }");
+
 							break;
 						}
 					}
-					
-					if(parameterValue.isInstance()){
+
+					if(parameterValue.isInstance()) {
 						possibleResult.addParameter(parameter.getName(), parameterValue);
 					} else {
 						throw new Exception("Parameter " + parameter.getName() + " cannot be found.");
 					}
-				} catch(Exception e){
-					LOG.info(e.getMessage());
+				} catch(Exception e) {
+					LOG.info(e);
 					break;
 				}
 			}
-			
+
 		}
-		
+
 		return possibleResults;
 	}
-
 
 }
