@@ -1,8 +1,15 @@
 package ch.zhaw.psit4.martin.common;
 
 import ch.zhaw.psit4.martin.api.types.Date;
+import ch.zhaw.psit4.martin.api.types.Duration;
 import ch.zhaw.psit4.martin.api.types.Location;
+import ch.zhaw.psit4.martin.api.types.Misc;
+import ch.zhaw.psit4.martin.api.types.Money;
+import ch.zhaw.psit4.martin.api.types.Ordinal;
+import ch.zhaw.psit4.martin.api.types.Organization;
+import ch.zhaw.psit4.martin.api.types.Percent;
 import ch.zhaw.psit4.martin.api.types.Person;
+import ch.zhaw.psit4.martin.api.types.Set;
 import ch.zhaw.psit4.martin.api.types.Text;
 import ch.zhaw.psit4.martin.api.types.Time;
 
@@ -30,29 +37,21 @@ public class Phrase {
 		case "TIME":
 			return Time.class.getName();
 		case "ORGANIZATION":
-			// TODO: Add Organization IMartinType
-			return Text.class.getName();
+			return Organization.class.getName();
 		case "MISC":
-			// TODO: Add Misc IMartinType
-			return Text.class.getName();
+			return Misc.class.getName();
 		case "MONEY":
-			// TODO: Add Money IMartinType
-			return Text.class.getName();
+			return Money.class.getName();
 		case "NUMBER":
-			// TODO: Add Number IMArtionType
-			return Text.class.getName();
+			return Number.class.getName();
 		case "ORDINAL":
-			// TODO: Add Ordinal IMartinType
-			return Text.class.getName();
+			return Ordinal.class.getName();
 		case "PERCENT":
-			// TODO: Add Percent IMArtinType
-			return Text.class.getName();
+			return Percent.class.getName();
 		case "DURATION":
-			// TODO: Add Duration IMartionType
-			return Text.class.getName();
+			return Duration.class.getName();
 		case "SET":
-			// TODO: Add Set IMartionType
-			return Text.class.getName();
+			return Set.class.getName();
 		default:
 			return Text.class.getName();
 		}

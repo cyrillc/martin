@@ -38,7 +38,6 @@ public class RequestProcessor implements IRequestProcessor {
 	private FunctionService functionService;
 
 	@Autowired
-
 	private StanfordCoreNLP stanfordNLP;
 
 	private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
