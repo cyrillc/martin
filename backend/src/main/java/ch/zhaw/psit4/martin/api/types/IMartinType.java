@@ -28,5 +28,5 @@ public interface IMartinType {
      */
     public boolean isInstancaeableWith(String data);
     
-    public boolean isInstance();
+    public boolean isValid();
 }

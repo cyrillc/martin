@@ -8,32 +8,27 @@ package ch.zhaw.psit4.martin.api.types;
  * @version 0.0.1-SNAPSHOT
  */
 public class Text implements IMartinType{
-	private boolean instance = false;
-    
-    private String value;
-    
-    /* (non-Javadoc)
-     * @see ch.zhaw.psit4.martin.api.types.IMartinType#fromString(java.lang.String)
-     */
-    public void fromString(String data) throws MartinTypeInstanciationException{
-        this.value = data;
-        this.instance = true;
-    }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        return value;
-    }
+	private boolean isValid = false;
+	private String data;
+
+	@Override
+	public void fromString(String data) throws MartinTypeInstanciationException {
+		this.data = data;
+		this.isValid = true;
+	}
+
 	@Override
 	public boolean isInstancaeableWith(String data) {
 		return true;
 	}
 	
 	@Override
-	public boolean isInstance() {
-		return instance;
+	public String toString(){
+		return data;
 	}
 
+	@Override
+	public boolean isValid(){
+		return isValid;
+	}
 }

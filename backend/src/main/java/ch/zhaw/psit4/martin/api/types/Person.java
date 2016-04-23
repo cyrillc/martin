@@ -1,6 +1,6 @@
 package ch.zhaw.psit4.martin.api.types;
 
-public class Location implements IMartinType {
+public class Person implements IMartinType{
 	private boolean isValid = false;
 	private String data;
 
@@ -21,7 +21,7 @@ public class Location implements IMartinType {
 	}
 
 	@Override
-	public boolean isValid(){
+	public boolean isValid() {
 		return isValid;
 	}
 }

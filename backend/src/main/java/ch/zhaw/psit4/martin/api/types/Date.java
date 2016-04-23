@@ -1,6 +1,6 @@
 package ch.zhaw.psit4.martin.api.types;
 
-public class Location implements IMartinType {
+public class Date implements IMartinType{
 	private boolean isValid = false;
 	private String data;
 

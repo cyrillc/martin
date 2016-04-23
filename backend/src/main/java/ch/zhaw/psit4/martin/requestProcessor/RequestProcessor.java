@@ -8,12 +8,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ch.zhaw.psit4.martin.api.types.Date;
 import ch.zhaw.psit4.martin.api.types.IMartinType;
-import ch.zhaw.psit4.martin.api.types.Location;
+import ch.zhaw.psit4.martin.api.types.Time;
 import ch.zhaw.psit4.martin.api.types.Timestamp;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Request;
+import ch.zhaw.psit4.martin.common.Sentence;
+import ch.zhaw.psit4.martin.common.Phrase;
 import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
 import ch.zhaw.psit4.martin.pluginlib.db.function.FunctionService;
 import ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword;
@@ -54,8 +57,6 @@ public class RequestProcessor implements IRequestProcessor {
 
 		Sentence sentence = new Sentence(request.getCommand(), stanfordNLP);
 		
-		//sentence.analyzeWithStanfordNLP();
-
 		// Find possible Plugins/Functions by keywords
 		addPossibleRequestsWithKeywords(possibleResults, sentence.getWords());
 
@@ -83,12 +84,11 @@ public class RequestProcessor implements IRequestProcessor {
 		return extendedRequest;
 	}
 
-	private List<PossibleResult> addPossibleRequestsWithKeywords(List<PossibleResult> possibleResults,
-			List<Word> words) {
+	private List<PossibleResult> addPossibleRequestsWithKeywords(List<PossibleResult> possibleResults, String[] words) {
 
-		for (Word word : words) {
+		for(String word : words) {
 
-			List<Object[]> functionsKeywords = functionService.getByKeyword(word.toString());
+			List<Object[]> functionsKeywords = functionService.getByKeyword(word);
 			for (Object[] functionsKeyword : functionsKeywords) {
 				Function function = (Function) functionsKeyword[0];
 				Plugin plugin = function.getPlugin();
@@ -121,39 +121,39 @@ public class RequestProcessor implements IRequestProcessor {
 				try {
 					IMartinType parameterValue = Class.forName(parameter.getType()).asSubclass(IMartinType.class)
 							.newInstance();
+				
 
 					// Perform Name Entity Recognition
-					boolean nameEntityRecognitionSuccess = false;
 					String data = "";
 					if(Timestamp.class.getName().equals(parameter.getType())){
-						ArrayList<String> dates = (ArrayList<String>) sentence.performNameEntityRecognition("DATE");
-						ArrayList<String> times = (ArrayList<String>) sentence.performNameEntityRecognition("TIME");
-						data = (String.join(" ", dates) + " " + String.join(" ", times)).trim();
-					}
-					
-					if(Location.class.getName().equals(parameter.getType())){
-						ArrayList<String> locations = (ArrayList<String>) sentence.performNameEntityRecognition("LOCATION");
-						data = String.join(" ", locations);
+						Phrase date = sentence.popExpressionOfIMartinType(Date.class.getName());
+						Phrase time = sentence.popExpressionOfIMartinType(Time.class.getName());
+						
+						data = (date.getValue() + " " + time.getValue()).trim();
+					} else {
+						Phrase phrase = sentence.popExpressionOfIMartinType(parameter.getType());
+						
+						if(phrase != null){
+							data = phrase.getValue();
+						}
 					}
 					
 					if(data != "" && parameterValue.isInstancaeableWith(data)){
 						parameterValue.fromString(data);
-						nameEntityRecognitionSuccess = true;
 						
-						LOG.info("\n Parameter " + parameter.getName() + " resolved: " + "\n { "
+						LOG.info("\n Parameter found via Name Entity Recognition: { "
 								+ "\n    name:          '" + parameter.getName() + "', " + "\n    value:         '"
-								+ parameterValue.toString() + "'" + "\n    type:          '" + parameter.getType()
-								+ "',  " + "\n    originalValue: '" + sentence.getWords() + "', " + "\n }");
+								+ parameterValue.toString() + "'" + "\n    type:          '" + parameter.getType()+ "\n }");
 					}
 					
 					
 					// Perform Brute-Force
-					if(nameEntityRecognitionSuccess == false){
+					/*if(nameEntityRecognitionSuccess == false){
 						for(Word word : sentence.getWords()) {
 							if (parameterValue.isInstancaeableWith(word.toString())) {
 								parameterValue.fromString(word.toString());
 
-								LOG.info("\n Parameter " + parameter.getName() + " resolved: " + "\n { "
+								LOG.info("\n Parameter found via Brute-Force: { "
 										+ "\n    name:          '" + parameter.getName() + "', " + "\n    value:         '"
 										+ parameterValue.toString() + "'" + "\n    type:          '" + parameter.getType()
 										+ "',  " + "\n    originalValue: '" + word.toString() + "', " + "\n }");
@@ -161,13 +161,11 @@ public class RequestProcessor implements IRequestProcessor {
 								break;
 							}
 						}
-					}
+					} */
 					
 					
-					if(parameterValue.isInstance()) {
+					if(parameterValue.isValid()) {
 						possibleResult.addParameter(parameter.getName(), parameterValue);
-					} else {
-						throw new Exception("Parameter " + parameter.getName() + " cannot be found.");
 					}
 				} catch(Exception e) {
 					LOG.info(e);

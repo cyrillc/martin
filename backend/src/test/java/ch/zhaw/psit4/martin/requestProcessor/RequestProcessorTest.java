@@ -41,8 +41,8 @@ public class RequestProcessorTest {
 		assertEquals(extRequest0.getCalls().isEmpty(), false);
 		assertEquals(extRequest0.getCalls().get(0).getPlugin().getName(), "WeatherApp");
 		assertEquals(extRequest0.getCalls().get(0).getFeature().getName(), "weather");
-		assertEquals(extRequest0.getCalls().get(0).getArguments().get("Time").toString(), "tomorrow");
-		assertEquals(extRequest0.getCalls().get(0).getArguments().get("Location").toString(), "Zürich");
+		assertEquals(extRequest0.getCalls().get(0).getArguments().get("time").toString(), "tomorrow");
+		assertEquals(extRequest0.getCalls().get(0).getArguments().get("location").toString(), "Zürich");
 		
 		
 		/*Request request1 = new Request("Hello world!");
