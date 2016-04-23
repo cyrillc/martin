@@ -120,7 +120,7 @@ public class Sentence {
 			phrases.remove(phrases.indexOf(token.get()));
 			return token.get();
 		} else {
-			return new Phrase("O", "");
+			return new Phrase("", "");
 		}
 	}
 

@@ -1,5 +1,8 @@
 package ch.zhaw.psit4.martin.api.types;
 
+import java.lang.reflect.Constructor;
+import org.json.JSONObject;
+
 /**
  * Distributed generic Type for MArtIn objects.
  * 
@@ -16,14 +19,22 @@ public interface IMartinType {
 	 */
 	@Override
 	public String toString();
-	
+
 	/**
 	 * De-serialize this object from a {@link String} in Text format.
 	 * 
 	 * @param data
 	 *            The string filed with data to deserialize.
 	 */
-	public void fromString(String data) throws IMartinTypeInstanciationException;
+	public static IMartinType fromString(String type, String data) throws IMartinTypeInstanciationException{
+		try {
+			Constructor<? extends IMartinType> constructor = Class.forName(type)
+					.asSubclass(IMartinType.class).getConstructor(String.class);
+			return constructor.newInstance(data);
+		} catch (Exception e) {
+			throw new IMartinTypeInstanciationException(e);
+		}
+	}
 
 	/**
 	 * Serialize this Object into a string in JSON format.
@@ -31,27 +42,22 @@ public interface IMartinType {
 	 * @return The serialized {@link String}.
 	 */
 	public String toJson();
-	
+
 	/**
 	 * De-serialize this object from a {@link String} in JSON format.
 	 * 
 	 * @param json
 	 *            The string filed with data to deserialize.
+	 * @throws IMartinTypeInstanciationException
 	 */
-	public void fromJSON(String json);
-
-	/**
-	 * Verifies, if the string-data can be converted to this type. This function
-	 * should shall not use extensive API's and will be called a lot. Build this
-	 * function lightweigth.
-	 * 
-	 * @param data
-	 *            The string filed with data to deserialize.
-	 */
-	public boolean isInstancaeableWith(String data);
-
-	/**
-	 * @return If the instance is valid and can be used for further operation.
-	 */
-	public boolean isValid();
+	public static IMartinType fromJSON(String json) throws IMartinTypeInstanciationException {
+		try {
+			JSONObject jsonObject = new JSONObject(json);
+			Constructor<? extends IMartinType> constructor = Class.forName(jsonObject.getString("type"))
+					.asSubclass(IMartinType.class).getConstructor(String.class);
+			return constructor.newInstance(jsonObject.getString("data"));
+		} catch (Exception e) {
+			throw new IMartinTypeInstanciationException(e);
+		}
+	}
 }

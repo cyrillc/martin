@@ -108,7 +108,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     public Response executeRequest(ExtendedRequest req) {
         Call call = req.getCalls().get(0);
         String pluginID = ((Integer)call.getPlugin().getId()).toString();
-        String featureID = ((Integer)call.getFeature().getId()).toString();
+        String featureID = ((Integer)call.getFunction().getId()).toString();
         MartinPlugin service = pluginExtentions.get(pluginID);
 
         // if service exists, execute call

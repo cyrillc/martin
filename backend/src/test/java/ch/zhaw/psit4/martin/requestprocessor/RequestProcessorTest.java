@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 import ch.zhaw.psit4.martin.common.Request;
@@ -40,7 +39,7 @@ public class RequestProcessorTest {
 		ExtendedRequest extRequest1 = requestProcessor.extend(request1);
 		assertEquals(extRequest1.getCalls().isEmpty(), false);
 		assertEquals(extRequest1.getCalls().get(0).getPlugin().getName(), "HelloPlugin");
-		assertEquals(extRequest1.getCalls().get(0).getFeature().getName(), "greeting");
+		assertEquals(extRequest1.getCalls().get(0).getFunction().getName(), "greeting");
 		assertEquals(extRequest1.getCalls().get(0).getArguments().values().size(), 2);
 		if(extRequest1.getCalls().get(0).getArguments().get("name1").toString().equals("Martin")){
 			assertEquals(extRequest1.getCalls().get(0).getArguments().get("name1").toString(), "Martin");
@@ -53,12 +52,11 @@ public class RequestProcessorTest {
 
 	@Test
 	public void testExtendRequestPluginAndFeature() {
-	
 		Request request0 = new Request("Whats the weather tomorrow in Zürich?");
 		ExtendedRequest extRequest0 = requestProcessor.extend(request0);
 		assertEquals(extRequest0.getCalls().isEmpty(), false);
 		assertEquals(extRequest0.getCalls().get(0).getPlugin().getName(), "WetterPlugin");
-		assertEquals(extRequest0.getCalls().get(0).getFeature().getName(), "getWeatherAtLocation");
+		assertEquals(extRequest0.getCalls().get(0).getFunction().getName(), "getWeatherAtLocation");
 		assertEquals(extRequest0.getCalls().get(0).getArguments().get("time").toString(), "tomorrow");
 		assertEquals(extRequest0.getCalls().get(0).getArguments().get("location").toString(), "Zürich");
 	}
@@ -69,8 +67,9 @@ public class RequestProcessorTest {
 		ExtendedRequest extRequest2 = requestProcessor.extend(request2);
 		assertEquals(extRequest2.getCalls().isEmpty(), false);
 		assertEquals(extRequest2.getCalls().get(0).getPlugin().getName(), "WetterPlugin");
-		assertEquals(extRequest2.getCalls().get(0).getFeature().getName(), "getWeatherAtLocation");
+		assertEquals(extRequest2.getCalls().get(0).getFunction().getName(), "getWeatherAtLocation");
 		assertEquals(extRequest2.getCalls().get(0).getArguments().get("location").toString(), "Hugentoblerplatz");
+		assertEquals(extRequest2.getCalls().size(), 1);
 	}
 	
 }
