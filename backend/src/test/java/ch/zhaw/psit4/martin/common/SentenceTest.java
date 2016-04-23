@@ -9,7 +9,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.api.types.Duration;
-import ch.zhaw.psit4.martin.api.types.IMartinType;
 import ch.zhaw.psit4.martin.api.types.Location;
 import ch.zhaw.psit4.martin.api.types.Money;
 import ch.zhaw.psit4.martin.api.types.Ordinal;
