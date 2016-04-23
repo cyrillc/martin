@@ -13,10 +13,10 @@ import ch.zhaw.psit4.martin.common.Response;
 import ch.zhaw.psit4.martin.common.service.HistoryItemService;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
+import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.HistoryItem;
 import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
 
 /**
  * This class represents the AIControllerFacade The class follows the Facade

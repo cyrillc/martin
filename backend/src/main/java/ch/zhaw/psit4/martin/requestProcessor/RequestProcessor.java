@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.requestProcessor;
+package ch.zhaw.psit4.martin.requestprocessor;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class RequestProcessor implements IRequestProcessor {
 
 	@Autowired
 	private FunctionService functionService;
-	
+
 	@Autowired
 
 	private StanfordCoreNLP stanfordNLP;
@@ -44,8 +44,7 @@ public class RequestProcessor implements IRequestProcessor {
 
 	/**
 	 * Extends a request from a basic command and tries to determine possible
-	 * module calls. In oder for this method to work, set the library beforehand
-	 * with {@code setLibrary}
+	 * function calls.
 	 * 
 	 * @param request
 	 *            Raw request to be extended
@@ -57,7 +56,7 @@ public class RequestProcessor implements IRequestProcessor {
 		List<PossibleResult> possibleResults = new ArrayList<>();
 
 		Sentence sentence = new Sentence(request.getCommand(), stanfordNLP);
-		
+
 		// Find possible Plugins/Functions by keywords
 		addPossibleRequestsWithKeywords(possibleResults, sentence.getWords());
 
@@ -85,9 +84,19 @@ public class RequestProcessor implements IRequestProcessor {
 		return extendedRequest;
 	}
 
+	/**
+	 * Searches the database for plugins/functions with the keywords provided
+	 * and adds them to the list.
+	 * 
+	 * @param possibleResults
+	 *            List of possible results.
+	 * @param words
+	 *            words to be matched with the keywords.
+	 * @return the extended list
+	 */
 	private List<PossibleResult> addPossibleRequestsWithKeywords(List<PossibleResult> possibleResults, String[] words) {
 
-		for(String word : words) {
+		for (String word : words) {
 
 			List<Object[]> functionsKeywords = functionService.getByKeyword(word);
 			for (Object[] functionsKeyword : functionsKeywords) {
@@ -113,71 +122,84 @@ public class RequestProcessor implements IRequestProcessor {
 		return possibleResults;
 	}
 
-	private List<PossibleResult> resolveParameters(List<PossibleResult> possibleResults, Sentence sentence) {
+	/**
+	 * This function tries to determine the best word or phrase in the provided
+	 * sentence to fit into an argument that is needed from the function. It
+	 * uses the Stanford CoreNLP library to search for IMartinTypes in the
+	 * sentence.
+	 * 
+	 * The result of the parameter-filling may not be perfect and is heavy
+	 * dependent on the provided sentence. If the sentence has bad spelling or
+	 * is grammatically incorrect, the results may be not as good as expected.
+	 * The more details and contextual consistent the sentence is, the better
+	 * the results.
+	 * 
+	 * @param possibleResults
+	 *            A list of possible results, whose parameters should be filled
+	 * @param sentence
+	 *            A sentence which provides the base for the parameter-finding
+	 * @return A list of PossibleResults with their corresponding parameters
+	 *         filled as good as possible
+	 */
+	public List<PossibleResult> resolveParameters(List<PossibleResult> possibleResults, Sentence sentence) {
 		for (PossibleResult possibleResult : possibleResults) {
 			Function function = possibleResult.getFunction();
 
 			for (Parameter parameter : function.getParameter()) {
 				// Create instance of IMartinType for requested type
-				try {
-					IMartinType parameterValue = Class.forName(parameter.getType()).asSubclass(IMartinType.class)
-							.newInstance();
-				
-
-					// Perform Name Entity Recognition
-					String data = "";
-					if(Timestamp.class.getName().equals(parameter.getType())){
-						Phrase date = sentence.popExpressionOfIMartinType(Date.class.getName());
-						Phrase time = sentence.popExpressionOfIMartinType(Time.class.getName());
-						
-						data = (date.getValue() + " " + time.getValue()).trim();
-					} else {
-						Phrase phrase = sentence.popExpressionOfIMartinType(parameter.getType());
-						
-						if(phrase != null){
-							data = phrase.getValue();
-						}
-					}
-					
-					if(data != "" && parameterValue.isInstancaeableWith(data)){
-						parameterValue.fromString(data);
-						
-						LOG.info("\n Parameter found via Name Entity Recognition: { "
-								+ "\n    name:          '" + parameter.getName() + "', " + "\n    value:         '"
-								+ parameterValue.toString() + "'" + "\n    type:          '" + parameter.getType()+ "\n }");
-					}
-					
-					
-					// Perform Brute-Force
-					/*if(nameEntityRecognitionSuccess == false){
-						for(Word word : sentence.getWords()) {
-							if (parameterValue.isInstancaeableWith(word.toString())) {
-								parameterValue.fromString(word.toString());
-
-								LOG.info("\n Parameter found via Brute-Force: { "
-										+ "\n    name:          '" + parameter.getName() + "', " + "\n    value:         '"
-										+ parameterValue.toString() + "'" + "\n    type:          '" + parameter.getType()
-										+ "',  " + "\n    originalValue: '" + word.toString() + "', " + "\n }");
-
-								break;
-							}
-						}
-					} */
-					
-					
-					if(parameterValue.isValid()) {
-						possibleResult.addParameter(parameter.getName(), parameterValue);
-					}
-				} catch(Exception e) {
-					LOG.info(e);
-					break;
+				IMartinType parameterValue = getParameterValue(parameter, sentence);
+				if (parameterValue != null && parameterValue.isValid()) {
+					possibleResult.addParameter(parameter.getName(), parameterValue);
 				}
 			}
-
 		}
 
 		return possibleResults;
 	}
 
+	public IMartinType getParameterValue(Parameter parameter, Sentence sentence){
+		try {
+			IMartinType parameterValue = Class.forName(parameter.getType()).asSubclass(IMartinType.class)
+					.newInstance();
+
+			Integer possibilitiesLeft;
+			do {
+				// Perform Name Entity Recognition
+				String data = "";
+				
+				if (Timestamp.class.getName().equals(parameter.getType())) {
+					// Timestamp consists of Date and Time
+					Phrase date = sentence.popPhraseOfIMartinType(Date.class.getName());
+					Phrase time = sentence.popPhraseOfIMartinType(Time.class.getName());
+					
+					possibilitiesLeft = sentence.getPhrasesOfIMartionType(Date.class.getName()).size() + sentence.getPhrasesOfIMartionType(Time.class.getName()).size();
+	
+					data = (date.getValue() + " " + time.getValue()).trim();
+				} else {
+					// All the rest can be resolved directly
+					Phrase phrase = sentence.popPhraseOfIMartinType(parameter.getType());
+					
+					possibilitiesLeft = sentence.getPhrasesOfIMartionType(parameter.getType()).size();
+	
+					if(phrase != null) {
+						data = phrase.getValue();
+					}
+				}
+	
+				if(data != "" && parameterValue.isInstancaeableWith(data)) {
+					parameterValue.fromString(data);
+	
+					LOG.info("\n Parameter found via Name Entity Recognition: { " + "\n    name:          '"
+							+ parameter.getName() + "', " + "\n    value:         '" + parameterValue.toString()
+							+ "'" + "\n    type:          '" + parameter.getType() + "\n }");
+					return parameterValue;
+				}
+			} while(possibilitiesLeft > 0);
+		} catch (Exception e) {
+			LOG.debug(e);
+			LOG.error("The IMartinType '" + parameter.getType() + "' could not be found.");
+		}
+		return null;
+	}
 
 }

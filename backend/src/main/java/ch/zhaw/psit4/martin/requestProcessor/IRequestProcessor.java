@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.requestProcessor;
+package ch.zhaw.psit4.martin.requestprocessor;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Request;

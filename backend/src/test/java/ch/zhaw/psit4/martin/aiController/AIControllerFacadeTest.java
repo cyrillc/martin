@@ -23,7 +23,7 @@ import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
 import ch.zhaw.psit4.martin.common.service.HistoryItemService;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
-import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
+import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:Beans.xml", "classpath:Beans-unit-tests.xml"})

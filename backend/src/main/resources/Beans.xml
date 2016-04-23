@@ -112,9 +112,9 @@
 	</bean>
 
 	<!-- package requestProcessor -->
-	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestProcessor.RequestProcessor" scope="singleton">
+	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestprocessor.RequestProcessor" scope="singleton">
 	</bean>
-    <bean id="NaturalLanguageAnalysisUtilities" class="ch.zhaw.psit4.martin.requestProcessor.utils.NaturalLanguageAnalysisUtilities" scope="singleton">
+    <bean id="NaturalLanguageAnalysisUtilities" class="ch.zhaw.psit4.martin.requestprocessor.utils.NaturalLanguageAnalysisUtilities" scope="singleton">
     </bean>
     <bean id="StanfordCoreNLP" class="edu.stanford.nlp.pipeline.StanfordCoreNLP" scope="singleton" factory-bean="NaturalLanguageAnalysisUtilities" factory-method="bootStanfordNLP">
     </bean>

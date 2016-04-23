@@ -5,7 +5,7 @@ public class Time implements IMartinType{
 	private String data;
 
 	@Override
-	public void fromString(String data) throws MartinTypeInstanciationException {
+	public void fromString(String data) throws IMartinTypeInstanciationException {
 		this.data = data;
 		this.isValid = true;
 	}
@@ -23,5 +23,17 @@ public class Time implements IMartinType{
 	@Override
 	public boolean isValid(){
 		return isValid;
+	}
+
+	@Override
+	public String toJson() {
+		// TODO Auto-generated method stub
+		return "";
+	}
+
+	@Override
+	public void fromJSON(String json) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 import ch.zhaw.psit4.martin.common.Request;
+import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -35,14 +36,14 @@ public class RequestProcessorTest {
 	
 	@Test
 	public void testMultipleParameterOfSameType() {
-		Request request1 = new Request("Hello Martin, today I met Simon Flepp and and he's such an awsome guy!");
+		Request request1 = new Request("Hello Martin, today I met Chuck Norris and and he's such an awsome guy!");
 		ExtendedRequest extRequest1 = requestProcessor.extend(request1);
 		assertEquals(extRequest1.getCalls().isEmpty(), false);
 		assertEquals(extRequest1.getCalls().get(0).getPlugin().getName(), "HelloPlugin");
 		assertEquals(extRequest1.getCalls().get(0).getFeature().getName(), "greeting");
 		assertEquals(extRequest1.getCalls().get(0).getArguments().values().size(), 2);
-		assertEquals(extRequest1.getCalls().get(0).getArguments().get("name1").toString(), "Simon Flepp");
-		assertEquals(extRequest1.getCalls().get(0).getArguments().get("name2").toString(), "Martin");
+		assertEquals(extRequest1.getCalls().get(0).getArguments().get("name1").toString(), "Martin");
+		assertEquals(extRequest1.getCalls().get(0).getArguments().get("name2").toString(), "Chuck Norris");
 	}
 
 	@Test
