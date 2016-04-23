@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.api.types.Date;
 import ch.zhaw.psit4.martin.api.types.IMartinType;
+import ch.zhaw.psit4.martin.api.types.IMartinTypeInstanciationException;
 import ch.zhaw.psit4.martin.api.types.Time;
 import ch.zhaw.psit4.martin.api.types.Timestamp;
 import ch.zhaw.psit4.martin.common.Call;
@@ -53,30 +54,30 @@ public class RequestProcessor implements IRequestProcessor {
 	 */
 	@Override
 	public ExtendedRequest extend(Request request) {
-		List<PossibleResult> possibleResults = new ArrayList<>();
+		List<PossibleCall> possibleCalls = new ArrayList<>();
 
 		Sentence sentence = new Sentence(request.getCommand(), stanfordNLP);
 
-		// Find possible Plugins/Functions by keywords
-		addPossibleRequestsWithKeywords(possibleResults, sentence.getWords());
+		// Find possible Calls by keywords
+		addPossibleCallsWithKeywords(possibleCalls, sentence.getWords());
 
 		// Resolve parameters
-		resolveParameters(possibleResults, sentence);
+		resolveParameters(possibleCalls, sentence);
 
 		// Sort by relevance
-		possibleResults.sort(
-				(PossibleResult result1, PossibleResult result2) -> result1.getRelevance() - result2.getRelevance());
+		possibleCalls.sort(
+				(PossibleCall result1, PossibleCall result2) -> result1.getRelevance() - result2.getRelevance());
 
 		// Create final ExtendedRequest
 		ExtendedRequest extendedRequest = new ExtendedRequest();
 		extendedRequest.setInput(request);
 
-		for (PossibleResult possibleResult : possibleResults) {
+		for (PossibleCall possibleCall : possibleCalls) {
 			// Create Call
 			Call call = new Call();
-			call.setPlugin(possibleResult.getPlugin());
-			call.setFeature(possibleResult.getFunction());
-			call.setParameters(possibleResult.getParameters());
+			call.setPlugin(possibleCall.getPlugin());
+			call.setFunction(possibleCall.getFunction());
+			call.setParameters(possibleCall.getParameters());
 
 			extendedRequest.addCall(call);
 		}
@@ -88,13 +89,13 @@ public class RequestProcessor implements IRequestProcessor {
 	 * Searches the database for plugins/functions with the keywords provided
 	 * and adds them to the list.
 	 * 
-	 * @param possibleResults
+	 * @param possibleCalls
 	 *            List of possible results.
 	 * @param words
 	 *            words to be matched with the keywords.
 	 * @return the extended list
 	 */
-	private List<PossibleResult> addPossibleRequestsWithKeywords(List<PossibleResult> possibleResults, String[] words) {
+	private List<PossibleCall> addPossibleCallsWithKeywords(List<PossibleCall> possibleCalls, String[] words) {
 
 		for (String word : words) {
 
@@ -105,21 +106,21 @@ public class RequestProcessor implements IRequestProcessor {
 
 				Keyword keyword = (Keyword) functionsKeyword[1];
 
-				Optional<PossibleResult> optionalPossibleResult = possibleResults.stream()
+				Optional<PossibleCall> optionalPossibleResult = possibleCalls.stream()
 						.filter(o -> o.getPlugin().getId() == plugin.getId())
 						.filter(o -> o.getFunction().getId() == function.getId()).findFirst();
 
 				if (optionalPossibleResult.isPresent()) {
 					optionalPossibleResult.get().addMatchingKeyword(keyword);
 				} else {
-					PossibleResult possibleResult = new PossibleResult(plugin, function);
-					possibleResult.addMatchingKeyword(keyword);
-					possibleResults.add(possibleResult);
+					PossibleCall possibleCall = new PossibleCall(plugin, function);
+					possibleCall.addMatchingKeyword(keyword);
+					possibleCalls.add(possibleCall);
 				}
 			}
 		}
 
-		return possibleResults;
+		return possibleCalls;
 	}
 
 	/**
@@ -134,33 +135,30 @@ public class RequestProcessor implements IRequestProcessor {
 	 * The more details and contextual consistent the sentence is, the better
 	 * the results.
 	 * 
-	 * @param possibleResults
+	 * @param possibleCalls
 	 *            A list of possible results, whose parameters should be filled
 	 * @param sentence
 	 *            A sentence which provides the base for the parameter-finding
 	 * @return A list of PossibleResults with their corresponding parameters
 	 *         filled as good as possible
 	 */
-	public List<PossibleResult> resolveParameters(List<PossibleResult> possibleResults, Sentence sentence) {
-		for (PossibleResult possibleResult : possibleResults) {
-			Function function = possibleResult.getFunction();
+	public List<PossibleCall> resolveParameters(List<PossibleCall> possibleCalls, Sentence sentence) {
+		for (PossibleCall possibleCall : possibleCalls) {
+			Function function = possibleCall.getFunction();
 
 			for (Parameter parameter : function.getParameter()) {
 				// Create instance of IMartinType for requested type
 				IMartinType parameterValue = getParameterValue(parameter, sentence);
-				if (parameterValue != null && parameterValue.isValid()) {
-					possibleResult.addParameter(parameter.getName(), parameterValue);
-				}
+				possibleCall.addParameter(parameter.getName(), parameterValue);
 			}
 		}
 
-		return possibleResults;
+		return possibleCalls;
 	}
 
 	public IMartinType getParameterValue(Parameter parameter, Sentence sentence){
 		try {
-			IMartinType parameterValue = Class.forName(parameter.getType()).asSubclass(IMartinType.class)
-					.newInstance();
+			
 
 			Integer possibilitiesLeft;
 			do {
@@ -186,13 +184,18 @@ public class RequestProcessor implements IRequestProcessor {
 					}
 				}
 	
-				if(data != "" && parameterValue.isInstancaeableWith(data)) {
-					parameterValue.fromString(data);
-	
-					LOG.info("\n Parameter found via Name Entity Recognition: { " + "\n    name:          '"
-							+ parameter.getName() + "', " + "\n    value:         '" + parameterValue.toString()
-							+ "'" + "\n    type:          '" + parameter.getType() + "\n }");
-					return parameterValue;
+				if(data != "") {
+					try {
+						IMartinType parameterValue = IMartinType.fromString(parameter.getType(), data);
+						
+						
+						LOG.info("\n Parameter found via Name Entity Recognition: { " + "\n    name:          '"
+								+ parameter.getName() + "', " + "\n    value:         '" + parameterValue.toString()
+								+ "'" + "\n    type:          '" + parameter.getType() + "\n }");
+						return parameterValue;
+					} catch(IMartinTypeInstanciationException e){
+						LOG.debug(e);
+					}	
 				}
 			} while(possibilitiesLeft > 0);
 		} catch (Exception e) {

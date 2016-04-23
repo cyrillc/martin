@@ -60,7 +60,7 @@ public class PluginLibraryTest {
             List<Call> calls = new ArrayList<Call>();
             Call mockedCall = Mockito.mock(Call.class);
             Mockito.when(mockedCall.getArguments()).thenReturn(null);
-            Mockito.when(mockedCall.getFeature()).thenReturn(testFunction);
+            Mockito.when(mockedCall.getFunction()).thenReturn(testFunction);
             Mockito.when(mockedCall.getPlugin()).thenReturn(testPlugin);
             calls.add(mockedCall);
 

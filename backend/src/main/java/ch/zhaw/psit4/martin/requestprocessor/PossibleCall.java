@@ -9,15 +9,15 @@ import ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword;
 import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
 
 /**
- * This class is used to prepare possible results. The state of the
- * PossibleResult may not be complete and will be changed over the analyzation
- * of the code. A PossibleResult may be thrown away if not all criteria for a
+ * This class is used to prepare possible calls. The state of the
+ * PossibleCall may not be complete and will be changed over the analyzation
+ * of the code. A PossibleCall may be thrown away if not all criteria for a
  * valid Call is being met.
  * 
  * @author simonflepp
  *
  */
-class PossibleResult {
+class PossibleCall {
 	private Plugin plugin;
 	private Function function;
 	private HashMap<String, IMartinType> parameters = new HashMap<>();
@@ -30,7 +30,7 @@ class PossibleResult {
 	private static final Integer RELEVANCE_WEIGHT_KEYWORD_COUNT = 10;
 	// TODO: Add more weights to get better results
 
-	public PossibleResult(Plugin plugin, Function function) {
+	public PossibleCall(Plugin plugin, Function function) {
 		this.plugin = plugin;
 		this.function = function;
 	}

@@ -5,12 +5,10 @@ import ch.zhaw.psit4.martin.api.types.Location;
 import ch.zhaw.psit4.martin.api.types.Person;
 import ch.zhaw.psit4.martin.api.types.Text;
 import ch.zhaw.psit4.martin.api.types.Time;
-import ch.zhaw.psit4.martin.api.types.Timestamp;
 
 public class Phrase {
 	private String type;
 	private String value;
-	private String iMartinType;
 
 	public Phrase(String type, String value) {
 		this.type = type;

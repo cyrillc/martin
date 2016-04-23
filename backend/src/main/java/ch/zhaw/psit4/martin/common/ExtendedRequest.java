@@ -25,6 +25,12 @@ public class ExtendedRequest {
 	 * List of possible Calls for the request ordered by possibility.
 	 */
 	private List<Call> calls;
+	
+	/**
+	 * Parsed and analyzed sentence for further analysis.
+	 */
+	private Sentence sentence;
+	
 
 	public ExtendedRequest() {
 		this.calls = new ArrayList<Call>();
@@ -53,5 +59,13 @@ public class ExtendedRequest {
 
 	public List<Call> getCalls() {
 		return this.calls;
+	}
+	
+	public Sentence getSentence(){
+		return this.sentence;
+	}
+	
+	public void setSentence(Sentence sentence){
+		this.sentence = sentence;
 	}
 }

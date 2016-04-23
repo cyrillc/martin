@@ -40,7 +40,7 @@ public class RequestProcessorTest {
 		ExtendedRequest extRequest1 = requestProcessor.extend(request1);
 		assertEquals(extRequest1.getCalls().isEmpty(), false);
 		assertEquals(extRequest1.getCalls().get(0).getPlugin().getName(), "HelloPlugin");
-		assertEquals(extRequest1.getCalls().get(0).getFeature().getName(), "greeting");
+		assertEquals(extRequest1.getCalls().get(0).getFunction().getName(), "greeting");
 		assertEquals(extRequest1.getCalls().get(0).getArguments().values().size(), 2);
 		if(extRequest1.getCalls().get(0).getArguments().get("name1").toString().equals("Martin")){
 			assertEquals(extRequest1.getCalls().get(0).getArguments().get("name1").toString(), "Martin");
@@ -58,7 +58,7 @@ public class RequestProcessorTest {
 		ExtendedRequest extRequest0 = requestProcessor.extend(request0);
 		assertEquals(extRequest0.getCalls().isEmpty(), false);
 		assertEquals(extRequest0.getCalls().get(0).getPlugin().getName(), "WetterPlugin");
-		assertEquals(extRequest0.getCalls().get(0).getFeature().getName(), "getWeatherAtLocation");
+		assertEquals(extRequest0.getCalls().get(0).getFunction().getName(), "getWeatherAtLocation");
 		assertEquals(extRequest0.getCalls().get(0).getArguments().get("time").toString(), "tomorrow");
 		assertEquals(extRequest0.getCalls().get(0).getArguments().get("location").toString(), "Zürich");
 	}
@@ -69,7 +69,7 @@ public class RequestProcessorTest {
 		ExtendedRequest extRequest2 = requestProcessor.extend(request2);
 		assertEquals(extRequest2.getCalls().isEmpty(), false);
 		assertEquals(extRequest2.getCalls().get(0).getPlugin().getName(), "WetterPlugin");
-		assertEquals(extRequest2.getCalls().get(0).getFeature().getName(), "getWeatherAtLocation");
+		assertEquals(extRequest2.getCalls().get(0).getFunction().getName(), "getWeatherAtLocation");
 		assertEquals(extRequest2.getCalls().get(0).getArguments().get("location").toString(), "Hugentoblerplatz");
 	}
 	

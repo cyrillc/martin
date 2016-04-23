@@ -15,7 +15,7 @@ import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
 **/
 public class Call {
 	private Plugin plugin;
-	private Function feature;
+	private Function function;
 	private Map<String, IMartinType> arguments;
 	
 	public Call(){
@@ -30,12 +30,12 @@ public class Call {
 		this.plugin = plugin;
 	}
 
-	public Function getFeature() {
-		return this.feature;
+	public Function getFunction() {
+		return this.function;
 	}
 
-	public void setFeature(Function feature) {
-		this.feature = feature;
+	public void setFunction(Function feature) {
+		this.function = feature;
 	}
 	
 	/**
