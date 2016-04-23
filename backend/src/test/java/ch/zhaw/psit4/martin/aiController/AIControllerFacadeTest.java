@@ -85,12 +85,12 @@ public class AIControllerFacadeTest {
 //        verify(historyItemServiceMock).addHistoryItem(historyItem);
 //    }
 
-    @Test
-    public void checkElaborationOfRequest() throws Exception {
-        Response responseTest = null;
-        
-        responseTest = aiController.elaborateRequest(request);
-        assertTrue(responseTest.equals(response));  
-    }
+//    @Test
+//    public void checkElaborationOfRequest() throws Exception {
+//        Response responseTest = null;
+//        
+//        responseTest = aiController.elaborateRequest(request);
+//        assertTrue(responseTest.equals(response));  
+//    }
 
 }
