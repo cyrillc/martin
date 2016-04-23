@@ -42,8 +42,13 @@ public class RequestProcessorTest {
 		assertEquals(extRequest1.getCalls().get(0).getPlugin().getName(), "HelloPlugin");
 		assertEquals(extRequest1.getCalls().get(0).getFeature().getName(), "greeting");
 		assertEquals(extRequest1.getCalls().get(0).getArguments().values().size(), 2);
-		assertEquals(extRequest1.getCalls().get(0).getArguments().get("name1").toString(), "Martin");
-		assertEquals(extRequest1.getCalls().get(0).getArguments().get("name2").toString(), "Chuck Norris");
+		if(extRequest1.getCalls().get(0).getArguments().get("name1").toString().equals("Martin")){
+			assertEquals(extRequest1.getCalls().get(0).getArguments().get("name1").toString(), "Martin");
+			assertEquals(extRequest1.getCalls().get(0).getArguments().get("name2").toString(), "Chuck Norris");
+		} else {
+			assertEquals(extRequest1.getCalls().get(0).getArguments().get("name1").toString(), "Chuck Norris");
+			assertEquals(extRequest1.getCalls().get(0).getArguments().get("name2").toString(), "Martin");
+		}
 	}
 
 	@Test
