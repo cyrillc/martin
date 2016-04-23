@@ -24,7 +24,6 @@ import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.MartinPlugin;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
-import ch.zhaw.psit4.martin.api.util.Pair;
 
 import ch.zhaw.psit4.martin.common.Call;
 
@@ -108,8 +107,8 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     @Override
     public Response executeRequest(ExtendedRequest req) {
         Call call = req.getCalls().get(0);
-        String pluginID = call.getPlugin();
-        String featureID = call.getFeature();
+        String pluginID = ((Integer)call.getPlugin().getId()).toString();
+        String featureID = ((Integer)call.getFeature().getId()).toString();
         MartinPlugin service = pluginExtentions.get(pluginID);
 
         // if service exists, execute call
@@ -124,35 +123,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         }
     }
 
-    /**
-     * Querry all plugins by keyword and return matching pluginIDs.
-     * 
-     * @param keyword
-     *            The keyword to search.
-     * @return {@link Pair} of found plugins sorted by probability (highest
-     *         first). The first element is the Plugin ID the second is the
-     *         feature ID
-     */
-    public List<Pair<String, String>> queryFunctionsByKeyword(String keyword) {
-        return new ArrayList<Pair<String, String>>();
-    }
-
-    /**
-     * Get a {@link Map} filled with all required parameters for a plugin and
-     * the argument types.
-     * 
-     * @param plugin
-     *            The pluginID to querry.
-     * @param The
-     *            feature designator to querry.
-     * @return A {@link Map} of arguments with key = ({@link String}) argument
-     *         name and value = ({@link String}) Argument type (from
-     *         {@link ch.zhaw.psit4.martin.api.types})
-     */
-    public Map<String, String> queryFunctionArguments(String plugin,
-            String feature) {
-        return new HashMap<String, String>();
-    }
 
     /**
      * Returns a list of example calls read from the plugin database. Is usually

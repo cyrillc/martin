@@ -12,6 +12,7 @@ import org.java.plugin.PluginManager;
 import org.java.plugin.PluginManager.PluginLocation;
 import org.java.plugin.boot.DefaultPluginsCollector;
 import org.java.plugin.util.ExtendedProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginFolderAccessor;
@@ -23,14 +24,6 @@ import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginFolderAccessor;
  * @version 0.0.1-SNAPSHOT
  */
 public class PluginLibraryBootstrap {
-    /**
-     * Path to folder where plugins reside (either zipped, or unpacked as a simple folder)
-     */
-    private static final String PLUGINS_FOLDER = "plugins";
-    /**
-     * The plugin configuration file
-     */
-    private static final String PLUGINS_CONFIG = "library.cfg.json";
     /**
      * Boots up the module library
      */
@@ -48,6 +41,9 @@ public class PluginLibraryBootstrap {
      */
     private final ExtendedProperties props;
 
+    @Autowired
+    private PluginFolderAccessor folderAccessor;
+
     public PluginLibraryBootstrap() {
         // instantiate necessary objects
         manager = ObjectFactory.newInstance().createManager();
@@ -62,8 +58,6 @@ public class PluginLibraryBootstrap {
      */
     public IPluginLibrary boot() {
         // get the plugin folder
-        PluginFolderAccessor folderAccessor =
-                new PluginFolderAccessor(PLUGINS_FOLDER, PLUGINS_CONFIG);
         File file = folderAccessor.getPluginFolder();
         if (file == null) {
             LOG.error("Plugin library could not be initialized!");

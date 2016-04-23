@@ -74,19 +74,16 @@ public class AIControllerFacade {
      * @return the response of the AI.
      */
     public Response elaborateRequest(Request request) {
-        try { 
-            ExtendedRequest extendedRequest = requestProcessor.extend(request);
-            Response response = pluginLibrary.executeRequest(extendedRequest);
-            historyItemService
-                    .addHistoryItem(new HistoryItem(request, response));
-            return response;
-        } catch (Exception e) {
-        	LOG.info(e);
-            Response response = new Response("Sorry, I can't understand you.");
-            historyItemService
-                    .addHistoryItem(new HistoryItem(request, response));
-            return response;
+        ExtendedRequest extendedRequest = requestProcessor.extend(request);
+        Response response;
+        
+        if(extendedRequest.getCalls().size() > 0){
+        	response = pluginLibrary.executeRequest(extendedRequest);
+        } else {
+        	response = new Response("Sorry, I can't understand you.");
         }
+        
+        return response;
     }
 
     /**

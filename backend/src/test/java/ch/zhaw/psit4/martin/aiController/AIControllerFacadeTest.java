@@ -90,7 +90,7 @@ public class AIControllerFacadeTest {
         Response responseTest = null;
         
         responseTest = aiController.elaborateRequest(request);
-        assertTrue(responseTest.equals(response));
+        assertTrue(responseTest.equals(response));  
     }
 
 }

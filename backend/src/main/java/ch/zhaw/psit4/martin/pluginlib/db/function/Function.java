@@ -16,10 +16,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.ManyToAny;
-
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword;
 import ch.zhaw.psit4.martin.pluginlib.db.parameter.Parameter;
 import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
@@ -97,6 +93,10 @@ public class Function {
 
     public Set<Keyword> getKeywords(){
         return this.functionKeywords;
+    }
+    
+    public Plugin getPlugin(){
+    	return this.plugin;
     }
 
 }

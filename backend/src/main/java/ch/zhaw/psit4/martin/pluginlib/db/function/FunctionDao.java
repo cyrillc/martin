@@ -37,6 +37,13 @@ public class FunctionDao {
         return (Function) session.get(Function.class,id);
     }
     
+    @SuppressWarnings("unchecked")
+	public List<Object[]> getByKeyword(String keyword){
+    	Session session = this.sessionFactory.getCurrentSession();
+    	
+    	return session.createQuery("FROM Function f JOIN f.functionKeywords k WHERE LOWER(k.keyword) = LOWER('" + keyword + "')").list();
+    }
+    
     /**
      * USE WITH CAUTION!!
      * @param function

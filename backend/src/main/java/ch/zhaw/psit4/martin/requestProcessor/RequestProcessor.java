@@ -2,22 +2,27 @@ package ch.zhaw.psit4.martin.requestProcessor;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ch.zhaw.psit4.martin.api.types.Date;
 import ch.zhaw.psit4.martin.api.types.IMartinType;
-import ch.zhaw.psit4.martin.api.types.*;
-import ch.zhaw.psit4.martin.api.util.Pair;
+import ch.zhaw.psit4.martin.api.types.Time;
+import ch.zhaw.psit4.martin.api.types.Timestamp;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Request;
-import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
+import ch.zhaw.psit4.martin.common.Sentence;
+import ch.zhaw.psit4.martin.common.Phrase;
+import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
+import ch.zhaw.psit4.martin.pluginlib.db.function.FunctionService;
+import ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword;
+import ch.zhaw.psit4.martin.pluginlib.db.parameter.Parameter;
+import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
 /**
  * This class is responible for extending a request to a computer readable
@@ -27,134 +32,152 @@ import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
  * @version 0.1
  **/
 public class RequestProcessor implements IRequestProcessor {
+
+	@Autowired
+	private FunctionService functionService;
 	
 	@Autowired
-	private IPluginLibrary library;
 
-    private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
+	private StanfordCoreNLP stanfordNLP;
 
-    /**
-     * Searches the plugin-library for matching plugin features for a list of
-     * keywords.
-     * 
-     * @param keywords
-     *            A list of keywords to be searched in the library.
-     * @return
-     */
-    Pair<String, String> getFeatureByKeywords(String[] keywords) {
-        Map<String, Pair<String, String>> featureList = new HashMap<String, Pair<String, String>>();
-        Map<String, Integer> featureCount = new HashMap<String, Integer>();
-        List<Pair<String, String>> queryResult = new ArrayList<Pair<String, String>>();
+	private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
 
-        // Get features by keywords and count them
-        for (String keyword : keywords) {
+	/**
+	 * Extends a request from a basic command and tries to determine possible
+	 * module calls. In oder for this method to work, set the library beforehand
+	 * with {@code setLibrary}
+	 * 
+	 * @param request
+	 *            Raw request to be extended
+	 * @return Returns an ExtendedRequest with original-request and a possible
+	 *         executable function calls.
+	 */
+	@Override
+	public ExtendedRequest extend(Request request) {
+		List<PossibleResult> possibleResults = new ArrayList<>();
 
-            try {
-                queryResult = library.queryFunctionsByKeyword(keyword);
-            } catch (Exception e) {
-                LOG.error("An error occured at getFeatureByKeywords()", e);
-                continue;
-            }
+		Sentence sentence = new Sentence(request.getCommand(), stanfordNLP);
+		
+		// Find possible Plugins/Functions by keywords
+		addPossibleRequestsWithKeywords(possibleResults, sentence.getWords());
 
-            for (Pair<String, String> feature : queryResult) {
-                String key = feature.first + "." + feature.second;
+		// Resolve parameters
+		resolveParameters(possibleResults, sentence);
 
-                featureList.put(key, feature);
+		// Sort by relevance
+		possibleResults.sort(
+				(PossibleResult result1, PossibleResult result2) -> result1.getRelevance() - result2.getRelevance());
 
-                if (featureCount.containsKey(key)) {
-                    featureCount.put(key, featureCount.get(key) + 1);
-                } else {
-                    featureCount.put(key, 1);
-                }
-            }
-        }
+		// Create final ExtendedRequest
+		ExtendedRequest extendedRequest = new ExtendedRequest();
+		extendedRequest.setInput(request);
 
-        // Get most frequent Plugin / Feature
-        Integer highestCount = 0;
-        String mostFrequentKey = null;
-        for (String key : featureCount.keySet()) {
-            if (highestCount < featureCount.get(key)) {
-                mostFrequentKey = key;
-                highestCount = featureCount.get(key);
-            }
-        }
+		for (PossibleResult possibleResult : possibleResults) {
+			// Create Call
+			Call call = new Call();
+			call.setPlugin(possibleResult.getPlugin());
+			call.setFeature(possibleResult.getFunction());
+			call.setParameters(possibleResult.getParameters());
 
-        if (featureList.isEmpty()) {
-            return null;
-        } else {
-            return featureList.get(mostFrequentKey);
-        }
-    }
+			extendedRequest.addCall(call);
+		}
 
-    /**
-     * Searches for parameters in the command string and returns IMartinType
-     * wrapped argument content.
-     * 
-     * @param parameterName
-     *            name of parameter to be searched
-     * @param command
-     *            command string to be searched
-     * @param martinType
-     *            type to be returned
-     * @return
-     */
-    private IMartinType getParameterFromCommand(String parameterName,
-            String command, String martinType) {
-        Pattern pattern = Pattern
-                .compile("(" + parameterName + ")\\s([^\\s]+)");
-        Matcher matcher = pattern.matcher(command.toLowerCase());
+		return extendedRequest;
+	}
 
-        if (matcher.find()) {
-            // ToDo: Return corresponding martinType. At the moment only Text
-            // elements are returned.
-            return new Text(matcher.group(2));
-        } else {
-            return null;
-        }
-    }
+	private List<PossibleResult> addPossibleRequestsWithKeywords(List<PossibleResult> possibleResults, String[] words) {
 
-    /**
-     * Extends a request from a basic command and tries to determine possible
-     * module calls. In oder for this method to work, set the library beforehand
-     * with {@code setLibrary}
-     * 
-     * @param request
-     *            Raw request to be extended
-     * @return Returns an ExtendedRequest with original-request and a possible
-     *         executable function calls.
-     */
-    @Override
-    public ExtendedRequest extend(Request request) throws Exception {
-        ExtendedRequest extendedRequest = new ExtendedRequest();
-        extendedRequest.setInput(request);
+		for(String word : words) {
 
-        String[] keywords = request.getCommand().toLowerCase().split(" ");
+			List<Object[]> functionsKeywords = functionService.getByKeyword(word);
+			for (Object[] functionsKeyword : functionsKeywords) {
+				Function function = (Function) functionsKeyword[0];
+				Plugin plugin = function.getPlugin();
 
-        Pair<String, String> pluginFeature = this
-                .getFeatureByKeywords(keywords);
+				Keyword keyword = (Keyword) functionsKeyword[1];
 
-        if (pluginFeature != null) {
-            String plugin = pluginFeature.first;
-            String feature = pluginFeature.second;
+				Optional<PossibleResult> optionalPossibleResult = possibleResults.stream()
+						.filter(o -> o.getPlugin().getId() == plugin.getId())
+						.filter(o -> o.getFunction().getId() == function.getId()).findFirst();
 
-            Call call = new Call();
-            call.setFeature(feature);
-            call.setPlugin(plugin);
+				if (optionalPossibleResult.isPresent()) {
+					optionalPossibleResult.get().addMatchingKeyword(keyword);
+				} else {
+					PossibleResult possibleResult = new PossibleResult(plugin, function);
+					possibleResult.addMatchingKeyword(keyword);
+					possibleResults.add(possibleResult);
+				}
+			}
+		}
 
-            Map<String, String> parameters = library
-                    .queryFunctionArguments(plugin, feature);
+		return possibleResults;
+	}
 
-            for (String key : parameters.keySet()) {
-                call.addArgument(key, this.getParameterFromCommand(key,
-                        request.getCommand(), parameters.get(key)));
-            }
+	private List<PossibleResult> resolveParameters(List<PossibleResult> possibleResults, Sentence sentence) {
+		for (PossibleResult possibleResult : possibleResults) {
+			Function function = possibleResult.getFunction();
 
-            extendedRequest.addCall(call);
-        } else {
-            throw new Exception("No module found for this command.");
-        }
+			for (Parameter parameter : function.getParameter()) {
+				// Create instance of IMartinType for requested type
+				try {
+					IMartinType parameterValue = Class.forName(parameter.getType()).asSubclass(IMartinType.class)
+							.newInstance();
+				
 
-        return extendedRequest;
-    }
+					// Perform Name Entity Recognition
+					String data = "";
+					if(Timestamp.class.getName().equals(parameter.getType())){
+						Phrase date = sentence.popExpressionOfIMartinType(Date.class.getName());
+						Phrase time = sentence.popExpressionOfIMartinType(Time.class.getName());
+						
+						data = (date.getValue() + " " + time.getValue()).trim();
+					} else {
+						Phrase phrase = sentence.popExpressionOfIMartinType(parameter.getType());
+						
+						if(phrase != null){
+							data = phrase.getValue();
+						}
+					}
+					
+					if(data != "" && parameterValue.isInstancaeableWith(data)){
+						parameterValue.fromString(data);
+						
+						LOG.info("\n Parameter found via Name Entity Recognition: { "
+								+ "\n    name:          '" + parameter.getName() + "', " + "\n    value:         '"
+								+ parameterValue.toString() + "'" + "\n    type:          '" + parameter.getType()+ "\n }");
+					}
+					
+					
+					// Perform Brute-Force
+					/*if(nameEntityRecognitionSuccess == false){
+						for(Word word : sentence.getWords()) {
+							if (parameterValue.isInstancaeableWith(word.toString())) {
+								parameterValue.fromString(word.toString());
+
+								LOG.info("\n Parameter found via Brute-Force: { "
+										+ "\n    name:          '" + parameter.getName() + "', " + "\n    value:         '"
+										+ parameterValue.toString() + "'" + "\n    type:          '" + parameter.getType()
+										+ "',  " + "\n    originalValue: '" + word.toString() + "', " + "\n }");
+
+								break;
+							}
+						}
+					} */
+					
+					
+					if(parameterValue.isValid()) {
+						possibleResult.addParameter(parameter.getName(), parameterValue);
+					}
+				} catch(Exception e) {
+					LOG.info(e);
+					break;
+				}
+			}
+
+		}
+
+		return possibleResults;
+	}
+
 
 }

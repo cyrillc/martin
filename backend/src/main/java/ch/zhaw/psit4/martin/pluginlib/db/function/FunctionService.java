@@ -5,9 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword;
-import ch.zhaw.psit4.martin.pluginlib.db.keyword.KeywordDao;
-
 /**
 * This class provides methods to easily save and read Function from the
 * database.
@@ -36,6 +33,11 @@ public class FunctionService {
    @Transactional
    public Function getFunctionById(int id) {
        return functionDao.getById(id);
+   }
+   
+   @Transactional
+   public List<Object[]> getByKeyword(String keyword){
+	   return functionDao.getByKeyword(keyword);
    }
 
    /**

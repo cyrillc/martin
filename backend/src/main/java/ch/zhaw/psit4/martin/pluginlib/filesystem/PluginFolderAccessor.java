@@ -1,27 +1,26 @@
 package ch.zhaw.psit4.martin.pluginlib.filesystem;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URISyntaxException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * This class handles searching for plugins in the file-system of the backend server.
  *
  * @version 0.0.1-SNAPSHOT
  */
-public class PluginFolderAccessor {
-
+public class PluginFolderAccessor implements ResourceLoaderAware {
+    private ResourceLoader resourceLoader;
     /**
      * Path to folder where plugins reside (either zipped, or unpacked as a simple folder)
      */
@@ -46,21 +45,14 @@ public class PluginFolderAccessor {
      * @return The plugin folder.
      */
     public File getPluginFolder() {
-        File out = getFolderDynamically();
-        if (out != null)
-            return out;
-
+        File out = null;
         // load library config json
         JSONObject libConfig = null;
         try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            URL urlPath = classLoader.getResource(configFile);
-            if (urlPath == null)
-                throw new IOException("URL could not be loaded.");
-            File file = new File(urlPath.getPath());
-            InputStream is = new FileInputStream(file);
-            libConfig = new JSONObject(IOUtils.toString(is));
-            is.close();
+            Resource resource = resourceLoader.getResource(configFile);
+            InputStream resourceInputStream = resource.getInputStream();
+            libConfig = new JSONObject(IOUtils.toString(resourceInputStream));
+            resourceInputStream.close();
         } catch (IOException e) {
             LOG.warn("Missing " + configFile + "!", e);
         }
@@ -76,25 +68,6 @@ public class PluginFolderAccessor {
     }
 
     /**
-     * Tries to get the plugin folder dynamically
-     * 
-     * @return The folder if found
-     */
-    File getFolderDynamically() {
-        File out = null;
-        // try to get path dynamically
-        try {
-            String path = PluginLibraryBootstrap.class.getProtectionDomain().getCodeSource()
-                    .getLocation().toURI().getPath();
-            path += ".." + File.separatorChar + "..";
-            out = findFolder(new File(path).getCanonicalPath(), folderName);
-        } catch (IOException | URISyntaxException e) {
-            LOG.warn("Could not load path dynamically, opt to json paths.", e);
-        }
-        return out;
-    }
-
-    /**
      * Get the plugin folder from an array of paths.
      * 
      * @param paths The paths in a {@link JSONArray} file.
@@ -104,7 +77,9 @@ public class PluginFolderAccessor {
         File out = null;
         for (int i = 0; i < paths.length(); i++) {
             try {
-                out = findFolder(new File(paths.get(i).toString()).getCanonicalPath(), folderName);
+                File test = new File(paths.get(i).toString());
+                LOG.info("Checking: " + test.getCanonicalPath() + ".");
+                out = checkFolder(test.getCanonicalPath(), folderName);
                 // if a folder was found, return
                 if (out != null)
                     return out;
@@ -117,31 +92,26 @@ public class PluginFolderAccessor {
     }
 
     /**
-     * Find a sub-folder recursively in a given file path.
+     * Check if the folder is the searched folder.
      * 
      * @param source The source path to search.
      * @param folder The folder name to search.
      * @return The found folder or null if no folder was found.
+     * @throws IOException 
      */
-    File findFolder(String source, String folder) {
+    File checkFolder(String source, String folder) throws IOException {
         File out = null;
-
-        String[] subFolders = (new File(source)).list();
-        for (String name : subFolders) {
-            // file is not a directory -> skip
-            if (!(new File(source + File.separatorChar + name)).isDirectory())
-                continue;
-
-            // check path and recursively call this method if dir was not found
-            if (!(source + File.separatorChar + name)
-                    .equals(source + File.separatorChar + folder)) {
-                out = findFolder(source + File.separatorChar + name, folder);
-                if (out != null)
-                    return out;
-            } else {
-                return new File(source + File.separatorChar + folder);
+        String[] sourceParts = source.split("/|\\\\");
+        if (sourceParts[sourceParts.length - 1].equals(folder)) {
+            out = new FileSystemResource(source).getFile();
+            if(out.exists() && out.isDirectory()) {
+                LOG.info("Source: " + source + " is a plugin folder.");
+                return out;
             }
-
+            else {
+                LOG.warn("Path " + out.getCanonicalPath() + " is not a valid plugin folder.");
+                return null;
+            }
         }
         return out;
     }
@@ -162,4 +132,11 @@ public class PluginFolderAccessor {
         this.configFile = configFile;
     }
 
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
+
+    public Resource getResource(String location) {
+        return resourceLoader.getResource(location);
+    }
 }
