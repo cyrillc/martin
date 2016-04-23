@@ -5,12 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * Entry point for the application to bootstrap jpf, SPRING 
