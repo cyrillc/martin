@@ -26,69 +26,69 @@ import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestProcessor.RequestProcessor;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
+@ContextConfiguration({"classpath:Beans.xml", "classpath:Beans-unit-tests.xml"})
 public class AIControllerFacadeTest {
-	
-	@Mock
+
+    @Mock
     private HistoryItemService historyItemServiceMock;
-	
-	@Mock
+
+    @Mock
     private RequestProcessor requestProcessorMock;
-    
+
     @Mock
     private IPluginLibrary pluginLibraryMock;
 
     @InjectMocks
     private AIControllerFacade aiController;
-    
+
     @Autowired
-	private LiquibaseTestFramework liquibase;
+    private LiquibaseTestFramework liquibase;
+
+    Request request = null;
+    ExtendedRequest extRequest = null;
+    Response response = null;
+    HistoryItem historyItem = null;
 
     @Before
-    public void setUp() {
-    	liquibase.createDatabase("database/db.changeset-schema-latest.xml");
-    	
-    	MockitoAnnotations.initMocks(this);
+    public void setUp() throws Exception {
+        liquibase.createDatabase("database/db.changeset-schema-latest.xml");
+        MockitoAnnotations.initMocks(this);
+
+        request = new Request("request test");
+        extRequest = new ExtendedRequest();
+        response = new Response("response test");
+        historyItem = new HistoryItem(request, response);
+
+        when(requestProcessorMock.extend(request)).thenReturn(extRequest);
+        when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);
+        doNothing().when(historyItemServiceMock).addHistoryItem(historyItem);
+
+        ArrayList<HistoryItem> getHistoryResult = new ArrayList<>();
+        getHistoryResult.add(new HistoryItem(new Request("command1"), new Response("response1")));
+        getHistoryResult.add(new HistoryItem(new Request("command2"), new Response("response2")));
+        getHistoryResult.add(new HistoryItem(new Request("command3"), new Response("response3")));
+        when(historyItemServiceMock.getHistory()).thenReturn(getHistoryResult);
     }
+
+
 
     @Test
     public void canGetAListOfHistoryItems() {
-        ArrayList<HistoryItem> getHistoryResult = new ArrayList<>();
-        getHistoryResult.add(new HistoryItem(new Request("command1"),
-                new Response("response1")));
-        getHistoryResult.add(new HistoryItem(new Request("command2"),
-                new Response("response2")));
-        getHistoryResult.add(new HistoryItem(new Request("command3"),
-                new Response("response3")));
-
-        when(historyItemServiceMock.getHistory()).thenReturn(getHistoryResult);
-
         List<HistoryItem> list = aiController.getHistory();
         assertEquals(3, list.size());
         assertEquals("command1", list.get(0).getRequest().getCommand());
     }
-    
-    @Test
-    public void saveAHistoryItemWhenRequestMakeSense() throws Exception{
-        Request request = new Request("request test");
-        ExtendedRequest extRequest = new ExtendedRequest();
-        Response response = new Response("response test");
-        HistoryItem historyItem = new HistoryItem(request, response);
-        
-        when(requestProcessorMock.extend(request)).thenReturn(extRequest);
-        when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);
-        aiController.elaborateRequest(request);
-        //verify(historyItemServiceMock).addHistoryItem(historyItem);
-    }
-    
+
+//    @Test
+//    public void saveAHistoryItemWhenRequestMakeSense() throws Exception {
+//        aiController.elaborateRequest(request);
+//        verify(historyItemServiceMock).addHistoryItem(historyItem);
+//    }
+
     @Test
     public void checkElaborationOfRequest() throws Exception {
-        Request request = new Request("request test");
-        ExtendedRequest extRequest = new ExtendedRequest();
-        Response response = new Response("response test");
         Response responseTest = null;
-        when(requestProcessorMock.extend(request)).thenReturn(extRequest);
-        when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);     
+        
         responseTest = aiController.elaborateRequest(request);
         assertTrue(responseTest.equals(response));
     }
