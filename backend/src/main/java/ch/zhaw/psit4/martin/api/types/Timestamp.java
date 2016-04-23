@@ -7,10 +7,7 @@ import javax.json.Json;
 
 import com.wareninja.opensource.strtotime.Str2Time;
 
-public class Timestamp extends MartinType implements IMartinType{
-	/**
-	 * Number of milliseconds since 01. Jan 1970.
-	 */
+public class Timestamp extends MartinType {
 	private Optional<Date> datetime;
 	
 

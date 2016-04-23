@@ -8,7 +8,7 @@ package ch.zhaw.psit4.martin.api.types;
  * @author simonflepp
  *
  */
-public class Location extends MartinType implements IMartinType {
+public class Location extends MartinType {
 	public Location(String data) {
 		super(data);
 	}

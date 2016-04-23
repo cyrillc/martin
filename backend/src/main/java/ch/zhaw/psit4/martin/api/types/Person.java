@@ -5,7 +5,7 @@ package ch.zhaw.psit4.martin.api.types;
  * @author simonflepp
  *
  */
-public class Person extends MartinType implements IMartinType{
+public class Person extends MartinType {
 	public Person(String data) {
 		super(data);
 	}

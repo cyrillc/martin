@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.requestProcessor;
+package ch.zhaw.psit4.martin.requestprocessor;
 
 import static org.junit.Assert.*;
 
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-
+import ch.zhaw.psit4.martin.api.types.Timestamp;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 import ch.zhaw.psit4.martin.common.Request;
@@ -53,7 +53,6 @@ public class RequestProcessorTest {
 
 	@Test
 	public void testExtendRequestPluginAndFeature() {
-	
 		Request request0 = new Request("Whats the weather tomorrow in Zürich?");
 		ExtendedRequest extRequest0 = requestProcessor.extend(request0);
 		assertEquals(extRequest0.getCalls().isEmpty(), false);
@@ -71,6 +70,7 @@ public class RequestProcessorTest {
 		assertEquals(extRequest2.getCalls().get(0).getPlugin().getName(), "WetterPlugin");
 		assertEquals(extRequest2.getCalls().get(0).getFunction().getName(), "getWeatherAtLocation");
 		assertEquals(extRequest2.getCalls().get(0).getArguments().get("location").toString(), "Hugentoblerplatz");
+		assertEquals(extRequest2.getCalls().size(), 1);
 	}
 	
 }

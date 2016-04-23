@@ -184,7 +184,7 @@ public class RequestProcessor implements IRequestProcessor {
 					}
 				}
 	
-				if(data != "") {
+				if(!data.equals("")) {
 					try {
 						IMartinType parameterValue = IMartinType.fromString(parameter.getType(), data);
 						
