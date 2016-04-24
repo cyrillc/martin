@@ -6,14 +6,14 @@
   <session-factory>
     <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
     <property name="show_sql">true</property>
-    <mapping class="ch.zhaw.psit4.martin.pluginlib.db.historyitem.HistoryItem"/>
+    <mapping class="ch.zhaw.psit4.martin.db.historyitem.HistoryItem"/>
     <mapping class="ch.zhaw.psit4.martin.common.Response"/>
     <mapping class="ch.zhaw.psit4.martin.common.Request"/>
-    <mapping class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCall"/>
-    <mapping class="ch.zhaw.psit4.martin.pluginlib.db.parameter.Parameter"/>
-    <mapping class="ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword"/>
-    <mapping class="ch.zhaw.psit4.martin.pluginlib.db.function.Function"/>
-    <mapping class="ch.zhaw.psit4.martin.pluginlib.db.author.Author"/>
-    <mapping class="ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin"/>
+    <mapping class="ch.zhaw.psit4.martin.db.ExampleCall"/>
+    <mapping class="ch.zhaw.psit4.martin.db.parameter.Parameter"/>
+    <mapping class="ch.zhaw.psit4.martin.db.keyword.Keyword"/>
+    <mapping class="ch.zhaw.psit4.martin.db.function.Function"/>
+    <mapping class="ch.zhaw.psit4.martin.db.author.Author"/>
+    <mapping class="ch.zhaw.psit4.martin.db.plugin.Plugin"/>
   </session-factory>
 </hibernate-configuration>

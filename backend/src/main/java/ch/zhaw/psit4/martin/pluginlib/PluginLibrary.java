@@ -22,14 +22,13 @@ import org.java.plugin.registry.Extension.Parameter;
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.MartinPlugin;
-import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
-import ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService;
-
 import ch.zhaw.psit4.martin.common.Call;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.common.Response;
+import ch.zhaw.psit4.martin.db.ExampleCall;
+import ch.zhaw.psit4.martin.db.ExampleCallService;
 
 /**
  * PluginLibrary logic entry point.
@@ -60,7 +59,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     private ExampleCallService exampleCallService;
 
     @Autowired
-    private ch.zhaw.psit4.martin.pluginlib.db.plugin.PluginService pluginService;
+    private ch.zhaw.psit4.martin.db.plugin.PluginService pluginService;
 
     /*
      * (non-Javadoc)
@@ -256,10 +255,10 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
     @Override
     public List<PluginInformation> getPluginInformation() {
-        List<ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin> pluginList = pluginService
+        List<ch.zhaw.psit4.martin.db.plugin.Plugin> pluginList = pluginService
                 .listPlugins();
         List<PluginInformation> pluginInformationList = new ArrayList<PluginInformation>();
-        for (ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin plugin : pluginList) {
+        for (ch.zhaw.psit4.martin.db.plugin.Plugin plugin : pluginList) {
             pluginInformationList.add(new PluginInformation(plugin.getName(),
                     plugin.getDescription(), plugin.getFunctions()));
         }

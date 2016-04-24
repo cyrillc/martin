@@ -9,14 +9,13 @@ import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
+import ch.zhaw.psit4.martin.db.*;
+import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-
-import ch.zhaw.psit4.martin.pluginlib.db.*;
-import ch.zhaw.psit4.martin.pluginlib.db.historyitem.HistoryItem;
 
 /**
  * This class connect the Frontend with the AI using REST.

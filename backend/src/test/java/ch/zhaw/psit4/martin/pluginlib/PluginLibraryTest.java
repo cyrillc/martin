@@ -23,8 +23,8 @@ import ch.zhaw.psit4.martin.api.MartinPlugin;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Response;
-import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
-import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
+import ch.zhaw.psit4.martin.db.function.Function;
+import ch.zhaw.psit4.martin.db.plugin.Plugin;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:Beans.xml", "classpath:Beans-unit-tests.xml"})

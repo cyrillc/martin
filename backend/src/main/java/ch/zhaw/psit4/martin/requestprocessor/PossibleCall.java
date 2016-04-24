@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.zhaw.psit4.martin.api.types.IMartinType;
-import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
-import ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword;
-import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
+import ch.zhaw.psit4.martin.db.function.Function;
+import ch.zhaw.psit4.martin.db.keyword.Keyword;
+import ch.zhaw.psit4.martin.db.plugin.Plugin;
 
 /**
  * This class is used to prepare possible calls. The state of the
