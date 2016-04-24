@@ -40,20 +40,23 @@ public class PluginServiceTest {
         List<Plugin> plugins = pluginService.listPlugins();
         plugins.stream().forEach(plugin -> printPlugin(plugin));
         assertEquals(false,plugins.isEmpty());
-        assertEquals(4,plugins.size());
-
+        assertEquals(4,plugins.size()); 
     }
 
     private void printPlugin(Plugin plugin) {
-        StringBuilder str  = new StringBuilder(plugin.getId()));
-        log.info(plugin.getName()+" has ID "+ plugin.getId());
+        StringBuilder str  = new StringBuilder(plugin.getId());
+        str.append(", ");
+        str.append(plugin.getName());
+        str.append(" \"");
+        str.append(plugin.getDescription());
+        str.append("\"");
+        str.append(" from ");
+        str.append(plugin.getAuthor());
+        plugin.getFunctions().stream().forEach(function -> str.append("\n->"+function.getName()));
+
+        log.info(str);
     }
 
-    private void printParam(plugin param) {
-        log.info(param.getId()+", "+param.getName()+", "+param.getType());
-        log.info("Keywords for "+param.getName());
-        param.getKeywords().stream().forEach(keyword -> log.info(keyword.getKeyword()));
-    }
     /*
     @Test
     public void testAddPlugin() {
