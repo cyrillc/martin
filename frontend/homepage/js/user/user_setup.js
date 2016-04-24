@@ -48,13 +48,16 @@ var sendCommand = function () {
     });
 };
 
-$(document).ajaxStart(function () {
-    $('#loading').show();
-});
-
-$(document).ajaxStop(function () {
-    $('#loading').hide();
-});
+// Set up an Listener for ajax-request and responses
+$(document)
+    .ajaxStart(function () {
+        //shows the whole loading div-class
+        $('.loading').show();
+    })
+    .ajaxStop(function () {
+        //shows the whole loading div-class
+        $('.loading').hide();
+    });
 
 var addRequestToHistory = function (requestText) {
 
