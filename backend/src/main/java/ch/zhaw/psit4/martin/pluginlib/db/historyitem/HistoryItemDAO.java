@@ -1,12 +1,10 @@
-package ch.zhaw.psit4.martin.common.dao;
+package ch.zhaw.psit4.martin.pluginlib.db.historyitem;
 
 import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
-
-import ch.zhaw.psit4.martin.common.HistoryItem;
 
 /**
  * This class is used to save HistoryItems into DB

@@ -14,7 +14,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
-import ch.zhaw.psit4.martin.pluginlib.db.parameter.ParameterService;
 import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
 import ch.zhaw.psit4.martin.pluginlib.db.plugin.PluginService;
 
@@ -40,7 +39,7 @@ public class PluginServiceTest {
         List<Plugin> plugins = pluginService.listPlugins();
         plugins.stream().forEach(plugin -> printPlugin(plugin));
         assertEquals(false,plugins.isEmpty());
-        assertEquals(4,plugins.size()); 
+        
     }
 
     private void printPlugin(Plugin plugin) {
@@ -50,8 +49,9 @@ public class PluginServiceTest {
         str.append(" \"");
         str.append(plugin.getDescription());
         str.append("\"");
-        str.append(" from ");
-        str.append(plugin.getAuthor());
+        str.append("\nfrom ");
+        str.append(plugin.getAuthor().getName());
+        str.append("\nFunctions: ");
         plugin.getFunctions().stream().forEach(function -> str.append("\n->"+function.getName()));
 
         log.info(str);

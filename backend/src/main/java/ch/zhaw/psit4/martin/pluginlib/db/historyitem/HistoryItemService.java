@@ -1,12 +1,9 @@
-package ch.zhaw.psit4.martin.common.service;
+package ch.zhaw.psit4.martin.pluginlib.db.historyitem;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import ch.zhaw.psit4.martin.common.HistoryItem;
-import ch.zhaw.psit4.martin.common.dao.HistoryItemDAO;
 
 /**
  * Service just to test some work.. should waiting for a better solution

@@ -67,10 +67,10 @@
     </bean>
 
   	<!--  History Tables -->
-    <bean id="historyItemDao" class="ch.zhaw.psit4.martin.common.dao.HistoryItemDAO">
+    <bean id="historyItemDao" class="ch.zhaw.psit4.martin.pluginlib.db.historyitem.HistoryItemDAO">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
-    <bean id="historyItemService" class="ch.zhaw.psit4.martin.common.service.HistoryItemService">
+    <bean id="historyItemService" class="ch.zhaw.psit4.martin.pluginlib.db.historyitem.HistoryItemService">
         <property name="historyItemDAO" ref="historyItemDao"></property>
     </bean>
 

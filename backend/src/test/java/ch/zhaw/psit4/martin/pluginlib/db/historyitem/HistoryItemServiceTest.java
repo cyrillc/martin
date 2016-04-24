@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.common.service;
+package ch.zhaw.psit4.martin.pluginlib.db.historyitem;
 
 import static org.junit.Assert.*;
 
@@ -13,10 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import ch.zhaw.psit4.martin.common.HistoryItem;
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
-import ch.zhaw.psit4.martin.common.dao.HistoryItemDAO;
+import ch.zhaw.psit4.martin.pluginlib.db.historyitem.HistoryItem;
+import ch.zhaw.psit4.martin.pluginlib.db.historyitem.HistoryItemDAO;
+import ch.zhaw.psit4.martin.pluginlib.db.historyitem.HistoryItemService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml",

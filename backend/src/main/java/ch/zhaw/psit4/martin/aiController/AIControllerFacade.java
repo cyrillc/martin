@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Response;
-import ch.zhaw.psit4.martin.common.service.HistoryItemService;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.db.ExampleCall;
+import ch.zhaw.psit4.martin.pluginlib.db.historyitem.HistoryItem;
+import ch.zhaw.psit4.martin.pluginlib.db.historyitem.HistoryItemService;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
-import ch.zhaw.psit4.martin.common.HistoryItem;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 
 /**
