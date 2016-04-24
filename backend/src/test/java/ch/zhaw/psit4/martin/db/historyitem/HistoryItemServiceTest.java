@@ -13,11 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import ch.zhaw.psit4.martin.common.Request;
-import ch.zhaw.psit4.martin.common.Response;
 import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
 import ch.zhaw.psit4.martin.db.historyitem.HistoryItemDAO;
 import ch.zhaw.psit4.martin.db.historyitem.HistoryItemService;
+import ch.zhaw.psit4.martin.db.request.Request;
+import ch.zhaw.psit4.martin.db.response.Response;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml",

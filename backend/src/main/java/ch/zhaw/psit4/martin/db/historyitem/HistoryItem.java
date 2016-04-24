@@ -14,8 +14,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import ch.zhaw.psit4.martin.common.Request;
-import ch.zhaw.psit4.martin.common.Response;
+import ch.zhaw.psit4.martin.db.request.Request;
+import ch.zhaw.psit4.martin.db.response.Response;
 
 /**
  * A HistoryItem is used to keep track of the Requests sent to Martin and the

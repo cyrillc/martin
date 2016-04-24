@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
 import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.common.Request;
-import ch.zhaw.psit4.martin.common.Response;
 import ch.zhaw.psit4.martin.db.*;
+import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
 import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
+import ch.zhaw.psit4.martin.db.request.Request;
+import ch.zhaw.psit4.martin.db.response.Response;
 
 import java.util.List;
 

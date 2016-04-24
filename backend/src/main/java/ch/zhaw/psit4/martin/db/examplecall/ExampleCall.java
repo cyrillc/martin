@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.db;
+package ch.zhaw.psit4.martin.db.examplecall;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

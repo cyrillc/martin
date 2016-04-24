@@ -24,10 +24,10 @@
 	</bean>
 
 	<!--  Plugin Library Tables -->
-    <bean id="exampleCallDao" class="ch.zhaw.psit4.martin.db.ExampleCallDao">
+    <bean id="exampleCallDao" class="ch.zhaw.psit4.martin.db.examplecall.ExampleCallDao">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
-    <bean id="exampleCallService" class="ch.zhaw.psit4.martin.db.ExampleCallService">
+    <bean id="exampleCallService" class="ch.zhaw.psit4.martin.db.examplecall.ExampleCallService">
         <property name="exampleCallDao" ref="exampleCallDao"></property>
     </bean>
 

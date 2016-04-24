@@ -7,9 +7,9 @@
     <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
     <property name="show_sql">true</property>
     <mapping class="ch.zhaw.psit4.martin.db.historyitem.HistoryItem"/>
-    <mapping class="ch.zhaw.psit4.martin.common.Response"/>
-    <mapping class="ch.zhaw.psit4.martin.common.Request"/>
-    <mapping class="ch.zhaw.psit4.martin.db.ExampleCall"/>
+    <mapping class="ch.zhaw.psit4.martin.db.response.Response"/>
+    <mapping class="ch.zhaw.psit4.martin.db.request.Request"/>
+    <mapping class="ch.zhaw.psit4.martin.db.examplecall.ExampleCall"/>
     <mapping class="ch.zhaw.psit4.martin.db.parameter.Parameter"/>
     <mapping class="ch.zhaw.psit4.martin.db.keyword.Keyword"/>
     <mapping class="ch.zhaw.psit4.martin.db.function.Function"/>
