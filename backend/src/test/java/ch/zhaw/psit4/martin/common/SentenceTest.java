@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import ch.zhaw.psit4.martin.api.types.Date;
 import ch.zhaw.psit4.martin.api.types.Duration;
 import ch.zhaw.psit4.martin.api.types.Location;
 import ch.zhaw.psit4.martin.api.types.Money;
@@ -135,12 +136,17 @@ public class SentenceTest {
 	
 	@Test
 	public void testTime() {
-		Sentence sentence = new Sentence("It was 12 o'clock when the New Year's Eve rockets hit the sky.", stanfordNLP);
+		Sentence sentence = new Sentence("It was 12 o'clock when the New Year 's Eve rockets hit the sky.", stanfordNLP);
 
 		Phrase phrase1 = sentence.popPhraseOfIMartinType(Time.class.getName());
 
 		assertEquals(phrase1.getType(), "TIME");
 		assertEquals(phrase1.getValue(), "12 o'clock");
+		
+		Phrase phrase2 = sentence.popPhraseOfIMartinType(Date.class.getName());
+		
+		assertEquals(phrase2.getType(), "DATE");
+		assertEquals(phrase2.getValue(), "New Year 's Eve");
 		
 	}
 
