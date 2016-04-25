@@ -1,19 +1,13 @@
 package ch.zhaw.psit4.martin.pluginlib;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
-import org.apache.commons.io.IOUtils;
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.java.plugin.Plugin;
@@ -22,12 +16,8 @@ import org.java.plugin.PluginManager;
 import org.java.plugin.registry.Extension;
 import org.java.plugin.registry.ExtensionPoint;
 import org.java.plugin.registry.PluginDescriptor;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.wareninja.opensource.strtotime.Str2Time;
 
 import org.java.plugin.registry.Extension.Parameter;
 
@@ -39,12 +29,10 @@ import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.db.author.Author;
-import ch.zhaw.psit4.martin.db.author.AuthorService;
 import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
 import ch.zhaw.psit4.martin.db.examplecall.ExampleCallService;
-import ch.zhaw.psit4.martin.db.function.Function;
-import ch.zhaw.psit4.martin.db.plugin.PluginService;
 import ch.zhaw.psit4.martin.db.response.Response;
+import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor;
 
 /**
  * PluginLibrary logic entry point.
@@ -70,13 +58,13 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
     @Autowired
     private MartinContextAccessor martinContextAccessor;
+    
+    @Autowired
+    private PluginDataAccessor pluginDataAccessor;
 
     @Autowired
     private ExampleCallService exampleCallService;
 
-    @Autowired
-    private PluginService pluginService;
-   
 
     /*
      * (non-Javadoc)
@@ -99,8 +87,12 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     }
 
     /*
-     * Start the module and initialize components
+     * Start the module and initialize components.
+     * 
+     * It will start after all beans have been initialized to prevent crashes during bean
+     * initialization and for looser dependencies.
      */
+    @PostConstruct
     @Override
     public void startLibrary() {
         // Get plugins
@@ -133,14 +125,17 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 continue;
             }
             ClassLoader classLoader = manager.getPluginClassLoader(extensionDescriptor);
-            
-            // create new DB item
-            ch.zhaw.psit4.martin.db.plugin.Plugin dbPlugin = new ch.zhaw.psit4.martin.db.plugin.Plugin();
 
             // parameter access + storage
-            Parameter pluginClassName = getAndUpdatePluginMetadata(extension, dbPlugin);
-            URL keywordsUrl = classLoader.getResource(PLUGIN_FUNCTIONS);
-            JSONObject jsonKeywords = getPluginKeywords(keywordsUrl, dbPlugin);
+            Parameter pluginClassName = extension.getParameter("class");
+            
+            ch.zhaw.psit4.martin.db.plugin.Plugin dbPlugin = pluginDataAccessor.getPluginMetadata(extension);
+            Author author = pluginDataAccessor.getAuthorData(extension);
+            dbPlugin.setAuthor(author);
+            
+            
+            URL jsonUrl = classLoader.getResource(PLUGIN_FUNCTIONS);
+            JSONObject jsonKeywords = pluginDataAccessor.parsePluginFunctions(jsonUrl, dbPlugin);
             if (jsonKeywords == null)
                 continue;
 
@@ -149,7 +144,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             if (pluginInstance == null)
                 continue;
             String uuid = extension.getId();
-            
+
             // update DB and memory
             dbPlugin.setUuid(uuid);
             pluginService.addPlugin(dbPlugin);
@@ -158,76 +153,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
         return plugins;
     }
-
-    /**
-     * Gets the plugin metadata from the plugin.xml.
-     * 
-     * @param extension The extension to get the plugins from.
-     * @return The plugin java class name.
-     */
-    Parameter getAndUpdatePluginMetadata(Extension extension, ch.zhaw.psit4.martin.db.plugin.Plugin refPlugin) {
-        // metadata-parsing (mandatory)
-        Parameter pluginClassName = extension.getParameter("class");
-        Parameter pluginName = extension.getParameter("name");
-
-        // metadata-parsing (optional)
-        Parameter pluginDesctibtion = extension.getParameter("description");
-        Parameter pluginAuthor = extension.getParameter("author");
-        Parameter pluginMail = extension.getParameter("e-mail");
-        Parameter pluginDate = extension.getParameter("date");
-        
-        // update DB-object
-        Author author = new Author();
-        author.setName(pluginAuthor.valueAsString());
-        author.setEmail(pluginMail.valueAsString());
-        refPlugin.setName(pluginName.valueAsString());
-        refPlugin.setDescription(pluginDesctibtion.valueAsString());
-        String date = pluginDate.valueAsString();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        java.util.Date parsed;
-        try {
-            parsed = format.parse(date);
-            java.sql.Date sqlDate = new java.sql.Date(parsed.getTime());
-            refPlugin.setDate(sqlDate);
-        } catch (ParseException e) {
-            LOG.warn("Could not parse date.", e);
-        }
-        refPlugin.setAuthor(author);
-
-        return pluginClassName;
-    }
-
-    /**
-     * Get the plugin JSON file for the keywords and functions.
-     * 
-     * @param keywordsUrl The URL of the file on the filesystem.
-     * @return The loaded JSON-file or null if an error occurred.
-     */
-    JSONObject getPluginKeywords(URL keywordsUrl, ch.zhaw.psit4.martin.db.plugin.Plugin refPlugin) {
-        // keywords JSON loading
-        JSONObject jsonKeywords = null;
-        try {
-            // Get JSON
-            InputStream is = keywordsUrl.openStream();
-            jsonKeywords = new JSONObject(IOUtils.toString(is));
-            is.close();
-            
-            // fill DB-Object
-            JSONArray jsonFunctions = jsonKeywords.getJSONArray("Functions");
-            Set<Function> functions = new HashSet<>();
-            for(int numFuncts = 0; numFuncts < jsonFunctions.length(); numFuncts++) {
-                JSONObject jsonFunct = jsonFunctions.getJSONObject(numFuncts);
-                //String functName = jsonFunct.get
-            }
-                        
-        } catch (JSONException | IOException e) {
-            LOG.error("keywords.json could not be accessed.", e);
-        }
-
-        return jsonKeywords;
-    }
-
-
+    
     /**
      * Loads a plugin via framework and returns the {@link MartinPlugin} interface
      * 
@@ -236,7 +162,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @return The loaded class or null, if an error occurred
      */
     @SuppressWarnings("unchecked")
-    MartinPlugin loadPlugin(ClassLoader classLoader, Parameter pluginClassName) {
+    public MartinPlugin loadPlugin(ClassLoader classLoader, Parameter pluginClassName) {
         MartinPlugin pluginInstance = null;
         Class<MartinPlugin> pluginClass = null;
         try {

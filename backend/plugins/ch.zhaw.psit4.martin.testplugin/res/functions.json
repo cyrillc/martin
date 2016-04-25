@@ -1,30 +1,28 @@
 {
 	"Functions": [
 		{
-			"hello": {
-				"Describtion": "Greets the greeter.",
-				"Keywords": [
-					"hello",
-					"greetings",
-					"hey",
-					"howdy",
-					"hi-ya",
-					"whazzup"
-				],
-				"Parameter": [
-					{
-						"Name": {
-							"required": "false",
-							"type": "ch.zhaw.psit4.martin.api.types.Person",
-							"tokens-regex": ""
-						}
-					}
-				],
-				"Examples": [
-					"Hello MArtIn!",
-					"Howdy partner!"
-				]
-			}
+			"Name": "hallo",
+			"Describtion": "Greets the greeter.",
+			"Keywords": [
+				"hello",
+				"greetings",
+				"hey",
+				"howdy",
+				"hi-ya",
+				"whazzup"
+			],
+			"Parameter": [
+				{
+					"Name": "Name",
+					"Required": "false",
+					"Type": "ch.zhaw.psit4.martin.api.types.Person",
+					"Tokens-regex": ""
+				}
+			],
+			"Examples": [
+				"Hello MArtIn!",
+				"Howdy partner!"
+			]
 		}
 	]
 }
