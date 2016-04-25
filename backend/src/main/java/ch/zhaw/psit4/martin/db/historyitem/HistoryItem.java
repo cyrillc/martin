@@ -89,7 +89,7 @@ public class HistoryItem {
             return false;
         }
         final HistoryItem item = (HistoryItem) obj;
-        if (this.id != item.id || this.getDate().equals(item.getDate())
+        if (this.id != item.id || !this.getDate().equals(item.getDate())
                 || !this.request.equals(item.getRequest())
                 || !this.response.equals(item.getResponse())) {
             return false;

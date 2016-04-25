@@ -27,7 +27,8 @@ import ch.zhaw.psit4.martin.common.PluginInformation;
  *
  */
 public class AIControllerFacade {
-    private static final Log LOG = LogFactory.getLog(AIControllerFacade.class);
+    @SuppressWarnings("unused")
+	private static final Log LOG = LogFactory.getLog(AIControllerFacade.class);
     
     @Autowired
     private IPluginLibrary pluginLibrary;
@@ -82,6 +83,8 @@ public class AIControllerFacade {
         } else {
         	response = new Response("Sorry, I can't understand you.");
         }
+        
+        historyItemService.addHistoryItem(new HistoryItem(request, response));
         
         return response;
     }
