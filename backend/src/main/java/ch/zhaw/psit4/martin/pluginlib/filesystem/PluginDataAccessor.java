@@ -25,17 +25,35 @@ import ch.zhaw.psit4.martin.db.plugin.Plugin;
 import ch.zhaw.psit4.martin.db.plugin.PluginService;
 
 public class PluginDataAccessor {
-    
+
+    /**
+     * File name of the plugin keywords JSON.
+     */
+    public static final String PLUGIN_FUNCTIONS = "functions.json";
     /*
      * Log from the common logging api
      */
     private static final Log LOG = LogFactory.getLog(PluginDataAccessor.class);
-    
+
     @Autowired
     private PluginService pluginService;
-    
+
     public PluginDataAccessor() {
         // empty
+    }
+
+    public void putPluginInDB(Extension extension, ClassLoader classLoader) {
+        Plugin dbPlugin = getPluginMetadata(extension);
+        Author author = getAuthorData(extension);
+        dbPlugin.setAuthor(author);
+
+        URL jsonUrl = classLoader.getResource(PLUGIN_FUNCTIONS);
+        JSONObject jsonKeywords = parseFunctionsJSON(jsonUrl);
+        Set<Function> functions = parsePluginFunctions(jsonKeywords);
+
+        String uuid = extension.getId();
+        dbPlugin.setUuid(uuid);
+        pluginService.addPlugin(dbPlugin);
     }
 
     /**
@@ -56,11 +74,11 @@ public class PluginDataAccessor {
 
         // update DB-object
         plugin.setName(pluginName.valueAsString());
-        if(pluginDesctibtion != null)
+        if (pluginDesctibtion != null)
             plugin.setDescription(pluginDesctibtion.valueAsString());
         else
             plugin.setDescription("No Describtion provided.");
-        if(pluginDate != null) {
+        if (pluginDate != null) {
             String date = pluginDate.valueAsString();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             java.util.Date parsed = null;
@@ -75,15 +93,16 @@ public class PluginDataAccessor {
 
         return plugin;
     }
-    
+
     /**
      * Get the author Metadata from plugins.xml
+     * 
      * @param extension The extension to get the data from.
      * @return The author java type.
      */
     public Author getAuthorData(Extension extension) {
         Author author = new Author();
-        
+
         // get data
         Parameter pluginAuthor = extension.getParameter("author");
         Parameter pluginMail = extension.getParameter("e-mail");
@@ -101,12 +120,12 @@ public class PluginDataAccessor {
      * @param keywordsUrl The URL of the file on the filesystem.
      * @return The loaded JSON-file or null if an error occurred.
      */
-    public JSONObject parseFunctionsJSON(URL functionsUrl) {
+    public JSONObject parseFunctionsJSON(URL url) {
         // keywords JSON loading
         JSONObject json = null;
         try {
             // Get JSON
-            InputStream is = functionsUrl.openStream();
+            InputStream is = url.openStream();
             json = new JSONObject(IOUtils.toString(is));
             is.close();
         } catch (JSONException | IOException e) {
@@ -134,11 +153,15 @@ public class PluginDataAccessor {
             Function function = new Function();
             function.setName(functName);
             function.setDescription(description);
+
+            Set<ch.zhaw.psit4.martin.db.parameter.Parameter> params = parseParameters(jsonFunct);
+            Set<Keyword> keywords = parseKeywords(jsonFunct);
+
             functions.add(function);
         }
         return functions;
     }
-    
+
     /**
      * Gets a set of parameters from the JSON file for a specific function.
      * 
@@ -148,15 +171,16 @@ public class PluginDataAccessor {
     public Set<ch.zhaw.psit4.martin.db.parameter.Parameter> parseParameters(JSONObject jsonFunct) {
         JSONArray jsonParameter = jsonFunct.getJSONArray("Parameter");
         Set<ch.zhaw.psit4.martin.db.parameter.Parameter> parameter = new HashSet<>();
-        for(int paramNum = 0; paramNum < jsonParameter.length(); paramNum++) {
+        for (int paramNum = 0; paramNum < jsonParameter.length(); paramNum++) {
             // get parameter
             JSONObject jsonparam = jsonParameter.getJSONObject(paramNum);
             String paramName = jsonFunct.getString("Name");
             boolean required = jsonFunct.getBoolean("Required");
             String type = jsonFunct.getString("Type");
             String regex = jsonFunct.getString("Tokens-regex");
-            
-            ch.zhaw.psit4.martin.db.parameter.Parameter param = new ch.zhaw.psit4.martin.db.parameter.Parameter();
+
+            ch.zhaw.psit4.martin.db.parameter.Parameter param =
+                    new ch.zhaw.psit4.martin.db.parameter.Parameter();
             param.setName(paramName);
             param.setRequired(required);
             param.setType(type);
@@ -165,7 +189,7 @@ public class PluginDataAccessor {
         }
         return parameter;
     }
-    
+
     /**
      * Gets a set of keywords from the JSON file for a specific function.
      * 
@@ -175,7 +199,7 @@ public class PluginDataAccessor {
     public Set<Keyword> parseKeywords(JSONObject jsonFunct) {
         JSONArray jsonKeywords = jsonFunct.getJSONArray("Examples");
         Set<Keyword> keywords = new HashSet<>();
-        for(int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
+        for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
             Keyword keyword = new Keyword();
             keyword.setKeyword(jsonKeywords.getString(keyWordNum));
             keywords.add(keyword);
