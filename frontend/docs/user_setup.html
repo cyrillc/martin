@@ -27,21 +27,6 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <p>Defautl Port for the Backend is 4040. This can be changed in $(document).ready()</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> backendPort = <span class="hljs-number">4040</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
               <p>enabling <em>RETURN</em> to submit command</p>
 
             </div>
@@ -63,11 +48,11 @@
         </li>
         
         
-        <li id="section-3">
+        <li id="section-2">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
               <p>make submit button look pressed for visual feedback</p>
 
@@ -83,17 +68,33 @@
         </li>
         
         
-        <li id="section-4">
+        <li id="section-3">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <p>sending a command to the backend of MArtIn using an Ajax request</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> sendCommand = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>shows MArtIn thingking Area</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'.thinking'</span>).show();
+    $(<span class="hljs-string">'.history-loading'</span>).show();</pre></div></div>
             
         </li>
         
@@ -154,10 +155,18 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    $.get(backendUrl, command, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data</span>) </span>{
-        $(<span class="hljs-string">"#response"</span>).append(<span class="hljs-built_in">JSON</span>.stringify(data) + <span class="hljs-string">'&lt;br&gt;'</span>);
-    });
-};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    $.get(backendUrl, command, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) </span>{
+        $(<span class="hljs-string">"#response"</span>).append(<span class="hljs-built_in">JSON</span>.stringify(response) + <span class="hljs-string">'&lt;br&gt;'</span>);
+
+        <span class="hljs-keyword">var</span> historyItem = {
+            date: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(),
+            request: command,
+            response: response
+        };
+
+        <span class="hljs-keyword">var</span> historyRenderer = <span class="hljs-keyword">new</span> HistoryRenderer(<span class="hljs-literal">null</span>);
+        historyRenderer.renderItem(historyItem);
+    })</pre></div></div>
             
         </li>
         
@@ -168,11 +177,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>ask the backend for example commands and history to show on the homepage after the document has loaded</p>
+              <p>always hide the Section.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>$(<span class="hljs-built_in">document</span>).ready(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        .always(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
             
         </li>
         
@@ -182,6 +191,43 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>hides thinking Area</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        $(<span class="hljs-string">'.thinking'</span>).hide();
+        $(<span class="hljs-string">'.history-loading'</span>).hide();
+    });
+};
+
+<span class="hljs-keyword">var</span> addRequestToHistory = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">requestText</span>) </span>{
+
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>ask the backend for example commands and history to show on the homepage after the document has loaded</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>$(<span class="hljs-built_in">document</span>).ready(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>ask server for port where backend runs and call callback-Function with the received data.</p>
 
@@ -196,40 +242,77 @@
         </li>
         
         
-        <li id="section-11">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>send GET request with data and show response on page</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>        $.get(exampleCommandsUrl, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">receivedExampleCommands</span>) </span>{
+            $(<span class="hljs-string">'.possible-commands-loading'</span>).show();
             <span class="hljs-keyword">var</span> exampleCommandsRenderer = <span class="hljs-keyword">new</span> ExampleCommandsRenderer(receivedExampleCommands);
             exampleCommandsRenderer.renderCommands();
-        });
-
-        HistoryUrl = createRequestURL(frontendUrl, backendPort, <span class="hljs-string">"history"</span>);</pre></div></div>
+        })</pre></div></div>
             
         </li>
         
         
-        <li id="section-12">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>always hide the Section.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            .always(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                $(<span class="hljs-string">'.possible-commands-loading'</span>).hide();
+            });
+
+        HistoryUrl = createRequestURL(frontendUrl, backendPort, <span class="hljs-string">"history"</span>);
+        <span class="hljs-keyword">var</span> amountOfHistoryItems = { amount: <span class="hljs-number">15</span> };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>send GET request with data and show response on page</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $.get(HistoryUrl, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">receivedHistory</span>) </span>{
+            <div class="content"><div class='highlight'><pre>        $.get(HistoryUrl, amountOfHistoryItems, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">receivedHistory</span>) </span>{
+            $(<span class="hljs-string">'.history-loading'</span>).show();
             <span class="hljs-keyword">var</span> historyRenderer = <span class="hljs-keyword">new</span> HistoryRenderer(receivedHistory);
-            historyRenderer.render();
-        });
+            historyRenderer.renderAll();
+        })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>always hide the Section.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            .always(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+                $(<span class="hljs-string">'.history-loading'</span>).hide()
+            });
     });
 
 });</pre></div></div>

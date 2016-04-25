@@ -168,6 +168,17 @@ img.newTabIcon {
     opacity: 0.7;
 }
 
+div.thinking {
+    display: none;
+}
+
+div.history-loading {
+    display: none;
+}
+
+div.possible-commands-loading {
+    display: none;
+}
 
 /* ==========================================================================
    Helper classes
