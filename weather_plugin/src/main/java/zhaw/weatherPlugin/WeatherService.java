@@ -18,7 +18,7 @@ public class WeatherService {
 
     public String getWeatherAtCity(String city) throws WeatherPluginException {
         try {
-            WeatherResponseAdapter response = responseAdapterFactory
+            WeatherStatusResponseAdapter response = responseAdapterFactory
                     .getResponseAdapter(owmClient.currentWeatherAtCity(city));
             if (response.hasWeatherData()) {
 
@@ -30,6 +30,26 @@ public class WeatherService {
                         + " Temperature: " + temperatureCelsius + " Rain: "
                         + rain;
             } else {
+                return null;
+            }
+        } catch (JSONException e) {
+            throw new WeatherPluginException(
+                    "OpenWeatherMap Response not valid");
+        } catch (IOException e) {
+            throw new WeatherPluginException(
+                    "impossible to connect with the server");
+        }
+    }
+
+    public String getForecastAtCity(String city) throws WeatherPluginException {
+
+        try {
+            WeatherForecastResponseAdapter response = responseAdapterFactory
+                    .getResponseAdapter(owmClient.forecastWeatherAtCity(city));
+            if(response.hasForecast()){
+                // TODO
+                return null;
+            }else {
                 return null;
             }
         } catch (JSONException e) {

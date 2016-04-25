@@ -21,7 +21,7 @@ public class WeatherServiceTest {
     @Mock
     private WeatherStatusResponse owmResponseMock;
     @Mock
-    private WeatherResponseAdapter responseAdapterMock;
+    private WeatherStatusResponseAdapter responseAdapterMock;
     @Mock
     private ResponseAdapterFactory responseAdapterFactoryMock;
 
@@ -66,5 +66,4 @@ public class WeatherServiceTest {
             fail();
         }
     }
-
 }

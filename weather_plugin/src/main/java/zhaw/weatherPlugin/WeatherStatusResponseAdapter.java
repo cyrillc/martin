@@ -3,12 +3,12 @@ package zhaw.weatherPlugin;
 import org.bitpipeline.lib.owm.WeatherData;
 import org.bitpipeline.lib.owm.WeatherStatusResponse;
 
-public class WeatherResponseAdapter {
+public class WeatherStatusResponseAdapter {
 
     private WeatherStatusResponse owmResponse;
     private WeatherData weatherData;
 
-    public WeatherResponseAdapter(WeatherStatusResponse response) {
+    public WeatherStatusResponseAdapter(WeatherStatusResponse response) {
         this.owmResponse = response;
         if (owmResponse.hasWeatherStatus()) {
             this.weatherData = owmResponse.getWeatherStatus().get(0);
