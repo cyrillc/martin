@@ -23,6 +23,8 @@ var visuallyUnpressButton = function () {
 
 // sending a command to the backend of MArtIn using an Ajax request
 var sendCommand = function () {
+    // shows MArtIn thingking Area
+    $('.thinking').show();
     // get and clear text input
     var textInput = $('#commandInput').val();
     $('#commandInput').val('');
@@ -45,6 +47,9 @@ var sendCommand = function () {
 
         var historyRenderer = new HistoryRenderer(null);
         historyRenderer.renderItem(historyItem);
+    }).always(function () {
+        // hides thinking Area
+        $('.thinking').hide();
     });
 };
 
