@@ -25,6 +25,7 @@ var visuallyUnpressButton = function () {
 var sendCommand = function () {
     // shows MArtIn thingking Area
     $('.thinking').show();
+    $('.history-loading').show();
     // get and clear text input
     var textInput = $('#commandInput').val();
     $('#commandInput').val('');
@@ -47,22 +48,14 @@ var sendCommand = function () {
 
         var historyRenderer = new HistoryRenderer(null);
         historyRenderer.renderItem(historyItem);
-    }).always(function () {
-        // hides thinking Area
-        $('.thinking').hide();
-    });
-};
-
-// Set up an Listener for ajax-request and responses
-$(document)
-    .ajaxStart(function () {
-        //shows the whole loading div-class
-        $('.loading').show();
     })
-    .ajaxStop(function () {
-        //shows the whole loading div-class
-        $('.loading').hide();
-    });
+        // always hide the Section.
+        .always(function () {
+            // hides thinking Area
+            $('.thinking').hide();
+            $('.history-loading').hide();
+        });
+};
 
 var addRequestToHistory = function (requestText) {
 
@@ -77,20 +70,29 @@ $(document).ready(function () {
         backendPort = port;
 
         exampleCommandsUrl = createRequestURL(frontendUrl, backendPort, "exampleCommands");
+        $('.possible-commands-loading').show();
         // send GET request with data and show response on page
         $.get(exampleCommandsUrl, function (receivedExampleCommands) {
             var exampleCommandsRenderer = new ExampleCommandsRenderer(receivedExampleCommands);
             exampleCommandsRenderer.renderCommands();
-        });
+        })
+            // always hide the Section.
+            .always(function () {
+                $('.possible-commands-loading').hide();
+            });
 
         HistoryUrl = createRequestURL(frontendUrl, backendPort, "history");
         var amountOfHistoryItems = { amount: 15 };
-
+        $('.history-loading').show();
         // send GET request with data and show response on page
-        $.get(HistoryUrl,amountOfHistoryItems, function (receivedHistory) {
+        $.get(HistoryUrl, amountOfHistoryItems, function (receivedHistory) {
             var historyRenderer = new HistoryRenderer(receivedHistory);
             historyRenderer.renderAll();
-        });
+        })
+            // always hide the Section.
+            .always(function () {
+                $('.history-loading').hide()
+            });
     });
 
 });

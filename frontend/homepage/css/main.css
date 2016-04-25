@@ -172,6 +172,14 @@ div.thinking {
     display: none;
 }
 
+div.history-loading {
+    display: none;
+}
+
+div.possible-commands-loading {
+    display: none;
+}
+
 /* ==========================================================================
    Helper classes
    ========================================================================== */

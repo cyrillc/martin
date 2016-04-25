@@ -6,20 +6,17 @@ $(document).ready(function () {
         backendPort = port;
 
         pluginListUrl = createRequestURL(frontendUrl, backendPort, "pluginList");
-        // send GET request with data and show response on page
+        // send GET request with data and show response on page and shows loading section
+        $('.plugin-list-loading').show();
         $.get(pluginListUrl, function (receivedPluginList) {
             var pluginListRenderer = new PluginListRenderer(receivedPluginList);
             pluginListRenderer.renderPlugins();
-        });
+        })
+            // always hides the section
+            .always(function () {
+                $('.plugin-list-loading').hide();
+            });
 
     });
 
 });
-
-$(document)
-    .ajaxStart(function () {
-        $('.loading').show();
-    })
-    .ajaxStop(function () {
-        $('.loading').hide();
-    });
