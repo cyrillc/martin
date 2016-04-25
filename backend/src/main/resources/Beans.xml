@@ -102,9 +102,11 @@
 	<bean id="MartinContextAccessor" class="ch.zhaw.psit4.martin.pluginlib.MartinContextAccessor" scope="singleton">
 	</bean>
 
-	<bean id="PluginLibraryBootstrap" class="ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap" scope="singleton"/>
+	<bean id="PluginLibraryBootstrap" class="ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap"
+	scope="singleton" depends-on="PluginFolderAccessor" />
 
-	<bean id="IPluginLibrary" factory-bean="PluginLibraryBootstrap" factory-method="boot" class="ch.zhaw.psit4.martin.pluginlib.IPluginLibrary" scope="singleton"/>
+	<bean id="IPluginLibrary" factory-bean="PluginLibraryBootstrap" factory-method="boot" class="ch.zhaw.psit4.martin.pluginlib.IPluginLibrary" scope="singleton"
+	depends-on="pluginService"/>
 	
 	<bean id="PluginFolderAccessor" class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginFolderAccessor">
 		<constructor-arg value="plugins"/>

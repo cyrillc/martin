@@ -2,6 +2,7 @@
 	"Functions": [
 		{
 			"hello": {
+				"Describtion": "Greets the greeter.",
 				"Keywords": [
 					"hello",
 					"greetings",
@@ -12,22 +13,10 @@
 				],
 				"Parameter": [
 					{
-						"Text": {
-							"optional": "true",
-							"type": "keyword",
-							"values": [
-								"tomorrow",
-								"today",
-								"in two days",
-								"in 2 days",
-								"saturday",
-								"sunday",
-								"monday",
-								"tuesday",
-								"wednesday",
-								"thursday",
-								"friday"
-							]
+						"Name": {
+							"required": "false",
+							"type": "ch.zhaw.psit4.martin.api.types.Person",
+							"tokens-regex": ""
 						}
 					}
 				],

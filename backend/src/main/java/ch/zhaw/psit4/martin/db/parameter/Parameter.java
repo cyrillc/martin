@@ -37,9 +37,15 @@ public class Parameter {
     @Column(name = "name")
     private String name;
     
+    @Column(name = "required")
+    private boolean required;
+
     @Column(name = "type")
     private String type;
     
+    @Column(name = "tokens-regex")
+    private String tokensRegex;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "parameter_has_keyword", joinColumns = { 
             @JoinColumn(name = "parameter_id", nullable = false, updatable = false) }, 
@@ -64,6 +70,14 @@ public class Parameter {
     public void setId(int id) {
         this.id = id;
     }
+    
+    public boolean isRequired() {
+        return required;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -79,6 +93,14 @@ public class Parameter {
 
     public String getType() {
         return type;
+    }
+    
+    public String getTokensRegex() {
+        return tokensRegex;
+    }
+
+    public void setTokensRegex(String tokensRegex) {
+        this.tokensRegex = tokensRegex;
     }
 
     public Set<Keyword> getKeywords(){

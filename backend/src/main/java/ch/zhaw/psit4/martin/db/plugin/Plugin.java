@@ -32,6 +32,9 @@ public class Plugin {
     @Column(name = "plugin_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    
+    @Column(name="plugin_uuid")
+    private String uuid;
 
     @Column(name = "name")
     private String name;
@@ -41,7 +44,6 @@ public class Plugin {
     
     @Column(name = "date")
     private Date date;
-    
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id", nullable = false)
@@ -80,6 +82,26 @@ public class Plugin {
 
     public String getDescription() {
         return description;
+    }
+    
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+    
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+    
+    public void setFunctions(Set<Function> functions) {
+        this.functions = functions;
     }
 
     public Set<Function> getFunctions(){
