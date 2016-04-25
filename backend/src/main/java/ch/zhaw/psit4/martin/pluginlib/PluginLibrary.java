@@ -1,5 +1,6 @@
 package ch.zhaw.psit4.martin.pluginlib;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,10 +12,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.java.plugin.Plugin;
+import org.java.plugin.PluginLifecycleException;
 import org.java.plugin.PluginManager;
 import org.java.plugin.registry.Extension;
 import org.java.plugin.registry.ExtensionPoint;
 import org.java.plugin.registry.PluginDescriptor;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.java.plugin.registry.Extension.Parameter;
@@ -28,6 +31,7 @@ import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
 import ch.zhaw.psit4.martin.db.examplecall.ExampleCallService;
+import ch.zhaw.psit4.martin.db.plugin.PluginService;
 import ch.zhaw.psit4.martin.db.response.Response;
 
 /**
@@ -42,7 +46,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     /**
      * File name of the plugin keywords JSON.
      */
-    public static final String PLUGIN_KEYWORDS = "keywords.json";
+    public static final String PLUGIN_FUNCTIONS = "functions.json";
     /*
      * List of all the plugins currently registered
      */
@@ -59,7 +63,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     private ExampleCallService exampleCallService;
 
     @Autowired
-    private ch.zhaw.psit4.martin.db.plugin.PluginService pluginService;
+    private PluginService pluginService;
 
     /*
      * (non-Javadoc)
@@ -69,7 +73,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     @Override
     protected void doStart() throws Exception {
         // nothing to do here
-
     }
 
     /*
@@ -80,7 +83,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     @Override
     protected void doStop() throws Exception {
         // nothing to do here
-
     }
 
     /*
@@ -90,24 +92,133 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     public void startLibrary() {
         // Get plugins
         pluginExtentions = fetchPlugins(IMartinContext.EXTPOINT_ID);
-        LOG.info("Plugin library booted, " + pluginExtentions.size()
-                + " plugins loaded.");
+        LOG.info("Plugin library booted, " + pluginExtentions.size() + " plugins loaded.");
+    }
+
+    /*
+     * Fetches all extensions for the given extension point qualifiers.
+     * 
+     * @param extPointId The extension point id to gather plugins for
+     * 
+     * @return The gathered plugins in a LinkedList
+     */
+    protected Map<String, MartinPlugin> fetchPlugins(final String extPointId) {
+
+        Map<String, MartinPlugin> plugins = new HashMap<>();
+        PluginManager manager = this.getManager();
+
+        ExtensionPoint extPoint =
+                manager.getRegistry().getExtensionPoint(this.getDescriptor().getId(), extPointId);
+
+        // iterate through found plugins
+        for (Extension extension : extPoint.getConnectedExtensions()) {
+            PluginDescriptor extensionDescriptor = extension.getDeclaringPluginDescriptor();
+            try {
+                manager.activatePlugin(extensionDescriptor.getId());
+            } catch (PluginLifecycleException e) {
+                LOG.error("An Error occured while activating plugin.", e);
+                continue;
+            }
+            ClassLoader classLoader = manager.getPluginClassLoader(extensionDescriptor);
+
+            // parameter access + storage
+            Parameter pluginClassName = getPluginMetadata(extension);
+            URL keywordsUrl = classLoader.getResource(PLUGIN_FUNCTIONS);
+            JSONObject jsonKeywords = getPluginKeywords(keywordsUrl);
+            if (jsonKeywords == null)
+                continue;
+
+            // plugin loading
+            MartinPlugin pluginInstance = loadPlugin(classLoader, pluginClassName);
+            if (pluginInstance == null)
+                continue;
+            String id = extension.getExtendedPointId();
+            plugins.put(id, pluginInstance);
+        }
+
+        return plugins;
     }
 
     /**
-     * Answer a request by searching plugin-library for function and executing
-     * them.
+     * Gets the plugin metadata from the plugin.xml.
      * 
-     * @param req
-     *            The {@link ExtendedQequest} to answer.
+     * @param extension The extension to get the plugins from.
+     * @return The plugin java class name.
+     */
+    Parameter getPluginMetadata(Extension extension) {
+        // metadata-parsing (mandatory)
+        Parameter pluginClassName = extension.getParameter("class");
+        Parameter pluginNAme = extension.getParameter("name");
+
+        // metadata-parsing (optional)
+        Parameter pluginDesctibtion = extension.getParameter("description");
+        Parameter pluginAuthor = extension.getParameter("author");
+        Parameter pluginMail = extension.getParameter("e-mail");
+        Parameter pluginHomepage = extension.getParameter("homepage");
+        Parameter pluginDate = extension.getParameter("date");
+
+        return pluginClassName;
+    }
+
+    /**
+     * Get the plugin JSON file for the keywords and functions.
+     * 
+     * @param keywordsUrl The URL of the file on the filesystem.
+     * @return The loaded JSON-file or null if an error occurred.
+     */
+    JSONObject getPluginKeywords(URL keywordsUrl) {
+        // keywords JSON loading
+        JSONObject jsonKeywords = null;
+        try {
+            InputStream is = keywordsUrl.openStream();
+            jsonKeywords = new JSONObject(IOUtils.toString(is));
+            is.close();
+        } catch (JSONException | IOException e) {
+            LOG.error("keywords.json could not be accessed.", e);
+        }
+
+        return jsonKeywords;
+    }
+
+
+    /**
+     * Loads a plugin via framework and returns the {@link MartinPlugin} interface
+     * 
+     * @param classLoader The framework classloader singleton.
+     * @param pluginClassName The java name of the class to load.
+     * @return The loaded class or null, if an error occurred
+     */
+    @SuppressWarnings("unchecked")
+    MartinPlugin loadPlugin(ClassLoader classLoader, Parameter pluginClassName) {
+        MartinPlugin pluginInstance = null;
+        Class<MartinPlugin> pluginClass = null;
+        try {
+            pluginClass =
+                    (Class<MartinPlugin>) classLoader.loadClass(pluginClassName.valueAsString());
+            pluginInstance = pluginClass.newInstance();
+            LOG.info("Plugin \"" + pluginClassName + "\" loaded");
+        } catch (ClassNotFoundException e) {
+            LOG.error("Plugin class could not be found.", e);
+        } catch (InstantiationException | ClassCastException e) {
+            LOG.error("Plugin class could not be instanced to \"MartinPlugin\".", e);
+        } catch (IllegalAccessException e) {
+            LOG.error("Plugin class could not be accessed.", e);
+        }
+        return pluginInstance;
+    }
+
+    /**
+     * Answer a request by searching plugin-library for function and executing them.
+     * 
+     * @param req The {@link ExtendedQequest} to answer.
      * 
      * @return The generated {@link Response}.
      */
     @Override
     public Response executeRequest(ExtendedRequest req) {
         Call call = req.getCalls().get(0);
-        String pluginID = ((Integer)call.getPlugin().getId()).toString();
-        String featureID = ((Integer)call.getFunction().getId()).toString();
+        String pluginID = ((Integer) call.getPlugin().getId()).toString();
+        String featureID = ((Integer) call.getFunction().getId()).toString();
         MartinPlugin service = pluginExtentions.get(pluginID);
 
         // if service exists, execute call
@@ -122,100 +233,10 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         }
     }
 
-
-    /**
-     * Returns a list of example calls read from the plugin database. Is usually
-     * only called from the AI controller when the user first loads the MArtIn
-     * frontend.
-     * 
-     * @return a list of example calls
-     */
-    @Override
-    public List<ExampleCall> getExampleCalls() {
-        return exampleCallService.listExampleCalls();
-    }
-
-    @Override
-    public List<ExampleCall> getRandomExampleCalls() {
-        return exampleCallService.getRandomExcampleCalls();
-    }
-
-    public Map<String, MartinPlugin> getPluginExtentions() {
-        return pluginExtentions;
-    }
-
-    public void setPluginExtentions(
-            Map<String, MartinPlugin> pluginExtentions) {
-        this.pluginExtentions = pluginExtentions;
-    }
-
-    /*
-     * Fetches all extensions for the given extension point qualifiers.
-     * 
-     * @param extPointId The extension point id to gather plugins for
-     * 
-     * @return The gathered plugins in a LinkedList
-     */
-    @SuppressWarnings({ "unchecked", "unused" })
-    protected Map<String, MartinPlugin> fetchPlugins(final String extPointId) {
-
-        Map<String, MartinPlugin> plugins = new HashMap<String, MartinPlugin>();
-        PluginManager manager = this.getManager();
-
-        ExtensionPoint extPoint = manager.getRegistry()
-                .getExtensionPoint(this.getDescriptor().getId(), extPointId);
-
-        // iterate through found plugins
-        for (Extension extension : extPoint.getConnectedExtensions()) {
-            try {
-                PluginDescriptor extensionDescriptor = extension
-                        .getDeclaringPluginDescriptor();
-                manager.activatePlugin(extensionDescriptor.getId());
-                ClassLoader classLoader = manager
-                        .getPluginClassLoader(extensionDescriptor);
-
-                String id = extension.getExtendedPointId().toString();
-
-                // metadata-parsing (mandatory)
-                Parameter pluginClassName = extension.getParameter("class");
-                Parameter pluginNAme = extension.getParameter("name");
-
-                // metadata-parsing (optional)
-                Parameter pluginDesctibtion = extension
-                        .getParameter("description");
-                Parameter pluginAuthor = extension.getParameter("author");
-                Parameter pluginMail = extension.getParameter("e-mail");
-                Parameter pluginHomepage = extension.getParameter("homepage");
-                Parameter pluginDate = extension.getParameter("date");
-
-                // keywords JSON loading
-                URL keywordsUrl = classLoader.getResource(PLUGIN_KEYWORDS);
-                InputStream is = keywordsUrl.openStream();
-                JSONObject jsonKeywords = new JSONObject(IOUtils.toString(is));
-                is.close();
-
-                // plugin loading
-                Class<MartinPlugin> pluginClass = (Class<MartinPlugin>) classLoader
-                        .loadClass(pluginClassName.valueAsString());
-                MartinPlugin pluginInstance = pluginClass.newInstance();
-                plugins.put(id, pluginInstance);
-                LOG.info("Plugin \""
-                        + extension.getParameter("name").valueAsString()
-                        + "\" loaded");
-
-            } catch (Exception e) {
-                LOG.error("An Error occured at fetchPlugins: ", e);
-            }
-        }
-
-        return plugins;
-    }
-
     /**
      * Executes the feature of a call by passing call arguments
      * 
-     * @param call
-     *            The call to execute features for.
+     * @param call The call to execute features for.
      * @return The return value as string.
      */
     private String executeCall(Call call, long requestID) {
@@ -255,13 +276,36 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
     @Override
     public List<PluginInformation> getPluginInformation() {
-        List<ch.zhaw.psit4.martin.db.plugin.Plugin> pluginList = pluginService
-                .listPlugins();
+        List<ch.zhaw.psit4.martin.db.plugin.Plugin> pluginList = pluginService.listPlugins();
         List<PluginInformation> pluginInformationList = new ArrayList<PluginInformation>();
         for (ch.zhaw.psit4.martin.db.plugin.Plugin plugin : pluginList) {
             pluginInformationList.add(new PluginInformation(plugin.getName(),
                     plugin.getDescription(), plugin.getFunctions()));
         }
         return pluginInformationList;
+    }
+
+    /**
+     * Returns a list of example calls read from the plugin database. Is usually only called from
+     * the AI controller when the user first loads the MArtIn frontend.
+     * 
+     * @return a list of example calls
+     */
+    @Override
+    public List<ExampleCall> getExampleCalls() {
+        return exampleCallService.listExampleCalls();
+    }
+
+    @Override
+    public List<ExampleCall> getRandomExampleCalls() {
+        return exampleCallService.getRandomExcampleCalls();
+    }
+
+    public Map<String, MartinPlugin> getPluginExtentions() {
+        return pluginExtentions;
+    }
+
+    public void setPluginExtentions(Map<String, MartinPlugin> pluginExtentions) {
+        this.pluginExtentions = pluginExtentions;
     }
 }
