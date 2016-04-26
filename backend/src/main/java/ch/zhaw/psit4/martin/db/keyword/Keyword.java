@@ -8,7 +8,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import ch.zhaw.psit4.martin.db.parameter.*;
@@ -26,7 +28,7 @@ public class Keyword {
     public Keyword() {}
 
     @Id
-    @Column(name = "keyword_id")
+    @Column(name="keyword_id", unique = true, nullable = false, updatable = false )
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 

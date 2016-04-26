@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import ch.zhaw.psit4.martin.db.function.Function;
@@ -30,7 +31,7 @@ public class Parameter {
 
 
     @Id
-    @Column(name = "parameter_id")
+    @Column(name="parameter_id", unique = true, nullable = false, updatable = false )
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
@@ -46,13 +47,13 @@ public class Parameter {
     @Column(name = "tokens-regex")
     private String tokensRegex;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE })
     @JoinTable(name = "parameter_has_keyword", joinColumns = { 
             @JoinColumn(name = "parameter_id", nullable = false, updatable = false) }, 
             inverseJoinColumns = { @JoinColumn(name = "keyword_id", 
                     nullable = false, updatable = false) })
     private Set<Keyword> parameterKeywords;
-    
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "function_id", nullable = false)
     private Function function;
@@ -101,6 +102,10 @@ public class Parameter {
 
     public void setTokensRegex(String tokensRegex) {
         this.tokensRegex = tokensRegex;
+    }
+    
+    public void setParameterKeywords(Set<Keyword> parameterKeywords) {
+        this.parameterKeywords = parameterKeywords;
     }
 
     public Set<Keyword> getKeywords(){

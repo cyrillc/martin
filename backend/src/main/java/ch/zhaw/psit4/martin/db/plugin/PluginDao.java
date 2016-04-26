@@ -1,6 +1,8 @@
 package ch.zhaw.psit4.martin.db.plugin;
 
 import java.util.List;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
@@ -30,6 +32,14 @@ public class PluginDao {
     public List<Plugin> listPlugins() {
         Session session = this.sessionFactory.getCurrentSession();
         return session.createQuery("from Plugin").list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Plugin> getByUUID(String uuid) {
+        Session session = this.sessionFactory.getCurrentSession();
+        Query query = session.createQuery("from Plugin where plugin_uuid = :uuid");
+        query.setParameter("uuid", uuid);
+        return query.list();
     }
     
     public Plugin getById(int id) {

@@ -29,6 +29,11 @@ public class AuthorService {
    public List<Author> listAuthors() {
        return this.authorDao.listAuthors();
    }
+   
+   @Transactional
+   public List<Author> getAuthorsByName(String name) {
+       return this.authorDao.getByName(name);
+   }
 
    @Transactional
    public Author getAuthorById(int id) {

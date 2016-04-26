@@ -6,6 +6,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
@@ -19,7 +20,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.db.author.Author;
+import ch.zhaw.psit4.martin.db.author.AuthorService;
 import ch.zhaw.psit4.martin.db.function.Function;
+import ch.zhaw.psit4.martin.db.function.FunctionService;
 import ch.zhaw.psit4.martin.db.keyword.Keyword;
 import ch.zhaw.psit4.martin.db.plugin.Plugin;
 import ch.zhaw.psit4.martin.db.plugin.PluginService;
@@ -36,25 +39,61 @@ public class PluginDataAccessor {
     private static final Log LOG = LogFactory.getLog(PluginDataAccessor.class);
 
     @Autowired
-    private PluginService pluginService;
+    private AuthorService authorService;
 
     public PluginDataAccessor() {
         // empty
     }
 
-    public void putPluginInDB(Extension extension, ClassLoader classLoader) {
-        Plugin dbPlugin = getPluginMetadata(extension);
-        Author author = getAuthorData(extension);
-        dbPlugin.setAuthor(author);
-
+    public void putPluginInDB(Extension extension, ClassLoader classLoader)
+            throws KeywordsJSONMissingException {
+        // get JSON
         URL jsonUrl = classLoader.getResource(PLUGIN_FUNCTIONS);
         JSONObject jsonKeywords = parseFunctionsJSON(jsonUrl);
-        Set<Function> functions = parsePluginFunctions(jsonKeywords);
 
-        String uuid = extension.getId();
-        dbPlugin.setUuid(uuid);
-        //pluginService.addPlugin(dbPlugin);
+        // check if there is a JSON file
+        if (jsonKeywords == null)
+            throw new KeywordsJSONMissingException(
+                    "keywords.json missing for " + extension.getParameter("name").valueAsString());
+        
+        // parse JSON arguments
+        Set<Function> functons = parsePluginFunctions(jsonKeywords);
+        
+        // get plugin
+        Plugin dbPlugin = getPluginMetadata(extension);
+        dbPlugin.setFunctions(functons);
+        
+        // get author
+        Author author = getAuthorData(extension);
+        Set<Plugin> pluginSet = new HashSet<>();
+        pluginSet.add(dbPlugin);
+        author.setPlugins(pluginSet);
+        
+        // update DB
+        authorService.addAuthor(author);
     }
+    
+    /**
+    * Get the plugin JSON file for the keywords and functions.
+    * 
+    * @param keywordsUrl The URL of the file on the filesystem.
+    * @return The loaded JSON-file or null if an error occurred.
+    */
+   public JSONObject parseFunctionsJSON(URL url) {
+       // keywords JSON loading
+       JSONObject json = null;
+       try {
+           // Get JSON
+           InputStream is = url.openStream();
+           json = new JSONObject(IOUtils.toString(is));
+           is.close();
+       } catch (JSONException | IOException e) {
+           LOG.error("keywords.json could not be accessed.", e);
+       }
+
+       return json;
+   }
+
 
     /**
      * Gets the plugin metadata from the plugin.xml and parses it to a Java object.
@@ -71,6 +110,7 @@ public class PluginDataAccessor {
         // metadata-parsing (optional)
         Parameter pluginDesctibtion = extension.getParameter("description");
         Parameter pluginDate = extension.getParameter("date");
+        String uuid = extension.getId();
 
         // update DB-object
         plugin.setName(pluginName.valueAsString());
@@ -90,6 +130,7 @@ public class PluginDataAccessor {
                 LOG.warn("Could not parse date.", e);
             }
         }
+        plugin.setUuid(uuid);
 
         return plugin;
     }
@@ -115,27 +156,6 @@ public class PluginDataAccessor {
     }
 
     /**
-     * Get the plugin JSON file for the keywords and functions.
-     * 
-     * @param keywordsUrl The URL of the file on the filesystem.
-     * @return The loaded JSON-file or null if an error occurred.
-     */
-    public JSONObject parseFunctionsJSON(URL url) {
-        // keywords JSON loading
-        JSONObject json = null;
-        try {
-            // Get JSON
-            InputStream is = url.openStream();
-            json = new JSONObject(IOUtils.toString(is));
-            is.close();
-        } catch (JSONException | IOException e) {
-            LOG.error("keywords.json could not be accessed.", e);
-        }
-
-        return json;
-    }
-
-    /**
      * Gets a set of function attributes from the JSON file.
      * 
      * @param json The JSON file.
@@ -155,8 +175,8 @@ public class PluginDataAccessor {
             function.setDescription(description);
 
             Set<ch.zhaw.psit4.martin.db.parameter.Parameter> params = parseParameters(jsonFunct);
-            Set<Keyword> keywords = parseKeywords(jsonFunct);
 
+            function.setParameter(params);
             functions.add(function);
         }
         return functions;
@@ -185,6 +205,10 @@ public class PluginDataAccessor {
             param.setRequired(required);
             param.setType(type);
             param.setTokensRegex(regex);
+
+            Set<Keyword> keywords = parseKeywords(jsonFunct);
+            param.setParameterKeywords(keywords);
+
             parameter.add(param);
         }
         return parameter;

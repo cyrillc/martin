@@ -30,6 +30,11 @@ public class PluginService {
    public List<Plugin> listPlugins() {
        return this.pluginDao.listPlugins();
    }
+   
+   @Transactional
+   public List<Plugin> getPluginsByUUID(String uuid) {
+       return this.pluginDao.getByUUID(uuid);
+   }
 
    @Transactional
    public Plugin getPluginById(int id) {

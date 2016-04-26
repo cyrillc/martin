@@ -3,6 +3,7 @@ package ch.zhaw.psit4.martin.db.plugin;
 import java.sql.Date;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,7 +30,7 @@ public class Plugin {
 
 
     @Id
-    @Column(name = "plugin_id")
+    @Column( name="plugin_id", unique = true, nullable = false, updatable = false )
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
@@ -49,9 +50,8 @@ public class Plugin {
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plugin")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plugin", cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE })
     private Set<Function> functions;
-    
     
     
     public Plugin() {}

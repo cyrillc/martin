@@ -30,6 +30,7 @@ import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
 import ch.zhaw.psit4.martin.db.examplecall.ExampleCallService;
 import ch.zhaw.psit4.martin.db.plugin.PluginService;
 import ch.zhaw.psit4.martin.db.response.Response;
+import ch.zhaw.psit4.martin.pluginlib.filesystem.KeywordsJSONMissingException;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor;
 
 /**
@@ -132,8 +133,12 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 continue;
             
             // update DB and memory
-            pluginDataAccessor.putPluginInDB(extension, classLoader);
-            plugins.put(uuid, pluginInstance);
+            try {
+                pluginDataAccessor.putPluginInDB(extension, classLoader);
+                plugins.put(uuid, pluginInstance);
+            } catch (KeywordsJSONMissingException e) {
+                LOG.warn("Plugin could not be loaded.", e);
+            }
         }
 
         return plugins;

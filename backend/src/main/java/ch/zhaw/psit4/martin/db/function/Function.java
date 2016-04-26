@@ -32,7 +32,7 @@ public class Function {
 
 
     @Id
-    @Column(name = "function_id")
+    @Column( name="function_id", unique = true, nullable = false, updatable = false )
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
@@ -42,11 +42,10 @@ public class Function {
     @Column(name = "description")
     private String description;
     
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "function")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "function", cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE })
     private Set<Parameter> parameter;
     
-    
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "function_has_keyword", joinColumns = { 
             @JoinColumn(name = "function_id", nullable = false, updatable = false) }, 
             inverseJoinColumns = { @JoinColumn(name = "keyword_id", 
@@ -87,12 +86,20 @@ public class Function {
         return description;
     }
     
+    public void setParameter(Set<Parameter> parameter) {
+        this.parameter = parameter;
+    }
+    
     public Set<Parameter> getParameter(){
         return this.parameter;
     }
 
     public Set<Keyword> getKeywords(){
         return this.functionKeywords;
+    }
+    
+    public void setPlugin(Plugin plugin) {
+        this.plugin = plugin;
     }
     
     public Plugin getPlugin(){

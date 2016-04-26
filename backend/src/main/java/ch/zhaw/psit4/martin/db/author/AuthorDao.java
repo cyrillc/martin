@@ -1,6 +1,8 @@
 package ch.zhaw.psit4.martin.db.author;
 
 import java.util.List;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
@@ -30,6 +32,14 @@ public class AuthorDao {
     public List<Author> listAuthors() {
         Session session = this.sessionFactory.getCurrentSession();
         return session.createQuery("from Author").list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Author> getByName(String name) {
+        Session session = this.sessionFactory.getCurrentSession();
+        Query query = session.createQuery("from Author where name = :name");
+        query.setParameter("name", name);
+        return query.list();
     }
     
     public Author getById(int id) {

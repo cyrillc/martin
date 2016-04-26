@@ -1,29 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
 
 
-	<!-- Include previous version  -->
-	<include file="db.changeset-schema-1.1.xml" relativeToChangelogFile="true"/> 
-    
+	<!-- Include previous version -->
+	<include file="db.changeset-schema-1.1.xml"
+		relativeToChangelogFile="true" />
+
 
 
 
 	<!-- Make changes to schema -->
-    <changeSet author="fabiadan" id="schema-1.2.0">
-        <addColumn tableName="parameter">
-            <column name="required" type="BIT(1)" />
-            <column name="tokens-regex" type="VARCHAR(255)" />
-        </addColumn>
-    </changeSet>
+	<changeSet author="fabiadan" id="schema-1.2.0">
+		<addColumn tableName="parameter">
+			<column name="required" type="BIT(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="tokens-regex" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
 
-    <changeSet author="fabiadan" id="schema-1.2.1">
-        <addColumn tableName="parameter">
-            <column name="plugin_uuid" type="VARCHAR(36)" />
-        </addColumn>
-    </changeSet>
-    
+		<addColumn tableName="plugin">
+			<column name="plugin_uuid" type="VARCHAR(36)">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="fabiadan" id="schema-1.2.1">
+		<addUniqueConstraint columnNames="name" tableName="author" />
+		<addUniqueConstraint columnNames="plugin_uuid" tableName="plugin" />
+	</changeSet>
+
 </databaseChangeLog>

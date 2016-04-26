@@ -23,7 +23,7 @@ public class NaturalLanguageAnalysisUtilities {
 		// creates a StanfordCoreNLP object, with POS tagging, lemmatization,
 		// NER, parsing, and coreference resolution
 		Properties props = new Properties();
-		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
+		props.setProperty("annotators", "ner");
 		return new StanfordCoreNLP(props);
 	}
 
