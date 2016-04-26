@@ -44,7 +44,7 @@ public class FeatureValidator<Type> {
             return MartinAPITestResult.ERROR;
         }
         result = throwsException();
-        if(!result)
+        if(result)
             return MartinAPITestResult.ERROR;
         result = returnsMessage();
         if(!result) {
