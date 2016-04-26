@@ -1,5 +1,7 @@
 package zhaw.weatherPlugin;
 
+import java.util.Date;
+
 import org.bitpipeline.lib.owm.WeatherData;
 
 public class WeatherDataAdapter {
@@ -13,6 +15,10 @@ public class WeatherDataAdapter {
         return this.data.hasRain();
     }
     
+    public Date getDate(){
+        return new Date(this.data.getDateTime() * 1000);
+    }
+    
     public int getRain(){
         return this.hasRain() ? this.data.getRain() : 0;
     }
@@ -22,7 +28,7 @@ public class WeatherDataAdapter {
     }
     
     public float getTemperature(){
-        return this.data.getTemp();
+        return convertKelvinToCelsius(this.data.getTemp());
     }
     
     public float convertKelvinToCelsius(float kelvin) {

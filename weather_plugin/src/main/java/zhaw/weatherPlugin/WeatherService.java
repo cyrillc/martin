@@ -1,6 +1,8 @@
 package zhaw.weatherPlugin;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.bitpipeline.lib.owm.OwmClient;
 import org.json.JSONException;
@@ -41,15 +43,25 @@ public class WeatherService {
         }
     }
 
-    public String getForecastAtCity(String city) throws WeatherPluginException {
+    public String getForecastAtCityInXHours(String city, int hours) throws WeatherPluginException {
 
         try {
             WeatherForecastResponseAdapter response = responseAdapterFactory
                     .getResponseAdapter(owmClient.forecastWeatherAtCity(city));
-            if(response.hasForecast()){
-                // TODO
-                return null;
-            }else {
+            if (response.hasForecast()) {
+                Date searchedDate = getDateInXHours(hours);
+                WeatherDataAdapter data = response
+                        .searchClosestForecastFrom(searchedDate);
+                
+                String foundDate = data.getDate().toString();
+                float temperatureCelsius = data.getTemperature();
+                String description = data.getWeatherDescription();
+                int rain = data.getRain();
+
+                return "Weather in " + city + " for : " + foundDate + "\n"
+                        + description + " Temperature: " + temperatureCelsius
+                        + " Rain: " + rain;
+            } else {
                 return null;
             }
         } catch (JSONException e) {
@@ -59,6 +71,12 @@ public class WeatherService {
             throw new WeatherPluginException(
                     "impossible to connect with the server");
         }
+    }
+    
+    private Date getDateInXHours(int hours){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, hours);
+         return calendar.getTime();
     }
 
 }

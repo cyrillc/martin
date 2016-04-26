@@ -23,18 +23,13 @@ public class WeatherForecastResponseAdapter {
         return owmResponse.hasForecasts();
     }
 
-    public String getWeatherDescriptionAtTime(Date date) {
-        ForecastWeatherData forecastData = searchClosestForecastFrom(date);
-        return forecastData.getWeatherConditions().get(0).getDescription();
-    }
-
     /**
      * 
      * @param searchedDate
      * @return the closes forecast at the given date. Null if the searched Date
      *         is earlier from the first available forecast or after the last
      */
-    private ForecastWeatherData searchClosestForecastFrom(Date searchedDate) {
+    public WeatherDataAdapter searchClosestForecastFrom(Date searchedDate) {
         List<ForecastWeatherData> forecasts = owmResponse.getForecasts();
 
         Date firstForecastDate = convertDate(forecasts.get(0).getDateTime());
@@ -52,9 +47,9 @@ public class WeatherForecastResponseAdapter {
                         - searchedDate.getTime();
                 if (diffWithB / (60 * 1000) < 90) { // time between two
                                                     // Forecasts is 180 min
-                    return nextForecast;
+                    return new WeatherDataAdapter(nextForecast);
                 } else {
-                    return lastForecast;
+                    return new WeatherDataAdapter(lastForecast);
                 }
             }
         }
