@@ -111,6 +111,9 @@
 		<constructor-arg value="plugins"/>
 		<constructor-arg value="classpath:library.cfg.json"/>
 	</bean>
+	
+	<bean id="PluginDataAccessor" class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor">
+	</bean>
 
 	<!-- package requestProcessor -->
 	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestprocessor.RequestProcessor" scope="singleton">

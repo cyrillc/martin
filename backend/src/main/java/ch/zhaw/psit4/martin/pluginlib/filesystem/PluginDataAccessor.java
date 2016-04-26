@@ -53,7 +53,7 @@ public class PluginDataAccessor {
 
         String uuid = extension.getId();
         dbPlugin.setUuid(uuid);
-        pluginService.addPlugin(dbPlugin);
+        //pluginService.addPlugin(dbPlugin);
     }
 
     /**
@@ -174,10 +174,10 @@ public class PluginDataAccessor {
         for (int paramNum = 0; paramNum < jsonParameter.length(); paramNum++) {
             // get parameter
             JSONObject jsonparam = jsonParameter.getJSONObject(paramNum);
-            String paramName = jsonFunct.getString("Name");
-            boolean required = jsonFunct.getBoolean("Required");
-            String type = jsonFunct.getString("Type");
-            String regex = jsonFunct.getString("Tokens-regex");
+            String paramName = jsonparam.getString("Name");
+            boolean required = jsonparam.getBoolean("Required");
+            String type = jsonparam.getString("Type");
+            String regex = jsonparam.getString("Tokens-regex");
 
             ch.zhaw.psit4.martin.db.parameter.Parameter param =
                     new ch.zhaw.psit4.martin.db.parameter.Parameter();
