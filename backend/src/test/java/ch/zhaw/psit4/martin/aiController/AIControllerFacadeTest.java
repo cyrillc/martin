@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
@@ -48,6 +49,7 @@ public class AIControllerFacadeTest {
     ExtendedRequest extRequest = null;
     Response response = null;
     HistoryItem historyItem = null;
+    Call call = null;
 
     @Before
     public void setUp() throws Exception {
@@ -56,6 +58,8 @@ public class AIControllerFacadeTest {
 
         request = new Request("request test");
         extRequest = new ExtendedRequest();
+        call = new Call();
+        extRequest.addCall(call);
         response = new Response("response test");
         historyItem = new HistoryItem(request, response);
 
@@ -79,18 +83,18 @@ public class AIControllerFacadeTest {
         assertEquals("command1", list.get(0).getRequest().getCommand());
     }
 
-//    @Test
-//    public void saveAHistoryItemWhenRequestMakeSense() throws Exception {
-//        aiController.elaborateRequest(request);
-//        verify(historyItemServiceMock).addHistoryItem(historyItem);
-//    }
+    @Test
+    public void saveAHistoryItemWhenRequestMakeSense(){
+        aiController.elaborateRequest(request);
+        verify(historyItemServiceMock).addHistoryItem(historyItem);
+    }
 
-//    @Test
-//    public void checkElaborationOfRequest() throws Exception {
-//        Response responseTest = null;
-//        
-//        responseTest = aiController.elaborateRequest(request);
-//        assertTrue(responseTest.equals(response));  
-//    }
+    @Test
+    public void checkElaborationOfRequest() {
+        Response responseTest = null;
+        
+        responseTest = aiController.elaborateRequest(request);
+        assertTrue(responseTest.equals(response));  
+    }
 
 }
