@@ -42,7 +42,8 @@ public class WeatherForecastResponseAdapter {
             ForecastWeatherData nextForecast = forecasts.get(i);
 
             Date nextForecastDate = convertDate(nextForecast.getDateTime());
-            if (searchedDate.compareTo(nextForecastDate) < 0) {
+            if (searchedDate.compareTo(nextForecastDate) < 0
+                    || searchedDate.compareTo(nextForecastDate) == 0) {
                 long diffWithB = nextForecastDate.getTime()
                         - searchedDate.getTime();
                 if (diffWithB / (60 * 1000) < 90) { // time between two
