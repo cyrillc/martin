@@ -8,11 +8,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ch.zhaw.psit4.martin.api.types.Date;
+import ch.zhaw.psit4.martin.api.typefactory.MartinTypeFactory;
+import ch.zhaw.psit4.martin.api.types.EMartinType;
 import ch.zhaw.psit4.martin.api.types.IMartinType;
 import ch.zhaw.psit4.martin.api.types.IMartinTypeInstanciationException;
-import ch.zhaw.psit4.martin.api.types.Time;
-import ch.zhaw.psit4.martin.api.types.Timestamp;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Sentence;
@@ -164,19 +163,19 @@ public class RequestProcessor implements IRequestProcessor {
 				// Perform Name Entity Recognition
 				String data = "";
 				
-				if (Timestamp.class.getName().equals(parameter.getType())) {
+				if (EMartinType.TIMESTAMP.equals(parameter.getType())) {
 					// Timestamp consists of Date and Time
-					Phrase date = sentence.popPhraseOfIMartinType(Date.class.getName());
-					Phrase time = sentence.popPhraseOfIMartinType(Time.class.getName());
+					Phrase date = sentence.popPhraseOfType(EMartinType.DATE);
+					Phrase time = sentence.popPhraseOfType(EMartinType.TIME);
 					
-					possibilitiesLeft = sentence.getPhrasesOfIMartionType(Date.class.getName()).size() + sentence.getPhrasesOfIMartionType(Time.class.getName()).size();
+					possibilitiesLeft = sentence.getPhrasesOfType(EMartinType.DATE).size() + sentence.getPhrasesOfType(EMartinType.TIME).size();
 	
 					data = (date.getValue() + " " + time.getValue()).trim();
 				} else {
 					// All the rest can be resolved directly
-					Phrase phrase = sentence.popPhraseOfIMartinType(parameter.getType());
+					Phrase phrase = sentence.popPhraseOfType(EMartinType.valueOf(parameter.getType()));
 					
-					possibilitiesLeft = sentence.getPhrasesOfIMartionType(parameter.getType()).size();
+					possibilitiesLeft = sentence.getPhrasesOfType(EMartinType.valueOf(parameter.getType())).size();
 	
 					if(phrase != null) {
 						data = phrase.getValue();
@@ -185,7 +184,7 @@ public class RequestProcessor implements IRequestProcessor {
 	
 				if(!"".equals(data)) {
 					try {
-						IMartinType parameterValue = IMartinType.fromString(parameter.getType(), data);
+						IMartinType parameterValue = MartinTypeFactory.fromType(EMartinType.valueOf(parameter.getType()), data);
 						
 						
 						LOG.info("\n Parameter found via Name Entity Recognition: { " + "\n    name:          '"
