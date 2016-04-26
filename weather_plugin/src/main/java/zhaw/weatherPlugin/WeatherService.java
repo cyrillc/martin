@@ -21,10 +21,10 @@ public class WeatherService {
             WeatherStatusResponseAdapter response = responseAdapterFactory
                     .getResponseAdapter(owmClient.currentWeatherAtCity(city));
             if (response.hasWeatherData()) {
-
-                float temperatureCelsius = response.getTemperature();
-                String description = response.getWeatherDescription();
-                int rain = response.getRain();
+                WeatherDataAdapter data = response.getWeatherData();
+                float temperatureCelsius = data.getTemperature();
+                String description = data.getWeatherDescription();
+                int rain = data.getRain();
 
                 return "Weather in " + city + ": " + description
                         + " Temperature: " + temperatureCelsius + " Rain: "

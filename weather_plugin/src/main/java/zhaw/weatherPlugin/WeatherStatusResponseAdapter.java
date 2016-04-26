@@ -6,12 +6,13 @@ import org.bitpipeline.lib.owm.WeatherStatusResponse;
 public class WeatherStatusResponseAdapter {
 
     private WeatherStatusResponse owmResponse;
-    private WeatherData weatherData;
+    private WeatherDataAdapter data;
 
     public WeatherStatusResponseAdapter(WeatherStatusResponse response) {
         this.owmResponse = response;
         if (owmResponse.hasWeatherStatus()) {
-            this.weatherData = owmResponse.getWeatherStatus().get(0);
+            this.data = new WeatherDataAdapter(
+                    owmResponse.getWeatherStatus().get(0));
         }
     }
 
@@ -19,32 +20,12 @@ public class WeatherStatusResponseAdapter {
         return owmResponse;
     }
 
-    public WeatherData getWeatherData() {
-        return weatherData;
+    public WeatherDataAdapter getWeatherData() {
+        return data;
     }
 
     public boolean hasWeatherData() {
-        return (this.weatherData == null) ? false : true;
-    }
-
-    public boolean hasRain() {
-        return (this.weatherData.getRain() == Integer.MIN_VALUE) ? false : true;
-    }
-
-    public int getRain() {
-        return this.hasRain() ? this.weatherData.getRain() : 0;
-    }
-
-    public String getWeatherDescription() {
-        return this.weatherData.getWeatherConditions().get(0).getDescription();
-    }
-
-    public float getTemperature() {
-        return convertKelvinToCelsius(this.weatherData.getTemp());
-    }
-
-    public float convertKelvinToCelsius(float kelvin) {
-        return (float) (kelvin - 273.15);
+        return (this.data == null) ? false : true;
     }
 
 }

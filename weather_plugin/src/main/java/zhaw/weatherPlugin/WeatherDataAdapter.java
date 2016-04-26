@@ -1,0 +1,32 @@
+package zhaw.weatherPlugin;
+
+import org.bitpipeline.lib.owm.WeatherData;
+
+public class WeatherDataAdapter {
+    private WeatherData data;
+    
+    public WeatherDataAdapter(WeatherData data) {
+        this.data = data;
+    }
+    
+    public boolean hasRain(){
+        return this.data.hasRain();
+    }
+    
+    public int getRain(){
+        return this.hasRain() ? this.data.getRain() : 0;
+    }
+    
+    public String getWeatherDescription(){
+        return this.data.getWeatherConditions().get(0).getDescription();
+    }
+    
+    public float getTemperature(){
+        return this.data.getTemp();
+    }
+    
+    public float convertKelvinToCelsius(float kelvin) {
+        return (float) (kelvin - 273.15);
+    }
+    
+}
