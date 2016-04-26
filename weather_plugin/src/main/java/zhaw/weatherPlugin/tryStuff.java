@@ -8,6 +8,9 @@ import org.bitpipeline.lib.owm.OwmClient;
 import org.bitpipeline.lib.owm.WeatherForecastResponse;
 import org.json.JSONException;
 
+import zhaw.weatherPlugin.plugin.WeatherService;
+import zhaw.weatherPlugin.plugin.exception.WeatherPluginException;
+
 public class tryStuff {
 
     public static void main(String[] args) throws JSONException, IOException, WeatherPluginException {

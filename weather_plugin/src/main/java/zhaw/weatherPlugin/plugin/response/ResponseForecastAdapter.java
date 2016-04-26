@@ -1,17 +1,18 @@
-package zhaw.weatherPlugin;
+package zhaw.weatherPlugin.plugin.response;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.bitpipeline.lib.owm.ForecastWeatherData;
 import org.bitpipeline.lib.owm.WeatherForecastResponse;
 
-public class WeatherForecastResponseAdapter {
+import zhaw.weatherPlugin.plugin.WeatherDataAdapter;
+
+public class ResponseForecastAdapter {
 
     private WeatherForecastResponse owmResponse;
 
-    public WeatherForecastResponseAdapter(WeatherForecastResponse owmResponse) {
+    public ResponseForecastAdapter(WeatherForecastResponse owmResponse) {
         this.owmResponse = owmResponse;
     }
 
