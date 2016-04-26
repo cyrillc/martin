@@ -15,14 +15,14 @@ import ch.zhaw.psit4.martin.api.types.Time;
 import ch.zhaw.psit4.martin.api.types.Timestamp;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
-import ch.zhaw.psit4.martin.common.Request;
 import ch.zhaw.psit4.martin.common.Sentence;
+import ch.zhaw.psit4.martin.db.function.Function;
+import ch.zhaw.psit4.martin.db.function.FunctionService;
+import ch.zhaw.psit4.martin.db.keyword.Keyword;
+import ch.zhaw.psit4.martin.db.parameter.Parameter;
+import ch.zhaw.psit4.martin.db.plugin.Plugin;
+import ch.zhaw.psit4.martin.db.request.Request;
 import ch.zhaw.psit4.martin.common.Phrase;
-import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
-import ch.zhaw.psit4.martin.pluginlib.db.function.FunctionService;
-import ch.zhaw.psit4.martin.pluginlib.db.keyword.Keyword;
-import ch.zhaw.psit4.martin.pluginlib.db.parameter.Parameter;
-import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
 /**

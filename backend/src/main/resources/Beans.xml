@@ -24,53 +24,53 @@
 	</bean>
 
 	<!--  Plugin Library Tables -->
-    <bean id="exampleCallDao" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallDao">
+    <bean id="exampleCallDao" class="ch.zhaw.psit4.martin.db.examplecall.ExampleCallDao">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
-    <bean id="exampleCallService" class="ch.zhaw.psit4.martin.pluginlib.db.ExampleCallService">
+    <bean id="exampleCallService" class="ch.zhaw.psit4.martin.db.examplecall.ExampleCallService">
         <property name="exampleCallDao" ref="exampleCallDao"></property>
     </bean>
 
-    <bean id="keywordDao" class="ch.zhaw.psit4.martin.pluginlib.db.keyword.KeywordDao">
+    <bean id="keywordDao" class="ch.zhaw.psit4.martin.db.keyword.KeywordDao">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
-    <bean id="keywordService" class="ch.zhaw.psit4.martin.pluginlib.db.keyword.KeywordService">
+    <bean id="keywordService" class="ch.zhaw.psit4.martin.db.keyword.KeywordService">
         <property name="keywordDao" ref="keywordDao"></property>
     </bean>
   
-    <bean id="parameterDao" class="ch.zhaw.psit4.martin.pluginlib.db.parameter.ParameterDao">
+    <bean id="parameterDao" class="ch.zhaw.psit4.martin.db.parameter.ParameterDao">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
-    <bean id="parameterService" class="ch.zhaw.psit4.martin.pluginlib.db.parameter.ParameterService">
+    <bean id="parameterService" class="ch.zhaw.psit4.martin.db.parameter.ParameterService">
         <property name="parameterDao" ref="parameterDao"></property>
     </bean>
     
-    <bean id="functionDao" class="ch.zhaw.psit4.martin.pluginlib.db.function.FunctionDao">
+    <bean id="functionDao" class="ch.zhaw.psit4.martin.db.function.FunctionDao">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
-    <bean id="functionService" class="ch.zhaw.psit4.martin.pluginlib.db.function.FunctionService">
+    <bean id="functionService" class="ch.zhaw.psit4.martin.db.function.FunctionService">
         <property name="functionDao" ref="functionDao"></property>
     </bean>
 
-    <bean id="pluginDao" class="ch.zhaw.psit4.martin.pluginlib.db.plugin.PluginDao">
+    <bean id="pluginDao" class="ch.zhaw.psit4.martin.db.plugin.PluginDao">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
-    <bean id="pluginService" class="ch.zhaw.psit4.martin.pluginlib.db.plugin.PluginService">
+    <bean id="pluginService" class="ch.zhaw.psit4.martin.db.plugin.PluginService">
         <property name="pluginDao" ref="pluginDao"></property>
     </bean>
 
-    <bean id="authorDao" class="ch.zhaw.psit4.martin.pluginlib.db.author.AuthorDao">
+    <bean id="authorDao" class="ch.zhaw.psit4.martin.db.author.AuthorDao">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
-    <bean id="authorService" class="ch.zhaw.psit4.martin.pluginlib.db.author.AuthorService">
+    <bean id="authorService" class="ch.zhaw.psit4.martin.db.author.AuthorService">
         <property name="authorDao" ref="authorDao"></property>
     </bean>
 
   	<!--  History Tables -->
-    <bean id="historyItemDao" class="ch.zhaw.psit4.martin.common.dao.HistoryItemDAO">
+    <bean id="historyItemDao" class="ch.zhaw.psit4.martin.db.historyitem.HistoryItemDAO">
         <property name="sessionFactory" ref="HibernateSessionFactory" />
     </bean>
-    <bean id="historyItemService" class="ch.zhaw.psit4.martin.common.service.HistoryItemService">
+    <bean id="historyItemService" class="ch.zhaw.psit4.martin.db.historyitem.HistoryItemService">
         <property name="historyItemDAO" ref="historyItemDao"></property>
     </bean>
 

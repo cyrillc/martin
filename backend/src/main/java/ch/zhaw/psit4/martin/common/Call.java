@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.zhaw.psit4.martin.api.types.IMartinType;
-import ch.zhaw.psit4.martin.pluginlib.db.function.Function;
-import ch.zhaw.psit4.martin.pluginlib.db.plugin.Plugin;
+import ch.zhaw.psit4.martin.db.function.Function;
+import ch.zhaw.psit4.martin.db.plugin.Plugin;
 
 /**
 * This class holds information about a Plugin feature call. It holds the

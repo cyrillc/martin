@@ -1,5 +1,6 @@
 package zhaw.weatherPlugin;
 
+import org.bitpipeline.lib.owm.WeatherForecastResponse;
 import org.bitpipeline.lib.owm.WeatherStatusResponse;
 
 /**
@@ -12,7 +13,11 @@ import org.bitpipeline.lib.owm.WeatherStatusResponse;
  */
 public class ResponseAdapterFactory {
 
-    public WeatherResponseAdapter getResponseAdapter(WeatherStatusResponse r) {
-        return new WeatherResponseAdapter(r);
+    public WeatherStatusResponseAdapter getResponseAdapter(WeatherStatusResponse r) {
+        return new WeatherStatusResponseAdapter(r);
+    }
+    
+    public WeatherForecastResponseAdapter getResponseAdapter(WeatherForecastResponse r){
+        return new WeatherForecastResponseAdapter(r);
     }
 }

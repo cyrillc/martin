@@ -61,14 +61,32 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>send GET request with data and show response on page</p>
+              <p>send GET request with data and show response on page and shows loading section</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $.get(pluginListUrl, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">receivedPluginList</span>) </span>{
+            <div class="content"><div class='highlight'><pre>        $(<span class="hljs-string">'.plugin-list-loading'</span>).show();
+        $.get(pluginListUrl, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">receivedPluginList</span>) </span>{
             <span class="hljs-keyword">var</span> pluginListRenderer = <span class="hljs-keyword">new</span> PluginListRenderer(receivedPluginList);
             pluginListRenderer.renderPlugins();
-        });
+        })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>always hides the section</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            .always(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                $(<span class="hljs-string">'.plugin-list-loading'</span>).hide();
+            });
 
     });
 

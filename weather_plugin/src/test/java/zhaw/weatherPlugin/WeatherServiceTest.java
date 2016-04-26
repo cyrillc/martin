@@ -21,9 +21,11 @@ public class WeatherServiceTest {
     @Mock
     private WeatherStatusResponse owmResponseMock;
     @Mock
-    private WeatherResponseAdapter responseAdapterMock;
+    private WeatherStatusResponseAdapter responseAdapterMock;
     @Mock
     private ResponseAdapterFactory responseAdapterFactoryMock;
+    @Mock
+    private WeatherDataAdapter dataAdapterMock;
 
     @Before
     public void setUp() throws Exception {
@@ -34,6 +36,7 @@ public class WeatherServiceTest {
                 .thenReturn(owmResponseMock);
         when(responseAdapterFactoryMock.getResponseAdapter(owmResponseMock))
                 .thenReturn(responseAdapterMock);
+        when(responseAdapterMock.getWeatherData()).thenReturn(dataAdapterMock);
     }
 
     @Test
@@ -41,10 +44,10 @@ public class WeatherServiceTest {
         when(responseAdapterFactoryMock.getResponseAdapter(owmResponseMock))
                 .thenReturn(responseAdapterMock);
         when(responseAdapterMock.hasWeatherData()).thenReturn(true);
-        when(responseAdapterMock.getTemperature()).thenReturn(20.1f);
-        when(responseAdapterMock.getWeatherDescription())
+        when(dataAdapterMock.getTemperature()).thenReturn(20.1f);
+        when(dataAdapterMock.getWeatherDescription())
                 .thenReturn("mega good");
-        when(responseAdapterMock.getRain()).thenReturn(0);
+        when(dataAdapterMock.getRain()).thenReturn(0);
 
         try {
             String weather = service.getWeatherAtCity("testcity");
@@ -66,5 +69,4 @@ public class WeatherServiceTest {
             fail();
         }
     }
-
 }
