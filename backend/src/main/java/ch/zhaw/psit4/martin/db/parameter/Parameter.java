@@ -40,7 +40,7 @@ public class Parameter {
     @Column(name = "type")
     private String type;
     
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "parameter_has_keyword", joinColumns = { 
             @JoinColumn(name = "parameter_id", nullable = false, updatable = false) }, 
             inverseJoinColumns = { @JoinColumn(name = "keyword_id", 
