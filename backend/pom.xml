@@ -123,13 +123,8 @@
 			<version>1.3.2</version>
 		</dependency>
 
-		<!-- strtotime for java -->
-		<dependency>
-		    <groupId>com.github.wareninja</groupId>
-		    <artifactId>strtotime-for-java</artifactId>
-		    <version>c7a4bbd</version>
-		</dependency>
 
+		<!-- LIBRARIES FOR TEXT-RECOGNITION -->
 		<!-- Stanford Named Entity Recognizer  -->
 		<!-- http://stanfordnlp.github.io/CoreNLP/ -->
 		<dependency>
@@ -137,19 +132,36 @@
 		    <artifactId>stanford-corenlp</artifactId>
 		    <version>3.6.0</version>
 		</dependency>
+		<!-- english language-->
 		<dependency>
 		    <groupId>edu.stanford.nlp</groupId>
 		    <artifactId>stanford-corenlp</artifactId>
 		    <version>3.6.0</version>
 		    <classifier>models</classifier>
 		</dependency>
-		<!-- uncomment for german language -->
+		<!-- german language -->
 		<!-- <dependency>
 		    <groupId>edu.stanford.nlp</groupId>
 		    <artifactId>stanford-corenlp</artifactId>
 		    <version>3.6.0</version>
 		    <classifier>models-german</classifier>
 		</dependency> -->
+
+
+		<!-- LIBRARIES FOR TYPE RESOLVING -->
+		<!-- Google Services API -->
+		<dependency>
+			<groupId>com.google.maps</groupId>
+			<artifactId>google-maps-services</artifactId>
+			<version>0.1.12</version>
+		</dependency>
+		<!-- String to time library -->
+		<dependency>
+		    <groupId>com.github.wareninja</groupId>
+		    <artifactId>strtotime-for-java</artifactId>
+		    <version>c7a4bbd</version>
+		</dependency>
+
 	</dependencies>
 
 	<properties>

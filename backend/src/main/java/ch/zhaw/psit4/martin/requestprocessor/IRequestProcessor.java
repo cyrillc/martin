@@ -11,12 +11,14 @@ import ch.zhaw.psit4.martin.db.request.Request;
  */
 
 public interface IRequestProcessor {
-    /**
-     * Extends a request from a basic command and tries to determine possible module calls.
-     * 
-     * @param request 
-     * @return Returns an ExtendedRequest with original-request and a possible executable function calls.
-     */
+	/**
+	 * Extends a request from a basic command and tries to determine possible
+	 * module calls.
+	 * 
+	 * @param request
+	 * @return Returns an ExtendedRequest with original-request and a possible
+	 *         executable function calls.
+	 */
 	public ExtendedRequest extend(Request request) throws Exception;
 
 }
