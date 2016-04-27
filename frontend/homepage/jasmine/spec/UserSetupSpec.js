@@ -54,15 +54,7 @@ describe("MArtIn Frontend", function () {
     describe("History Renderer", function () {
         var historyRenderer, historyList, historyItem1, historyItem2, _date, dateObj;
 
-        var myCustomEquality = function (first, second) {
-            if ((first instanceof jQuery) && (second instanceof jQuery)) {
-                return first.is(second);
-            }
-        };
-
         beforeEach(function () {
-
-            jasmine.addCustomEqualityTester(myCustomEquality);
 
             historyItem1 = {
                 id: 1,
@@ -93,9 +85,9 @@ describe("MArtIn Frontend", function () {
             historyRenderer = new HistoryRenderer(historyList);
         });
 
-        it("should render a Date in a Table", function () {
+        it("should render a Date with given Values", function () {
             var returnDate;
-            returnDate = historyRenderer.renderDate(historyItem1);
+            returnDate = historyRenderer.renderDate(historyItem1.date);
 
             // generates a jQuery-Date Object with the same data as renderDate gets.
             _date = $('<td></td>');
@@ -105,9 +97,51 @@ describe("MArtIn Frontend", function () {
             expect(_date.html()).toEqual(returnDate.html());
         });
 
-        it("should render the whole History Item", function () {
-            spyOn($.fn, "append");
+        it("should call all render-Functions while rendering an Item", function () {
+            spyOn(historyRenderer, "renderResponse");
+            spyOn(historyRenderer, "renderRequest");
+            spyOn(historyRenderer, "renderDate");
 
+            historyRenderer.renderItem(historyItem1);
+
+            expect(historyRenderer.renderResponse).toHaveBeenCalledWith(historyItem1.response);
+            expect(historyRenderer.renderRequest).toHaveBeenCalledWith(historyItem1.request);
+            expect(historyRenderer.renderDate).toHaveBeenCalledWith(historyItem1.date);
+        });
+
+        it("should iterates through the whole List of History-Items", function () {
+            spyOn(historyRenderer, "renderItem");
+
+            historyRenderer.renderAll(historyList);
+
+            expect(historyRenderer.renderItem).toHaveBeenCalledTimes(historyList.length);
+
+            // iterates through the Array and tests if every Element was used.
+            historyList.forEach(function (item) {
+                expect(historyRenderer.renderItem).toHaveBeenCalledWith(item);
+            });
+        });
+
+        it("should render a Request with given Values", function () {
+            var returnRequest, _request;
+            returnRequest = historyRenderer.renderRequest(historyItem1.request);
+
+            // generate the jQuery Object with the same data
+            _request = $('<td></td>');
+            _request.append(historyItem1.request.command);
+
+            expect(returnRequest.html()).toEqual(_request.html());
+        });
+
+        it("should render a response with given Values", function () {
+            var returnResponse, _response;
+            returnResponse = historyRenderer.renderResponse(historyItem1.response);
+
+            // generate the jQuery Object with the same data
+            _response = $('<td></td>');
+            _response.append(historyItem1.response.content);
+
+            expect(returnResponse.html()).toEqual(_response.html());
         });
     });
 });
