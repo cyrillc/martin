@@ -21,14 +21,14 @@ import ch.zhaw.psit4.martin.api.types.IMartinType;
 public class FeatureValidator<Type> {
     
     private static final Log LOG = LogFactory.getLog(FeatureValidator.class);
-    private Class<Type> clazz;
+    private Class<Type> className;
     private Type instance;
     private Map<String, IMartinType> args;
 
     @SuppressWarnings("unchecked")
     public FeatureValidator(Type type) {
         this.instance = type;
-        this.clazz = (Class<Type>) type.getClass();
+        this.className = (Class<Type>) type.getClass();
     }
     
     /**
@@ -39,7 +39,7 @@ public class FeatureValidator<Type> {
     public MartinAPITestResult runTests() {
         boolean result = isMartinPlugin();
         if (!result) {
-            LOG.error(clazz.toString() + " cannot be instanced to " + Feature.class.toString()
+            LOG.error(className.toString() + " cannot be instanced to " + Feature.class.toString()
                     + ".");
             return MartinAPITestResult.ERROR;
         }
@@ -48,7 +48,7 @@ public class FeatureValidator<Type> {
             return MartinAPITestResult.ERROR;
         result = returnsMessage();
         if(!result) {
-            LOG.warn(clazz.toString() + " does not return a message.");
+            LOG.warn(className.toString() + " does not return a message.");
             return MartinAPITestResult.WARNING;
         }
         
