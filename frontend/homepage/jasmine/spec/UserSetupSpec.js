@@ -1,6 +1,5 @@
 describe("MArtIn Frontend", function () {
     describe("Martin Render", function () {
-        var spy;
         var martinResponseRenderer;
         var martinStatement;
 
@@ -23,7 +22,6 @@ describe("MArtIn Frontend", function () {
     });
 
     describe("Example Command Render", function () {
-        var spy;
         var exampleCommandsRenderer;
         var exampleCommand;
 
@@ -54,9 +52,18 @@ describe("MArtIn Frontend", function () {
     });
 
     describe("History Renderer", function () {
-        var spy, historyRenderer, historyList, historyItem1, historyItem2;
+        var historyRenderer, historyList, historyItem1, historyItem2, _date, dateObj;
+
+        var myCustomEquality = function (first, second) {
+            if ((first instanceof jQuery) && (second instanceof jQuery)) {
+                return first.is(second);
+            }
+        };
 
         beforeEach(function () {
+
+            jasmine.addCustomEqualityTester(myCustomEquality);
+
             historyItem1 = {
                 id: 1,
                 date: 1461768927000,
@@ -84,9 +91,23 @@ describe("MArtIn Frontend", function () {
 
             historyList = [historyItem1, historyItem2];
             historyRenderer = new HistoryRenderer(historyList);
+        });
 
+        it("should render a Date in a Table", function () {
+            var returnDate;
+            returnDate = historyRenderer.renderDate(historyItem1);
+
+            // generates a jQuery-Date Object with the same data as renderDate gets.
+            _date = $('<td></td>');
+            dateObj = new Date(historyItem1.date);
+            _date.append(dateObj.getDate() + '.' + (dateObj.getMonth() + 1) + '.' + dateObj.getFullYear());
+
+            expect(_date.html()).toEqual(returnDate.html());
+        });
+
+        it("should render the whole History Item", function () {
             spyOn($.fn, "append");
+
         });
     });
-
 });
