@@ -16,6 +16,7 @@ public class WeatherDataAdapter {
     }
 
     public Date getDate() {
+        //owm returns date as a unix timestamp
         return new Date(this.data.getDateTime() * 1000);
     }
 
