@@ -97,7 +97,7 @@ $(document).ready(function () {
         })
             // always hide the Section.
             .always(function () {
-                $('.history-loading').hide()
+                $('.history-loading').hide();
             });
     });
 
