@@ -3,35 +3,37 @@ function HistoryRenderer(history) {
 	this.history = history;
 }
 
-HistoryRenderer.prototype.renderDate = function (item) {
+HistoryRenderer.prototype.renderDate = function (itemDate) {
 	var date = $('<td></td>');
-	dateObj = new Date(item.date);
+	dateObj = new Date(itemDate);
 	date.append(dateObj.getDate() + '.' + (dateObj.getMonth() + 1) + '.' + dateObj.getFullYear());
 	return date;
 };
 
-HistoryRenderer.prototype.renderRequest = function (item) {
+HistoryRenderer.prototype.renderRequest = function (itemRequest) {
 	var request = $('<td></td>');
-	request.append(item.request.command);
+	request.append(itemRequest.command);
 	return request;
 };
 
-HistoryRenderer.prototype.renderResponse = function (item) {
+HistoryRenderer.prototype.renderResponse = function (itemResponse) {
 	var response = $('<td></td>');
-	response.append(item.response.content);
+	response.append(itemResponse.content);
 	return response;
 };
 
 HistoryRenderer.prototype.renderItem = function (item) {
 	// Appends every part of the items
-	var html = $('<tr></tr>').append(this.renderDate(item)).append(this.renderRequest(item)).append(this.renderResponse(item));
+	var html = $('<tr></tr>');
+	html.append(this.renderDate(item.date)).append(this.renderRequest(item.request)).append(this.renderResponse(item.response));
 	$('#historyItems').prepend(html);
 };
 
 // Renders all part of a Historyitem.
 HistoryRenderer.prototype.renderAll = function () {
+	var renderer = this;
 	this.history.forEach(function (item) {
-		HistoryRenderer.prototype.renderItem(item);
+		renderer.renderItem(item);
 	});
 };
 
