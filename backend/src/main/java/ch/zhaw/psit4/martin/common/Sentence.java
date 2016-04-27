@@ -1,6 +1,7 @@
 package ch.zhaw.psit4.martin.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,11 +28,14 @@ public class Sentence {
 	private StanfordCoreNLP textAnalyzer;
 
 	List<Phrase> phrases = new ArrayList<>();
+	
+	String predefinedAnswer;
 
 	public Sentence(String sentence, StanfordCoreNLP textAnalyzer) {
 		this.rawSentence = sentence;
 		this.textAnalyzer = textAnalyzer;
 		this.generateNamedEntityRecognitionTokens();
+		this.generadePredefinedAnswer();
 	}
 
 	/**
@@ -124,6 +128,18 @@ public class Sentence {
 			return new Phrase("", "");
 		}
 	}
+	
+	/**
+	 * Generates predefined answers, that can be used for static stentences.
+	 */
+	private void generadePredefinedAnswer(){
+		if("".equalsIgnoreCase(rawSentence)){
+			predefinedAnswer = "I can't hear you. Please speak louder.";
+		}
+		if((this.getWords().contains("unit") && this.getWords().contains("tests")) || this.getWords().contains("unit-tests")){
+			predefinedAnswer = "<img src='http://tclhost.com/gEFAjgp.gif' />";
+		}
+	}
 
 	/**
 	 * Gets all phrases with a chosen IMartionType
@@ -143,7 +159,12 @@ public class Sentence {
 		return rawSentence;
 	}
 
-	public String[] getWords() {
-		return rawSentence.replaceAll("[^a-zA-Z0-9- äöüÄÖÜ]", "").split(" ");
+	public List<String> getWords() {
+		return new ArrayList<>(Arrays.asList(rawSentence.toLowerCase().replaceAll("[^a-zA-Z0-9- äöüÄÖÜ]", "").split(" ")));
 	}
+	
+	public String getPredefinedAnswer(){
+		return predefinedAnswer;
+	}
+
 }

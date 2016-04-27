@@ -69,6 +69,7 @@ public class RequestProcessor implements IRequestProcessor {
 		// Create final ExtendedRequest
 		ExtendedRequest extendedRequest = new ExtendedRequest();
 		extendedRequest.setInput(request);
+		extendedRequest.setSentence(sentence);
 
 		for (PossibleCall possibleCall : possibleCalls) {
 			// Create Call
@@ -93,7 +94,7 @@ public class RequestProcessor implements IRequestProcessor {
 	 *            words to be matched with the keywords.
 	 * @return the extended list
 	 */
-	private List<PossibleCall> addPossibleCallsWithKeywords(List<PossibleCall> possibleCalls, String[] words) {
+	private List<PossibleCall> addPossibleCallsWithKeywords(List<PossibleCall> possibleCalls, List<String> words) {
 
 		for (String word : words) {
 
