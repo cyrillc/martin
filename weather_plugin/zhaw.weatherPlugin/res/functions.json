@@ -13,6 +13,12 @@
                     "Required": "true",
                     "Type": "ch.zhaw.psit4.martin.api.types.Location",
                     "Tokens-regex": ""
+                },
+                {
+                    "Name": "time",
+                    "Required": "false",
+                    "Type": "ch.zhaw.psit4.martin.api.types.Timestamp",
+                    "Tokens-regex": ""
                 }
             ],
             "Examples": [
