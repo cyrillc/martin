@@ -21,12 +21,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
+import ch.zhaw.psit4.martin.common.Sentence;
 import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
 import ch.zhaw.psit4.martin.db.historyitem.HistoryItemService;
 import ch.zhaw.psit4.martin.db.request.Request;
 import ch.zhaw.psit4.martin.db.response.Response;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
@@ -46,6 +48,9 @@ public class AIControllerFacadeTest {
 
 	@Autowired
 	private LiquibaseTestFramework liquibase;
+	
+	@Autowired
+	private StanfordCoreNLP stanfordNLP;
 
 	Request request = null;
 	ExtendedRequest extRequest = null;
@@ -62,6 +67,7 @@ public class AIControllerFacadeTest {
 		extRequest = new ExtendedRequest();
 		call = new Call();
 		extRequest.addCall(call);
+		extRequest.setSentence(new Sentence("test", stanfordNLP));
 		response = new Response("response test");
 		historyItem = new HistoryItem(request, response);
 
