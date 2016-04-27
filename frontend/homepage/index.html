@@ -72,17 +72,17 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1>Talk to MArtIn</h1>
-                    <div class="input-group">
+                    <div class="input-group martin-search-field">
                         <input id="commandInput" type="text" class="form-control" autofocus="true">
                         <div class="input-group-btn">
                             <button id="sendCommand" class="btn btn-default" type="button" onclick="sendCommand();">Go!</button>
                         </div>
                     </div>
-                    <div class="thinking">
-                        <p class="loading-text">Let me think about this...</p>
-                        <img class="loading-image" src="img/MArtIn-Loading-Gif-Transparent.gif" alt="Loading Animation" />
-                    </div>
                     <div id="martinResponsesContainer" class="col-lg-offset-3 col-lg-6">
+                        <div class="thinking">
+                            <p class="loading-text">Let me think about this...</p>
+                            <img class="loading-image" src="img/MArtIn-Loading-Gif-Transparent.gif" alt="Loading Animation" />
+                        </div>
                         <div id="martin-responses"></div>
                     </div>
                 </div>

@@ -9,10 +9,10 @@ import ch.zhaw.psit4.martin.db.keyword.Keyword;
 import ch.zhaw.psit4.martin.db.plugin.Plugin;
 
 /**
- * This class is used to prepare possible calls. The state of the
- * PossibleCall may not be complete and will be changed over the analyzation
- * of the code. A PossibleCall may be thrown away if not all criteria for a
- * valid Call is being met.
+ * This class is used to prepare possible calls. The state of the PossibleCall
+ * may not be complete and will be changed over the analyzation of the code. A
+ * PossibleCall may be thrown away if not all criteria for a valid Call is being
+ * met.
  * 
  * @author simonflepp
  *
@@ -34,10 +34,10 @@ class PossibleCall {
 		this.plugin = plugin;
 		this.function = function;
 	}
-	
+
 	/**
-	 * @return Returns a number which can be compared with other PossibleRequests to determine 
-	 * the best result
+	 * @return Returns a number which can be compared with other
+	 *         PossibleRequests to determine the best result
 	 */
 	public Integer getRelevance() {
 		return RELEVANCE_WEIGHT_KEYWORD_COUNT * this.matchingKeywords.size();

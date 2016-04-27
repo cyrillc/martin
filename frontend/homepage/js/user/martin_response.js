@@ -8,5 +8,10 @@ MartinResponseRenderer.prototype.renderResponse = function (martinStatement) {
     martinResponse.append(martinStatement.response.content);
     $("#martin-responses").prepend(martinResponse).prepend(martinCommand);
 
+    // for some fun
+    if (martinStatement.request.command == "EASTEREGG") {
+        $('#main').toggleClass("EASTEREGG");
+    }
+
 };
 

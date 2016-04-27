@@ -26,9 +26,9 @@ public interface IMartinType {
 	 * @param data
 	 *            The string filed with data to deserialize.
 	 */
-	public static IMartinType fromString(String type, String data) throws IMartinTypeInstanciationException{
+	public static IMartinType fromString(EMartinType type, String data) throws IMartinTypeInstanciationException{
 		try {
-			Constructor<? extends IMartinType> constructor = Class.forName(type)
+			Constructor<? extends IMartinType> constructor = Class.forName(type.getValue())
 					.asSubclass(IMartinType.class).getConstructor(String.class);
 			return constructor.newInstance(data);
 		} catch (Exception e) {
