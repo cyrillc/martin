@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CascadeType;
+
 import ch.zhaw.psit4.martin.db.author.Author;
 import ch.zhaw.psit4.martin.db.function.Function;
 
@@ -42,12 +44,11 @@ public class Plugin {
     @Column(name = "date")
     private Date date;
     
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plugin")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plugin",  orphanRemoval = true)
     private Set<Function> functions;
     
     
@@ -57,6 +58,7 @@ public class Plugin {
     public Plugin(int id) {
         this.setId(id);
     }
+    
 
     public int getId() {
         return id;
@@ -92,6 +94,14 @@ public class Plugin {
     
     public void setAuthor(Author author){
         this.author = author;
+    }
+    
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
 }
