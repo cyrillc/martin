@@ -17,7 +17,7 @@ public class TestPluginWork extends Feature{
     @Override
     public void start(Map<String, IMartinType> args) throws Exception {
         Text text = (Text)args.get("name");
-        name = text.getValue();
+        name = text.toString();
     }
 
     @Override

@@ -1,17 +1,18 @@
-package zhaw.weatherPlugin;
+package zhaw.weatherPlugin.plugin.response;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.bitpipeline.lib.owm.ForecastWeatherData;
 import org.bitpipeline.lib.owm.WeatherForecastResponse;
 
-public class WeatherForecastResponseAdapter {
+import zhaw.weatherPlugin.plugin.WeatherDataAdapter;
+
+public class ResponseForecastAdapter {
 
     private WeatherForecastResponse owmResponse;
 
-    public WeatherForecastResponseAdapter(WeatherForecastResponse owmResponse) {
+    public ResponseForecastAdapter(WeatherForecastResponse owmResponse) {
         this.owmResponse = owmResponse;
     }
 
@@ -42,7 +43,8 @@ public class WeatherForecastResponseAdapter {
             ForecastWeatherData nextForecast = forecasts.get(i);
 
             Date nextForecastDate = convertDate(nextForecast.getDateTime());
-            if (searchedDate.compareTo(nextForecastDate) < 0) {
+            if (searchedDate.compareTo(nextForecastDate) < 0
+                    || searchedDate.compareTo(nextForecastDate) == 0) {
                 long diffWithB = nextForecastDate.getTime()
                         - searchedDate.getTime();
                 if (diffWithB / (60 * 1000) < 90) { // time between two

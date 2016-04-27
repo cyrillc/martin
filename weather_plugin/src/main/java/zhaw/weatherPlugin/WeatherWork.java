@@ -5,6 +5,7 @@ import java.util.Map;
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.types.IMartinType;
 import ch.zhaw.psit4.martin.api.types.Text;
+import zhaw.weatherPlugin.plugin.WeatherService;
 
 public class WeatherWork extends Feature {
 
