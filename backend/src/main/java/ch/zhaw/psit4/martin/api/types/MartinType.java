@@ -1,6 +1,6 @@
 package ch.zhaw.psit4.martin.api.types;
 
-import javax.json.Json;
+import org.json.*;
 
 public abstract class MartinType implements IMartinType {
 	protected String data;
@@ -16,9 +16,9 @@ public abstract class MartinType implements IMartinType {
 	
 	@Override
 	public String toJson() {
-		return Json.createObjectBuilder()
-				.add("type", this.getClass().getName())
-				.add("data", data)
-				.build().toString();
+		JSONObject json = new JSONObject();
+		json.put("type", this.getClass().getName());
+		json.put("data", data);
+		return json.toString(4);
 	}
 }

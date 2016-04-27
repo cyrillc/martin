@@ -28,7 +28,7 @@ public interface IMartinType {
 	 */
 	public static IMartinType fromString(EMartinType type, String data) throws IMartinTypeInstanciationException{
 		try {
-			Constructor<? extends IMartinType> constructor = Class.forName(type.toString())
+			Constructor<? extends IMartinType> constructor = Class.forName(type.getValue())
 					.asSubclass(IMartinType.class).getConstructor(String.class);
 			return constructor.newInstance(data);
 		} catch (Exception e) {

@@ -3,9 +3,6 @@ package ch.zhaw.psit4.martin.api.types;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.base.Enums;
-import com.google.common.base.Optional;
-
 public enum EMartinType {
 	DATE(Date.class.getName()), DURATION(Duration.class.getName()), LOCATION(Location.class.getName()), MISC(
 			Misc.class.getName()), MONEY(Money.class.getName()), NUMBER(Number.class.getName()), ORDINAL(
@@ -40,19 +37,27 @@ public enum EMartinType {
 		this.value = value;
 	}
 
-	public static EMartinType fromNerTag(String tag) {
-		String key = "";
-		for (Map.Entry<String, String> entry : NERTAGS.entrySet()) {
-			if (entry.getValue().equalsIgnoreCase(tag)) {
-				key = entry.getKey();
+	public String getValue() {
+		return value;
+	}
+
+	public static EMartinType fromClassName(String value) {
+		for (EMartinType e : EMartinType.values()) {
+			if (value.equals(e.value)) {
+				return e;
 			}
 		}
 
-		Optional<EMartinType> possible = Enums.getIfPresent(EMartinType.class, tag);
-		if (!possible.isPresent()) {
-			throw new IllegalArgumentException(key + "? There is no such NER-Tag!");
+		return null;
+	}
+
+	public static EMartinType fromNerTag(String tag) {
+		for (EMartinType e : EMartinType.values()) {
+			if (tag.equals(e.getNerTag())) {
+				return e;
+			}
 		}
-		return possible.get();
+		return null;
 	}
 
 	public String getNerTag() {

@@ -150,13 +150,6 @@
 		    <version>3.6.0</version>
 		    <classifier>models-german</classifier>
 		</dependency> -->
-
-		<!-- Helper functions from Google -->
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>19.0</version>
-		</dependency>
 	</dependencies>
 
 	<properties>

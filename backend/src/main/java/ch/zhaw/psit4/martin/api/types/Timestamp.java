@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import javax.json.Json;
 
+import org.json.JSONObject;
+
 import com.wareninja.opensource.strtotime.Str2Time;
 
 public class Timestamp extends MartinType {
@@ -30,10 +32,15 @@ public class Timestamp extends MartinType {
 
 	@Override
 	public String toJson() {
-		return Json.createObjectBuilder()
-				.add("type", this.getClass().getName())
-				.add("data", data)
-				.add("timestamp", getTimestamp())
-				.build().toString();
+		JSONObject json = new JSONObject();
+		json.put("type", this.getClass().getName());
+		json.put("data", data);
+		
+		if(datetime.isPresent()){
+			json.put("datetime", datetime.get().toString());
+			json.put("timestamp", datetime.get().getTime());
+		}
+		
+		return json.toString(4);
 	}
 }
