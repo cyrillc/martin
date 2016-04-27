@@ -18,6 +18,14 @@ public class WeatherService {
         client = new OwmClientAdapter();
     }
 
+    /**
+     * This method return the current Weather at the given city
+     * 
+     * @param city
+     * @return a String with the basic info about the weather, null if the city
+     *         is not found.
+     * @throws WeatherPluginException
+     */
     public String getWeatherAtCity(String city) throws WeatherPluginException {
         try {
             ResponseStatusAdapter response = client.currentWeatherAtCity(city);
@@ -35,6 +43,17 @@ public class WeatherService {
         }
     }
 
+    /**
+     * This method give the weather forecast for a specific City at a specific
+     * Time. It can get forecast until 5 days in advance.
+     * 
+     * @param city
+     * @param time
+     * @return a String with the basic info about the forecast. Null if the date
+     *         is not in the available forecast range or if the city is not
+     *         found.
+     * @throws WeatherPluginException
+     */
     public String getForecastAtCityForSpecificTime(String city, Date time)
             throws WeatherPluginException {
         try {
@@ -56,8 +75,22 @@ public class WeatherService {
 
     }
 
+    /**
+     * This method give the weather forecast for a specific City at some hours
+     * in advance form now.
+     * 
+     * @param city
+     * @param hours
+     * @return a String with the basic info about the forecast. Null if the time
+     *         is not in the available forecast range or if the city is not
+     *         found.
+     * @throws WeatherPluginException
+     */
     public String getForecastAtCityInXHours(String city, int hours)
             throws WeatherPluginException {
+        if (hours < 0) {
+            return null;
+        }
         Date searchedDate = getDateInXHours(hours);
         return getForecastAtCityForSpecificTime(city, searchedDate);
     }
