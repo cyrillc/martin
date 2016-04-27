@@ -1,0 +1,23 @@
+{
+    "Functions": [
+        {
+            "Name": "weather",
+            "Describtion": "Returns the weather in a certain location.",
+            "Keywords": [
+                "weather",
+                "forecast"
+            ],
+            "Parameter": [
+                {
+                    "Name": "city",
+                    "Required": "true",
+                    "Type": "ch.zhaw.psit4.martin.api.types.Location",
+                    "Tokens-regex": ""
+                }
+            ],
+            "Examples": [
+                "What's the weather in Zürich?"
+            ]
+        }
+    ]
+}
