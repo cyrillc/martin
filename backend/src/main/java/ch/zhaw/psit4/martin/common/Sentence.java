@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import ch.zhaw.psit4.martin.api.types.EMartinType;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
@@ -95,8 +96,8 @@ public class Sentence {
 	 *            ORDINAL, PERCENT, DATE, TIME, DURATION, SET)
 	 * @return a phrese with the chosen type
 	 */
-	public Phrase popPhraseOfType(String type) {
-		Optional<Phrase> token = phrases.stream().filter(o -> o.getType().equals(type)).findFirst();
+	public Phrase popPhraseOfNERTag(String NERTag) {
+		Optional<Phrase> token = phrases.stream().filter(o -> o.getType().getNerTag().equals(NERTag)).findFirst();
 
 		if (token.isPresent()) {
 			phrases.remove(phrases.indexOf(token.get()));
@@ -113,8 +114,8 @@ public class Sentence {
 	 * @param type full IMartinType classname as String (with package)
 	 * @return a phrese with the chosen type
 	 */
-	public Phrase popPhraseOfIMartinType(String iMartinType) {
-		Optional<Phrase> token = phrases.stream().filter(o -> o.getIMartinType().equals(iMartinType)).findFirst();
+	public Phrase popPhraseOfType(EMartinType type) {
+		Optional<Phrase> token = phrases.stream().filter(o -> o.getType().equals(type)).findFirst();
 
 		if (token.isPresent()) {
 			phrases.remove(phrases.indexOf(token.get()));
@@ -129,8 +130,8 @@ public class Sentence {
 	 * @param iMartinType full IMartinType classname as String (with package)
 	 * @return a list of chosen phrases
 	 */
-	public List<Phrase> getPhrasesOfIMartionType(String iMartinType) {
-		return phrases.stream().filter(o -> o.getIMartinType().equals(iMartinType))
+	public List<Phrase> getPhrasesOfType(EMartinType iMartinType) {
+		return phrases.stream().filter(o -> o.getType().equals(iMartinType))
 				.collect(Collectors.<Phrase> toList());
 	}
 
