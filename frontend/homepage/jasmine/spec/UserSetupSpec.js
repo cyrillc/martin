@@ -22,7 +22,7 @@ describe("MArtIn Frontend", function () {
         });
     });
 
-    describe("Example Command REnder", function () {
+    describe("Example Command Render", function () {
         var spy;
         var exampleCommandsRenderer;
         var exampleCommand;
@@ -53,6 +53,40 @@ describe("MArtIn Frontend", function () {
         });
     });
 
+    describe("History Renderer", function () {
+        var spy, historyRenderer, historyList, historyItem1, historyItem2;
 
+        beforeEach(function () {
+            historyItem1 = {
+                id: 1,
+                date: 1461768927000,
+                request: {
+                    id: 1,
+                    command: "EASTEREGG"
+                },
+                response: {
+                    id: 1,
+                    content: "No"
+                }
+            };
+            historyItem2 = {
+                id: 2,
+                date: 1461769000000,
+                request: {
+                    id: 2,
+                    command: "doSomething"
+                },
+                response: {
+                    id: 2,
+                    content: "No"
+                }
+            }
+
+            historyList = [historyItem1, historyItem2];
+            historyRenderer = new HistoryRenderer(historyList);
+
+            spyOn($.fn, "append");
+        });
+    });
 
 });
