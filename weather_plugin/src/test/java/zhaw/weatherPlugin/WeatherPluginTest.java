@@ -1,5 +1,7 @@
 package zhaw.weatherPlugin;
 
+import ch.zhaw.psit4.martin.api.validation.MartinAPITestResult;
+import ch.zhaw.psit4.martin.api.validation.MartinPluginValidator;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -28,11 +30,9 @@ public class WeatherPluginTest
         return new TestSuite( WeatherPluginTest.class );
     }
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
+    public void itIsValidateAsMartinPlugin()
     {
-        assertTrue( true );
+        MartinPluginValidator<WeatherPlugin> validator = new MartinPluginValidator<WeatherPlugin>(new WeatherPlugin());
+        assertEquals(MartinAPITestResult.OK, validator.runTests());
     }
 }
