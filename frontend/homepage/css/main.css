@@ -107,6 +107,11 @@ h1 {
     margin-bottom: 40px;
 }
 
+#martinResponsesContainer {
+    height: 800px;
+    overflow-y:auto;
+}
+
 #possibleCommandsContainer {
     margin-top: 20px;
 }
