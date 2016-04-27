@@ -23,41 +23,43 @@ public class WeatherService {
             ResponseStatusAdapter response = client.currentWeatherAtCity(city);
             if (response.hasWeatherData()) {
                 WeatherDataAdapter data = response.getWeatherData();
-                return "Weather in " + city + " : " + data.getBasicWeatherString();
+                return "Weather in " + city + " : "
+                        + data.getBasicWeatherString();
             } else {
                 return null;
             }
         } catch (JSONException e) {
-            throw new WeatherPluginException(
-                    "OpenWeatherMap Response not valid");
+            throw new WeatherPluginException("OWM Response not valid");
         } catch (IOException e) {
-            throw new WeatherPluginException(
-                    "impossible to connect with the server");
+            throw new WeatherPluginException("Connection failed");
         }
+    }
+
+    public String getForecastAtCityForSpecificTime(String city, Date time)
+            throws WeatherPluginException {
+        try {
+            ResponseForecastAdapter response;
+            response = client.forecastWeatherAtCity(city);
+            if (response.hasForecast()) {
+                WeatherDataAdapter data;
+                data = response.searchClosestForecastFrom(time);
+                return "Weather in " + city + " : "
+                        + data.getBasicWeatherString();
+            } else {
+                return null;
+            }
+        } catch (JSONException e) {
+            throw new WeatherPluginException("OWM Response not valid");
+        } catch (IOException e) {
+            throw new WeatherPluginException("Connection failed");
+        }
+
     }
 
     public String getForecastAtCityInXHours(String city, int hours)
             throws WeatherPluginException {
-
-        try {
-            ResponseForecastAdapter response = client
-                    .forecastWeatherAtCity(city);
-            if (response.hasForecast()) {
-                Date searchedDate = getDateInXHours(hours);
-                WeatherDataAdapter data = response
-                        .searchClosestForecastFrom(searchedDate);
-
-                return "Weather in " + city + " : " + data.getBasicWeatherString();
-            } else {
-                return null;
-            }
-        } catch (JSONException e) {
-            throw new WeatherPluginException(
-                    "OpenWeatherMap Response not valid");
-        } catch (IOException e) {
-            throw new WeatherPluginException(
-                    "impossible to connect with the server");
-        }
+        Date searchedDate = getDateInXHours(hours);
+        return getForecastAtCityForSpecificTime(city, searchedDate);
     }
 
     private Date getDateInXHours(int hours) {
