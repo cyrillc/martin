@@ -5,17 +5,21 @@ import java.util.Optional;
 public class Number extends MartinType {
 	private Optional<Integer> integerNumber = Optional.ofNullable(null);
 	private Optional<Double> doubleNumber = Optional.ofNullable(null);
-	private String rawFormat = "unknown";
+	private RawFormat rawFormat = RawFormat.UNKNOWN;
+
+	public enum RawFormat {
+		UNKNOWN, NUMERIC, WORD_EN;
+	}
 
 	public Number(String data) {
 		super(data);
 	}
 
-	public String getRawFormat() {
+	public RawFormat getRawFormat() {
 		return rawFormat;
 	}
 
-	public void setRawFormat(String rawFormat) {
+	public void setRawFormat(RawFormat rawFormat) {
 		this.rawFormat = rawFormat;
 	}
 

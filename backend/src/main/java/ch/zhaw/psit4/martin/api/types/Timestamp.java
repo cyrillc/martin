@@ -1,28 +1,28 @@
 package ch.zhaw.psit4.martin.api.types;
 
-import java.util.Date;
 import java.util.Optional;
 
+import org.joda.time.DateTime;
 import org.json.JSONObject;
 
 public class Timestamp extends MartinType {
-	private Optional<Date> datetime;
+	private Optional<DateTime> datetime;
 
 	public Timestamp(String data) {
 		super(data);
 	}
 
-	public Optional<Date> getDatetime() {
+	public Optional<DateTime> getDatetime() {
 		return datetime;
 	}
 
-	public void setDatetime(Optional<Date> datetime) {
+	public void setDatetime(Optional<DateTime> datetime) {
 		this.datetime = datetime;
 	}
 
 	public Optional<Long> getTimestamp() {
 		if (datetime.isPresent()) {
-			return Optional.ofNullable(datetime.get().getTime());
+			return Optional.ofNullable(datetime.get().getMillis());
 		} else {
 			return Optional.ofNullable(null);
 		}
@@ -36,7 +36,7 @@ public class Timestamp extends MartinType {
 
 		if (datetime.isPresent()) {
 			json.put("datetime", datetime.get().toString());
-			json.put("timestamp", datetime.get().getTime());
+			json.put("timestamp", datetime.get().getMillis());
 		}
 
 		return json.toString(4);

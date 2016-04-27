@@ -12,7 +12,6 @@ import ch.zhaw.psit4.martin.api.typefactory.MartinTypeFactory;
 import ch.zhaw.psit4.martin.api.types.EMartinType;
 import ch.zhaw.psit4.martin.api.types.IMartinType;
 import ch.zhaw.psit4.martin.api.types.IMartinTypeInstanciationException;
-import ch.zhaw.psit4.martin.api.types.Timestamp;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Sentence;
@@ -64,8 +63,8 @@ public class RequestProcessor implements IRequestProcessor {
 		resolveParameters(possibleCalls, sentence);
 
 		// Sort by relevance
-		possibleCalls.sort(
-				(PossibleCall result1, PossibleCall result2) -> result1.getRelevance() - result2.getRelevance());
+		possibleCalls
+				.sort((PossibleCall result1, PossibleCall result2) -> result1.getRelevance() - result2.getRelevance());
 
 		// Create final ExtendedRequest
 		ExtendedRequest extendedRequest = new ExtendedRequest();
@@ -155,44 +154,46 @@ public class RequestProcessor implements IRequestProcessor {
 		return possibleCalls;
 	}
 
-	public IMartinType getParameterValue(Parameter parameter, Sentence sentence){
+	public IMartinType getParameterValue(Parameter parameter, Sentence sentence) {
 		try {
-			
 
 			Integer possibilitiesLeft;
 			do {
 				// Perform Name Entity Recognition
 				String data = "";
-			
+
 				if (EMartinType.TIMESTAMP.equals(EMartinType.fromClassName(parameter.getType()))) {
 					// Timestamp consists of Date and Time
 					Phrase date = sentence.popPhraseOfType(EMartinType.DATE);
 					Phrase time = sentence.popPhraseOfType(EMartinType.TIME);
-					
-					possibilitiesLeft = sentence.getPhrasesOfType(EMartinType.DATE).size() + sentence.getPhrasesOfType(EMartinType.TIME).size();
-	
+
+					possibilitiesLeft = sentence.getPhrasesOfType(EMartinType.DATE).size()
+							+ sentence.getPhrasesOfType(EMartinType.TIME).size();
+
 					data = (date.getValue() + " " + time.getValue()).trim();
 				} else {
 					// All the rest can be resolved directly
 					Phrase phrase = sentence.popPhraseOfType(EMartinType.fromClassName(parameter.getType()));
-					
-					possibilitiesLeft = sentence.getPhrasesOfType(EMartinType.fromClassName(parameter.getType())).size();
-	
-					if(phrase != null) {
+
+					possibilitiesLeft = sentence.getPhrasesOfType(EMartinType.fromClassName(parameter.getType()))
+							.size();
+
+					if (phrase != null) {
 						data = phrase.getValue();
 					}
 				}
-	
-				if(!"".equals(data)) {
+
+				if (!"".equals(data)) {
 					try {
-						IMartinType parameterValue = MartinTypeFactory.fromType(EMartinType.fromClassName(parameter.getType()), data);
+						IMartinType parameterValue = MartinTypeFactory
+								.fromType(EMartinType.fromClassName(parameter.getType()), data);
 						LOG.info("\n Parameter found via Name Entity Recognition: " + parameterValue.toJson());
 						return parameterValue;
-					} catch(IMartinTypeInstanciationException e){
+					} catch (IMartinTypeInstanciationException e) {
 						LOG.debug(e);
-					}	
+					}
 				}
-			} while(possibilitiesLeft > 0);
+			} while (possibilitiesLeft > 0);
 		} catch (Exception e) {
 			LOG.debug(e);
 			LOG.error("The IMartinType '" + parameter.getType() + "' could not be found.");

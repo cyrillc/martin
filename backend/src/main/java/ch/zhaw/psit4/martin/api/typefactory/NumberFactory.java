@@ -4,44 +4,54 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ch.zhaw.psit4.martin.api.types.IMartinTypeInstanciationException;
 import ch.zhaw.psit4.martin.api.types.Number;
+import ch.zhaw.psit4.martin.boot.MartinBoot;
 
 public class NumberFactory {
+	private static final Log LOG = LogFactory.getLog(MartinBoot.class);
+
 	public Number fromString(String rawInput) throws IMartinTypeInstanciationException {
-		return this.fromString(rawInput, "unknown");
+		return this.fromString(rawInput, Number.RawFormat.UNKNOWN);
 	}
 
-	public Number fromString(String rawInput, String rawFormat) throws IMartinTypeInstanciationException {
+	public Number fromString(String rawInput, Number.RawFormat rawFormat) throws IMartinTypeInstanciationException {
 		Number number = new Number(rawInput);
 		number.setRawFormat(rawFormat);
 
-		if ("numeric".equals(number.getRawFormat()) || "unknown".equals(number.getRawFormat())) {
+		if (Number.RawFormat.NUMERIC.equals(number.getRawFormat())
+				|| Number.RawFormat.UNKNOWN.equals(number.getRawFormat())) {
 			try {
 				// try numeric format (e.g. "1000")
 				number.setDoubleNumber(Optional.ofNullable(Double.parseDouble(rawInput)));
 				number.setIntegerNumber(Optional.ofNullable(Integer.parseInt(rawInput)));
-				number.setRawFormat("numeric");
+				number.setRawFormat(Number.RawFormat.NUMERIC);
 			} catch (Exception e) {
-				number.setRawFormat("unknown");
+				LOG.debug(e);
+				number.setRawFormat(Number.RawFormat.UNKNOWN);
 			}
 		}
 
-		if ("words-en".equals(number.getRawFormat()) || "unknown".equals(number.getRawFormat())) {
+		if (Number.RawFormat.WORD_EN.equals(number.getRawFormat())
+				|| Number.RawFormat.UNKNOWN.equals(number.getRawFormat())) {
 			try {
 				// try word format (e.g. "thousand")
 				Double result = stringToDouble(rawInput);
 				if (result != null) {
 					number.setDoubleNumber(Optional.ofNullable(result));
 					number.setIntegerNumber(Optional.ofNullable(result.intValue()));
-					number.setRawFormat("words-en");
+					number.setRawFormat(Number.RawFormat.WORD_EN);
 				}
 			} catch (Exception e) {
-				number.setRawFormat("unknown");
+				LOG.debug(e);
+				number.setRawFormat(Number.RawFormat.UNKNOWN);
 			}
 		}
 
-		if ("unknown".equals(number.getRawFormat())) {
+		if (Number.RawFormat.UNKNOWN.equals(number.getRawFormat())) {
 			throw new IMartinTypeInstanciationException(
 					"Could not instanciate Number with raw-data \"" + rawInput + "\"");
 		}
@@ -49,7 +59,8 @@ public class NumberFactory {
 		return number;
 	}
 
-	public Double stringToDouble(String input) {
+	public Double stringToDouble(String rawInput) {
+		String input = rawInput;
 		boolean isValidInput = true;
 		Double result = 0.0;
 		Double finalResult = 0.0;
@@ -66,83 +77,83 @@ public class NumberFactory {
 			for (String str : splittedParts) {
 				if (!allowedStrings.contains(str)) {
 					isValidInput = false;
-					System.out.println("Invalid word found : " + str);
+					LOG.debug("Invalid word found : " + str);
 					break;
 				}
 			}
 			if (isValidInput) {
 				for (String str : splittedParts) {
-					if (str.equalsIgnoreCase("zero")) {
+					if ("zero".equalsIgnoreCase(str)) {
 						result += 0;
-					} else if (str.equalsIgnoreCase("one")) {
+					} else if ("one".equalsIgnoreCase(str)) {
 						result += 1;
-					} else if (str.equalsIgnoreCase("two")) {
+					} else if ("two".equalsIgnoreCase(str)) {
 						result += 2;
-					} else if (str.equalsIgnoreCase("three")) {
+					} else if ("three".equalsIgnoreCase(str)) {
 						result += 3;
-					} else if (str.equalsIgnoreCase("four")) {
+					} else if ("four".equalsIgnoreCase(str)) {
 						result += 4;
-					} else if (str.equalsIgnoreCase("five")) {
+					} else if ("five".equalsIgnoreCase(str)) {
 						result += 5;
-					} else if (str.equalsIgnoreCase("six")) {
+					} else if ("six".equalsIgnoreCase(str)) {
 						result += 6;
-					} else if (str.equalsIgnoreCase("seven")) {
+					} else if ("seven".equalsIgnoreCase(str)) {
 						result += 7;
-					} else if (str.equalsIgnoreCase("eight")) {
+					} else if ("eight".equalsIgnoreCase(str)) {
 						result += 8;
-					} else if (str.equalsIgnoreCase("nine")) {
+					} else if ("nine".equalsIgnoreCase(str)) {
 						result += 9;
-					} else if (str.equalsIgnoreCase("ten")) {
+					} else if ("ten".equalsIgnoreCase(str)) {
 						result += 10;
-					} else if (str.equalsIgnoreCase("eleven")) {
+					} else if ("eleven".equalsIgnoreCase(str)) {
 						result += 11;
-					} else if (str.equalsIgnoreCase("twelve")) {
+					} else if ("twelve".equalsIgnoreCase(str)) {
 						result += 12;
-					} else if (str.equalsIgnoreCase("thirteen")) {
+					} else if ("thirteen".equalsIgnoreCase(str)) {
 						result += 13;
-					} else if (str.equalsIgnoreCase("fourteen")) {
+					} else if ("fourteen".equalsIgnoreCase(str)) {
 						result += 14;
-					} else if (str.equalsIgnoreCase("fifteen")) {
+					} else if ("fifteen".equalsIgnoreCase(str)) {
 						result += 15;
-					} else if (str.equalsIgnoreCase("sixteen")) {
+					} else if ("sixteen".equalsIgnoreCase(str)) {
 						result += 16;
-					} else if (str.equalsIgnoreCase("seventeen")) {
+					} else if ("seventeen".equalsIgnoreCase(str)) {
 						result += 17;
-					} else if (str.equalsIgnoreCase("eighteen")) {
+					} else if ("eighteen".equalsIgnoreCase(str)) {
 						result += 18;
-					} else if (str.equalsIgnoreCase("nineteen")) {
+					} else if ("nineteen".equalsIgnoreCase(str)) {
 						result += 19;
-					} else if (str.equalsIgnoreCase("twenty")) {
+					} else if ("twenty".equalsIgnoreCase(str)) {
 						result += 20;
-					} else if (str.equalsIgnoreCase("thirty")) {
+					} else if ("thirty".equalsIgnoreCase(str)) {
 						result += 30;
-					} else if (str.equalsIgnoreCase("forty")) {
+					} else if ("forty".equalsIgnoreCase(str)) {
 						result += 40;
-					} else if (str.equalsIgnoreCase("fifty")) {
+					} else if ("fifty".equalsIgnoreCase(str)) {
 						result += 50;
-					} else if (str.equalsIgnoreCase("sixty")) {
+					} else if ("sixty".equalsIgnoreCase(str)) {
 						result += 60;
-					} else if (str.equalsIgnoreCase("seventy")) {
+					} else if ("seventy".equalsIgnoreCase(str)) {
 						result += 70;
-					} else if (str.equalsIgnoreCase("eighty")) {
+					} else if ("eighty".equalsIgnoreCase(str)) {
 						result += 80;
-					} else if (str.equalsIgnoreCase("ninety")) {
+					} else if ("ninety".equalsIgnoreCase(str)) {
 						result += 90;
-					} else if (str.equalsIgnoreCase("hundred")) {
+					} else if ("hundred".equalsIgnoreCase(str)) {
 						result *= 100;
-					} else if (str.equalsIgnoreCase("thousand")) {
+					} else if ("thousand".equalsIgnoreCase(str)) {
 						result *= 1000;
 						finalResult += result;
 						result = 0.0;
-					} else if (str.equalsIgnoreCase("million")) {
+					} else if ("million".equalsIgnoreCase(str)) {
 						result *= 1000000;
 						finalResult += result;
 						result = 0.0;
-					} else if (str.equalsIgnoreCase("billion")) {
+					} else if ("billion".equalsIgnoreCase(str)) {
 						result *= 1000000000;
 						finalResult += result;
 						result = 0.0;
-					} else if (str.equalsIgnoreCase("trillion")) {
+					} else if ("trillion".equalsIgnoreCase(str)) {
 						result *= 1000000000000L;
 						finalResult += result;
 						result = 0.0;
