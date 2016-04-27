@@ -9,30 +9,27 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  */
-public class WeatherPluginTest 
-    extends TestCase
-{
+public class WeatherPluginTest extends TestCase {
     /**
      * Create the test case
      *
-     * @param testName name of the test case
+     * @param testName
+     *            name of the test case
      */
-    public WeatherPluginTest( String testName )
-    {
-        super( testName );
+    public WeatherPluginTest(String testName) {
+        super(testName);
     }
 
     /**
      * @return the suite of tests being tested
      */
-    public static Test suite()
-    {
-        return new TestSuite( WeatherPluginTest.class );
+    public static Test suite() {
+        return new TestSuite(WeatherPluginTest.class);
     }
 
-    public void itIsValidateAsMartinPlugin()
-    {
-        MartinPluginValidator<WeatherPlugin> validator = new MartinPluginValidator<WeatherPlugin>(new WeatherPlugin());
+    public void itIsValidateAsMartinPlugin() {
+        MartinPluginValidator<WeatherPlugin> validator = new MartinPluginValidator<WeatherPlugin>(
+                new WeatherPlugin());
         assertEquals(MartinAPITestResult.OK, validator.runTests());
     }
 }
