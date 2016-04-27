@@ -14,6 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
+import ch.zhaw.psit4.martin.db.author.Author;
 import ch.zhaw.psit4.martin.db.plugin.Plugin;
 import ch.zhaw.psit4.martin.db.plugin.PluginService;
 
@@ -57,26 +58,45 @@ public class PluginServiceTest {
         log.info(str);
     }
 
-    /*
+    
     @Test
     public void testAddPlugin() {
-        fail("Not yet implemented");
+        Plugin newPlugin = new Plugin(3);
+        Author author = new Author(3);
+        author.setName("TestAuthor");
+        newPlugin.setAuthor(author);
+        newPlugin.setDescription("Test Description");
+        newPlugin.setName("Testname");
+        
+        pluginService.addPlugin(newPlugin);
+        
+        Plugin plugin = pluginService.getPluginById(3);
+        assertNotNull(plugin);
+        assertEquals(3,plugin.getId());
+        assertEquals("Test Description",plugin.getDescription());
+        assertEquals("Testname",plugin.getName());
+        assertEquals(3,plugin.getAuthor().getId());
+        
     }
 
-    @Test
-    public void testListPlugins() {
-        fail("Not yet implemented");
-    }
+   
 
     @Test
     public void testGetPluginById() {
-        fail("Not yet implemented");
+        Plugin plugin = pluginService.getPluginById(2);
+        assertNotNull(plugin);
+        assertEquals(2,plugin.getId());
+        assertEquals("Tells the weather for a given time and location",plugin.getDescription());
+        assertEquals("WeatherApp",plugin.getName());
+        assertEquals(1,plugin.getAuthor().getId());
+        
     }
 
     @Test
     public void testRemovePlugin() {
-        fail("Not yet implemented");
+        pluginService.removePlugin(1);
+        assertNull(pluginService.getPluginById(1));
     }
 
-    */
+    
 }
