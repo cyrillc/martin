@@ -209,7 +209,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 feature.start(call.getArguments());
             } catch (Exception e) {
                 LOG.error("Could not start plugin feature.", e);
-                ret += "ERROR at start()! ";
+                ret = "I'm sorry, I can not understand you.";
                 break;
             }
 
@@ -217,15 +217,20 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 feature.run();
             } catch (Exception e) {
                 LOG.error("Could not run plugin feature.", e);
-                ret += "ERROR during run()! ";
+                ret = "I'm sorry, I can not understand you.";
                 break;
             }
 
             try {
-                ret += feature.stop();
+                String stopValue = feature.stop();
+                if(stopValue == null || stopValue.isEmpty()) {
+                    ret = "I'm sorry, I can not understand you.";
+                } else {
+                    ret = stopValue;
+                }
             } catch (Exception e) {
                 LOG.error("Could not stop plugin feature.", e);
-                ret += "ERROR at stop()";
+                ret = "I'm sorry, I can not understand you.";
                 break;
             }
 

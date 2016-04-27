@@ -1,4 +1,4 @@
-package zhaw.weatherPlugin;
+package zhaw.weatherPlugin.plugin.exception;
 
 public class WeatherPluginException extends Exception {
 
