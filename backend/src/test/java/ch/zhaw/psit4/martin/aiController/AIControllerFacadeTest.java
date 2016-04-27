@@ -1,6 +1,8 @@
 package ch.zhaw.psit4.martin.aiController;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -19,82 +21,90 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
+import ch.zhaw.psit4.martin.common.Sentence;
 import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
 import ch.zhaw.psit4.martin.db.historyitem.HistoryItemService;
 import ch.zhaw.psit4.martin.db.request.Request;
 import ch.zhaw.psit4.martin.db.response.Response;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:Beans.xml", "classpath:Beans-unit-tests.xml"})
+@ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
 public class AIControllerFacadeTest {
 
-    @Mock
-    private HistoryItemService historyItemServiceMock;
+	@Mock
+	private HistoryItemService historyItemServiceMock;
 
-    @Mock
-    private RequestProcessor requestProcessorMock;
+	@Mock
+	private RequestProcessor requestProcessorMock;
 
-    @Mock
-    private IPluginLibrary pluginLibraryMock;
+	@Mock
+	private IPluginLibrary pluginLibraryMock;
 
-    @InjectMocks
-    private AIControllerFacade aiController;
+	@InjectMocks
+	private AIControllerFacade aiController;
 
-    @Autowired
-    private LiquibaseTestFramework liquibase;
+	@Autowired
+	private LiquibaseTestFramework liquibase;
+	
+	@Autowired
+	private StanfordCoreNLP stanfordNLP;
 
-    Request request = null;
-    ExtendedRequest extRequest = null;
-    Response response = null;
-    HistoryItem historyItem = null;
-    Call call = null;
+	Request request = null;
+	ExtendedRequest extRequest = null;
+	Response response = null;
+	HistoryItem historyItem = null;
+	Call call = null;
 
-    @Before
-    public void setUp() throws Exception {
-        liquibase.createDatabase("database/db.changeset-schema-latest.xml");
-        MockitoAnnotations.initMocks(this);
+	@Before
+	public void setUp() throws Exception {
+		liquibase.createDatabase("database/db.changeset-schema-latest.xml");
+		MockitoAnnotations.initMocks(this);
 
-        request = new Request("request test");
-        extRequest = new ExtendedRequest();
-        call = new Call();
-        extRequest.addCall(call);
-        response = new Response("response test");
-        historyItem = new HistoryItem(request, response);
+		request = new Request("request test");
+		extRequest = new ExtendedRequest();
+		call = new Call();
+		extRequest.addCall(call);
+		extRequest.setSentence(new Sentence("test", stanfordNLP));
+		response = new Response("response test");
+		historyItem = new HistoryItem(request, response);
 
-        when(requestProcessorMock.extend(request)).thenReturn(extRequest);
-        when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);
-        doNothing().when(historyItemServiceMock).addHistoryItem(historyItem);
+		when(requestProcessorMock.extend(request)).thenReturn(extRequest);
+		when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);
+		doNothing().when(historyItemServiceMock).addHistoryItem(historyItem);
 
-        ArrayList<HistoryItem> getHistoryResult = new ArrayList<>();
-        getHistoryResult.add(new HistoryItem(new Request("command1"), new Response("response1")));
-        getHistoryResult.add(new HistoryItem(new Request("command2"), new Response("response2")));
-        getHistoryResult.add(new HistoryItem(new Request("command3"), new Response("response3")));
-        when(historyItemServiceMock.getHistory()).thenReturn(getHistoryResult);
-    }
+		ArrayList<HistoryItem> getHistoryResult = new ArrayList<>();
+		getHistoryResult.add(new HistoryItem(new Request("command1"), new Response("response1")));
+		getHistoryResult.add(new HistoryItem(new Request("command2"), new Response("response2")));
+		getHistoryResult.add(new HistoryItem(new Request("command3"), new Response("response3")));
+		when(historyItemServiceMock.getHistory()).thenReturn(getHistoryResult);
+	}
 
+	@Test
+	public void canGetAListOfHistoryItems() {
+		List<HistoryItem> list = aiController.getHistory();
+		assertEquals(3, list.size());
+		assertEquals("command1", list.get(0).getRequest().getCommand());
+	}
 
+	@Test
+	public void saveAHistoryItemWhenRequestMakeSense() {
+		aiController.elaborateRequest(request);
+		// The timestamp must be updated to be the "same" as the generated in
+		// the elaborateRequestFunction, otherwise the mock will not be the
+		// same as the one generated.
+		historyItem.setDate(new Timestamp(new Date().getTime()));
+		verify(historyItemServiceMock).addHistoryItem(historyItem);
+	}
 
-    @Test
-    public void canGetAListOfHistoryItems() {
-        List<HistoryItem> list = aiController.getHistory();
-        assertEquals(3, list.size());
-        assertEquals("command1", list.get(0).getRequest().getCommand());
-    }
+	@Test
+	public void checkElaborationOfRequest() {
+		Response responseTest = null;
 
-    @Test
-    public void saveAHistoryItemWhenRequestMakeSense(){
-        aiController.elaborateRequest(request);
-        verify(historyItemServiceMock).addHistoryItem(historyItem);
-    }
-
-    @Test
-    public void checkElaborationOfRequest() {
-        Response responseTest = null;
-        
-        responseTest = aiController.elaborateRequest(request);
-        assertTrue(responseTest.equals(response));  
-    }
+		responseTest = aiController.elaborateRequest(request);
+		assertTrue(responseTest.equals(response));
+	}
 
 }

@@ -1,3 +1,6 @@
+// variable to move through history with *UP* and *DOWN* arrows
+var historyLocation = 0;
+
 // enabling *RETURN* to submit command
 $(function () {
     $("#commandInput").keydown(function (event) {
@@ -9,6 +12,19 @@ $(function () {
         if (event.which == 13) {
             visuallyUnpressButton();
             $("#sendCommand").click();
+        }
+    });
+    $("#commandInput").keyup(function (event) {
+        if (event.which == 38) {
+            historyLocation = Math.min(historyLocation + 1, 16);
+            getPreviousCommand(historyLocation);
+
+        }
+    });
+    $("#commandInput").keyup(function (event) {
+        if (event.which == 40) {
+            historyLocation = Math.max(historyLocation - 1, 0);
+            getPreviousCommand(historyLocation);
         }
     });
 });
@@ -38,7 +54,10 @@ var sendCommand = function () {
 
     // send GET request with data and show response on page
     $.get(backendUrl, command, function (response) {
-        $("#response").append(JSON.stringify(response) + '<br>');
+        var martinStatement = {
+            request: command,
+            response: response
+        };
 
         var historyItem = {
             date: new Date(),
@@ -46,15 +65,22 @@ var sendCommand = function () {
             response: response
         };
 
+        var martinResponseRenderer = new MartinResponseRenderer();
+        martinResponseRenderer.renderResponse(martinStatement);
+
         var historyRenderer = new HistoryRenderer(null);
         historyRenderer.renderItem(historyItem);
     })
         // always hide the Section.
         .always(function () {
             // hides thinking Area
-            $('.thinking').hide();
+            $('.thinking').hide(300);
             $('.history-loading').hide();
         });
+
+    // reset location to move through history with *UP* and *DOWN* arrows
+    historyLocation = 0;
+
 };
 
 var addRequestToHistory = function (requestText) {
@@ -91,8 +117,15 @@ $(document).ready(function () {
         })
             // always hide the Section.
             .always(function () {
-                $('.history-loading').hide()
+                $('.history-loading').hide();
             });
     });
 
 });
+
+// function to move through history with *UP* and *DOWN* arrows
+var getPreviousCommand = function (location) {
+    var selector = '#historyItems > tbody > tr:nth-child(' + location + ') > td:nth-child(2)';
+    console.log(location);
+    $('#commandInput').val($(selector).html());
+}

@@ -78,7 +78,9 @@ public class AIControllerFacade {
         ExtendedRequest extendedRequest = requestProcessor.extend(request);
         Response response;
         
-        if(extendedRequest.getCalls().size() > 0){
+        if(extendedRequest.getSentence().getPredefinedAnswer() != null){
+        	response = new Response(extendedRequest.getSentence().getPredefinedAnswer());
+        } else if(extendedRequest.getCalls().size() > 0){
         	response = pluginLibrary.executeRequest(extendedRequest);
         } else {
         	response = new Response("Sorry, I can't understand you.");

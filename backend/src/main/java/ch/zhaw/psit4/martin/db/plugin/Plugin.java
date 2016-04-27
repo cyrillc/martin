@@ -50,7 +50,7 @@ public class Plugin {
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plugin", cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE })
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plugin", cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE }, orphanRemoval = true)
     private Set<Function> functions;
     
     

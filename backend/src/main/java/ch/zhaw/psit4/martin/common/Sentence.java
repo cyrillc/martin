@@ -1,10 +1,12 @@
 package ch.zhaw.psit4.martin.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import ch.zhaw.psit4.martin.api.types.EMartinType;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
@@ -26,11 +28,14 @@ public class Sentence {
 	private StanfordCoreNLP textAnalyzer;
 
 	List<Phrase> phrases = new ArrayList<>();
+	
+	String predefinedAnswer;
 
 	public Sentence(String sentence, StanfordCoreNLP textAnalyzer) {
 		this.rawSentence = sentence;
 		this.textAnalyzer = textAnalyzer;
 		this.generateNamedEntityRecognitionTokens();
+		this.generadePredefinedAnswer();
 	}
 
 	/**
@@ -95,8 +100,8 @@ public class Sentence {
 	 *            ORDINAL, PERCENT, DATE, TIME, DURATION, SET)
 	 * @return a phrese with the chosen type
 	 */
-	public Phrase popPhraseOfType(String type) {
-		Optional<Phrase> token = phrases.stream().filter(o -> o.getType().equals(type)).findFirst();
+	public Phrase popPhraseOfNERTag(String NERTag) {
+		Optional<Phrase> token = phrases.stream().filter(o -> o.getType().getNerTag().equals(NERTag)).findFirst();
 
 		if (token.isPresent()) {
 			phrases.remove(phrases.indexOf(token.get()));
@@ -113,8 +118,8 @@ public class Sentence {
 	 * @param type full IMartinType classname as String (with package)
 	 * @return a phrese with the chosen type
 	 */
-	public Phrase popPhraseOfIMartinType(String iMartinType) {
-		Optional<Phrase> token = phrases.stream().filter(o -> o.getIMartinType().equals(iMartinType)).findFirst();
+	public Phrase popPhraseOfType(EMartinType type) {
+		Optional<Phrase> token = phrases.stream().filter(o -> o.getType().equals(type)).findFirst();
 
 		if (token.isPresent()) {
 			phrases.remove(phrases.indexOf(token.get()));
@@ -123,14 +128,31 @@ public class Sentence {
 			return new Phrase("", "");
 		}
 	}
+	
+	/**
+	 * Generates predefined answers, that can be used for static stentences.
+	 */
+	private void generadePredefinedAnswer(){
+		if("".equalsIgnoreCase(rawSentence)){
+			predefinedAnswer = "I can't hear you. Please speak louder.";
+		}
+
+		if((this.getWords().contains("unit") && this.getWords().contains("tests")) || this.getWords().contains("unittests")){
+			predefinedAnswer = "<img src='http://tclhost.com/gEFAjgp.gif' />";
+		}
+		
+		if(this.rawSentence.toLowerCase().startsWith("can you")){
+			predefinedAnswer = "<img src='http://tclhost.com/YXRMgbt.gif'>";
+		}
+	}
 
 	/**
 	 * Gets all phrases with a chosen IMartionType
 	 * @param iMartinType full IMartinType classname as String (with package)
 	 * @return a list of chosen phrases
 	 */
-	public List<Phrase> getPhrasesOfIMartionType(String iMartinType) {
-		return phrases.stream().filter(o -> o.getIMartinType().equals(iMartinType))
+	public List<Phrase> getPhrasesOfType(EMartinType iMartinType) {
+		return phrases.stream().filter(o -> o.getType().equals(iMartinType))
 				.collect(Collectors.<Phrase> toList());
 	}
 
@@ -142,7 +164,12 @@ public class Sentence {
 		return rawSentence;
 	}
 
-	public String[] getWords() {
-		return rawSentence.replaceAll("[^a-zA-Z0-9- äöüÄÖÜ]", "").split(" ");
+	public List<String> getWords() {
+		return new ArrayList<>(Arrays.asList(rawSentence.toLowerCase().replaceAll("[^a-zA-Z0-9- äöüÄÖÜ]", "").split(" ")));
 	}
+	
+	public String getPredefinedAnswer(){
+		return predefinedAnswer;
+	}
+
 }
