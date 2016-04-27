@@ -22,14 +22,14 @@ import ch.zhaw.psit4.martin.api.MartinPlugin;
 public class MartinPluginValidator<Type> {
 
     private static final Log LOG = LogFactory.getLog(MartinPluginValidator.class);
-    private Class<Type> clazz;
+    private Class<Type> className;
     private Type instance;
     private MartinContextAccessorMock context;
 
     @SuppressWarnings("unchecked")
     public MartinPluginValidator(Type type) {
         this.instance = type;
-        this.clazz = (Class<Type>) type.getClass();
+        this.className = (Class<Type>) type.getClass();
         this.context = new MartinContextAccessorMock();
     }
 
@@ -41,7 +41,7 @@ public class MartinPluginValidator<Type> {
     public MartinAPITestResult runTests() {
         boolean result = isMartinPlugin();
         if (!result) {
-            LOG.error(clazz.toString() + " cannot be instanced to " + MartinPlugin.class.toString()
+            LOG.error(className.toString() + " cannot be instanced to " + MartinPlugin.class.toString()
                     + ".");
             return MartinAPITestResult.ERROR;
         }

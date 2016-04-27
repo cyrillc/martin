@@ -1,0 +1,1 @@
+Diesen Ordner nach MArtIn/backend/plugins verschieben, wenn klassen drinn, plugin fertig und Datenbank funktional.
