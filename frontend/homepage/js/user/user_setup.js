@@ -58,7 +58,7 @@ var sendCommand = function () {
         // always hide the Section.
         .always(function () {
             // hides thinking Area
-            $('.thinking').hide();
+            $('.thinking').hide(300);
             $('.history-loading').hide();
         });
 };
