@@ -136,8 +136,13 @@ public class Sentence {
 		if("".equalsIgnoreCase(rawSentence)){
 			predefinedAnswer = "I can't hear you. Please speak louder.";
 		}
-		if((this.getWords().contains("unit") && this.getWords().contains("tests")) || this.getWords().contains("unit-tests")){
+
+		if((this.getWords().contains("unit") && this.getWords().contains("tests")) || this.getWords().contains("unittests")){
 			predefinedAnswer = "<img src='http://tclhost.com/gEFAjgp.gif' />";
+		}
+		
+		if(this.rawSentence.toLowerCase().startsWith("can you")){
+			predefinedAnswer = "<img src='http://tclhost.com/YXRMgbt.gif'>";
 		}
 	}
 
