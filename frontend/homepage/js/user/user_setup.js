@@ -38,13 +38,19 @@ var sendCommand = function () {
 
     // send GET request with data and show response on page
     $.get(backendUrl, command, function (response) {
-        $("#response").append(JSON.stringify(response) + '<br>');
+        var martinStatement = {
+            request: command,
+            response: response
+        };
 
         var historyItem = {
             date: new Date(),
             request: command,
             response: response
         };
+
+        var martinResponseRenderer = new MartinResponseRenderer();
+        martinResponseRenderer.renderResponse(martinStatement);
 
         var historyRenderer = new HistoryRenderer(null);
         historyRenderer.renderItem(historyItem);
