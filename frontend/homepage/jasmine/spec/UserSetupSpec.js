@@ -85,7 +85,7 @@ describe("MArtIn Frontend", function () {
             historyRenderer = new HistoryRenderer(historyList);
         });
 
-        it("should render a Date with given Values", function () {
+        it("should render a date with given values", function () {
             var returnDate;
             returnDate = historyRenderer.renderDate(historyItem1.date);
 
@@ -97,7 +97,7 @@ describe("MArtIn Frontend", function () {
             expect(_date.html()).toEqual(returnDate.html());
         });
 
-        it("should call all render-Functions while rendering an Item", function () {
+        it("should call all render-functions while rendering an item", function () {
             spyOn(historyRenderer, "renderResponse");
             spyOn(historyRenderer, "renderRequest");
             spyOn(historyRenderer, "renderDate");
@@ -109,7 +109,7 @@ describe("MArtIn Frontend", function () {
             expect(historyRenderer.renderDate).toHaveBeenCalledWith(historyItem1.date);
         });
 
-        it("should iterates through the whole List of History-Items", function () {
+        it("should iterate through the whole list of History-Items", function () {
             spyOn(historyRenderer, "renderItem");
 
             historyRenderer.renderAll(historyList);
@@ -122,7 +122,7 @@ describe("MArtIn Frontend", function () {
             });
         });
 
-        it("should render a Request with given Values", function () {
+        it("should render a request with given values", function () {
             var returnRequest, _request;
             returnRequest = historyRenderer.renderRequest(historyItem1.request);
 
@@ -133,7 +133,7 @@ describe("MArtIn Frontend", function () {
             expect(returnRequest.html()).toEqual(_request.html());
         });
 
-        it("should render a response with given Values", function () {
+        it("should render a response with given values", function () {
             var returnResponse, _response;
             returnResponse = historyRenderer.renderResponse(historyItem1.response);
 
@@ -144,4 +144,47 @@ describe("MArtIn Frontend", function () {
             expect(returnResponse.html()).toEqual(_response.html());
         });
     });
+
+    describe("Plugin List Render", function () {
+        var pluginListRenderer;
+        var pluginList;
+
+        beforeEach(function () {
+            pluginList = [
+                {
+                    name: "name1",
+                    description: "desc1",
+                    functionInformation: [{ name: 'func1' }, { name: 'func2' }]
+                },
+                {
+                    name: "name2",
+                    description: "desc2",
+                    functionInformation: [{ name: 'func3' }, { name: 'func4' }]
+                }
+            ];
+            pluginListRenderer = new PluginListRenderer(pluginList);
+            spyOn($.fn, "append");
+        });
+
+        it("should append a list of plugins if called", function () {
+
+            pluginListRenderer.renderPlugins();
+            expect($.fn.append.calls.count()).toBe(12);
+            expect($.fn.append).toHaveBeenCalledWith(pluginList[0].name);
+            expect($.fn.append).toHaveBeenCalledWith(pluginList[0].description);
+
+        });
+
+        it('should create a list of functions for each plugin', function () {
+            var resultingList = createFunctionNameList(pluginList[0].functionInformation);
+
+            console.log(resultingList);
+
+            expect($.fn.append.calls.count()).toBe(4);
+            expect($.fn.append).toHaveBeenCalledWith("func1");
+            expect($.fn.append).toHaveBeenCalledWith("func2");
+            expect(resultingList.hasClass("functionNames"));
+        });
+    });
+
 });

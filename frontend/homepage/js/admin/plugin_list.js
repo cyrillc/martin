@@ -17,7 +17,7 @@ PluginListRenderer.prototype.renderPlugins = function () {
         functionNames = createFunctionNameList(element.functionInformation);
 
 
-        $("#pluginList").append(pluginName).append(pluginDescription).append(functionNames);
+        $("#pluginList").prepend(functionNames).prepend(pluginDescription).prepend(pluginName);
     });
 };
 
