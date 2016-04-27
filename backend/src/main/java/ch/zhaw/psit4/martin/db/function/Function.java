@@ -42,7 +42,7 @@ public class Function {
     @Column(name = "description")
     private String description;
     
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "function")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "function", orphanRemoval = true)
     private Set<Parameter> parameter;
     
     
