@@ -27,7 +27,11 @@ public class WeatherPluginTest extends TestCase {
         return new TestSuite(WeatherPluginTest.class);
     }
 
-    public void itIsValidateAsMartinPlugin() {
+    /**
+     * Rigourous Test :-)
+     */
+    public void testApp() {
+        assertTrue(true);
         MartinPluginValidator<WeatherPlugin> validator = new MartinPluginValidator<WeatherPlugin>(
                 new WeatherPlugin());
         assertEquals(MartinAPITestResult.OK, validator.runTests());
