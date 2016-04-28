@@ -41,9 +41,7 @@ public class WeatherDataAdapter {
     }
 
     public String getBasicWeatherString() {
-        return getDate().toString().concat("\n").concat(getWeatherDescription())
-                .concat(" Temperature")
-                .concat(Float.toString(getTemperature()));
+        return getDate().toString().concat("\n").concat(getWeatherDescription());
     }
 
 }
