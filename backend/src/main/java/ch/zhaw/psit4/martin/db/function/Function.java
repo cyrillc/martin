@@ -30,7 +30,6 @@ import ch.zhaw.psit4.martin.db.plugin.Plugin;
 @Table(name = "function")
 public class Function {
 
-
     @Id
     @Column( name="function_id", unique = true, nullable = false, updatable = false )
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +41,7 @@ public class Function {
     @Column(name = "description")
     private String description;
     
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "function", cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE })
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "function", cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE }, orphanRemoval = true)
     private Set<Parameter> parameter;
     
     @ManyToMany(fetch = FetchType.EAGER)

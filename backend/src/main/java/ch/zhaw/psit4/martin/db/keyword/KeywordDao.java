@@ -1,6 +1,8 @@
 package ch.zhaw.psit4.martin.db.keyword;
 
 import java.util.List;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
@@ -30,6 +32,14 @@ public class KeywordDao {
     public List<Keyword> listKeywords() {
         Session session = this.sessionFactory.getCurrentSession();
         return session.createQuery("from Keyword").list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Keyword> getMatchingKeywords(String keyword) {
+        Session session = this.sessionFactory.getCurrentSession();
+        Query query = session.createQuery("from Keyword where keyword = :keyword");
+        query.setParameter("keyword", keyword);
+        return query.list();
     }
     
     public Keyword getById(int id) {

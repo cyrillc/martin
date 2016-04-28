@@ -1,8 +1,12 @@
 package ch.zhaw.psit4.martin.boot;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
+
+import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
+
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -19,6 +23,9 @@ public class MartinBoot {
      */
     @SuppressWarnings("unused")
 	private static ApplicationContext context;
+    
+    //@Autowired
+    //private static IPluginLibrary pluginLibrary;
 
     /**
      * Main application entry point launches MArtIn and used components.
@@ -28,5 +35,6 @@ public class MartinBoot {
      */
     public static void main(String[] args) {
     	MartinBoot.context = SpringApplication.run(MartinBoot.class, args);
+    	//pluginLibrary.startLibrary();
     }
 }

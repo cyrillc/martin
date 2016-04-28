@@ -39,6 +39,7 @@ public class Keyword {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "parameterKeywords")
     private Set<Parameter> parameter;
 
+
     public Keyword(int id) {
         this.setId(id);
     }
@@ -60,6 +61,14 @@ public class Keyword {
 
     public String getKeyword() {
         return keyword;
+    }
+    
+    public Set<Parameter> getParameter() {
+        return parameter;
+    }
+
+    public void setParameter(Set<Parameter> parameter) {
+        this.parameter = parameter;
     }
     
     public Set<Parameter> getParentParameter() {

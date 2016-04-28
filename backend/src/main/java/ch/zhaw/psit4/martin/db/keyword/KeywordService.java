@@ -1,6 +1,9 @@
 package ch.zhaw.psit4.martin.db.keyword;
 
 import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,11 @@ public class KeywordService {
     @Transactional
     public List<Keyword> listKeywords() {
         return this.keywordDao.listKeywords();
+    }
+    
+    @Transactional
+    public List<Keyword> getMatchingKeywords(String keyword) {
+        return this.keywordDao.getMatchingKeywords(keyword);
     }
 
     @Transactional

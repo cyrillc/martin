@@ -25,6 +25,8 @@ import ch.zhaw.psit4.martin.db.author.AuthorService;
 import ch.zhaw.psit4.martin.db.function.Function;
 import ch.zhaw.psit4.martin.db.function.FunctionService;
 import ch.zhaw.psit4.martin.db.keyword.Keyword;
+import ch.zhaw.psit4.martin.db.keyword.KeywordService;
+import ch.zhaw.psit4.martin.db.parameter.ParameterService;
 import ch.zhaw.psit4.martin.db.plugin.Plugin;
 import ch.zhaw.psit4.martin.db.plugin.PluginService;
 
@@ -41,9 +43,18 @@ public class PluginDataAccessor {
 
     @Autowired
     private AuthorService authorService;
-    
+
     @Autowired
     private PluginService pluginService;
+
+    @Autowired
+    private FunctionService functionService;
+
+    @Autowired
+    private ParameterService parameterService;
+
+    @Autowired
+    private KeywordService keywordService;
 
     public PluginDataAccessor() {
         // empty
@@ -59,54 +70,50 @@ public class PluginDataAccessor {
         if (jsonKeywords == null)
             throw new KeywordsJSONMissingException(
                     "keywords.json missing for " + extension.getParameter("name").valueAsString());
-        
-        // parse JSON arguments
-        Set<Function> functons = parsePluginFunctions(jsonKeywords);
-        
-        // get plugin
-        Plugin dbPlugin = getPluginMetadata(extension);
-        dbPlugin.setFunctions(functons);
-        
+
         // get author
         Author author = getAuthorData(extension);
         List<Author> possibleAuthors = authorService.getAuthorsByName(author.getName());
-        if(possibleAuthors.isEmpty()) {
+        if (possibleAuthors.isEmpty()) {
             authorService.addAuthor(author);
         } else {
             author = possibleAuthors.get(0);
         }
-        
-        // update DB
-        dbPlugin.setAuthor(author);
-        pluginService.addPlugin(dbPlugin);
-        
-    }
-    
-    private void getAuthorsByName(String name) {
-        // TODO Auto-generated method stub
-        
+
+        // get plugin
+        Plugin dbPlugin = getPluginMetadata(extension);
+        List<Plugin> possiblePlugins = pluginService.getPluginsByUUID(dbPlugin.getUuid());
+        if (possiblePlugins.isEmpty()) {
+            dbPlugin.setAuthor(author);
+            pluginService.addPlugin(dbPlugin);
+        } else {
+            dbPlugin = possiblePlugins.get(0);
+        }
+
+        // parse JSON arguments
+        parsePluginFunctions(jsonKeywords, dbPlugin);
     }
 
     /**
-    * Get the plugin JSON file for the keywords and functions.
-    * 
-    * @param keywordsUrl The URL of the file on the filesystem.
-    * @return The loaded JSON-file or null if an error occurred.
-    */
-   public JSONObject parseFunctionsJSON(URL url) {
-       // keywords JSON loading
-       JSONObject json = null;
-       try {
-           // Get JSON
-           InputStream is = url.openStream();
-           json = new JSONObject(IOUtils.toString(is));
-           is.close();
-       } catch (JSONException | IOException e) {
-           LOG.error("keywords.json could not be accessed.", e);
-       }
+     * Get the plugin JSON file for the keywords and functions.
+     * 
+     * @param keywordsUrl The URL of the file on the filesystem.
+     * @return The loaded JSON-file or null if an error occurred.
+     */
+    public JSONObject parseFunctionsJSON(URL url) {
+        // keywords JSON loading
+        JSONObject json = null;
+        try {
+            // Get JSON
+            InputStream is = url.openStream();
+            json = new JSONObject(IOUtils.toString(is));
+            is.close();
+        } catch (JSONException | IOException e) {
+            LOG.error("keywords.json could not be accessed.", e);
+        }
 
-       return json;
-   }
+        return json;
+    }
 
 
     /**
@@ -125,8 +132,8 @@ public class PluginDataAccessor {
         Parameter pluginDesctibtion = extension.getParameter("description");
         Parameter pluginDate = extension.getParameter("date");
         String uuid = extension.getId();
-        
-        if(uuid == null) {
+
+        if (uuid == null) {
             LOG.error("Extension ID not accessible");
             uuid = UUID.randomUUID().toString();
         }
@@ -180,11 +187,10 @@ public class PluginDataAccessor {
      * @param json The JSON file.
      * @return A set of function objects.
      */
-    public Set<Function> parsePluginFunctions(JSONObject json) {
+    public void parsePluginFunctions(JSONObject json, Plugin plugin) {
         JSONArray jsonFunctions = json.getJSONArray("Functions");
-        Set<Function> functions = new HashSet<>();
         for (int numFuncts = 0; numFuncts < jsonFunctions.length(); numFuncts++) {
-            // get function
+            // get function attributes
             JSONObject jsonFunct = jsonFunctions.getJSONObject(numFuncts);
             String functName = jsonFunct.getString("Name");
             String description = jsonFunct.getString("Describtion");
@@ -192,13 +198,27 @@ public class PluginDataAccessor {
             Function function = new Function();
             function.setName(functName);
             function.setDescription(description);
+            function.setPlugin(plugin);
 
-            Set<ch.zhaw.psit4.martin.db.parameter.Parameter> params = parseParameters(jsonFunct);
+            // check if function is allready in DB
+            Set<Function> functions = plugin.getFunctions();
+            boolean funcExisting = false;
+            if (functions != null)
+                for (Function f : functions) {
+                    if (f.getName().equals(function.getName())
+                            && f.getPlugin().getUuid().equals(plugin.getUuid())) {
+                        funcExisting = true;
+                        function = f;
+                        break;
+                    }
+                }
+            if (!funcExisting) {
+                functionService.addFunction(function);
+            }
 
-            function.setParameter(params);
-            functions.add(function);
+            // parse function parameters
+            parseParameters(jsonFunct, function);
         }
-        return functions;
     }
 
     /**
@@ -207,9 +227,8 @@ public class PluginDataAccessor {
      * @param jsonFunct The array of JSON function elements.
      * @return A set of Parameter objects.
      */
-    public Set<ch.zhaw.psit4.martin.db.parameter.Parameter> parseParameters(JSONObject jsonFunct) {
+    public void parseParameters(JSONObject jsonFunct, Function functtion) {
         JSONArray jsonParameter = jsonFunct.getJSONArray("Parameter");
-        Set<ch.zhaw.psit4.martin.db.parameter.Parameter> parameter = new HashSet<>();
         for (int paramNum = 0; paramNum < jsonParameter.length(); paramNum++) {
             // get parameter
             JSONObject jsonparam = jsonParameter.getJSONObject(paramNum);
@@ -222,13 +241,28 @@ public class PluginDataAccessor {
             param.setName(paramName);
             param.setRequired(required);
             param.setType(type);
+            param.setFunction(functtion);
 
-            Set<Keyword> keywords = parseKeywords(jsonFunct);
-            param.setParameterKeywords(keywords);
+            // check if param is allready in DB
+            Set<ch.zhaw.psit4.martin.db.parameter.Parameter> parameter = functtion.getParameter();
+            boolean paramExisting = false;
+            if (parameter != null)
+                for (ch.zhaw.psit4.martin.db.parameter.Parameter p : parameter) {
+                    if (p.getName().equals(param.getName())
+                            && p.getFunction().getName().equals(functtion.getName())
+                            && p.getFunction().getPlugin().getUuid()
+                                    .equals(functtion.getPlugin().getUuid())) {
+                        paramExisting = true;
+                        param = p;
+                        break;
+                    }
+                }
+            if (!paramExisting) {
+                parameterService.addParameter(param);
+            }
 
-            parameter.add(param);
+            parseKeywords(jsonFunct, param);
         }
-        return parameter;
     }
 
     /**
@@ -237,14 +271,39 @@ public class PluginDataAccessor {
      * @param jsonFunct The array of JSON function elements.
      * @return A set of keyword objects.
      */
-    public Set<Keyword> parseKeywords(JSONObject jsonFunct) {
+    public void parseKeywords(JSONObject jsonFunct,
+            ch.zhaw.psit4.martin.db.parameter.Parameter param) {
         JSONArray jsonKeywords = jsonFunct.getJSONArray("Examples");
-        Set<Keyword> keywords = new HashSet<>();
         for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
             Keyword keyword = new Keyword();
             keyword.setKeyword(jsonKeywords.getString(keyWordNum));
-            keywords.add(keyword);
+
+            List<Keyword> keywords = keywordService.getMatchingKeywords(keyword.getKeyword());
+            if (keywords.isEmpty()) {
+                Set<ch.zhaw.psit4.martin.db.parameter.Parameter> params = new HashSet<>();
+                params.add(param);
+                keyword.setParameter(params);
+                keywordService.addKeyword(keyword);
+            } else {
+                keyword = keywords.get(0);
+
+                // check keyword parameter
+                Set<ch.zhaw.psit4.martin.db.parameter.Parameter> parameter = keyword.getParameter();
+                boolean paramExisting = false;
+                for (ch.zhaw.psit4.martin.db.parameter.Parameter p : parameter) {
+                    if (p.getName().equals(param.getName())
+                            && p.getFunction().getName().equals(param.getFunction().getName())
+                            && p.getFunction().getPlugin().getUuid()
+                                    .equals(param.getFunction().getPlugin().getUuid())) {
+                        paramExisting = true;
+                        break;
+                    }
+                }
+                if (!paramExisting) {
+                    keyword.getParentParameter().add(param);
+                    keywordService.updateKeyword(keyword);
+                }
+            }
         }
-        return keywords;
     }
 }
