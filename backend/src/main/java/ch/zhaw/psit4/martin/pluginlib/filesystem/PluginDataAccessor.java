@@ -41,6 +41,9 @@ public class PluginDataAccessor {
 
     @Autowired
     private AuthorService authorService;
+    
+    @Autowired
+    private PluginService pluginService;
 
     public PluginDataAccessor() {
         // empty
@@ -66,14 +69,24 @@ public class PluginDataAccessor {
         
         // get author
         Author author = getAuthorData(extension);
-        Set<Plugin> pluginSet = new HashSet<>();
-        pluginSet.add(dbPlugin);
-        author.setPlugins(pluginSet);
+        List<Author> possibleAuthors = authorService.getAuthorsByName(author.getName());
+        if(possibleAuthors.isEmpty()) {
+            authorService.addAuthor(author);
+        } else {
+            author = possibleAuthors.get(0);
+        }
         
         // update DB
-        //authorService.addAuthor(author);
+        dbPlugin.setAuthor(author);
+        pluginService.addPlugin(dbPlugin);
+        
     }
     
+    private void getAuthorsByName(String name) {
+        // TODO Auto-generated method stub
+        
+    }
+
     /**
     * Get the plugin JSON file for the keywords and functions.
     * 
