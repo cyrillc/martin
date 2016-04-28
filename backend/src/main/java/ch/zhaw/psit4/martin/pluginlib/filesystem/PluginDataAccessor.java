@@ -71,6 +71,7 @@ public class PluginDataAccessor {
             throw new KeywordsJSONMissingException(
                     "keywords.json missing for " + extension.getParameter("name").valueAsString());
 
+        /**TODO
         // get author
         Author author = getAuthorData(extension);
         List<Author> possibleAuthors = authorService.getAuthorsByName(author.getName());
@@ -92,6 +93,7 @@ public class PluginDataAccessor {
 
         // parse JSON arguments
         parsePluginFunctions(jsonKeywords, dbPlugin);
+        **/
     }
 
     /**

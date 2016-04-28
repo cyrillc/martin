@@ -77,17 +77,6 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="fleppsim" id="schema-1.0.6">
-        <createTable tableName="option">
-            <column autoIncrement="true" name="option_id" type="INT">
-                <constraints primaryKey="true" />
-            </column>
-            <column name="name" type="VARCHAR(45)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="VARCHAR(200)" />
-        </createTable>
-    </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.7">
         <createTable tableName="parameter">
             <column autoIncrement="true" name="parameter_id" type="INT">
@@ -100,9 +89,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="function_id" type="INT">
-                <constraints nullable="false" />
-            </column>
-            <column name="option_id" type="INT">
                 <constraints nullable="false" />
             </column>
         </createTable>
@@ -205,11 +191,6 @@
             <column name="parameter_id" />
         </createIndex>
     </changeSet>
-    <changeSet author="fleppsim" id="schema-1.0.24">
-        <createIndex indexName="fk_parameter_option1_idx" tableName="parameter">
-            <column name="option_id" />
-        </createIndex>
-    </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.25">
         <createIndex indexName="fk_plugin_author_idx" tableName="plugin">
             <column name="author_id" />
@@ -251,9 +232,6 @@
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.36">
         <addForeignKeyConstraint baseColumnNames="parameter_id" baseTableName="parameter_has_keyword" constraintName="fk_parameter_has_keyword_parameter1" deferrable="false" initiallyDeferred="false" referencedColumnNames="parameter_id" referencedTableName="parameter" />
-    </changeSet>
-    <changeSet author="fleppsim" id="schema-1.0.37">
-        <addForeignKeyConstraint baseColumnNames="option_id" baseTableName="parameter" constraintName="fk_parameter_option1" deferrable="false" initiallyDeferred="false" referencedColumnNames="option_id" referencedTableName="option" />
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.38">
         <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="plugin" constraintName="fk_plugin_author" deferrable="false" initiallyDeferred="false" referencedColumnNames="author_id" referencedTableName="author" />
