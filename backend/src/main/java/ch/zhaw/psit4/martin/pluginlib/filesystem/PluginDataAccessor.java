@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -70,7 +71,7 @@ public class PluginDataAccessor {
         author.setPlugins(pluginSet);
         
         // update DB
-        authorService.addAuthor(author);
+        //authorService.addAuthor(author);
     }
     
     /**
@@ -111,6 +112,11 @@ public class PluginDataAccessor {
         Parameter pluginDesctibtion = extension.getParameter("description");
         Parameter pluginDate = extension.getParameter("date");
         String uuid = extension.getId();
+        
+        if(uuid == null) {
+            LOG.error("Extension ID not accessible");
+            uuid = UUID.randomUUID().toString();
+        }
 
         // update DB-object
         plugin.setName(pluginName.valueAsString());
@@ -197,14 +203,12 @@ public class PluginDataAccessor {
             String paramName = jsonparam.getString("Name");
             boolean required = jsonparam.getBoolean("Required");
             String type = jsonparam.getString("Type");
-            String regex = jsonparam.getString("Tokens-regex");
 
             ch.zhaw.psit4.martin.db.parameter.Parameter param =
                     new ch.zhaw.psit4.martin.db.parameter.Parameter();
             param.setName(paramName);
             param.setRequired(required);
             param.setType(type);
-            param.setTokensRegex(regex);
 
             Set<Keyword> keywords = parseKeywords(jsonFunct);
             param.setParameterKeywords(keywords);

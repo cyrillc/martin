@@ -17,9 +17,6 @@
 			<column name="required" type="BIT(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="tokens-regex" type="VARCHAR(255)">
-				<constraints nullable="false" />
-			</column>
 		</addColumn>
 
 		<addColumn tableName="plugin">

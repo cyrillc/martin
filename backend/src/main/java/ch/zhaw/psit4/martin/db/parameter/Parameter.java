@@ -43,10 +43,7 @@ public class Parameter {
     @Column(name = "type")
     private String type;
     
-    @Column(name = "tokens-regex")
-    private String tokensRegex;
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE })
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "parameter_has_keyword", joinColumns = { 
             @JoinColumn(name = "parameter_id", nullable = false, updatable = false) }, 
             inverseJoinColumns = { @JoinColumn(name = "keyword_id", 
@@ -93,14 +90,6 @@ public class Parameter {
 
     public String getType() {
         return type;
-    }
-    
-    public String getTokensRegex() {
-        return tokensRegex;
-    }
-
-    public void setTokensRegex(String tokensRegex) {
-        this.tokensRegex = tokensRegex;
     }
     
     public void setParameterKeywords(Set<Keyword> parameterKeywords) {
