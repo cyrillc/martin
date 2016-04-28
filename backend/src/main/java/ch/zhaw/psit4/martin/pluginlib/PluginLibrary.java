@@ -185,6 +185,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         MartinPlugin service = pluginExtentions.get(pluginID);
 
         // if service exists, execute call
+        
         if (service != null) {
             service.init(martinContextAccessor, functionName, 0);
 

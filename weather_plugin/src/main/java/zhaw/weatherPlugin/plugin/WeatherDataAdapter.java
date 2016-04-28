@@ -10,7 +10,7 @@ public class WeatherDataAdapter {
     public WeatherDataAdapter(WeatherData data) {
         this.owmData = data;
     }
-    
+
     public WeatherData getOwmData() {
         return owmData;
     }
@@ -20,7 +20,7 @@ public class WeatherDataAdapter {
     }
 
     public Date getDate() {
-        //owm returns date as a unix timestamp
+        // owm returns date as a unix timestamp
         return new Date(this.owmData.getDateTime() * 1000);
     }
 
@@ -41,13 +41,7 @@ public class WeatherDataAdapter {
     }
 
     public String getBasicWeatherString() {
-        String date = getDate().toString();
-        float temp = getTemperature();
-        String description = getWeatherDescription();
-        int rain = getRain();
-
-        return date + "\n" + description + " Temperature: " + temp + " Rain: "
-                + rain;
+        return getDate().toString().concat("\n").concat(getWeatherDescription());
     }
 
 }
