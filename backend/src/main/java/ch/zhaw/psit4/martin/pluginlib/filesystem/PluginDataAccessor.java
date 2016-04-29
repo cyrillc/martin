@@ -64,6 +64,7 @@ public class PluginDataAccessor {
 
     public void savePluginInDB(Extension extension, ClassLoader classLoader)
             throws KeywordsJSONMissingException {
+        LOG.info("add new Plugin to Database =?==============================================================");
         // get JSON
         URL jsonUrl = classLoader.getResource(PLUGIN_FUNCTIONS);
         JSONObject jsonPluginSource = parseJSON(jsonUrl);
@@ -73,9 +74,11 @@ public class PluginDataAccessor {
             throw new KeywordsJSONMissingException(
                     "keywords.json missing for " + extension.getParameter("name").valueAsString());
 
+
         // get author
         Author author = getAuthorData(extension);
         List<Author> possibleAuthors = authorService.getAuthorsByName(author.getName());
+        LOG.info("add author to Database : "+author.getName());
         if (possibleAuthors.isEmpty()) {
             authorService.addAuthor(author);
         } else {
@@ -85,6 +88,7 @@ public class PluginDataAccessor {
         // get plugin
         Plugin dbPlugin = getPluginMetadata(extension);
         List<Plugin> possiblePlugins = pluginService.getPluginsByUUID(dbPlugin.getUuid());
+        LOG.info("add Plugin to Database: "+dbPlugin.getName());
         if (possiblePlugins.isEmpty()) {
             dbPlugin.setAuthor(author);
             pluginService.addPlugin(dbPlugin);
@@ -95,7 +99,10 @@ public class PluginDataAccessor {
         // get Functions in the Plugin
         List<Function> functionsFromJson = parsePluginFunctions(jsonPluginSource, dbPlugin);
 
+        LOG.info("funktionen die zur DB hinzugefügt werden:"+functionsFromJson.size());
         for (Function function : functionsFromJson) {
+                Set<ch.zhaw.psit4.martin.db.parameter.Parameter> parameter = function.getParameter();
+                
             if (!functionExistsInDB(function, dbPlugin)) {
                 LOG.info("INSERT Function " + function.getName() + " into DB");
                 functionService.addFunction(function);
@@ -103,7 +110,12 @@ public class PluginDataAccessor {
                 LOG.warn("Function " + function.getName() + " allready in Database");
                 // replace function with the function from the database
                 function = getExistingFunctionFromDB(function, dbPlugin);
+                //add parameter from newly loaded function
+                function.addParameter(parameter);
+                functionService.updateFunction(function);
             }
+                //Persist parameter
+                //parameter.stream().forEach(p -> parameterService.addParameter(p));
 
         }
         /**

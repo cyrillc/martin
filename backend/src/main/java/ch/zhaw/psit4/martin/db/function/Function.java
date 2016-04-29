@@ -41,7 +41,7 @@ public class Function {
     @Column(name = "description")
     private String description;
     
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "function", cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE }, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "function", cascade = CascadeType.PERSIST , orphanRemoval = true)
     private Set<Parameter> parameter;
     
     @ManyToMany(fetch = FetchType.EAGER)
@@ -86,6 +86,7 @@ public class Function {
     }
     
     public void setParameter(Set<Parameter> parameter) {
+        parameter.stream().forEach(p -> p.setFunction(this));
         this.parameter = parameter;
     }
     
@@ -103,6 +104,12 @@ public class Function {
     
     public Plugin getPlugin(){
     	return this.plugin;
+    }
+
+    public void addParameter(Set<Parameter> parameter) {
+        //needs to be set, otherwise it can not be persisted
+        parameter.stream().forEach(p -> p.setFunction(this));
+       this.parameter.addAll(parameter);
     }
 
 }
