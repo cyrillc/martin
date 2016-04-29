@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ch.zhaw.psit4.martin.common.FunctionInformation;
 import ch.zhaw.psit4.martin.db.author.Author;
 import ch.zhaw.psit4.martin.db.author.AuthorService;
 import ch.zhaw.psit4.martin.db.function.Function;
@@ -60,7 +62,7 @@ public class PluginDataAccessor {
         // empty
     }
 
-    public void putPluginInDB(Extension extension, ClassLoader classLoader)
+    public void savePluginInDB(Extension extension, ClassLoader classLoader)
             throws KeywordsJSONMissingException {
         // get JSON
         URL jsonUrl = classLoader.getResource(PLUGIN_FUNCTIONS);
@@ -80,7 +82,6 @@ public class PluginDataAccessor {
             author = possibleAuthors.get(0);
         }
 
-        /**TODO
         // get plugin
         Plugin dbPlugin = getPluginMetadata(extension);
         List<Plugin> possiblePlugins = pluginService.getPluginsByUUID(dbPlugin.getUuid());
@@ -92,8 +93,21 @@ public class PluginDataAccessor {
         }
 
         // parse JSON arguments
-        parsePluginFunctions(jsonKeywords, dbPlugin);
-        **/
+        List<Function> functionsFromJson = parsePluginFunctions(jsonKeywords, dbPlugin);
+        
+        for (Function function : functionsFromJson) {
+            if (!functionExistsInDB(function,dbPlugin)) {
+                LOG.info("INSERT Function "+function.getName()+" into DB");
+                functionService.addFunction(function);
+            } else {
+                LOG.warn("Function "+function.getName()+" allready in Database");
+            }
+        }
+        /** for each function!
+
+            // parse function parameters
+            parseParameters(jsonFunction, function);
+            **/
     }
 
     /**
@@ -136,7 +150,7 @@ public class PluginDataAccessor {
         String uuid = extension.getId();
 
         if (uuid == null) {
-            LOG.error("Extension ID not accessible");
+            LOG.error("Extension ID not accessible, generating new UUID");
             uuid = UUID.randomUUID().toString();
         }
 
@@ -145,7 +159,7 @@ public class PluginDataAccessor {
         if (pluginDesctibtion != null)
             plugin.setDescription(pluginDesctibtion.valueAsString());
         else
-            plugin.setDescription("No Describtion provided.");
+            plugin.setDescription("No description provided.");
         if (pluginDate != null) {
             String date = pluginDate.valueAsString();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -189,38 +203,40 @@ public class PluginDataAccessor {
      * @param json The JSON file.
      * @return A set of function objects.
      */
-    public void parsePluginFunctions(JSONObject json, Plugin plugin) {
+    public List<Function> parsePluginFunctions(JSONObject json, Plugin plugin) {
+
+        ArrayList<Function> functions = new ArrayList<>();
         JSONArray jsonFunctions = json.getJSONArray("Functions");
         for (int numFuncts = 0; numFuncts < jsonFunctions.length(); numFuncts++) {
             // get function attributes
-            JSONObject jsonFunct = jsonFunctions.getJSONObject(numFuncts);
-            String functName = jsonFunct.getString("Name");
-            String description = jsonFunct.getString("Describtion");
+            JSONObject jsonFunction = jsonFunctions.getJSONObject(numFuncts);
+            String functionName = jsonFunction.getString("Name");
+            String description = jsonFunction.getString("Describtion");
 
+            LOG.info("create Function: "+functionName+ "with Plugin ID = "+plugin.getId());
             Function function = new Function();
-            function.setName(functName);
+            function.setName(functionName);
             function.setDescription(description);
             function.setPlugin(plugin);
+            
+            functions.add(function);
+        }
+        return functions;
+    }
 
-            // check if function is allready in DB
+    private boolean functionExistsInDB(Function function, Plugin plugin) {
             Set<Function> functions = plugin.getFunctions();
-            boolean funcExisting = false;
+            boolean isExistingFunction = false;
             if (functions != null)
                 for (Function f : functions) {
                     if (f.getName().equals(function.getName())
                             && f.getPlugin().getUuid().equals(plugin.getUuid())) {
-                        funcExisting = true;
+                        isExistingFunction = true;
                         function = f;
                         break;
                     }
                 }
-            if (!funcExisting) {
-                functionService.addFunction(function);
-            }
-
-            // parse function parameters
-            parseParameters(jsonFunct, function);
-        }
+        return isExistingFunction;
     }
 
     /**

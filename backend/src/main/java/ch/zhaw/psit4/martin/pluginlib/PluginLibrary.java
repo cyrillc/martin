@@ -134,7 +134,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             
             // update DB and memory
             try {
-                pluginDataAccessor.putPluginInDB(extension, classLoader);
+                pluginDataAccessor.savePluginInDB(extension, classLoader);
                 plugins.put(uuid, pluginInstance);
             } catch (KeywordsJSONMissingException e) {
                 LOG.warn("Plugin could not be loaded.", e);
