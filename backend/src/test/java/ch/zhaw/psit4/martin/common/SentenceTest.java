@@ -10,13 +10,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.api.types.EMartinType;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
 public class SentenceTest {
 
 	@Autowired
-	private StanfordCoreNLP stanfordNLP;
+	private StanfordCoreNLPClient stanfordNLP;
 
 	@Test
 	public void testPersonSimple() {

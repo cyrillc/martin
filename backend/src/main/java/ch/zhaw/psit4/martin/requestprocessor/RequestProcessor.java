@@ -23,6 +23,7 @@ import ch.zhaw.psit4.martin.db.plugin.Plugin;
 import ch.zhaw.psit4.martin.db.request.Request;
 import ch.zhaw.psit4.martin.common.Phrase;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
 /**
  * This class is responible for extending a request to a computer readable
@@ -37,7 +38,7 @@ public class RequestProcessor implements IRequestProcessor {
 	private FunctionService functionService;
 
 	@Autowired
-	private StanfordCoreNLP stanfordNLP;
+	private StanfordCoreNLPClient stanfordNLP;
 
 	private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
 
