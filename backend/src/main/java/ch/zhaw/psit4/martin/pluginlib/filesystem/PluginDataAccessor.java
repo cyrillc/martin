@@ -66,10 +66,10 @@ public class PluginDataAccessor {
             throws KeywordsJSONMissingException {
         // get JSON
         URL jsonUrl = classLoader.getResource(PLUGIN_FUNCTIONS);
-        JSONObject jsonKeywords = parseFunctionsJSON(jsonUrl);
+        JSONObject jsonPluginSource = parseJSON(jsonUrl);
 
         // check if there is a JSON file
-        if (jsonKeywords == null)
+        if (jsonPluginSource == null)
             throw new KeywordsJSONMissingException(
                     "keywords.json missing for " + extension.getParameter("name").valueAsString());
 
@@ -92,23 +92,27 @@ public class PluginDataAccessor {
             dbPlugin = possiblePlugins.get(0);
         }
 
-        // parse JSON arguments
-        List<Function> functionsFromJson = parsePluginFunctions(jsonKeywords, dbPlugin);
-        
+        // get Functions in the Plugin
+        List<Function> functionsFromJson = parsePluginFunctions(jsonPluginSource, dbPlugin);
+
         for (Function function : functionsFromJson) {
-            if (!functionExistsInDB(function,dbPlugin)) {
-                LOG.info("INSERT Function "+function.getName()+" into DB");
+            if (!functionExistsInDB(function, dbPlugin)) {
+                LOG.info("INSERT Function " + function.getName() + " into DB");
                 functionService.addFunction(function);
             } else {
-                LOG.warn("Function "+function.getName()+" allready in Database");
+                LOG.warn("Function " + function.getName() + " allready in Database");
+                // replace function with the function from the database
+                function = getExistingFunctionFromDB(function, dbPlugin);
             }
-        }
-        /** for each function!
 
-            // parse function parameters
-            parseParameters(jsonFunction, function);
-            **/
+        }
+        /**
+         * for each function!
+         * 
+         * // parse function parameters
+         **/
     }
+
 
     /**
      * Get the plugin JSON file for the keywords and functions.
@@ -116,7 +120,7 @@ public class PluginDataAccessor {
      * @param keywordsUrl The URL of the file on the filesystem.
      * @return The loaded JSON-file or null if an error occurred.
      */
-    public JSONObject parseFunctionsJSON(URL url) {
+    public JSONObject parseJSON(URL url) {
         // keywords JSON loading
         JSONObject json = null;
         try {
@@ -210,66 +214,87 @@ public class PluginDataAccessor {
         for (int numFuncts = 0; numFuncts < jsonFunctions.length(); numFuncts++) {
             // get function attributes
             JSONObject jsonFunction = jsonFunctions.getJSONObject(numFuncts);
-            String functionName = jsonFunction.getString("Name");
-            String description = jsonFunction.getString("Describtion");
 
-            LOG.info("create Function: "+functionName+ "with Plugin ID = "+plugin.getId());
+            LOG.info("create Function: " + jsonFunction.getString("Name") + "with Plugin ID = "
+                    + plugin.getId());
             Function function = new Function();
-            function.setName(functionName);
-            function.setDescription(description);
+            function.setName(jsonFunction.getString("Name"));
+            function.setDescription(jsonFunction.getString("Describtion"));
             function.setPlugin(plugin);
+
+
+            List<ch.zhaw.psit4.martin.db.parameter.Parameter> functionParameter = parseFunctionParameters(jsonFunction, function);
+
+            function.setParameter(new HashSet<ch.zhaw.psit4.martin.db.parameter.Parameter>(functionParameter));
             
             functions.add(function);
+
         }
         return functions;
     }
 
+    /**
+     * @param function
+     * @param plugin
+     * @return true if functionExists in Database
+     */
     private boolean functionExistsInDB(Function function, Plugin plugin) {
-            Set<Function> functions = plugin.getFunctions();
-            boolean isExistingFunction = false;
-            if (functions != null)
-                for (Function f : functions) {
-                    if (f.getName().equals(function.getName())
-                            && f.getPlugin().getUuid().equals(plugin.getUuid())) {
-                        isExistingFunction = true;
-                        function = f;
-                        break;
-                    }
+        return (getExistingFunctionFromDB(function, plugin) != null) ? true : false;
+    }
+
+    /**
+     * Checks if a function exists in the DB and returns the given function form the database
+     * 
+     * @param function
+     * @param plugin
+     * @return null if the function does not exist in the Database or the function
+     */
+    private Function getExistingFunctionFromDB(Function function, Plugin plugin) {
+        Set<Function> functions = plugin.getFunctions();
+        if (functions != null)
+            for (Function f : functions) {
+                if (f.getName().equals(function.getName())
+                        && f.getPlugin().getUuid().equals(plugin.getUuid())) {
+                    return f;
                 }
-        return isExistingFunction;
+            }
+        return null;
     }
 
     /**
      * Gets a set of parameters from the JSON file for a specific function.
      * 
-     * @param jsonFunct The array of JSON function elements.
+     * @param jsonFunction The array of JSON function elements.
      * @return A set of Parameter objects.
      */
-    public void parseParameters(JSONObject jsonFunct, Function functtion) {
-        JSONArray jsonParameter = jsonFunct.getJSONArray("Parameter");
-        for (int paramNum = 0; paramNum < jsonParameter.length(); paramNum++) {
+    public List<ch.zhaw.psit4.martin.db.parameter.Parameter> parseFunctionParameters(JSONObject jsonFunction, Function function) {
+        List<ch.zhaw.psit4.martin.db.parameter.Parameter> functionParameter = new ArrayList<>();
+
+        JSONArray jsonParameter = jsonFunction.getJSONArray("Parameter");
+        
+        for (int i = 0; i < jsonParameter.length(); i++) {
             // get parameter
-            JSONObject jsonparam = jsonParameter.getJSONObject(paramNum);
-            String paramName = jsonparam.getString("Name");
-            boolean required = jsonparam.getBoolean("Required");
-            String type = jsonparam.getString("Type");
+            JSONObject jsonparam = jsonParameter.getJSONObject(i);
 
-            ch.zhaw.psit4.martin.db.parameter.Parameter param =
+            ch.zhaw.psit4.martin.db.parameter.Parameter parameter =
                     new ch.zhaw.psit4.martin.db.parameter.Parameter();
-            param.setName(paramName);
-            param.setRequired(required);
-            param.setType(type);
-            param.setFunction(functtion);
+            parameter.setName(jsonparam.getString("Name"));
+            parameter.setRequired(jsonparam.getBoolean("Required"));
+            parameter.setType(jsonparam.getString("Type"));
+            parameter.setFunction(function);
+            
+            functionParameter.add(parameter);
 
+            /*
             // check if param is allready in DB
-            Set<ch.zhaw.psit4.martin.db.parameter.Parameter> parameter = functtion.getParameter();
+            Set<ch.zhaw.psit4.martin.db.parameter.Parameter> parameter = function.getParameter();
             boolean paramExisting = false;
             if (parameter != null)
                 for (ch.zhaw.psit4.martin.db.parameter.Parameter p : parameter) {
                     if (p.getName().equals(param.getName())
-                            && p.getFunction().getName().equals(functtion.getName())
+                            && p.getFunction().getName().equals(function.getName())
                             && p.getFunction().getPlugin().getUuid()
-                                    .equals(functtion.getPlugin().getUuid())) {
+                                    .equals(function.getPlugin().getUuid())) {
                         paramExisting = true;
                         param = p;
                         break;
@@ -279,8 +304,11 @@ public class PluginDataAccessor {
                 parameterService.addParameter(param);
             }
 
-            parseKeywords(jsonFunct, param);
+            parseKeywords(jsonFunction, param);
+            */
         }
+        
+        return functionParameter;
     }
 
     /**
