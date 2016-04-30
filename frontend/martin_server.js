@@ -30,6 +30,10 @@ app.get('/admin', function (req, res) {
     res.sendFile(path.join(__dirname  + homepagePath + '/admin.html'));
 });
 
+app.get('/api', function (req, res) {
+    res.sendFile(path.join(__dirname + homepagePath + '/api.html'));
+});
+
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function(req, res){
     res.status(404).sendFile(path.join(__dirname  + homepagePath + '/404.html'));
