@@ -29,11 +29,4 @@ public class OwmClientAdapter {
         WeatherForecastResponse r = owmClient.forecastWeatherAtCity(city);
         return new ResponseForecastAdapter(r);
     }
-    
-    public ResponseForecastAdapter dailyForecastWeatherAtCity(String city)
-            throws JSONException, IOException {
-        WeatherForecastResponse r = owmClient.dailyForecastWeatherAtCity(city);
-        return new ResponseForecastAdapter(r);
-    }
-
 }

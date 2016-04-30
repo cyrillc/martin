@@ -4,6 +4,8 @@ import java.util.Date;
 
 import org.bitpipeline.lib.owm.WeatherData;
 
+
+
 public class WeatherDataAdapter {
     private WeatherData owmData;
 
