@@ -14,7 +14,7 @@ public class OwmClientAdapter {
     private OwmClient owmClient;
 
     public OwmClientAdapter() {
-        this.owmClient = new OwmClient();
+        this.owmClient = new OwmClient(OwmClient.Units.METRIC);
         this.owmClient.setAPPID("c4cb05905b0c1017d58221beda81460d");
     }
 
@@ -29,11 +29,4 @@ public class OwmClientAdapter {
         WeatherForecastResponse r = owmClient.forecastWeatherAtCity(city);
         return new ResponseForecastAdapter(r);
     }
-    
-    public ResponseForecastAdapter dailyForecastWeatherAtCity(String city)
-            throws JSONException, IOException {
-        WeatherForecastResponse r = owmClient.dailyForecastWeatherAtCity(city);
-        return new ResponseForecastAdapter(r);
-    }
-
 }
