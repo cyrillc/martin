@@ -14,9 +14,8 @@ public class OwmClientAdapter {
     private OwmClient owmClient;
 
     public OwmClientAdapter() {
-        this.owmClient = new OwmClient();
+        this.owmClient = new OwmClient(OwmClient.Units.METRIC);
         this.owmClient.setAPPID("c4cb05905b0c1017d58221beda81460d");
-        this.owmClient.setUnits(OwmClient.Units.METRIC);
     }
 
     public ResponseStatusAdapter currentWeatherAtCity(String city)
