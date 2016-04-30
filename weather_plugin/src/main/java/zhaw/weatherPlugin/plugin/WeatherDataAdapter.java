@@ -4,8 +4,6 @@ import java.util.Date;
 
 import org.bitpipeline.lib.owm.WeatherData;
 
-
-
 public class WeatherDataAdapter {
     private WeatherData owmData;
 
@@ -35,7 +33,7 @@ public class WeatherDataAdapter {
     }
 
     public float getTemperature() {
-        return convertKelvinToCelsius(this.owmData.getTemp());
+        return this.owmData.getTemp();
     }
 
     public float convertKelvinToCelsius(float kelvin) {
@@ -43,7 +41,9 @@ public class WeatherDataAdapter {
     }
 
     public String getBasicWeatherString() {
-        return getDate().toString().concat("\n").concat(getWeatherDescription());
+        return getDate().toString().concat("\n")
+                .concat(getWeatherDescription().concat(" Temperature: ")
+                        .concat(Float.toString(getTemperature())));
     }
 
 }
