@@ -15,7 +15,7 @@ public class ResponseForecast16Adapter {
 
     private WeatherForecast16Response owmResponse;
 
-    ResponseForecast16Adapter(WeatherForecast16Response r) {
+    public ResponseForecast16Adapter(WeatherForecast16Response r) {
         this.owmResponse = r;
     }
 
