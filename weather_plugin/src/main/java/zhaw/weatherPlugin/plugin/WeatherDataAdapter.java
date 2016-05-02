@@ -33,7 +33,15 @@ public class WeatherDataAdapter {
     }
 
     public float getTemperature() {
-        return this.owmData.getTemp();
+        return this.owmData.getTemperature().getTemp();
+    }
+
+    public float getTemperatureMax() {
+        return this.owmData.getTemperature().getTempDayMax();
+    }
+
+    public float getTemperatureMin() {
+        return this.owmData.getTemperature().getTempDayMin();
     }
 
     public float convertKelvinToCelsius(float kelvin) {
@@ -41,9 +49,20 @@ public class WeatherDataAdapter {
     }
 
     public String getBasicWeatherString() {
-        return getDate().toString().concat("\n")
-                .concat(getWeatherDescription().concat(" Temperature: ")
-                        .concat(Float.toString(getTemperature())));
+        return getDate().toString().concat("\n").concat(getWeatherDescription()
+                .concat(" ").concat(getTemperatureString()));
+    }
+
+    public String getTemperatureString() {
+        String temp = "-";
+        if (!Float.isNaN(getTemperatureMax())
+                && !Float.isNaN(getTemperatureMin())) {
+            temp = "Min: " + Float.toString(getTemperatureMin()) + " Max: "
+                    + Float.toString(getTemperatureMax());
+        } else if (!Float.isNaN(getTemperature())) {
+            temp = Float.toString(getTemperature());
+        }
+        return "Temperature: " + temp;
     }
 
 }
