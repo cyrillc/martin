@@ -30,13 +30,6 @@ public class WeatherDataAdapterTest {
     }
 
     @Test
-    public void itReturnsTemperaturInCelsius() {
-        when(owmDataMock.getTemp()).thenReturn(300f);
-
-        assertEquals(dataAdapter.getTemperature(), 26.85f, 0.001);
-    }
-
-    @Test
     public void itReturnsTheRightTimeAsDateObject() {
         Date now = new Date();
         when(owmDataMock.getDateTime()).thenReturn(now.getTime() / 1000);
