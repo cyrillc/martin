@@ -3,10 +3,12 @@ package zhaw.weatherPlugin.plugin;
 import java.io.IOException;
 
 import org.bitpipeline.lib.owm.OwmClient;
+import org.bitpipeline.lib.owm.WeatherForecast16Response;
 import org.bitpipeline.lib.owm.WeatherForecastResponse;
 import org.bitpipeline.lib.owm.WeatherStatusResponse;
 import org.json.JSONException;
 
+import zhaw.weatherPlugin.plugin.response.ResponseForecast16Adapter;
 import zhaw.weatherPlugin.plugin.response.ResponseForecastAdapter;
 import zhaw.weatherPlugin.plugin.response.ResponseStatusAdapter;
 
@@ -28,5 +30,12 @@ public class OwmClientAdapter {
             throws JSONException, IOException {
         WeatherForecastResponse r = owmClient.forecastWeatherAtCity(city);
         return new ResponseForecastAdapter(r);
+    }
+
+    public ResponseForecast16Adapter dailyForecastAtCity(String city)
+            throws JSONException, IOException {
+        WeatherForecast16Response r = owmClient
+                .dailyForecastWeatherAtCity(city);
+        return new ResponseForecast16Adapter(r);
     }
 }
