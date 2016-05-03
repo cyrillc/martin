@@ -6,6 +6,8 @@ var
     express = require('express'),
     morgan = require('morgan'),
     path = require('path');
+    fs = require('fs');
+    
 var app = express();
 
 var homepagePath = '/homepage';
@@ -32,6 +34,18 @@ app.get('/admin', function (req, res) {
 
 app.get('/api', function (req, res) {
     res.sendFile(path.join(__dirname + homepagePath + '/api.html'));
+});
+
+app.post('/upload', function (req, res) {
+    var path = req.files.file.path;
+    var name = req.files.file.name;
+    fs.readFile(path, function (err, data) {     
+        var newPath = __dirname + "/upload/" + name;
+        fs.rename(path, newPath, function (err) {
+            console.log('rename callback ', err); 
+        });
+    });
+    res.sendFile(path.join(__dirname + 'index.html'));
 });
 
 //The 404 Route (ALWAYS Keep this as the last route)
