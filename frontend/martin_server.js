@@ -5,7 +5,7 @@
 var
     express = require('express'),
     morgan = require('morgan'),
-    path = require('path');
+    path = require('path'),
     fs = require('fs');
     
 var app = express();
@@ -47,6 +47,10 @@ app.post('/upload', function (req, res) {
     });
     res.sendFile(path.join(__dirname + 'index.html'));
 });
+
+app.get('/upload', function (req, res) {
+    res.sendFile(path.join(__dirname + homepagePath + '/upload.html'));
+});    
 
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function(req, res){
