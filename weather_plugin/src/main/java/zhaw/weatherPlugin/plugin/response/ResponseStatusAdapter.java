@@ -1,5 +1,7 @@
 package zhaw.weatherPlugin.plugin.response;
 
+
+
 import org.bitpipeline.lib.owm.WeatherStatusResponse;
 
 import zhaw.weatherPlugin.plugin.WeatherDataAdapter;

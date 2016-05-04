@@ -14,6 +14,7 @@ import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 import edu.stanford.nlp.util.CoreMap;
 
 /**
@@ -25,13 +26,13 @@ import edu.stanford.nlp.util.CoreMap;
 public class Sentence {
 	private String rawSentence;
 
-	private StanfordCoreNLP textAnalyzer;
+	private StanfordCoreNLPClient textAnalyzer;
 
 	List<Phrase> phrases = new ArrayList<>();
 	
 	String predefinedAnswer;
 
-	public Sentence(String sentence, StanfordCoreNLP textAnalyzer) {
+	public Sentence(String sentence, StanfordCoreNLPClient textAnalyzer) {
 		this.rawSentence = sentence;
 		this.textAnalyzer = textAnalyzer;
 		this.generateNamedEntityRecognitionTokens();

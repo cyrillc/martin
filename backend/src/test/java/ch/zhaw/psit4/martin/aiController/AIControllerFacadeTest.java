@@ -29,6 +29,7 @@ import ch.zhaw.psit4.martin.db.response.Response;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
@@ -50,7 +51,7 @@ public class AIControllerFacadeTest {
 	private LiquibaseTestFramework liquibase;
 	
 	@Autowired
-	private StanfordCoreNLP stanfordNLP;
+	private StanfordCoreNLPClient stanfordNLP;
 
 	Request request = null;
 	ExtendedRequest extRequest = null;
