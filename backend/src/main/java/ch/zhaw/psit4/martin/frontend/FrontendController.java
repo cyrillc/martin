@@ -2,6 +2,7 @@ package ch.zhaw.psit4.martin.frontend;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 
+
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -90,4 +91,19 @@ public class FrontendController {
     public List<PluginInformation> getPluginList() {
         return aiController.getPluginInformation();
     }
+    
+    /**
+     * 
+     * @return saves the uploaded file from the frontend
+     */
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @RequestMapping("/upload")
+    public void saveUpload() {
+        
+    }
+    
+    
+    
+    
 }
