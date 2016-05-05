@@ -1,8 +1,11 @@
 package ch.zhaw.psit4.martin.frontend;
 
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
+
+import org.java.plugin.boot.Application;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,10 +17,15 @@ import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
 import ch.zhaw.psit4.martin.db.request.Request;
 import ch.zhaw.psit4.martin.db.response.Response;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * This class connect the Frontend with the AI using REST.
@@ -32,33 +40,30 @@ public class FrontendController {
     private AIControllerFacade aiController;
 
     /**
-     * Returns the answer to a command to the Frontend. When a request to the
-     * API at /command comes in, the method querys the AI controller to get an
-     * answer for the command. It then returns that answer to the origin of the
-     * request.
+     * Returns the answer to a command to the Frontend. When a request to the API at /command comes
+     * in, the method querys the AI controller to get an answer for the command. It then returns
+     * that answer to the origin of the request.
      *
      * @param command
      * @return the response of the AI
      */
-    @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
+            "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping("/command")
-    public Response launchCommand(
-            @RequestParam(value = "command") String command) {
+    public Response launchCommand(@RequestParam(value = "command") String command) {
         Request request = new Request(command);
         return aiController.elaborateRequest(request);
     }
 
     /**
-     * Returns a list of example commands to the frontend. When a request to the
-     * API at /exampleCommands comes in (usually on page load), the method
-     * querys the AI controller to get a list of possible commands. It then
-     * returns that list to the origin of the request.
+     * Returns a list of example commands to the frontend. When a request to the API at
+     * /exampleCommands comes in (usually on page load), the method querys the AI controller to get
+     * a list of possible commands. It then returns that list to the origin of the request.
      *
      * @return A list of possible commands
      */
-    @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
+            "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping("/exampleCommands")
     public List<ExampleCall> sendExampleCommands() {
         return aiController.getRandomExampleCalls();
@@ -66,44 +71,55 @@ public class FrontendController {
 
     /**
      * 
-     * @return A list of HistoryItems, with all user Requests and relative
-     *         Responses.
+     * @return A list of HistoryItems, with all user Requests and relative Responses.
      */
-    @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
+            "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping("/history")
-    public List<HistoryItem> getHistory(
-            @RequestParam(value = "amount") int amount) {
+    public List<HistoryItem> getHistory(@RequestParam(value = "amount") int amount) {
         return aiController.getLimitedHistory(amount);
     }
-    
+
     /**
-     * Returns the information all MArtIn plugins to the Frontend. When a request to the
-     * API at /pluginList comes in, the method querys the AI controller to get an
-     * answer for the command. It then returns that answer to the origin of the
-     * request.
+     * Returns the information all MArtIn plugins to the Frontend. When a request to the API at
+     * /pluginList comes in, the method querys the AI controller to get an answer for the command.
+     * It then returns that answer to the origin of the request.
      *
      * @return the information all MArtIn plugins
      */
-    @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
+            "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping("/pluginList")
     public List<PluginInformation> getPluginList() {
         return aiController.getPluginInformation();
     }
-    
+
     /**
      * 
      * @return saves the uploaded file from the frontend
+     * @throws FileUploadException 
      */
-    @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
-    @RequestMapping("/upload")
-    public void saveUpload() {
-        
+    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
+            "http://srv-lab-t-825.zhaw.ch:4141"})
+    @RequestMapping(method = RequestMethod.POST, value = "/upload")
+    public String handleFileUpload(@RequestParam("name") String name,
+            @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws FileUploadException {
+
+        if (!file.isEmpty()) {
+            try {
+                BufferedOutputStream stream =
+                        new BufferedOutputStream(new FileOutputStream(new File("C:/Users/marco" + "/" + name)));
+                FileCopyUtils.copy(file.getInputStream(), stream);
+                stream.close();
+                return "successful file upload";
+            } catch (Exception e) {
+                throw new FileUploadException(e.getMessage());
+            }
+        } else {
+            return "file upload faild";
+        }
     }
-    
-    
-    
-    
+
+
+
 }
