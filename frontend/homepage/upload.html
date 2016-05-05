@@ -59,11 +59,11 @@
     <section id="pluginListSection" class="pluginList-section">
         <div class="container">
             <div class="row">
-                <div class="col-lg-12">
+                <div id="response" class="col-lg-12">
                     <h1>Please upload your Plugin here</h1><br>
-                        <form action="/upload" method="post" enctype="multipart/form-data">
+                        <form enctype="multipart/form-data">
                              <div class="col-lg-3 col-lg-offset-2">                    
-                                <input id="jar" class="mybutton" name="file" type="file" size="50" accept="application/java-archive">
+                                <input id="jar" class="mybutton" name="file" type="file" size="100000" accept="application/java-archive">
                              </div>
                             <button id="upload" class="mybutton" type="submit">send</button> 
                         </form>
@@ -87,6 +87,8 @@
     <script src="js/all/common.js"></script>
 
     <!-- MArtIn Upload Application -->
+    <script src="js/upload/upload.js"></script>
+    
     
 
 
