@@ -1,7 +1,8 @@
 package ch.zhaw.psit4.martin.frontend;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
-
+import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.java.plugin.boot.Application;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 
+import javax.servlet.annotation.MultipartConfig;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +37,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  *
  */
 @RestController
+@MultipartConfig(fileSizeThreshold = 52428800)  // upload Max 50MB
 public class FrontendController {
 
     @Autowired
@@ -99,15 +103,24 @@ public class FrontendController {
      * @return saves the uploaded file from the frontend
      * @throws FileUploadException 
      */
-    @CrossOrigin
+    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
+    "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping(method = RequestMethod.POST, value = "/upload")
     public String handleFileUpload(@RequestParam("name") String name,
-            @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws FileUploadException {
+            @RequestParam("file") MultipartFile file,
+            RedirectAttributes redirectAttributes) throws FileUploadException {
 
         if (!file.isEmpty()) {
             try {
-                BufferedOutputStream stream =
-                        new BufferedOutputStream(new FileOutputStream(new File("test.jar")));
+                if (!isJarFile(file)) {
+                    return "format not supported";
+                }
+                File fileJava = new File("uploads/" + name + ".jar");
+                if (!fileJava.getParentFile().exists()) {
+                    fileJava.getParentFile().mkdirs();
+                }
+                BufferedOutputStream stream = new BufferedOutputStream(
+                        new FileOutputStream(fileJava));
                 FileCopyUtils.copy(file.getInputStream(), stream);
                 stream.close();
                 return "successful file upload";
@@ -117,6 +130,12 @@ public class FrontendController {
         } else {
             return "file upload faild";
         }
+    }
+
+    private boolean isJarFile(MultipartFile file) {
+        String origFileName = file.getOriginalFilename();
+        boolean isJar = FilenameUtils.getExtension(origFileName).equals("jar");
+        return isJar ? true : false;
     }
 
 
