@@ -20,7 +20,7 @@ function uploadFile(event) {
         type: 'POST',
         data: formData,
         success:function (serverResponse) {
-            $("#response").append("<p>" + serverResponse + "</p>");
+            $("#response").html(serverResponse)
         },
         cache: false,
         contentType: false,
