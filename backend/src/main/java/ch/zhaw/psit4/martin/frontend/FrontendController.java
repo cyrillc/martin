@@ -17,6 +17,7 @@ import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
 import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
 import ch.zhaw.psit4.martin.db.request.Request;
 import ch.zhaw.psit4.martin.db.response.Response;
+import ch.zhaw.psit4.martin.pluginInstaller.PluginInstaller;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -105,38 +106,16 @@ public class FrontendController {
      */
     @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
     "http://srv-lab-t-825.zhaw.ch:4141"})
-    @RequestMapping(method = RequestMethod.POST, value = "/upload")
-    public String handleFileUpload(@RequestParam("name") String name,
+    @RequestMapping(method = RequestMethod.POST, value = "/plugin/install")
+    public String installPlugin(@RequestParam("name") String name,
             @RequestParam("file") MultipartFile file,
             RedirectAttributes redirectAttributes) throws FileUploadException {
-
-        if (!file.isEmpty()) {
-            try {
-                if (!isJarFile(file)) {
-                    return "format not supported";
-                }
-                File fileJava = new File("uploads/" + name + ".jar");
-                if (!fileJava.getParentFile().exists()) {
-                    fileJava.getParentFile().mkdirs();
-                }
-                BufferedOutputStream stream = new BufferedOutputStream(
-                        new FileOutputStream(fileJava));
-                FileCopyUtils.copy(file.getInputStream(), stream);
-                stream.close();
-                return "successful file upload";
-            } catch (Exception e) {
-                throw new FileUploadException(e.getMessage());
-            }
-        } else {
-            return "file upload failed";
-        }
+        
+        PluginInstaller installer = new PluginInstaller();
+        return installer.installPlugin(name, file);
     }
 
-    private boolean isJarFile(MultipartFile file) {
-        String origFileName = file.getOriginalFilename();
-        boolean isJar = FilenameUtils.getExtension(origFileName).equals("jar");
-        return isJar ? true : false;
-    }
+
 
 
 
