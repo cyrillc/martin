@@ -128,7 +128,7 @@ public class FrontendController {
                 throw new FileUploadException(e.getMessage());
             }
         } else {
-            return "file upload faild";
+            return "file upload failed";
         }
     }
 
