@@ -13,7 +13,7 @@ function uploadFile(event) {
     var formData = new FormData($("#upload_form").get(0));
     
     // create request URL from current URL
-    var backendUrl = createRequestURL(frontendUrl, backendPort, "upload");
+    var backendUrl = createRequestURL(frontendUrl, backendPort, "plugin/install");
     
     $.ajax({
         url: backendUrl,  
