@@ -99,8 +99,7 @@ public class FrontendController {
      * @return saves the uploaded file from the frontend
      * @throws FileUploadException 
      */
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
-            "http://srv-lab-t-825.zhaw.ch:4141"})
+    @CrossOrigin
     @RequestMapping(method = RequestMethod.POST, value = "/upload")
     public String handleFileUpload(@RequestParam("name") String name,
             @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws FileUploadException {
@@ -108,7 +107,7 @@ public class FrontendController {
         if (!file.isEmpty()) {
             try {
                 BufferedOutputStream stream =
-                        new BufferedOutputStream(new FileOutputStream(new File("C:/Users/marco" + "/" + name)));
+                        new BufferedOutputStream(new FileOutputStream(new File("test.jar")));
                 FileCopyUtils.copy(file.getInputStream(), stream);
                 stream.close();
                 return "successful file upload";
