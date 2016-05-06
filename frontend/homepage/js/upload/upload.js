@@ -4,7 +4,7 @@ $(document).ready(function () {
 // Prepare upload
     
 // Variable to store your files
-var files;
+var myfile;
 // Add events
 $('input[type=file]').on('change', prepareUpload);
 // Grab the files and set them to our variable

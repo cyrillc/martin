@@ -36,17 +36,17 @@ app.get('/api', function (req, res) {
     res.sendFile(path.join(__dirname + homepagePath + '/api.html'));
 });
 
-app.post('/upload', function (req, res) {
+/*app.post('/upload', function (req, res) {
     var path = req.files.file.path;
     var name = req.files.file.name;
-    fs.readFile(path, function (err, data) {     
+    fs.readFile(path, function (err, data) {
         var newPath = __dirname + "/upload/" + name;
         fs.rename(path, newPath, function (err) {
-            console.log('rename callback ', err); 
+            console.log('rename callback ', err);
         });
     });
     res.sendFile(path.join(__dirname + 'index.html'));
-});
+});*/
 
 app.get('/upload', function (req, res) {
     res.sendFile(path.join(__dirname + homepagePath + '/upload.html'));
