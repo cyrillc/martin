@@ -1,0 +1,21 @@
+{
+  "name": "martinclientside",
+  "authors": [
+    "grafhan2 <grafhan2@students.zhaw.ch>"
+  ],
+  "description": "Part of the MArtIn Frontend that gets delivered to the Client",
+  "main": "",
+  "license": "ZHAW",
+  "homepage": "https://github.engineering.zhaw.ch/Project-MArtIn/MArtIn/wiki",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "Chart.js": "^2.1.1"
+  }
+}
