@@ -7,7 +7,7 @@ var
     morgan = require('morgan'),
     path = require('path'),
     fs = require('fs');
-    
+
 var app = express();
 
 var homepagePath = '/homepage';
@@ -50,7 +50,12 @@ app.get('/api', function (req, res) {
 
 app.get('/upload', function (req, res) {
     res.sendFile(path.join(__dirname + homepagePath + '/upload.html'));
-});    
+});
+
+// For Testpurpose: Community endpoints
+app.get('/community', function (req, res) {
+    res.sendFile(path.join(__dirname + homepagePath + '/community.html'));
+});
 
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function(req, res){
