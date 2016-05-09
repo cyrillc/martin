@@ -21,8 +21,8 @@ import ch.zhaw.psit4.martin.db.Parameter;
 import ch.zhaw.psit4.martin.db.Plugin;
 
 /**
- * Contains a Paramter for a Plugin Function. The class
- * is used to store Functions, their names and options of a function. 
+ * Contains a Paramter for a Plugin Function. The class is used to store
+ * Functions, their names and options of a function.
  * 
  * @version 0.0.1-SNAPSHOT
  */
@@ -30,86 +30,86 @@ import ch.zhaw.psit4.martin.db.Plugin;
 @Table(name = "function")
 public class Function {
 
-    @Id
-    @Column( name="function_id", unique = true, nullable = false, updatable = false )
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+	@Id
+	@Column(name = "function_id", unique = true, nullable = false, updatable = false)
+	@GeneratedValue
+	private int id;
 
-    @Column(name = "name")
-    private String name;
-    
-    @Column(name = "description")
-    private String description;
-    
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "function", cascade = CascadeType.PERSIST , orphanRemoval = true)
-    private Set<Parameter> parameter;
-    
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "function_has_keyword", joinColumns = { 
-            @JoinColumn(name = "function_id", nullable = false, updatable = false) }, 
-            inverseJoinColumns = { @JoinColumn(name = "keyword_id", 
-                    nullable = false, updatable = false) })
-    private Set<Keyword> functionKeywords;
-    
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "plugin_id", nullable = false)
-    private Plugin plugin;
+	@Column(name = "name")
+	private String name;
 
-    public Function() {}
+	@Column(name = "description")
+	private String description;
 
-    public Function(int id) {
-        this.setId(id);
-    }
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "function", cascade = CascadeType.PERSIST, orphanRemoval = true)
+	private Set<Parameter> parameters;
 
-    public int getId() {
-        return id;
-    }
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "function_has_keyword", joinColumns = {
+	@JoinColumn(name = "function_id", nullable = false, updatable = false) }, inverseJoinColumns = {
+	@JoinColumn(name = "keyword_id", nullable = false, updatable = false) })
+	private Set<Keyword> keywords;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "plugin_id", nullable = false)
+	private Plugin plugin;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public Function() {
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Function(int id) {
+		this.setId(id);
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public String getDescription() {
-        return description;
-    }
-    
-    public void setParameter(Set<Parameter> parameter) {
-        parameter.stream().forEach(p -> p.setFunction(this));
-        this.parameter = parameter;
-    }
-    
-    public Set<Parameter> getParameter(){
-        return this.parameter;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public Set<Keyword> getKeywords(){
-        return this.functionKeywords;
-    }
-    
-    public void setPlugin(Plugin plugin) {
-        this.plugin = plugin;
-    }
-    
-    public Plugin getPlugin(){
-    	return this.plugin;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void addParameter(Set<Parameter> parameter) {
-        //needs to be set, otherwise it can not be persisted
-        parameter.stream().forEach(p -> p.setFunction(this));
-       this.parameter.addAll(parameter);
-    }
+	public String getName() {
+		return name;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setParameter(Set<Parameter> parameter) {
+		parameter.stream().forEach(p -> p.setFunction(this));
+		this.parameters = parameter;
+	}
+
+	public Set<Parameter> getParameters() {
+		return this.parameters;
+	}
+
+	public Set<Keyword> getKeywords() {
+		return this.keywords;
+	}
+
+	public void setPlugin(Plugin plugin) {
+		this.plugin = plugin;
+	}
+
+	public Plugin getPlugin() {
+		return this.plugin;
+	}
+
+	public void addParameters(Set<Parameter> parameter) {
+		// needs to be set, otherwise it can not be persisted
+		parameter.stream().forEach(p -> p.setFunction(this));
+		this.parameters.addAll(parameter);
+	}
 
 }

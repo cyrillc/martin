@@ -10,7 +10,7 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class PluginEntityManager {
+public class KeywordEntityManager {
 
 	private static EntityManager entityManager;
 	private static EntityManagerFactory entityManagerFactory;
@@ -23,26 +23,27 @@ public class PluginEntityManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Plugin> getAll(){
-		Query query = entityManager.createQuery("SELECT p FROM Plugin p");
-	    return (List<Plugin>) query.getResultList();
+	public List<Keyword> getAll(){
+		Query query = entityManager.createQuery("SELECT k FROM Keyword k");
+	    return (List<Keyword>) query.getResultList();
 	}
 	
-	public Plugin byUUID(String uuid){
-		Query query = entityManager.createQuery("SELECT p FROM Plugin p WHERE uuid = '" + uuid + "'");
-		return (Plugin) query.getSingleResult();
-	}
-	
-	public void persist(Plugin plugin){
+	public void persist(Keyword keyword){
 		entityManager.getTransaction().begin();
 		try {
-			entityManager.persist(plugin);
+			entityManager.persist(keyword);
 		} catch (Exception e){
 			entityManager.getTransaction().rollback();
 			LOG.error(e);
 		} finally {
 			entityManager.getTransaction().commit();
 		}
+	}
+	
+	
+	public Keyword getByName(String name){
+		Query query = entityManager.createQuery("SELECT k FROM Keyword k WHERE k.keyword = '" + name + "'");
+	    return (Keyword)query.getSingleResult();
 	}
 	
 	

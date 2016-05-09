@@ -2,7 +2,6 @@ package ch.zhaw.psit4.martin.db;
 
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import ch.zhaw.psit4.martin.db.Function;
 import ch.zhaw.psit4.martin.db.Keyword;
@@ -31,7 +31,7 @@ public class Parameter {
 
     @Id
     @Column(name="parameter_id", unique = true, nullable = false, updatable = false )
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private int id;
 
     @Column(name = "name")
@@ -50,9 +50,10 @@ public class Parameter {
                     nullable = false, updatable = false) })
     private Set<Keyword> parameterKeywords;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "function_id", nullable = false)
     private Function function;
+
 
     public Parameter() {}
 

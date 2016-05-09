@@ -8,12 +8,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import ch.zhaw.psit4.martin.db.parameter.*;
 
 /**
  * Contains a Keyword for a Plugin. Either Funtion or Parameter. The class
@@ -38,9 +35,12 @@ public class Keyword {
     // mapped by set in Parameter.java
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "parameterKeywords")
     private Set<Parameter> parameter;
+    
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "keywords")
+    private Set<Function> functions;
 
 
-    public Keyword(int id) {
+	public Keyword(int id) {
         this.setId(id);
     }
 
@@ -74,5 +74,13 @@ public class Keyword {
     public Set<Parameter> getParentParameter() {
         return this.parameter;
     }
+    
+    public Set<Function> getFunctions() {
+		return functions;
+	}
+
+	public void setFunctions(Set<Function> functions) {
+		this.functions = functions;
+	}
 
 }

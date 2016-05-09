@@ -10,7 +10,7 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class PluginEntityManager {
+public class HistoryItemEntityManager {
 
 	private static EntityManager entityManager;
 	private static EntityManagerFactory entityManagerFactory;
@@ -23,20 +23,22 @@ public class PluginEntityManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Plugin> getAll(){
-		Query query = entityManager.createQuery("SELECT p FROM Plugin p");
-	    return (List<Plugin>) query.getResultList();
+	public List<HistoryItem> getAll(){
+		Query query = entityManager.createQuery("SELECT h FROM HistoryItem h");
+	    return (List<HistoryItem>) query.getResultList();
 	}
 	
-	public Plugin byUUID(String uuid){
-		Query query = entityManager.createQuery("SELECT p FROM Plugin p WHERE uuid = '" + uuid + "'");
-		return (Plugin) query.getSingleResult();
+	public List<HistoryItem> getLimitedHistory(int amount){
+		Query query = entityManager.createQuery("SELECT h FROM HistoryItem h ORDER BY h.date DESC");
+		query.setMaxResults(amount);
+	    return (List<HistoryItem>) query.getResultList();
 	}
 	
-	public void persist(Plugin plugin){
+
+	public void persist(HistoryItem historyItem){
 		entityManager.getTransaction().begin();
 		try {
-			entityManager.persist(plugin);
+			entityManager.persist(historyItem);
 		} catch (Exception e){
 			entityManager.getTransaction().rollback();
 			LOG.error(e);
@@ -56,3 +58,4 @@ public class PluginEntityManager {
 		}
 	}
 }
+

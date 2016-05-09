@@ -21,7 +21,7 @@ import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 @ContextConfiguration({"classpath:Beans.xml", "classpath:Beans-unit-tests.xml"})
 public class PluginServiceTest {
 
-	@Autowired
+	/*@Autowired
 	private LiquibaseTestFramework liquibase;
 
 	@Autowired
@@ -45,7 +45,7 @@ public class PluginServiceTest {
 
     @Test
     public void testListplugins() throws Exception {
-        List<Plugin> plugins = pluginService.listPlugins();
+        List<Plugin> plugins = pluginService.getAll();
         plugins.stream().forEach(plugin -> printPlugin(plugin));
         assertEquals(false,plugins.isEmpty());
         
@@ -106,7 +106,7 @@ public class PluginServiceTest {
         newPlugin.setName("Testname");
         newPlugin.setUuid(UUID.randomUUID().toString());
         return newPlugin;      
-    }
+    } */
 
   
     /*

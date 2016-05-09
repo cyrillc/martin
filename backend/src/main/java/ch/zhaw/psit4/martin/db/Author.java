@@ -76,4 +76,9 @@ public class Author {
         this.plugins = plugins;
     }
 
+	public void addPlugin(Plugin plugin) {
+		plugins.add(plugin);
+		
+	}
+
 }

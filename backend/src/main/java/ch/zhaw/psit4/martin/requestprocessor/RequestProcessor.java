@@ -29,7 +29,7 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 public class RequestProcessor implements IRequestProcessor {
 
 	@Autowired
-	private FunctionService functionService;
+	private KeywordEntityManager keywordEntityManager;
 
 	@Autowired
 	private StanfordCoreNLPClient stanfordNLP;
@@ -92,13 +92,12 @@ public class RequestProcessor implements IRequestProcessor {
 	private List<PossibleCall> addPossibleCallsWithKeywords(List<PossibleCall> possibleCalls, List<String> words) {
 
 		for (String word : words) {
-
-			List<Object[]> functionsKeywords = functionService.getByKeyword(word);
-			for (Object[] functionsKeyword : functionsKeywords) {
-				Function function = (Function) functionsKeyword[0];
+			
+			
+			Keyword keyword = keywordEntityManager.getByName(word);
+			
+			for(Function function : keyword.getFunctions()){
 				Plugin plugin = function.getPlugin();
-
-				Keyword keyword = (Keyword) functionsKeyword[1];
 
 				Optional<PossibleCall> optionalPossibleResult = possibleCalls.stream()
 						.filter(o -> o.getPlugin().getId() == plugin.getId())
@@ -140,7 +139,7 @@ public class RequestProcessor implements IRequestProcessor {
 		for (PossibleCall possibleCall : possibleCalls) {
 			Function function = possibleCall.getFunction();
 
-			for (Parameter parameter : function.getParameter()) {
+			for (Parameter parameter : function.getParameters()) {
 				// Create instance of IMartinType for requested type
 				IMartinType parameterValue = getParameterValue(parameter, sentence);
 				possibleCall.addParameter(parameter.getName(), parameterValue);

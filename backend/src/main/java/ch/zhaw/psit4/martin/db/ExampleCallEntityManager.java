@@ -10,7 +10,7 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class PluginEntityManager {
+public class ExampleCallEntityManager {
 
 	private static EntityManager entityManager;
 	private static EntityManagerFactory entityManagerFactory;
@@ -23,26 +23,28 @@ public class PluginEntityManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Plugin> getAll(){
-		Query query = entityManager.createQuery("SELECT p FROM Plugin p");
-	    return (List<Plugin>) query.getResultList();
+	public List<ExampleCall> getAll(){
+		Query query = entityManager.createQuery("SELECT h FROM ExampleCall h");
+	    return (List<ExampleCall>) query.getResultList();
 	}
 	
-	public Plugin byUUID(String uuid){
-		Query query = entityManager.createQuery("SELECT p FROM Plugin p WHERE uuid = '" + uuid + "'");
-		return (Plugin) query.getSingleResult();
-	}
-	
-	public void persist(Plugin plugin){
+	public void persist(ExampleCall ExampleCall){
 		entityManager.getTransaction().begin();
 		try {
-			entityManager.persist(plugin);
+			entityManager.persist(ExampleCall);
 		} catch (Exception e){
 			entityManager.getTransaction().rollback();
 			LOG.error(e);
 		} finally {
 			entityManager.getTransaction().commit();
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ExampleCall> getRandomCalls(){
+		Query query = entityManager.createQuery("SELECT h FROM ExampleCall h");
+		query.setMaxResults(5);
+	    return (List<ExampleCall>) query.getResultList();
 	}
 	
 	
@@ -56,3 +58,5 @@ public class PluginEntityManager {
 		}
 	}
 }
+
+

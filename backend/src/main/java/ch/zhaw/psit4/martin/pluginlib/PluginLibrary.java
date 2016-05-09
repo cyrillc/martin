@@ -57,7 +57,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     private PluginEntityManager pluginEntityManager;
 
     @Autowired
-    private ExampleCallService exampleCallService;
+    private ExampleCallEntityManager exampleCallEntityManager;
 
 
     /*
@@ -261,12 +261,13 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public List<ExampleCall> getExampleCalls() {
-        return exampleCallService.listExampleCalls();
+        return exampleCallEntityManager.getAll();
+        
     }
 
     @Override
     public List<ExampleCall> getRandomExampleCalls() {
-        return exampleCallService.getRandomExcampleCalls();
+        return exampleCallEntityManager.getRandomCalls();
     }
 
     public Map<String, MartinPlugin> getPluginExtentions() {

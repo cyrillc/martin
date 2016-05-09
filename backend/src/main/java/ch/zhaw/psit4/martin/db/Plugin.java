@@ -53,7 +53,7 @@ public class Plugin {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "plugin", cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE }, orphanRemoval = true)
     private Set<Function> functions;
     
-    
+   
     public Plugin() {}
 
     public Plugin(int id) {
@@ -102,6 +102,7 @@ public class Plugin {
     
     public void setFunctions(Set<Function> functions) {
         this.functions = functions;
+        functions.stream().forEach(f -> f.setPlugin(this));
     }
 
     public Set<Function> getFunctions(){
@@ -114,6 +115,7 @@ public class Plugin {
     
     public void setAuthor(Author author){
         this.author = author;
+        author.addPlugin(this);
     }
 
 }
