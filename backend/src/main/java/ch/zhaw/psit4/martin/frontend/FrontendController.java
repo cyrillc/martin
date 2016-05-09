@@ -15,9 +15,6 @@ import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.db.*;
 import ch.zhaw.psit4.martin.pluginInstaller.PluginInstaller;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.List;
 
 import javax.servlet.annotation.MultipartConfig;

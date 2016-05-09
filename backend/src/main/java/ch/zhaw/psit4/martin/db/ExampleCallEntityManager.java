@@ -10,7 +10,7 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class ExampleCallEntityManager {
+public class ExampleCallEntityManager{
 
 	private static EntityManager entityManager;
 	private static EntityManagerFactory entityManagerFactory;

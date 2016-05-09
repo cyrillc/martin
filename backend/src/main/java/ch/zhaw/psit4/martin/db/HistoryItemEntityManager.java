@@ -28,6 +28,7 @@ public class HistoryItemEntityManager {
 	    return (List<HistoryItem>) query.getResultList();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<HistoryItem> getLimitedHistory(int amount){
 		Query query = entityManager.createQuery("SELECT h FROM HistoryItem h ORDER BY h.date DESC");
 		query.setMaxResults(amount);
