@@ -54,7 +54,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     private PluginDataAccessor pluginDataAccessor;
     
     @Autowired
-    private PluginService pluginService;
+    private PluginEntityManager pluginEntityManager;
 
     @Autowired
     private ExampleCallService exampleCallService;
@@ -241,7 +241,10 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
     @Override
     public List<PluginInformation> getPluginInformation() {
-        List<ch.zhaw.psit4.martin.db.Plugin> pluginList = pluginService.listPlugins();
+    	
+    	
+    	
+        List<ch.zhaw.psit4.martin.db.Plugin> pluginList = pluginEntityManager.getAll();
         List<PluginInformation> pluginInformationList = new ArrayList<PluginInformation>();
         for (ch.zhaw.psit4.martin.db.Plugin plugin : pluginList) {
             pluginInformationList.add(new PluginInformation(plugin.getName(),

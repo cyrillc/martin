@@ -81,6 +81,19 @@
 		<property name="sessionFactory" ref="HibernateSessionFactory" />
 	</bean>
 
+
+
+    <!-- Database JPA -->
+    <bean 
+        id="MartinDatabaseManager" 
+        class="ch.zhaw.psit4.martin.db.MartinDatabaseManager" 
+        scope="singleton"
+        init-method="init"
+        destroy-method="destroy">
+    </bean>
+
+
+
 	<!-- JAVA CLASSES -->
 
 	<!-- package aiController -->
@@ -123,13 +136,6 @@
         class="ch.zhaw.psit4.martin.requestprocessor.utils.NaturalLanguageAnalysisUtilities" 
         scope="singleton">
     </bean>
-    <!-- <bean 
-        id="StanfordCoreNLP" 
-        class="edu.stanford.nlp.pipeline.StanfordCoreNLP" 
-        scope="singleton" 
-        factory-bean="NaturalLanguageAnalysisUtilities" 
-        factory-method="bootStanfordNLP">
-    </bean> -->
 
     <bean 
         id="StanfordCoreNLPClient" 

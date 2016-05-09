@@ -47,22 +47,12 @@
 			<artifactId>spring-tx</artifactId>
 		</dependency>
 
-		<!-- HIBERNATE -->
+		<!-- JPA -->
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>5.1.0.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>5.1.0.Final</version>
-		</dependency>
-
-		<!-- MYSQL CONNECTOR -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.persistence</artifactId>
+			<version>2.1.1</version>
+			<scope>provided</scope>
 		</dependency>
 		
 		<!-- JAVA PLUGIN FRAMEWORK -->
