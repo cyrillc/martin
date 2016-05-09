@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.db.function;
+package ch.zhaw.psit4.martin.db;
 
 import java.util.List;
 import org.hibernate.Session;

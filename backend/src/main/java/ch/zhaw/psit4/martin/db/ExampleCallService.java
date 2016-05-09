@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ch.zhaw.psit4.martin.db.examplecall;
+package ch.zhaw.psit4.martin.db;
 
 import java.util.List;
 import org.springframework.stereotype.Service;

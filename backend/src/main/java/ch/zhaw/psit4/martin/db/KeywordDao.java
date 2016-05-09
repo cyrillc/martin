@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.db.author;
+package ch.zhaw.psit4.martin.db;
 
 import java.util.List;
 
@@ -8,14 +8,14 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 /**
- * DAO for Paramter to manage database access. The class defines the methods
+ * DAO for Keywords to manage database access. The class defines the methods
  * to access the plugin database.
  * 
  * 
  * @version 0.0.1-SNAPSHOT
  */
 @Repository
-public class AuthorDao {
+public class KeywordDao {
     
     private SessionFactory sessionFactory;
 
@@ -23,38 +23,40 @@ public class AuthorDao {
         this.sessionFactory = sf;
     }
 
-    public void add(Author author) {
+    public void add(Keyword keyword) {
         Session session = this.sessionFactory.getCurrentSession();
-        session.persist(author);
+        session.persist(keyword);
     }
     
     @SuppressWarnings("unchecked")
-    public List<Author> listAuthors() {
+    public List<Keyword> listKeywords() {
         Session session = this.sessionFactory.getCurrentSession();
-        return session.createQuery("from Author").list();
+        return session.createQuery("from Keyword").list();
     }
     
     @SuppressWarnings("unchecked")
-    public List<Author> getByName(String name) {
+    public List<Keyword> getMatchingKeywords(String keyword) {
         Session session = this.sessionFactory.getCurrentSession();
-        Query query = session.createQuery("from Author where name = :name");
-        query.setParameter("name", name);
+        Query query = session.createQuery("from Keyword where keyword = :keyword");
+        query.setParameter("keyword", keyword);
         return query.list();
     }
     
-    public Author getById(int id) {
+    public Keyword getById(int id) {
         Session session = this.sessionFactory.getCurrentSession();
-        return (Author) session.get(Author.class,id);
-    }
-
-    public void updateAuthor(Author author) {
-        Session session = this.sessionFactory.getCurrentSession();
-        session.update(author);
+        Keyword helloMartin = (Keyword) session.get(Keyword.class,
+                id);
+        return helloMartin;
     }
     
-    public void removeAuthor(int id) {
+    public void updateKeyword(Keyword keyword) {
         Session session = this.sessionFactory.getCurrentSession();
-        Author hm = this.getById(id);
+        session.update(keyword);
+    }
+    
+    public void removeKeyword(int id) {
+        Session session = this.sessionFactory.getCurrentSession();
+        Keyword hm = this.getById(id);
         if (hm != null) {
             session.delete(hm);
         }

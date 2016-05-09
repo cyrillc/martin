@@ -10,8 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
-import ch.zhaw.psit4.martin.db.parameter.Parameter;
-import ch.zhaw.psit4.martin.db.parameter.ParameterService;
+import ch.zhaw.psit4.martin.db.*;
 
 import static org.junit.Assert.*;
 

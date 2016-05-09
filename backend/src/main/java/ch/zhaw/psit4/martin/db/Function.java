@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.db.function;
+package ch.zhaw.psit4.martin.db;
 
 import java.util.Set;
 
@@ -16,9 +16,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import ch.zhaw.psit4.martin.db.keyword.Keyword;
-import ch.zhaw.psit4.martin.db.parameter.Parameter;
-import ch.zhaw.psit4.martin.db.plugin.Plugin;
+import ch.zhaw.psit4.martin.db.Keyword;
+import ch.zhaw.psit4.martin.db.Parameter;
+import ch.zhaw.psit4.martin.db.Plugin;
 
 /**
  * Contains a Paramter for a Plugin Function. The class

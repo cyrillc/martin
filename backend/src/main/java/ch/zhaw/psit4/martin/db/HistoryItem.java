@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.db.historyitem;
+package ch.zhaw.psit4.martin.db;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -14,8 +14,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import ch.zhaw.psit4.martin.db.request.Request;
-import ch.zhaw.psit4.martin.db.response.Response;
+import ch.zhaw.psit4.martin.db.Request;
+import ch.zhaw.psit4.martin.db.Response;
 
 /**
  * A HistoryItem is used to keep track of the Requests sent to Martin and the

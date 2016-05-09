@@ -1,6 +1,8 @@
-package ch.zhaw.psit4.martin.db.parameter;
+package ch.zhaw.psit4.martin.db;
 
 import java.util.List;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Repository;
  * @version 0.0.1-SNAPSHOT
  */
 @Repository
-public class ParameterDao {
+public class AuthorDao {
     
     private SessionFactory sessionFactory;
 
@@ -21,34 +23,38 @@ public class ParameterDao {
         this.sessionFactory = sf;
     }
 
-    public void add(Parameter parameter) {
+    public void add(Author author) {
         Session session = this.sessionFactory.getCurrentSession();
-        session.persist(parameter);
+        session.persist(author);
     }
     
     @SuppressWarnings("unchecked")
-    public List<Parameter> listParameters() {
+    public List<Author> listAuthors() {
         Session session = this.sessionFactory.getCurrentSession();
-        return session.createQuery("from Parameter").list();
+        return session.createQuery("from Author").list();
     }
     
-    public Parameter getById(int id) {
+    @SuppressWarnings("unchecked")
+    public List<Author> getByName(String name) {
         Session session = this.sessionFactory.getCurrentSession();
-        return (Parameter) session.get(Parameter.class,id);
+        Query query = session.createQuery("from Author where name = :name");
+        query.setParameter("name", name);
+        return query.list();
     }
     
-    /**
-     * USE WITH CAUTION!!
-     * @param parameter
-     */
-    public void updateParameter(Parameter parameter) {
+    public Author getById(int id) {
         Session session = this.sessionFactory.getCurrentSession();
-        session.update(parameter);
+        return (Author) session.get(Author.class,id);
+    }
+
+    public void updateAuthor(Author author) {
+        Session session = this.sessionFactory.getCurrentSession();
+        session.update(author);
     }
     
-    public void removeParameter(int id) {
+    public void removeAuthor(int id) {
         Session session = this.sessionFactory.getCurrentSession();
-        Parameter hm = this.getById(id);
+        Author hm = this.getById(id);
         if (hm != null) {
             session.delete(hm);
         }

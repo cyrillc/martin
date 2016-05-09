@@ -4,8 +4,7 @@ import java.util.List;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
-import ch.zhaw.psit4.martin.db.response.Response;
+import ch.zhaw.psit4.martin.db.*;
 
 /**
  * Interface for class <code>PluginLibrary</code>.

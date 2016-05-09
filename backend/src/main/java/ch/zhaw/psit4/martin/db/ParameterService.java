@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.db.parameter;
+package ch.zhaw.psit4.martin.db;
 
 import java.util.List;
 

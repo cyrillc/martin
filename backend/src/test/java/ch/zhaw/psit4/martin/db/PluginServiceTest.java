@@ -3,7 +3,6 @@ package ch.zhaw.psit4.martin.db;
 import static org.junit.Assert.*;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,13 +16,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
-import ch.zhaw.psit4.martin.db.author.Author;
-import ch.zhaw.psit4.martin.db.author.AuthorService;
-import ch.zhaw.psit4.martin.db.function.Function;
-import ch.zhaw.psit4.martin.db.function.FunctionService;
-import ch.zhaw.psit4.martin.db.parameter.ParameterService;
-import ch.zhaw.psit4.martin.db.plugin.Plugin;
-import ch.zhaw.psit4.martin.db.plugin.PluginService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:Beans.xml", "classpath:Beans-unit-tests.xml"})

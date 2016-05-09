@@ -8,11 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
-import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
-import ch.zhaw.psit4.martin.db.historyitem.HistoryItemService;
-import ch.zhaw.psit4.martin.db.request.Request;
-import ch.zhaw.psit4.martin.db.response.Response;
+import ch.zhaw.psit4.martin.db.*;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;

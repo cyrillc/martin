@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.db.author;
+package ch.zhaw.psit4.martin.db;
 
 import java.util.List;
 

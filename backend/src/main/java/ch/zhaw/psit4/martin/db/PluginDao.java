@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.db.keyword;
+package ch.zhaw.psit4.martin.db;
 
 import java.util.List;
 
@@ -8,14 +8,14 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 /**
- * DAO for Keywords to manage database access. The class defines the methods
+ * DAO for Paramter to manage database access. The class defines the methods
  * to access the plugin database.
  * 
  * 
  * @version 0.0.1-SNAPSHOT
  */
 @Repository
-public class KeywordDao {
+public class PluginDao {
     
     private SessionFactory sessionFactory;
 
@@ -23,40 +23,42 @@ public class KeywordDao {
         this.sessionFactory = sf;
     }
 
-    public void add(Keyword keyword) {
+    public void add(Plugin plugin) {
         Session session = this.sessionFactory.getCurrentSession();
-        session.persist(keyword);
+        session.persist(plugin);
     }
     
     @SuppressWarnings("unchecked")
-    public List<Keyword> listKeywords() {
+    public List<Plugin> listPlugins() {
         Session session = this.sessionFactory.getCurrentSession();
-        return session.createQuery("from Keyword").list();
+        return session.createQuery("from Plugin").list();
     }
     
     @SuppressWarnings("unchecked")
-    public List<Keyword> getMatchingKeywords(String keyword) {
+    public List<Plugin> getByUUID(String uuid) {
         Session session = this.sessionFactory.getCurrentSession();
-        Query query = session.createQuery("from Keyword where keyword = :keyword");
-        query.setParameter("keyword", keyword);
+        Query query = session.createQuery("from Plugin where plugin_uuid = :uuid");
+        query.setParameter("uuid", uuid);
         return query.list();
     }
     
-    public Keyword getById(int id) {
+    public Plugin getById(int id) {
         Session session = this.sessionFactory.getCurrentSession();
-        Keyword helloMartin = (Keyword) session.get(Keyword.class,
-                id);
-        return helloMartin;
+        return (Plugin) session.get(Plugin.class,id);
     }
     
-    public void updateKeyword(Keyword keyword) {
+    /**
+     * USE WITH CAUTION!!
+     * @param plugin
+     */
+    public void updatePlugin(Plugin plugin) {
         Session session = this.sessionFactory.getCurrentSession();
-        session.update(keyword);
+        session.update(plugin);
     }
     
-    public void removeKeyword(int id) {
+    public void removePlugin(int id) {
         Session session = this.sessionFactory.getCurrentSession();
-        Keyword hm = this.getById(id);
+        Plugin hm = this.getById(id);
         if (hm != null) {
             session.delete(hm);
         }

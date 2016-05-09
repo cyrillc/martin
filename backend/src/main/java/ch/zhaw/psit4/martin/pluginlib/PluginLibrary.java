@@ -26,10 +26,7 @@ import ch.zhaw.psit4.martin.common.Call;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
-import ch.zhaw.psit4.martin.db.examplecall.ExampleCallService;
-import ch.zhaw.psit4.martin.db.plugin.PluginService;
-import ch.zhaw.psit4.martin.db.response.Response;
+import ch.zhaw.psit4.martin.db.*;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.KeywordsJSONMissingException;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor;
 
@@ -133,12 +130,12 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 continue;
             
             // update DB and memory
-            try {
+            /**try {
                 pluginDataAccessor.savePluginInDB(extension, classLoader);
                 plugins.put(uuid, pluginInstance);
             } catch (KeywordsJSONMissingException e) {
                 LOG.warn("Plugin could not be loaded.", e);
-            }
+            } **/
         }
 
         return plugins;
@@ -244,9 +241,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
     @Override
     public List<PluginInformation> getPluginInformation() {
-        List<ch.zhaw.psit4.martin.db.plugin.Plugin> pluginList = pluginService.listPlugins();
+        List<ch.zhaw.psit4.martin.db.Plugin> pluginList = pluginService.listPlugins();
         List<PluginInformation> pluginInformationList = new ArrayList<PluginInformation>();
-        for (ch.zhaw.psit4.martin.db.plugin.Plugin plugin : pluginList) {
+        for (ch.zhaw.psit4.martin.db.Plugin plugin : pluginList) {
             pluginInformationList.add(new PluginInformation(plugin.getName(),
                     plugin.getDescription(), plugin.getFunctions()));
         }

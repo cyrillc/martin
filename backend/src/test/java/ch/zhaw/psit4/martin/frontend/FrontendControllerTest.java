@@ -15,9 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
-import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
-import ch.zhaw.psit4.martin.db.request.Request;
-import ch.zhaw.psit4.martin.db.response.Response;
+import ch.zhaw.psit4.martin.db.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })

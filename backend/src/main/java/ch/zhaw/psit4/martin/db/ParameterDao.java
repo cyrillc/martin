@@ -1,8 +1,6 @@
-package ch.zhaw.psit4.martin.db.plugin;
+package ch.zhaw.psit4.martin.db;
 
 import java.util.List;
-
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
@@ -15,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * @version 0.0.1-SNAPSHOT
  */
 @Repository
-public class PluginDao {
+public class ParameterDao {
     
     private SessionFactory sessionFactory;
 
@@ -23,42 +21,34 @@ public class PluginDao {
         this.sessionFactory = sf;
     }
 
-    public void add(Plugin plugin) {
+    public void add(Parameter parameter) {
         Session session = this.sessionFactory.getCurrentSession();
-        session.persist(plugin);
+        session.persist(parameter);
     }
     
     @SuppressWarnings("unchecked")
-    public List<Plugin> listPlugins() {
+    public List<Parameter> listParameters() {
         Session session = this.sessionFactory.getCurrentSession();
-        return session.createQuery("from Plugin").list();
+        return session.createQuery("from Parameter").list();
     }
     
-    @SuppressWarnings("unchecked")
-    public List<Plugin> getByUUID(String uuid) {
+    public Parameter getById(int id) {
         Session session = this.sessionFactory.getCurrentSession();
-        Query query = session.createQuery("from Plugin where plugin_uuid = :uuid");
-        query.setParameter("uuid", uuid);
-        return query.list();
-    }
-    
-    public Plugin getById(int id) {
-        Session session = this.sessionFactory.getCurrentSession();
-        return (Plugin) session.get(Plugin.class,id);
+        return (Parameter) session.get(Parameter.class,id);
     }
     
     /**
      * USE WITH CAUTION!!
-     * @param plugin
+     * @param parameter
      */
-    public void updatePlugin(Plugin plugin) {
+    public void updateParameter(Parameter parameter) {
         Session session = this.sessionFactory.getCurrentSession();
-        session.update(plugin);
+        session.update(parameter);
     }
     
-    public void removePlugin(int id) {
+    public void removeParameter(int id) {
         Session session = this.sessionFactory.getCurrentSession();
-        Plugin hm = this.getById(id);
+        Parameter hm = this.getById(id);
         if (hm != null) {
             session.delete(hm);
         }
