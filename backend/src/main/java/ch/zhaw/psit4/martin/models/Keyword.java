@@ -2,80 +2,57 @@ package ch.zhaw.psit4.martin.models;
 
 import java.util.Set;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-
 /**
- * Contains a Keyword for a Plugin. Either Funtion or Parameter. The class
- * is used to store a retreived keywords of a plugin. 
+ * Contains a Keyword for a Plugin. Either Funtion or Parameter. The class is
+ * used to store a retreived keywords of a plugin.
  * 
  * @version 0.0.1-SNAPSHOT
  */
 @Entity
 @Table(name = "keyword")
-public class Keyword {
+public class Keyword extends BaseModel {
 
-    public Keyword() {}
+	private String keyword;
 
-    @Id
-    @Column(name="keyword_id", unique = true, nullable = false, updatable = false )
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+	// mapped by set in Parameter.java
+	@ManyToMany(mappedBy = "parameterKeywords")
+	private Set<Parameter> parameter;
 
-    @Column(name = "keyword")
-    private String keyword;
+	@ManyToMany(mappedBy = "keywords")
+	private Set<Function> functions;
 
-    // mapped by set in Parameter.java
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "parameterKeywords")
-    private Set<Parameter> parameter;
-    
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "keywords")
-    private Set<Function> functions;
+	public Keyword() {
+	}
 
+	public Keyword(String keyword) {
+		this.setKeyword(keyword);
+	}
 
-	public Keyword(int id) {
-        this.setId(id);
-    }
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
 
-    public Keyword(String keyword ) {
-        this.setKeyword(keyword);
-    }
-    public int getId() {
-        return id;
-    }
+	public String getKeyword() {
+		return keyword;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public Set<Parameter> getParameter() {
+		return parameter;
+	}
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
+	public void setParameter(Set<Parameter> parameter) {
+		this.parameter = parameter;
+	}
 
-    public String getKeyword() {
-        return keyword;
-    }
-    
-    public Set<Parameter> getParameter() {
-        return parameter;
-    }
+	public Set<Parameter> getParentParameter() {
+		return this.parameter;
+	}
 
-    public void setParameter(Set<Parameter> parameter) {
-        this.parameter = parameter;
-    }
-    
-    public Set<Parameter> getParentParameter() {
-        return this.parameter;
-    }
-    
-    public Set<Function> getFunctions() {
+	public Set<Function> getFunctions() {
 		return functions;
 	}
 

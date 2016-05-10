@@ -20,7 +20,7 @@
 		</addColumn>
 
 		<addColumn tableName="plugin">
-			<column name="plugin_uuid" type="VARCHAR(36)">
+			<column name="uuid" type="VARCHAR(36)">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
@@ -28,7 +28,7 @@
 	
 	<changeSet author="fabiadan" id="schema-1.2.1">
 		<addUniqueConstraint columnNames="name" tableName="author" />
-		<addUniqueConstraint columnNames="plugin_uuid" tableName="plugin" />
+		<addUniqueConstraint columnNames="uuid" tableName="plugin" />
 	</changeSet>
 
 </databaseChangeLog>

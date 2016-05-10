@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
@@ -83,7 +84,7 @@ public class AIControllerFacade {
         	response = new Response("Sorry, I can't understand you.");
         }
         
-        historyItemRepository.persist(new HistoryItem(request, response));
+        historyItemRepository.save(new HistoryItem(request, response));
         
         return response;
     }
@@ -93,7 +94,7 @@ public class AIControllerFacade {
      * @return all the history of requests with the relative responses
      */
     public List<HistoryItem> getHistory() {
-        return historyItemRepository.getAll();
+        return historyItemRepository.findAll();
     }
     
     /**
@@ -103,7 +104,7 @@ public class AIControllerFacade {
      * @param amount the amount of historyItems to get
      */
     public List<HistoryItem> getLimitedHistory(int amount) {
-        return historyItemRepository.getLimitedHistory(amount);
+        return historyItemRepository.getLimitedHistory(new PageRequest(0, amount));
     }
 
     public List<PluginInformation> getPluginInformation() {

@@ -245,7 +245,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     	
     	
     	
-        List<ch.zhaw.psit4.martin.models.Plugin> pluginList = pluginRepository.getAll();
+        Iterable<ch.zhaw.psit4.martin.models.Plugin> pluginList = pluginRepository.findAll();
         List<PluginInformation> pluginInformationList = new ArrayList<PluginInformation>();
         for (ch.zhaw.psit4.martin.models.Plugin plugin : pluginList) {
             pluginInformationList.add(new PluginInformation(plugin.getName(),
@@ -262,13 +262,12 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public List<ExampleCall> getExampleCalls() {
-        return exampleCallRepository.getAll();
-        
+    	return exampleCallRepository.findAll();
     }
 
     @Override
     public List<ExampleCall> getRandomExampleCalls() {
-        return exampleCallRepository.getRandomCalls();
+        return exampleCallRepository.findAll();
     }
 
     public Map<String, MartinPlugin> getPluginExtentions() {

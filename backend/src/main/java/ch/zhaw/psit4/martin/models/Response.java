@@ -1,58 +1,44 @@
 package ch.zhaw.psit4.martin.models;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "response")
-public class Response {
+public class Response extends BaseModel {
 
-    public Response() {}
+	@NotNull
+	private String responseText;
 
-    @Id
-    @Column(name = "response_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+	public Response() {
+	}
 
-    @Column(name = "responsetext")
-    @NotNull
-    private String content;
+	public Response(String content) {
+		this.responseText = content;
+	}
 
-    public int getId() {
-        return this.id;
-    }
+	public String getResponseText() {
+		return responseText;
+	}
 
-    public Response(String content) {
-        this.content = content;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Response)) {
+			return false;
+		}
+		final Response r = (Response) obj;
+		if (this.getId() != r.getId() || !this.getResponseText().equals(r.getResponseText())) {
+			return false;
+		}
+		return true;
+	}
 
-    public String getContent() {
-        return content;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Response)) {
-            return false;
-        }
-        final Response r = (Response) obj;
-        if (this.getId() != r.getId()
-                || !this.getContent().equals(r.getContent())) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode() * (this.id + this.getContent().hashCode()) * 7;
-    }
+	@Override
+	public int hashCode() {
+		return super.hashCode() * (this.getId() + this.getResponseText().hashCode()) * 7;
+	}
 }

@@ -47,7 +47,7 @@ public class RequestProcessor implements IRequestProcessor {
 	 *         executable function calls.
 	 */
 	@Override
-	public ExtendedRequest extend(Request request) {
+	public ExtendedRequest extend(Request request) {	
 		List<PossibleCall> possibleCalls = new ArrayList<>();
 
 		Sentence sentence = new Sentence(request.getCommand(), stanfordNLP);
@@ -93,30 +93,27 @@ public class RequestProcessor implements IRequestProcessor {
 	private List<PossibleCall> addPossibleCallsWithKeywords(List<PossibleCall> possibleCalls, List<String> words) {
 
 		for (String word : words) {
-			
-			
-			
-			Optional<Keyword> keyword = keywordRepository.getByName(word);
-		
-			
-			if(keyword.isPresent()){
-				for(Function function : keyword.get().getFunctions()){
+
+			Keyword keyword = keywordRepository.findByKeywordIgnoreCase(word);
+
+			if (keyword != null) {
+				for (Function function : keyword.getFunctions()) {
 					Plugin plugin = function.getPlugin();
 
 					Optional<PossibleCall> optionalPossibleResult = possibleCalls.stream()
 							.filter(o -> o.getPlugin().getId() == plugin.getId())
 							.filter(o -> o.getFunction().getId() == function.getId()).findFirst();
 
-					if(optionalPossibleResult.isPresent()) {
-						optionalPossibleResult.get().addMatchingKeyword(keyword.get());
+					if (optionalPossibleResult.isPresent()) {
+						optionalPossibleResult.get().addMatchingKeyword(keyword);
 					} else {
 						PossibleCall possibleCall = new PossibleCall(plugin, function);
-						possibleCall.addMatchingKeyword(keyword.get());
+						possibleCall.addMatchingKeyword(keyword);
 						possibleCalls.add(possibleCall);
 					}
 				}
 			}
-			
+
 		}
 
 		return possibleCalls;

@@ -100,7 +100,7 @@ public class PluginDataAccessor {
 			// parameterService.addParameter(p));
 
 		}
-		pluginRepository.persist(dbPlugin);
+		pluginRepository.save(dbPlugin);
 	}
 
 	/**

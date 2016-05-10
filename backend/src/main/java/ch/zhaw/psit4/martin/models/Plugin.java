@@ -4,12 +4,7 @@ import java.sql.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -19,103 +14,78 @@ import ch.zhaw.psit4.martin.models.Author;
 import ch.zhaw.psit4.martin.models.Function;
 
 /**
- * Contains a Paramter for a Plugin Function. The class
- * is used to store plugins, their names and options of a function. 
+ * Contains a Paramter for a Plugin Function. The class is used to store
+ * plugins, their names and options of a function.
  * 
  * @version 0.0.1-SNAPSHOT
  */
 @Entity
 @Table(name = "plugin")
-public class Plugin {
+public class Plugin extends BaseModel {
 
+	private String uuid;
+	private String name;
+	private String description;
+	private Date date;
 
-    @Id
-    @Column( name="plugin_id", unique = true, nullable = false, updatable = false )
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    
-    @Column(name="plugin_uuid")
-    private String uuid;
+	@ManyToOne
+	@JoinColumn(nullable = false)
+	private Author author;
 
-    @Column(name = "name")
-    private String name;
-    
-    @Column(name = "description")
-    private String description;
-    
-    @Column(name = "date")
-    private Date date;
+	@OneToMany(mappedBy = "plugin", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Function> functions;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "author_id", nullable = false)
-    private Author author;
+	public Plugin() {
+	}
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plugin", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Function> functions;
-    
-   
-    public Plugin() {}
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public Plugin(int id) {
-        this.setId(id);
-    }
+	public String getName() {
+		return name;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getUuid() {
+		return uuid;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public Date getDate() {
+		return date;
+	}
 
-    public String getDescription() {
-        return description;
-    }
-    
-    public String getUuid() {
-        return uuid;
-    }
+	public void setDate(Date date) {
+		this.date = date;
+	}
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-    
-    public Date getDate() {
-        return date;
-    }
+	public void setFunctions(Set<Function> functions) {
+		this.functions = functions;
+		functions.stream().forEach(f -> f.setPlugin(this));
+	}
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
-    
-    public void setFunctions(Set<Function> functions) {
-        this.functions = functions;
-        functions.stream().forEach(f -> f.setPlugin(this));
-    }
+	public Set<Function> getFunctions() {
+		return this.functions;
+	}
 
-    public Set<Function> getFunctions(){
-        return this.functions;
-    }
-    
-    public Author getAuthor(){
-        return this.author;
-    }
-    
-    public void setAuthor(Author author){
-        this.author = author;
-        author.addPlugin(this);
-    }
+	public Author getAuthor() {
+		return this.author;
+	}
+
+	public void setAuthor(Author author) {
+		this.author = author;
+		author.addPlugin(this);
+	}
 
 }

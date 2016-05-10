@@ -3,11 +3,7 @@ package ch.zhaw.psit4.martin.models;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -27,45 +23,25 @@ import ch.zhaw.psit4.martin.models.Plugin;
  */
 @Entity
 @Table(name = "function")
-public class Function {
+public class Function extends BaseModel {
 
-	@Id
-	@Column(name = "function_id", unique = true, nullable = false, updatable = false)
-	@GeneratedValue
-	private int id;
-
-	@Column(name = "name")
 	private String name;
-
-	@Column(name = "description")
 	private String description;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "function", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "function", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Parameter> parameters;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	@JoinTable(name = "function_has_keyword", joinColumns = {
-	@JoinColumn(name = "function_id", nullable = false, updatable = false) }, inverseJoinColumns = {
-	@JoinColumn(name = "keyword_id", nullable = false, updatable = false) })
+			@JoinColumn(name = "function_id", nullable = false, updatable = false) }, inverseJoinColumns = {
+					@JoinColumn(name = "keyword_id", nullable = false, updatable = false) })
 	private Set<Keyword> keywords;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "plugin_id", nullable = false)
+	@ManyToOne
+	@JoinColumn(nullable = false)
 	private Plugin plugin;
 
 	public Function() {
-	}
-
-	public Function(int id) {
-		this.setId(id);
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	public void setName(String name) {

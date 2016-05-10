@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-  xmlns:tx="http://www.springframework.org/schema/tx"
-  xsi:schemaLocation="  http://www.springframework.org/schema/beans 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="  http://www.springframework.org/schema/beans 
                         http://www.springframework.org/schema/beans/spring-beans.xsd
                         http://www.springframework.org/schema/tx 
                         http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
@@ -11,55 +10,40 @@
                         http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
 	<!-- DATASOURCE -->
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://127.0.0.1:3306/martin_dev" />
 		<property name="username" value="devuser" />
 		<property name="password" value="devuser" />
 	</bean>
 
-    <!-- Database JPA -->
-    <bean id="myEmf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-      <property name="dataSource" ref="dataSource" />
-      <property name="packagesToScan" value="ch.zhaw.psit4.martin.models" />
-      <property name="jpaVendorAdapter">
-         <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-      </property>
-      <property name="jpaProperties">
-         <props>
-            <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
-         </props>
-      </property>
-    </bean>
- 
- 
-   <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-      <property name="entityManagerFactory" ref="myEmf" />
-   </bean>
-   <tx:annotation-driven />
- 
-   <bean id="persistenceExceptionTranslationPostProcessor" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
-
-   <jpa:repositories base-package="ch.zhaw.psit4.martin.models.repositoreis"/>
+	<!-- Database JPA -->
+	<bean id="myEmf"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="ch.zhaw.psit4.martin.models" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+			</props>
+		</property>
+	</bean>
 
 
-    <bean 
-        id="PluginRepository" 
-        class="ch.zhaw.psit4.martin.models.repositories.PluginRepository">
-    </bean>
-     <bean 
-        id="KeywordRepository" 
-        class="ch.zhaw.psit4.martin.models.repositories.KeywordRepository">
-    </bean>
-    <bean 
-        id="HistoryRepository" 
-        class="ch.zhaw.psit4.martin.models.repositories.HistoryItemRepository">
-    </bean>
-    <bean 
-        id="ExampleCallRepository" 
-        class="ch.zhaw.psit4.martin.models.repositories.ExampleCallRepository">
-    </bean>
-    
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="myEmf" />
+	</bean>
+	<tx:annotation-driven />
+
+	<bean id="persistenceExceptionTranslationPostProcessor"
+		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+	<jpa:repositories base-package="ch.zhaw.psit4.martin.models.repositories"
+		entity-manager-factory-ref="myEmf" />
 
 
 
@@ -85,30 +69,29 @@
 	</bean>
 
 	<bean id="PluginLibraryBootstrap" class="ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap"
-	scope="singleton" depends-on="PluginFolderAccessor" />
+		scope="singleton" depends-on="PluginFolderAccessor" />
 
-	<bean id="IPluginLibrary" factory-bean="PluginLibraryBootstrap" factory-method="boot" class="ch.zhaw.psit4.martin.pluginlib.IPluginLibrary"/>
-	
-	<bean id="PluginFolderAccessor" class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginFolderAccessor">
-		<constructor-arg value="plugins"/>
-		<constructor-arg value="classpath:library.cfg.json"/>
+	<bean id="IPluginLibrary" factory-bean="PluginLibraryBootstrap"
+		factory-method="boot" class="ch.zhaw.psit4.martin.pluginlib.IPluginLibrary" />
+
+	<bean id="PluginFolderAccessor"
+		class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginFolderAccessor">
+		<constructor-arg value="plugins" />
+		<constructor-arg value="classpath:library.cfg.json" />
 	</bean>
-	
-	<bean id="PluginDataAccessor" class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor">
+
+	<bean id="PluginDataAccessor"
+		class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor">
 	</bean>
 
 	<!-- package requestProcessor -->
 	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestprocessor.RequestProcessor">
 	</bean>
-    <bean 
-        id="NaturalLanguageAnalysisUtilities" 
-        class="ch.zhaw.psit4.martin.requestprocessor.utils.NaturalLanguageAnalysisUtilities">
-    </bean>
+	<bean id="NaturalLanguageAnalysisUtilities"
+		class="ch.zhaw.psit4.martin.requestprocessor.utils.NaturalLanguageAnalysisUtilities">
+	</bean>
 
-    <bean 
-        id="StanfordCoreNLPClient" 
-        class="edu.stanford.nlp.pipeline.StanfordCoreNLPClient" 
-        factory-bean="NaturalLanguageAnalysisUtilities" 
-        factory-method="bootStanfordNLPClient">
-    </bean>
+	<bean id="StanfordCoreNLPClient" class="edu.stanford.nlp.pipeline.StanfordCoreNLPClient"
+		factory-bean="NaturalLanguageAnalysisUtilities" factory-method="bootStanfordNLPClient">
+	</bean>
 </beans>
