@@ -8,11 +8,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ch.zhaw.psit4.martin.db.*;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
+import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.repositories.HistoryItemRepository;
 
 /**
  * This class represents the AIControllerFacade The class follows the Facade
@@ -30,7 +31,7 @@ public class AIControllerFacade {
     private IPluginLibrary pluginLibrary;
     
     @Autowired
-    private HistoryItemEntityManager historyItemEntityManager;
+    private HistoryItemRepository historyItemRepository;
     
     @Autowired
     private RequestProcessor requestProcessor;
@@ -82,7 +83,7 @@ public class AIControllerFacade {
         	response = new Response("Sorry, I can't understand you.");
         }
         
-        historyItemEntityManager.persist(new HistoryItem(request, response));
+        historyItemRepository.persist(new HistoryItem(request, response));
         
         return response;
     }
@@ -92,7 +93,7 @@ public class AIControllerFacade {
      * @return all the history of requests with the relative responses
      */
     public List<HistoryItem> getHistory() {
-        return historyItemEntityManager.getAll();
+        return historyItemRepository.getAll();
     }
     
     /**
@@ -102,7 +103,7 @@ public class AIControllerFacade {
      * @param amount the amount of historyItems to get
      */
     public List<HistoryItem> getLimitedHistory(int amount) {
-        return historyItemEntityManager.getLimitedHistory(amount);
+        return historyItemRepository.getLimitedHistory(amount);
     }
 
     public List<PluginInformation> getPluginInformation() {

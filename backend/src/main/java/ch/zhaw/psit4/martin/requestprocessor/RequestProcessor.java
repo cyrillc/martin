@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import ch.zhaw.psit4.martin.api.typefactory.MartinTypeFactory;
 import ch.zhaw.psit4.martin.api.types.EMartinType;
@@ -15,7 +16,8 @@ import ch.zhaw.psit4.martin.api.types.IMartinTypeInstanciationException;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Sentence;
-import ch.zhaw.psit4.martin.db.*;
+import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.repositories.KeywordRepository;
 import ch.zhaw.psit4.martin.common.Phrase;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
@@ -27,9 +29,9 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
  * @version 0.1
  **/
 public class RequestProcessor implements IRequestProcessor {
-
+	
 	@Autowired
-	private KeywordEntityManager keywordEntityManager;
+	private KeywordRepository keywordRepository;
 
 	@Autowired
 	private StanfordCoreNLPClient stanfordNLP;
@@ -94,7 +96,8 @@ public class RequestProcessor implements IRequestProcessor {
 		for (String word : words) {
 			
 			
-			Keyword keyword = keywordEntityManager.getByName(word);
+			Keyword keyword = keywordRepository.getByName(word);
+		
 			
 			for(Function function : keyword.getFunctions()){
 				Plugin plugin = function.getPlugin();

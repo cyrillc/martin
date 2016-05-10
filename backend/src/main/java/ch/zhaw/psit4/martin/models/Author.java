@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.db;
+package ch.zhaw.psit4.martin.models;
 
 import java.util.Set;
 
@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import ch.zhaw.psit4.martin.db.Plugin;
+import ch.zhaw.psit4.martin.models.Plugin;
 
 /**
  * Contains a Paramter for a Plugin Function. The class is used to store Authors, their names and

@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.db;
+package ch.zhaw.psit4.martin.models;
 
 import java.util.Set;
 

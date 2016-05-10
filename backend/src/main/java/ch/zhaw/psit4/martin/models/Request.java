@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.db;
+package ch.zhaw.psit4.martin.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,30 +9,34 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "response")
-public class Response {
+@Table(name = "request")
+public class Request {
 
-    public Response() {}
+    public Request() {}
 
     @Id
-    @Column(name = "response_id")
+    @Column(name = "request_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "responsetext")
+    @Column(name = "command")
     @NotNull
-    private String content;
+    private String command;
+
+    public Request(String command) {
+        setCommand(command);
+    }
 
     public int getId() {
         return this.id;
     }
 
-    public Response(String content) {
-        this.content = content;
+    public String getCommand() {
+        return command;
     }
 
-    public String getContent() {
-        return content;
+    public void setCommand(String command) {
+        this.command = command;
     }
 
     @Override
@@ -40,12 +44,12 @@ public class Response {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Response)) {
+        if (!(obj instanceof Request)) {
             return false;
         }
-        final Response r = (Response) obj;
+        final Request r = (Request) obj;
         if (this.getId() != r.getId()
-                || !this.getContent().equals(r.getContent())) {
+                || !this.getCommand().equals(r.getCommand())) {
             return false;
         }
         return true;
@@ -53,6 +57,6 @@ public class Response {
 
     @Override
     public int hashCode() {
-        return super.hashCode() * (this.id + this.getContent().hashCode()) * 7;
+        return (int) super.hashCode() * (this.id + this.getCommand().hashCode()) * 13;
     }
 }

@@ -1,7 +1,7 @@
 package ch.zhaw.psit4.martin.requestprocessor;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
-import ch.zhaw.psit4.martin.db.*;
+import ch.zhaw.psit4.martin.models.*;
 
 /**
  * This Interface represents the Interface to Request Processor.

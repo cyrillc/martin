@@ -13,18 +13,5 @@
             <property name="eclipselink.logging.level" value="SEVERE"/>
             <property name="eclipselink.orm.throw.exceptions" value="true"/>
         </properties>
-         
-        <!-- <properties>
-            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test"/>
-            <property name="javax.persistence.jdbc.user" value="sa"/>
-            <property name="javax.persistence.jdbc.password" value=""/>
-            <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform"/>
-            <property name="eclipselink.logging.level" value="SEVERE"/>
-            <property name="eclipselink.orm.throw.exceptions" value="true"/>
-            <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
-            <property name="eclipselink.ddl-generation.output-mode" value="database"/>
-        </properties> -->
-
     </persistence-unit>
 </persistence>

@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.db;
+package ch.zhaw.psit4.martin.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,8 +19,6 @@ import javax.persistence.Table;
 @Table(name = "example_call")
 public class ExampleCall {
 
-    public ExampleCall() {}
-
     @Id
     @Column(name = "example_call_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +30,7 @@ public class ExampleCall {
     @Column(name = "description")
     private String description;
 
+    public ExampleCall() {}
     public ExampleCall(int id) {
         this.setId(id);
     }

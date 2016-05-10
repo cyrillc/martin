@@ -26,7 +26,9 @@ import ch.zhaw.psit4.martin.common.Call;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.db.*;
+import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.repositories.ExampleCallRepository;
+import ch.zhaw.psit4.martin.models.repositories.PluginRepository;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.KeywordsJSONMissingException;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor;
 
@@ -54,10 +56,10 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     private PluginDataAccessor pluginDataAccessor;
     
     @Autowired
-    private PluginEntityManager pluginEntityManager;
+    private PluginRepository pluginRepository;
 
     @Autowired
-    private ExampleCallEntityManager exampleCallEntityManager;
+    private ExampleCallRepository exampleCallRepository;
 
 
     /*
@@ -244,9 +246,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     	
     	
     	
-        List<ch.zhaw.psit4.martin.db.Plugin> pluginList = pluginEntityManager.getAll();
+        List<ch.zhaw.psit4.martin.models.Plugin> pluginList = pluginRepository.getAll();
         List<PluginInformation> pluginInformationList = new ArrayList<PluginInformation>();
-        for (ch.zhaw.psit4.martin.db.Plugin plugin : pluginList) {
+        for (ch.zhaw.psit4.martin.models.Plugin plugin : pluginList) {
             pluginInformationList.add(new PluginInformation(plugin.getName(),
                     plugin.getDescription(), plugin.getFunctions()));
         }
@@ -261,13 +263,13 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public List<ExampleCall> getExampleCalls() {
-        return exampleCallEntityManager.getAll();
+        return exampleCallRepository.getAll();
         
     }
 
     @Override
     public List<ExampleCall> getRandomExampleCalls() {
-        return exampleCallEntityManager.getRandomCalls();
+        return exampleCallRepository.getRandomCalls();
     }
 
     public Map<String, MartinPlugin> getPluginExtentions() {

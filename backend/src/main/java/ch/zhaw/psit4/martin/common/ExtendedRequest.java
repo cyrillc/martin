@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import ch.zhaw.psit4.martin.db.Request;
+import ch.zhaw.psit4.martin.models.Request;
 
 /**
  * This class holds extended information about the request. It holds a possible

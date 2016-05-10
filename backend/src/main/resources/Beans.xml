@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
-
-	<!-- SAMPLE BEAN <bean id="helloWorld" class="com.tutorialspoint.HelloWorld">
-		<property name="message" value="Hello World!"/> </bean> -->
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="  http://www.springframework.org/schema/beans 
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/tx 
+                        http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+                        http://www.springframework.org/schema/context 
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+                        http://www.springframework.org/schema/data/jpa
+                        http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
 	<!-- DATASOURCE -->
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -18,33 +22,45 @@
 	</bean>
 
     <!-- Database JPA -->
+    <bean id="myEmf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="dataSource" ref="dataSource" />
+      <property name="packagesToScan" value="ch.zhaw.psit4.martin.models" />
+      <property name="jpaVendorAdapter">
+         <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+      </property>
+      <property name="jpaProperties">
+         <props>
+            <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+         </props>
+      </property>
+    </bean>
+ 
+ 
+   <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+      <property name="entityManagerFactory" ref="myEmf" />
+   </bean>
+   <tx:annotation-driven />
+ 
+   <bean id="persistenceExceptionTranslationPostProcessor" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+   <jpa:repositories base-package="ch.zhaw.psit4.martin.models.repositoreis"/>
+
+
     <bean 
-        id="PluginEntityManager" 
-        class="ch.zhaw.psit4.martin.db.PluginEntityManager" 
-        scope="singleton"
-        init-method="init"
-        destroy-method="destroy">
+        id="PluginRepository" 
+        class="ch.zhaw.psit4.martin.models.repositories.PluginRepository">
     </bean>
      <bean 
-        id="KeywordEntityManager" 
-        class="ch.zhaw.psit4.martin.db.KeywordEntityManager" 
-        scope="singleton"
-        init-method="init"
-        destroy-method="destroy">
+        id="KeywordRepository" 
+        class="ch.zhaw.psit4.martin.models.repositories.KeywordRepository">
     </bean>
     <bean 
-        id="HistoryItemEntityManager" 
-        class="ch.zhaw.psit4.martin.db.HistoryItemEntityManager" 
-        scope="singleton"
-        init-method="init"
-        destroy-method="destroy">
+        id="HistoryRepository" 
+        class="ch.zhaw.psit4.martin.models.repositories.HistoryItemRepository">
     </bean>
     <bean 
-        id="ExampleCallEntityManager" 
-        class="ch.zhaw.psit4.martin.db.ExampleCallEntityManager" 
-        scope="singleton"
-        init-method="init"
-        destroy-method="destroy">
+        id="ExampleCallRepository" 
+        class="ch.zhaw.psit4.martin.models.repositories.ExampleCallRepository">
     </bean>
 
 
@@ -52,7 +68,7 @@
 	<!-- JAVA CLASSES -->
 
 	<!-- package aiController -->
-	<bean id="AIControllerFacade" class="ch.zhaw.psit4.martin.aiController.AIControllerFacade" scope="singleton">
+	<bean id="AIControllerFacade" class="ch.zhaw.psit4.martin.aiController.AIControllerFacade">
 	</bean>
 
 	<!-- package boot -->
@@ -62,18 +78,18 @@
 
 
 	<!-- package Frontend -->
-	<bean id="FrontendController" class="ch.zhaw.psit4.martin.frontend.FrontendController" scope="singleton">
+	<bean id="FrontendController" class="ch.zhaw.psit4.martin.frontend.FrontendController">
 	</bean>
 
 
 	<!-- package pluginlib -->
-	<bean id="MartinContextAccessor" class="ch.zhaw.psit4.martin.pluginlib.MartinContextAccessor" scope="singleton">
+	<bean id="MartinContextAccessor" class="ch.zhaw.psit4.martin.pluginlib.MartinContextAccessor">
 	</bean>
 
 	<bean id="PluginLibraryBootstrap" class="ch.zhaw.psit4.martin.pluginlib.PluginLibraryBootstrap"
 	scope="singleton" depends-on="PluginFolderAccessor" />
 
-	<bean id="IPluginLibrary" factory-bean="PluginLibraryBootstrap" factory-method="boot" class="ch.zhaw.psit4.martin.pluginlib.IPluginLibrary" scope="singleton"/>
+	<bean id="IPluginLibrary" factory-bean="PluginLibraryBootstrap" factory-method="boot" class="ch.zhaw.psit4.martin.pluginlib.IPluginLibrary"/>
 	
 	<bean id="PluginFolderAccessor" class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginFolderAccessor">
 		<constructor-arg value="plugins"/>
@@ -84,18 +100,16 @@
 	</bean>
 
 	<!-- package requestProcessor -->
-	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestprocessor.RequestProcessor" scope="singleton">
+	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestprocessor.RequestProcessor">
 	</bean>
     <bean 
         id="NaturalLanguageAnalysisUtilities" 
-        class="ch.zhaw.psit4.martin.requestprocessor.utils.NaturalLanguageAnalysisUtilities" 
-        scope="singleton">
+        class="ch.zhaw.psit4.martin.requestprocessor.utils.NaturalLanguageAnalysisUtilities">
     </bean>
 
     <bean 
         id="StanfordCoreNLPClient" 
         class="edu.stanford.nlp.pipeline.StanfordCoreNLPClient" 
-        scope="singleton" 
         factory-bean="NaturalLanguageAnalysisUtilities" 
         factory-method="bootStanfordNLPClient">
     </bean>

@@ -1,26 +1,21 @@
-package ch.zhaw.psit4.martin.db;
+package ch.zhaw.psit4.martin.models.repositories;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class HistoryItemEntityManager {
+import ch.zhaw.psit4.martin.models.HistoryItem;
 
-	private static EntityManager entityManager;
-	private static EntityManagerFactory entityManagerFactory;
-	private static final Log LOG = LogFactory.getLog(PluginEntityManager.class);
-	
+public class HistoryItemRepository {
 
-	public static void init() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("martinPersistence");
-		entityManager = entityManagerFactory.createEntityManager();
-	}
+	@PersistenceContext
+	private EntityManager entityManager;
+	private static final Log LOG = LogFactory.getLog(PluginRepository.class);
 
 	@SuppressWarnings("unchecked")
 	public List<HistoryItem> getAll(){
@@ -45,17 +40,6 @@ public class HistoryItemEntityManager {
 			LOG.error(e);
 		} finally {
 			entityManager.getTransaction().commit();
-		}
-	}
-	
-	
-	public static void destroy() {
-		if (entityManager != null) {
-			entityManager.close();
-		}
-
-		if (entityManagerFactory != null) {
-			entityManagerFactory.close();
 		}
 	}
 }

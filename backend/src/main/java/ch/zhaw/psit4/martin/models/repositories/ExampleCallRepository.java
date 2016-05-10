@@ -1,26 +1,20 @@
-package ch.zhaw.psit4.martin.db;
+package ch.zhaw.psit4.martin.models.repositories;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class ExampleCallEntityManager{
+import ch.zhaw.psit4.martin.models.ExampleCall;
 
-	private static EntityManager entityManager;
-	private static EntityManagerFactory entityManagerFactory;
-	private static final Log LOG = LogFactory.getLog(PluginEntityManager.class);
-	
-
-	public static void init() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("martinPersistence");
-		entityManager = entityManagerFactory.createEntityManager();
-	}
+public class ExampleCallRepository{
+	@PersistenceContext
+	private EntityManager entityManager;
+	private static final Log LOG = LogFactory.getLog(PluginRepository.class);
 
 	@SuppressWarnings("unchecked")
 	public List<ExampleCall> getAll(){
@@ -45,17 +39,6 @@ public class ExampleCallEntityManager{
 		Query query = entityManager.createQuery("SELECT h FROM ExampleCall h");
 		query.setMaxResults(5);
 	    return (List<ExampleCall>) query.getResultList();
-	}
-	
-	
-	public static void destroy() {
-		if (entityManager != null) {
-			entityManager.close();
-		}
-
-		if (entityManagerFactory != null) {
-			entityManagerFactory.close();
-		}
 	}
 }
 
