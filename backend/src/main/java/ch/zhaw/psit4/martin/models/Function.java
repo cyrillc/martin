@@ -40,7 +40,7 @@ public class Function {
 	@Column(name = "description")
 	private String description;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "function", cascade = CascadeType.PERSIST, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "function", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Parameter> parameters;
 
 	@ManyToMany(fetch = FetchType.EAGER)

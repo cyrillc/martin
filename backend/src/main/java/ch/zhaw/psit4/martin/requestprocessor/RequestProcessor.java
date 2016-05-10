@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import ch.zhaw.psit4.martin.api.typefactory.MartinTypeFactory;
 import ch.zhaw.psit4.martin.api.types.EMartinType;
@@ -96,24 +95,28 @@ public class RequestProcessor implements IRequestProcessor {
 		for (String word : words) {
 			
 			
-			Keyword keyword = keywordRepository.getByName(word);
+			
+			Optional<Keyword> keyword = keywordRepository.getByName(word);
 		
 			
-			for(Function function : keyword.getFunctions()){
-				Plugin plugin = function.getPlugin();
+			if(keyword.isPresent()){
+				for(Function function : keyword.get().getFunctions()){
+					Plugin plugin = function.getPlugin();
 
-				Optional<PossibleCall> optionalPossibleResult = possibleCalls.stream()
-						.filter(o -> o.getPlugin().getId() == plugin.getId())
-						.filter(o -> o.getFunction().getId() == function.getId()).findFirst();
+					Optional<PossibleCall> optionalPossibleResult = possibleCalls.stream()
+							.filter(o -> o.getPlugin().getId() == plugin.getId())
+							.filter(o -> o.getFunction().getId() == function.getId()).findFirst();
 
-				if (optionalPossibleResult.isPresent()) {
-					optionalPossibleResult.get().addMatchingKeyword(keyword);
-				} else {
-					PossibleCall possibleCall = new PossibleCall(plugin, function);
-					possibleCall.addMatchingKeyword(keyword);
-					possibleCalls.add(possibleCall);
+					if(optionalPossibleResult.isPresent()) {
+						optionalPossibleResult.get().addMatchingKeyword(keyword.get());
+					} else {
+						PossibleCall possibleCall = new PossibleCall(plugin, function);
+						possibleCall.addMatchingKeyword(keyword.get());
+						possibleCalls.add(possibleCall);
+					}
 				}
 			}
+			
 		}
 
 		return possibleCalls;

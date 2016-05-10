@@ -8,6 +8,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import ch.zhaw.psit4.martin.models.HistoryItem;
 
@@ -15,6 +16,7 @@ public class HistoryItemRepository {
 
 	@PersistenceContext
 	private EntityManager entityManager;
+	@SuppressWarnings("unused")
 	private static final Log LOG = LogFactory.getLog(PluginRepository.class);
 
 	@SuppressWarnings("unchecked")
@@ -30,17 +32,9 @@ public class HistoryItemRepository {
 	    return (List<HistoryItem>) query.getResultList();
 	}
 	
-
+	@Transactional
 	public void persist(HistoryItem historyItem){
-		entityManager.getTransaction().begin();
-		try {
-			entityManager.persist(historyItem);
-		} catch (Exception e){
-			entityManager.getTransaction().rollback();
-			LOG.error(e);
-		} finally {
-			entityManager.getTransaction().commit();
-		}
+		entityManager.persist(historyItem);
 	}
 }
 

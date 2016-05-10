@@ -29,7 +29,6 @@ import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.ExampleCallRepository;
 import ch.zhaw.psit4.martin.models.repositories.PluginRepository;
-import ch.zhaw.psit4.martin.pluginlib.filesystem.KeywordsJSONMissingException;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor;
 
 /**
