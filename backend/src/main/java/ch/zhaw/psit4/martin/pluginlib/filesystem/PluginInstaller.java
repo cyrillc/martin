@@ -84,9 +84,9 @@ public class PluginInstaller {
 
     void createFolderStructure(File pluginFolder, String name) throws FolderCreationException {
         String newPluginPath = pluginFolder.getAbsolutePath() + File.pathSeparatorChar + name;
-        String newClasses = newPluginPath + File.pathSeparatorChar + "classes";
-        String newRes = newPluginPath + File.pathSeparatorChar + "res";
-        String newLib = newPluginPath + File.pathSeparatorChar + "lib";
+        String newClasses = newPluginPath + File.separatorChar + "classes";
+        String newRes = newPluginPath + File.separatorChar + "res";
+        String newLib = newPluginPath + File.separatorChar + "lib";
         createFolder(newClasses);
         createFolder(newRes);
         createFolder(newLib);
