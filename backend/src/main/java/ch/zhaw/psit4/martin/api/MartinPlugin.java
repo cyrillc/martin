@@ -14,5 +14,5 @@ public interface MartinPlugin {
      * @param feature The feature designation in Form of a String
      * @param requestID The unique ID of the request
      */
-    void init(IMartinContext context, String feature, long requestID);
+    public void init(IMartinContext context, String feature, long requestID);
 }

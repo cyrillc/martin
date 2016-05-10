@@ -34,6 +34,8 @@ public class Plugin {
     @Column(name = "plugin_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    
+    private String uuid;
 
     @Column(name = "name")
     private String name;
@@ -66,6 +68,14 @@ public class Plugin {
 
     public void setId(int id) {
         this.id = id;
+    }
+    
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public void setName(String name) {

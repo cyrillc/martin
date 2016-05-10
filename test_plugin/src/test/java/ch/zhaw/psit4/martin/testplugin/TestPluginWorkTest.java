@@ -15,11 +15,11 @@ import ch.zhaw.psit4.martin.api.validation.MartinAPITestResult;
 
 public class TestPluginWorkTest {
 
-    FeatureValidator<TestPluginWork> featureValidator;
+    FeatureValidator featureValidator;
     
     @Before
     public void setUp() {
-        featureValidator = new FeatureValidator<TestPluginWork>(new TestPluginWork(0));
+        featureValidator = new FeatureValidator(TestPluginWork.class);
         
         Map<String, IMartinType> args = new HashMap<>();
         args.put("name", new Text("bla"));
