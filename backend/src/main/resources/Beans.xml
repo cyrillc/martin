@@ -94,7 +94,7 @@
 
 
 	<!-- package Frontend -->
-	<bean id="FrontendController" class="ch.zhaw.psit4.martin.frontend.FrontendController" scope="singleton">
+	<bean id="FrontendController" class="ch.zhaw.psit4.martin.frontend.FrontendController">
 	</bean>
 
 
@@ -109,6 +109,10 @@
 	<bean id="PluginFolderAccessor" class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginFolderAccessor">
 		<constructor-arg value="plugins"/>
 		<constructor-arg value="classpath:library.cfg.json"/>
+	</bean>
+	
+	<bean id="PluginInstaller" class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginInstaller">
+		<constructor-arg value="jar"/>
 	</bean>
 
 	<!-- package requestProcessor -->

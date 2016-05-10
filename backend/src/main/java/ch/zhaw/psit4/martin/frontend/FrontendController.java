@@ -1,10 +1,7 @@
 package ch.zhaw.psit4.martin.frontend;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 
-import org.java.plugin.boot.Application;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,16 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
 import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.db.*;
 import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
 import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
 import ch.zhaw.psit4.martin.db.request.Request;
 import ch.zhaw.psit4.martin.db.response.Response;
-import ch.zhaw.psit4.martin.pluginInstaller.PluginInstaller;
+import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginInstaller;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.List;
 
 import javax.servlet.annotation.MultipartConfig;
@@ -43,6 +36,9 @@ public class FrontendController {
 
     @Autowired
     private AIControllerFacade aiController;
+    
+    @Autowired
+    private PluginInstaller pluginInstaller;
 
     /**
      * Returns the answer to a command to the Frontend. When a request to the API at /command comes
@@ -111,8 +107,7 @@ public class FrontendController {
             @RequestParam("file") MultipartFile file,
             RedirectAttributes redirectAttributes) throws FileUploadException {
         
-        PluginInstaller installer = new PluginInstaller();
-        return installer.installPlugin(name, file);
+        return pluginInstaller.installPlugin(name, file);
     }
 
 

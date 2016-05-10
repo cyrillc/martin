@@ -29,9 +29,7 @@ public class PluginFolderAccessor implements ResourceLoaderAware {
      * The plugin configuration file
      */
     private String configFile;
-    /**
-     * Boots up the module library
-     */
+    
     private static final Log LOG = LogFactory.getLog(PluginFolderAccessor.class);
 
     public PluginFolderAccessor(String folderName, String configFile) {
