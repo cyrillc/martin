@@ -130,8 +130,12 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             
             // plugin loading
             MartinPlugin pluginInstance = loadPlugin(classLoader, pluginClassName);
-            if (pluginInstance == null || !isValidPlugin(pluginInstance, MartinAPITestResult.WARNING))
+            if (pluginInstance == null)
                 continue;
+            if(!isValidPlugin(pluginInstance, MartinAPITestResult.WARNING))
+                continue;
+            
+            LOG.info("Plugin \"" + pluginClassName.valueAsString() + "\" is valid.");
 
             // update DB and memory
             /**try {
@@ -181,8 +185,8 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @return true or false
      */
     @Override
-    public boolean isValidPlugin(MartinPlugin plugin, MartinAPITestResult testLevel) {        
-        LOG.info("Checking plugin: " + plugin.getClass().toString() + " for validity.");
+    public boolean isValidPlugin(MartinPlugin plugin, MartinAPITestResult testLevel) {     
+        LOG.info("Checking plugin: \"" + plugin.getClass().toString() + "\" for validity.");
         
         // check the interface
         MartinPluginValidator pluginValidator = new MartinPluginValidator(plugin);
