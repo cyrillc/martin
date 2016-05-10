@@ -7,16 +7,14 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 
-import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
-import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
-import ch.zhaw.psit4.martin.db.historyitem.HistoryItemService;
-import ch.zhaw.psit4.martin.db.request.Request;
-import ch.zhaw.psit4.martin.db.response.Response;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
+import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.repositories.HistoryItemRepository;
 
 /**
  * This class represents the AIControllerFacade The class follows the Facade
@@ -34,7 +32,7 @@ public class AIControllerFacade {
     private IPluginLibrary pluginLibrary;
     
     @Autowired
-    private HistoryItemService historyItemService;
+    private HistoryItemRepository historyItemRepository;
     
     @Autowired
     private RequestProcessor requestProcessor;
@@ -86,7 +84,7 @@ public class AIControllerFacade {
         	response = new Response("Sorry, I can't understand you.");
         }
         
-        historyItemService.addHistoryItem(new HistoryItem(request, response));
+        historyItemRepository.save(new HistoryItem(request, response));
         
         return response;
     }
@@ -96,7 +94,7 @@ public class AIControllerFacade {
      * @return all the history of requests with the relative responses
      */
     public List<HistoryItem> getHistory() {
-        return historyItemService.getHistory();
+        return historyItemRepository.findAll();
     }
     
     /**
@@ -106,7 +104,7 @@ public class AIControllerFacade {
      * @param amount the amount of historyItems to get
      */
     public List<HistoryItem> getLimitedHistory(int amount) {
-        return historyItemService.getLimitedHistory(amount);
+        return historyItemRepository.getLimitedHistory(new PageRequest(0, amount));
     }
 
     public List<PluginInformation> getPluginInformation() {

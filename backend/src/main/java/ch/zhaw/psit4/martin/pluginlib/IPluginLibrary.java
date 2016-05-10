@@ -9,8 +9,7 @@ import ch.zhaw.psit4.martin.api.MartinPlugin;
 import ch.zhaw.psit4.martin.api.validation.MartinAPITestResult;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
-import ch.zhaw.psit4.martin.db.response.Response;
+import ch.zhaw.psit4.martin.models.*;
 
 /**
  * Interface for class <code>PluginLibrary</code>.

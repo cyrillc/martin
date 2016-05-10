@@ -26,13 +26,14 @@ import ch.zhaw.psit4.martin.common.Call;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
-import ch.zhaw.psit4.martin.db.examplecall.ExampleCallService;
-import ch.zhaw.psit4.martin.db.plugin.PluginService;
-import ch.zhaw.psit4.martin.db.response.Response;
 import ch.zhaw.psit4.martin.api.validation.FeatureValidator;
 import ch.zhaw.psit4.martin.api.validation.MartinAPITestResult;
 import ch.zhaw.psit4.martin.api.validation.MartinPluginValidator;
+import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.repositories.ExampleCallRepository;
+import ch.zhaw.psit4.martin.models.repositories.PluginRepository;
+import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor;
+
 
 /**
  * PluginLibrary logic entry point.
@@ -53,14 +54,16 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
     @Autowired
     private MartinContextAccessor martinContextAccessor;
+    
+    @Autowired
+    private PluginDataAccessor pluginDataAccessor;
+    
+    @Autowired
+    private PluginRepository pluginRepository;
 
     @Autowired
-    private PluginService pluginService;
-
-    @Autowired
-    private ExampleCallService exampleCallService;
-
-
+    private ExampleCallRepository exampleCallRepository;
+    
     /*
      * (non-Javadoc)
      * 
@@ -124,18 +127,25 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             // parameter access + storage
             Parameter pluginClassName = extension.getParameter("class");
             String uuid = extension.getId();
-
+            
             // plugin loading
             MartinPlugin pluginInstance = loadPlugin(classLoader, pluginClassName);
             if (pluginInstance == null || !isValidPlugin(pluginInstance, MartinAPITestResult.WARNING))
                 continue;
 
+            // update DB and memory
+            /**try {
+                pluginDataAccessor.savePluginInDB(extension, classLoader);
+                plugins.put(uuid, pluginInstance);
+            } catch (KeywordsJSONMissingException e) {
+                LOG.warn("Plugin could not be loaded.", e);
+            } **/
             plugins.put(uuid, pluginInstance);
         }
 
         return plugins;
     }
-
+    
     /**
      * Loads a plugin via framework and returns the {@link MartinPlugin} interface
      * 
@@ -143,7 +153,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @param pluginClassName The java name of the class to load.
      * @return The loaded class or null, if an error occurred
      */
-    @Override
     @SuppressWarnings("unchecked")
     public MartinPlugin loadPlugin(ClassLoader classLoader, Parameter pluginClassName) {
         MartinPlugin pluginInstance = null;
@@ -260,9 +269,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
     @Override
     public List<PluginInformation> getPluginInformation() {
-        List<ch.zhaw.psit4.martin.db.plugin.Plugin> pluginList = pluginService.listPlugins();
+        Iterable<ch.zhaw.psit4.martin.models.Plugin> pluginList = pluginRepository.findAll();
         List<PluginInformation> pluginInformationList = new ArrayList<PluginInformation>();
-        for (ch.zhaw.psit4.martin.db.plugin.Plugin plugin : pluginList) {
+        for (ch.zhaw.psit4.martin.models.Plugin plugin : pluginList) {
             pluginInformationList.add(new PluginInformation(plugin.getName(),
                     plugin.getDescription(), plugin.getFunctions()));
         }
@@ -277,15 +286,14 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public List<ExampleCall> getExampleCalls() {
-        return exampleCallService.listExampleCalls();
+    	return exampleCallRepository.findAll();
     }
 
     @Override
     public List<ExampleCall> getRandomExampleCalls() {
-        return exampleCallService.getRandomExcampleCalls();
+        return exampleCallRepository.findAll();
     }
 
-    @Override
     public Map<String, MartinPlugin> getPluginExtentions() {
         return pluginExtentions;
     }
