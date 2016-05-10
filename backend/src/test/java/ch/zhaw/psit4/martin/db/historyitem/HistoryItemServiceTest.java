@@ -14,13 +14,17 @@
 //import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 //
 //import ch.zhaw.psit4.martin.db.*;
+//import ch.zhaw.psit4.martin.models.HistoryItem;
+//import ch.zhaw.psit4.martin.models.Request;
+//import ch.zhaw.psit4.martin.models.Response;
+//import ch.zhaw.psit4.martin.models.repositories.HistoryItemRepository;
 //
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration({ "classpath:Beans.xml",
 //        "classpath:Beans-unit-tests.xml" })
 //public class HistoryItemServiceTest {
 //
-//    class DaoStub extends HistoryItemDAO {
+//    class DaoStub extends HistoryItemRepository {
 //        public boolean addIsCalled = false;
 //        public boolean getAllIsCalled = false;
 //
@@ -35,7 +39,7 @@
 //    }
 //
 //    @Autowired
-//    private HistoryItemService historyItemService;
+//    private HistoryItemRepository historyItemService;
 //    private DaoStub daoStub;
 //
 //    @Before
@@ -50,15 +54,9 @@
 //        Request request = new Request("testRequest");
 //        Response response = new Response("testResponse");
 //        HistoryItem hs = new HistoryItem(request, response);
-//        historyItemService.addHistoryItem(hs);
+//        historyItemService.save(hs);
 //
 //        assertTrue(this.daoStub.addIsCalled);
-//    }
-//
-//    @Test
-//    public void canGetAHistoryItemListUsingDAO() {
-//        this.historyItemService.getHistory();
-//        Assert.assertTrue(this.daoStub.getAllIsCalled);
 //    }
 //
 //}

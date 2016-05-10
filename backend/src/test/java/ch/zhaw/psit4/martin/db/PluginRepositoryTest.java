@@ -30,7 +30,7 @@ public class PluginRepositoryTest {
 
 	@Autowired
 	private PluginRepository pluginRepository;
-	
+
 	@Autowired
 	private AuthorRepository authorRepository;
 
@@ -107,16 +107,10 @@ public class PluginRepositoryTest {
 
 	@Test
 	public void testRemovePlugin() {
-		Plugin newPlugin = createPlugin();
-		pluginRepository.save(newPlugin);
-		
-		int pluginId = newPlugin.getId();
-		int authorId = newPlugin.getAuthor().getId();
-		
-		pluginRepository.delete(pluginId);
+		pluginRepository.delete(2);
 
-		assertNull(pluginRepository.findOne(pluginId));
-		assertNotNull(authorRepository.findOne(authorId));
+		assertNull(pluginRepository.findOne(2));
+		assertNotNull(authorRepository.findOne(1));
 	}
 
 }

@@ -28,7 +28,7 @@ public abstract class BaseModel {
 	private Date updatedAt;
 	
 	@Version
-    private long version;
+    private Integer version;
 
 	public int getId() {
 		return id;
