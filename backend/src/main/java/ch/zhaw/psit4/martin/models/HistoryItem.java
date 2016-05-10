@@ -38,15 +38,11 @@ public class HistoryItem extends BaseModel {
 	public HistoryItem(Request request, Response response) {
 		this.request = request;
 		this.response = response;
+		this.date = new Timestamp(new Date().getTime());
 	}
 
 	public Timestamp getDate() {
 		return date;
-	}
-	
-	@PrePersist
-	public void prePersist(){
-		this.date = new Timestamp(new Date().getTime());
 	}
 
 	public void setDate(Timestamp date) {

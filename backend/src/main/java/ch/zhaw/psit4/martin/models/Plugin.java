@@ -28,7 +28,7 @@ public class Plugin extends BaseModel {
 	private String description;
 	private Date date;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(nullable = false)
 	private Author author;
 
@@ -85,7 +85,7 @@ public class Plugin extends BaseModel {
 
 	public void setAuthor(Author author) {
 		this.author = author;
-		author.addPlugin(this);
+		//author.addPlugin(this);
 	}
 
 }

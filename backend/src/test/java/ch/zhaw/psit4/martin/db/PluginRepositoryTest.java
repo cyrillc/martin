@@ -16,109 +16,107 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
+import ch.zhaw.psit4.martin.models.Author;
+import ch.zhaw.psit4.martin.models.Plugin;
+import ch.zhaw.psit4.martin.models.repositories.AuthorRepository;
+import ch.zhaw.psit4.martin.models.repositories.PluginRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:Beans.xml", "classpath:Beans-unit-tests.xml"})
-public class PluginServiceTest {
+@ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
+public class PluginRepositoryTest {
 
-	/*@Autowired
+	@Autowired
 	private LiquibaseTestFramework liquibase;
 
 	@Autowired
-    private PluginService pluginService;
+	private PluginRepository pluginRepository;
 	
 	@Autowired
-	private AuthorService authorService;
-	
-	@Autowired
-	private FunctionService functionService;
-	
-	@Autowired
-    private ParameterService parameterService;
-    private Log log;
+	private AuthorRepository authorRepository;
 
-    @Before
-    public void setUp(){
-    	liquibase.createDatabase("database/unit-tests/pluginTest/db.pluginUnitTest-1.0.xml");
-        log = LogFactory.getLog(PluginServiceTest.class);        
-    }
+	private Log log;
 
-    @Test
-    public void testListplugins() throws Exception {
-        List<Plugin> plugins = pluginService.getAll();
-        plugins.stream().forEach(plugin -> printPlugin(plugin));
-        assertEquals(false,plugins.isEmpty());
-        
-    }
+	@Before
+	public void setUp() {
+		liquibase.createDatabase("database/unit-tests/pluginTest/db.pluginUnitTest-1.0.xml");
+		log = LogFactory.getLog(PluginRepositoryTest.class);
+	}
 
-    private void printPlugin(Plugin plugin) {
-        StringBuilder str  = new StringBuilder(plugin.getId());
-        str.append(", ");
-        str.append(plugin.getName());
-        str.append(" \"");
-        str.append(plugin.getDescription());
-        str.append("\"");
-        str.append("\nfrom ");
-        str.append(plugin.getAuthor().getName());
-        str.append("\nFunctions: ");
-        plugin.getFunctions().stream().forEach(function -> str.append("\n->"+function.getName()));
+	@Test
+	public void testListplugins() throws Exception {
+		List<Plugin> plugins = pluginRepository.findAll();
+		plugins.stream().forEach(plugin -> printPlugin(plugin));
+		assertEquals(false, plugins.isEmpty());
 
-        log.info(str);
-    }
+	}
 
-   
-    @Test
-    public void testGetPluginById() {
-        Plugin plugin = pluginService.getPluginById(1);
-        assertNotNull(plugin);
-        assertEquals(1,plugin.getId());
-        assertEquals("Tells the weather for a given time and location",plugin.getDescription());
-        assertEquals("WeatherApp",plugin.getName());
-        assertEquals(1,plugin.getAuthor().getId());
-        
-    }
-    
-    @Test
-    public void testAddPlugin() {
-        Plugin newPlugin = createPlugin();
-        pluginService.addPlugin(newPlugin);
-        
-        int pluginID = newPlugin.getId();      
-        Plugin plugin = pluginService.getPluginById(pluginID);
-        
-        assertNotNull(plugin);
-        assertEquals(pluginID,plugin.getId());
-        assertEquals("Test Description",plugin.getDescription());
-        assertEquals("Testname",plugin.getName());
-        
-    }
-    
-    private Plugin createPlugin() {  
-        Plugin newPlugin = new Plugin();
-        Author author = new Author();
-        author.setName("TestAuthor");
-        author.setEmail("testAUthor@mail.ch");
-        authorService.addAuthor(author);
-        
-        newPlugin.setAuthor(author);
-        newPlugin.setDate(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
-        newPlugin.setDescription("Test Description");
-        newPlugin.setName("Testname");
-        newPlugin.setUuid(UUID.randomUUID().toString());
-        return newPlugin;      
-    } */
+	private void printPlugin(Plugin plugin) {
+		StringBuilder str = new StringBuilder(plugin.getId());
+		str.append(", ");
+		str.append(plugin.getName());
+		str.append(" \"");
+		str.append(plugin.getDescription());
+		str.append("\"");
+		str.append("\nfrom ");
+		str.append(plugin.getAuthor().getName());
+		str.append("\nFunctions: ");
+		plugin.getFunctions().stream().forEach(function -> str.append("\n->" + function.getName()));
 
-  
-    /*
-    @Test
-    public void testRemovePlugin() {
-        pluginService.removePlugin(1);
-        
-        assertNull(pluginService.getPluginById(1));
-        assertNull(functionService.getFunctionById(1));
-        assertNull(parameterService.getParameterById(1));
-        assertNotNull(authorService.getAuthorById(1));
-    }
-*/
-    
+		log.info(str);
+	}
+
+	@Test
+	public void testGetPluginById() {
+		Plugin plugin = pluginRepository.findOne(1);
+		assertNotNull(plugin);
+		assertEquals(1, plugin.getId());
+		assertEquals("Tells the weather for a given time and location", plugin.getDescription());
+		assertEquals("WeatherApp", plugin.getName());
+		assertEquals(1, plugin.getAuthor().getId());
+
+	}
+
+	@Test
+	public void testAddPlugin() {
+		Plugin newPlugin = createPlugin();
+		pluginRepository.save(newPlugin);
+
+		int pluginID = newPlugin.getId();
+		Plugin plugin = pluginRepository.findOne(pluginID);
+
+		assertNotNull(plugin);
+		assertEquals(pluginID, plugin.getId());
+		assertEquals("Test Description", plugin.getDescription());
+		assertEquals("Testname", plugin.getName());
+
+	}
+
+	private Plugin createPlugin() {
+		Plugin newPlugin = new Plugin();
+		Author author = new Author();
+		author.setName("TestAuthor");
+		author.setEmail("testAUthor@mail.ch");
+
+		newPlugin.setAuthor(author);
+		newPlugin.setDate(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
+		newPlugin.setDescription("Test Description");
+		newPlugin.setName("Testname");
+		newPlugin.setUuid(UUID.randomUUID().toString());
+		return newPlugin;
+	}
+
+	@Test
+	public void testRemovePlugin() {
+		Plugin newPlugin = createPlugin();
+		pluginRepository.save(newPlugin);
+		
+		int pluginId = newPlugin.getId();
+		int authorId = newPlugin.getAuthor().getId();
+		
+		pluginRepository.delete(pluginId);
+
+		assertNull(pluginRepository.findOne(pluginId));
+		assertNotNull(authorRepository.findOne(authorId));
+	}
+
 }
