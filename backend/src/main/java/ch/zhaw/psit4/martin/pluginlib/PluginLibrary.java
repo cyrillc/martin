@@ -26,10 +26,14 @@ import ch.zhaw.psit4.martin.common.Call;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
+import ch.zhaw.psit4.martin.api.validation.FeatureValidator;
+import ch.zhaw.psit4.martin.api.validation.MartinAPITestResult;
+import ch.zhaw.psit4.martin.api.validation.MartinPluginValidator;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.ExampleCallRepository;
 import ch.zhaw.psit4.martin.models.repositories.PluginRepository;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor;
+
 
 /**
  * PluginLibrary logic entry point.
@@ -59,8 +63,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
     @Autowired
     private ExampleCallRepository exampleCallRepository;
-
-
+    
     /*
      * (non-Javadoc)
      * 
@@ -129,7 +132,11 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             MartinPlugin pluginInstance = loadPlugin(classLoader, pluginClassName);
             if (pluginInstance == null)
                 continue;
+            if(!isValidPlugin(pluginInstance, MartinAPITestResult.WARNING))
+                continue;
             
+            LOG.info("Plugin \"" + pluginClassName.valueAsString() + "\" is valid.");
+
             // update DB and memory
             /**try {
                 pluginDataAccessor.savePluginInDB(extension, classLoader);
@@ -137,6 +144,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             } catch (KeywordsJSONMissingException e) {
                 LOG.warn("Plugin could not be loaded.", e);
             } **/
+            plugins.put(uuid, pluginInstance);
         }
 
         return plugins;
@@ -169,6 +177,29 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     }
 
     /**
+     * Checks a plugin for validity.
+     * 
+     * @param plugin The plugin to check
+     * @param The level to test against, this method will return true if the result is greater or
+     *        equal than the testLevel
+     * @return true or false
+     */
+    @Override
+    public boolean isValidPlugin(MartinPlugin plugin, MartinAPITestResult testLevel) {     
+        LOG.info("Checking plugin: \"" + plugin.getClass().toString() + "\" for validity.");
+        
+        // check the interface
+        MartinPluginValidator pluginValidator = new MartinPluginValidator(plugin);
+        boolean result = pluginValidator.runTests().getValue() >= testLevel.getValue();
+        if(!result)
+            return result;
+        
+        // check the features
+        // TODO: needs DB connecttion
+        return result;
+    }
+
+    /**
      * Answer a request by searching plugin-library for function and executing them.
      * 
      * @param req The {@link ExtendedQequest} to answer.
@@ -183,7 +214,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         MartinPlugin service = pluginExtentions.get(pluginID);
 
         // if service exists, execute call
-        
+
         if (service != null) {
             service.init(martinContextAccessor, functionName, 0);
 
@@ -222,7 +253,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
             try {
                 String stopValue = feature.stop();
-                if(stopValue == null || stopValue.isEmpty()) {
+                if (stopValue == null || stopValue.isEmpty()) {
                     ret = "I'm sorry, I can not understand you.";
                 } else {
                     ret = stopValue;
@@ -242,9 +273,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
     @Override
     public List<PluginInformation> getPluginInformation() {
-    	
-    	
-    	
         Iterable<ch.zhaw.psit4.martin.models.Plugin> pluginList = pluginRepository.findAll();
         List<PluginInformation> pluginInformationList = new ArrayList<PluginInformation>();
         for (ch.zhaw.psit4.martin.models.Plugin plugin : pluginList) {
