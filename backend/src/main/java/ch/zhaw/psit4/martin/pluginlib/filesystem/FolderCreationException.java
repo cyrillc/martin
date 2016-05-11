@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.pluginlib;
+package ch.zhaw.psit4.martin.pluginlib.filesystem;
 
 import java.io.IOException;
 
