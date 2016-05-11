@@ -13,10 +13,10 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import ch.zhaw.psit4.martin.api.types.EMartinType;
-import ch.zhaw.psit4.martin.api.types.Location;
-import ch.zhaw.psit4.martin.api.types.Number;
-import ch.zhaw.psit4.martin.api.types.Timestamp;
+import ch.zhaw.psit4.martin.api.types.EBaseType;
+import ch.zhaw.psit4.martin.api.types.MLocation;
+import ch.zhaw.psit4.martin.api.types.MNumber;
+import ch.zhaw.psit4.martin.api.types.MTimestamp;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
@@ -26,25 +26,25 @@ public class TypeFactoryTest {
 	public void testNumber() {
 
 		try {
-			Number one = (Number) MartinTypeFactory.fromType(EMartinType.NUMBER, "1");
+			MNumber one = (MNumber) BaseTypeFactory.fromType(EBaseType.NUMBER, "1");
 			assertEquals(one.getIntegerNumber().get(), (Integer) 1);
 			assertEquals(one.getDoubleNumber().get(), (Double) 1.0);
-			assertEquals(one.getRawFormat(), Number.RawFormat.NUMERIC);
+			assertEquals(one.getRawFormat(), MNumber.RawFormat.NUMERIC);
 
-			Number oneWord = (Number) MartinTypeFactory.fromType(EMartinType.NUMBER, "one");
+			MNumber oneWord = (MNumber) BaseTypeFactory.fromType(EBaseType.NUMBER, "one");
 			assertEquals(oneWord.getIntegerNumber().get(), (Integer) 1);
 			assertEquals(oneWord.getDoubleNumber().get(), (Double) 1.0);
-			assertEquals(oneWord.getRawFormat(), Number.RawFormat.WORD_EN);
+			assertEquals(oneWord.getRawFormat(), MNumber.RawFormat.WORD_EN);
 
-			Number twoThousand = (Number) MartinTypeFactory.fromType(EMartinType.NUMBER, "two thousand");
+			MNumber twoThousand = (MNumber) BaseTypeFactory.fromType(EBaseType.NUMBER, "two thousand");
 			assertEquals(twoThousand.getIntegerNumber().get(), (Integer) 2000);
 			assertEquals(twoThousand.getDoubleNumber().get(), (Double) 2000.0);
-			assertEquals(twoThousand.getRawFormat(), Number.RawFormat.WORD_EN);
+			assertEquals(twoThousand.getRawFormat(), MNumber.RawFormat.WORD_EN);
 
-			Number eleven = (Number) MartinTypeFactory.fromType(EMartinType.NUMBER, "eleven");
+			MNumber eleven = (MNumber) BaseTypeFactory.fromType(EBaseType.NUMBER, "eleven");
 			assertEquals(eleven.getIntegerNumber().get(), (Integer) 11);
 			assertEquals(eleven.getDoubleNumber().get(), (Double) 11.0);
-			assertEquals(eleven.getRawFormat(), Number.RawFormat.WORD_EN);
+			assertEquals(eleven.getRawFormat(), MNumber.RawFormat.WORD_EN);
 
 		} catch (Exception e) {
 			fail("Expected no exception, but got: " + e.getMessage());
@@ -57,7 +57,7 @@ public class TypeFactoryTest {
 			DateTimeZone timeZone = DateTimeZone.forID("Europe/Paris");
 
 			// Today
-			Timestamp today = (Timestamp) MartinTypeFactory.fromType(EMartinType.TIMESTAMP, "today");
+			MTimestamp today = (MTimestamp) BaseTypeFactory.fromType(EBaseType.TIMESTAMP, "today");
 			DateTime correctToday = DateTime.now(timeZone);
 
 			assertEquals(today.getDatetime().get().getYear(), correctToday.getYear());
@@ -65,7 +65,7 @@ public class TypeFactoryTest {
 			assertEquals(today.getDatetime().get().getDayOfMonth(), correctToday.getDayOfMonth());
 
 			// Yesterday
-			Timestamp yesterday = (Timestamp) MartinTypeFactory.fromType(EMartinType.TIMESTAMP, "yesterday");
+			MTimestamp yesterday = (MTimestamp) BaseTypeFactory.fromType(EBaseType.TIMESTAMP, "yesterday");
 			DateTime correctYesterday = DateTime.now(timeZone).minusDays(1);
 
 			assertEquals(yesterday.getDatetime().get().getYear(), correctYesterday.getYear());
@@ -86,13 +86,13 @@ public class TypeFactoryTest {
 		}
 
 		try {
-			Location zurich = (Location) MartinTypeFactory.fromType(EMartinType.LOCATION, "Zürich");
+			MLocation zurich = (MLocation) BaseTypeFactory.fromType(EBaseType.LOCATION, "Zürich");
 
 			assertEquals(zurich.getFormattedAddress().get(), "Zürich, Switzerland");
 			assertEquals(zurich.getLatitude().get(), (Double) 47.3768866);
 			assertEquals(zurich.getLongitude().get(), (Double) 8.541694);
 
-			Location honolulu = (Location) MartinTypeFactory.fromType(EMartinType.LOCATION, "Honolulu");
+			MLocation honolulu = (MLocation) BaseTypeFactory.fromType(EBaseType.LOCATION, "Honolulu");
 			
 			assertEquals(honolulu.getFormattedAddress().get(), "Honolulu, HI, USA");
 			assertEquals(honolulu.getLatitude().get(), (Double)21.3069444);

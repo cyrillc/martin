@@ -3,7 +3,7 @@ package ch.zhaw.psit4.martin.boot;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
-
+import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 
 import org.springframework.context.ApplicationContext;
 
@@ -19,7 +19,6 @@ public class MartinBoot {
     /**
      * The application context
      */
-    @SuppressWarnings("unused")
 	private static ApplicationContext context;
    
 
@@ -30,6 +29,23 @@ public class MartinBoot {
      *            Command line arguments (unused)
      */
     public static void main(String[] args) {
+    	MartinBoot.preBoot(args);
+    	MartinBoot.boot(args);
+    	MartinBoot.postBoot(args);
+    }
+    
+    public static void preBoot(String[] args){
+    	// Nothing to do
+    }
+    
+    public static void boot(String[] args){
+    	// Start Spring Application
     	MartinBoot.context = SpringApplication.run(MartinBoot.class, args);
+    }
+    
+    public static void postBoot(String[] args){
+    	// Start Plugin-Library
+    	IPluginLibrary library = (IPluginLibrary)MartinBoot.context.getBean("IPluginLibrary");
+    	library.startLibrary();
     }
 }

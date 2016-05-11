@@ -19,6 +19,6 @@ public interface IRequestProcessor {
 	 * @return Returns an ExtendedRequest with original-request and a possible
 	 *         executable function calls.
 	 */
-	public ExtendedRequest extend(Request request) throws Exception;
+	public ExtendedRequest extend(MRequest request) throws Exception;
 
 }

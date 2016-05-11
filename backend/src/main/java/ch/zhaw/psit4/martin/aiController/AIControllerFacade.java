@@ -15,7 +15,7 @@ import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.models.*;
-import ch.zhaw.psit4.martin.models.repositories.HistoryItemRepository;
+import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
 
 /**
  * This class represents the AIControllerFacade The class follows the Facade
@@ -33,7 +33,7 @@ public class AIControllerFacade {
     private IPluginLibrary pluginLibrary;
     
     @Autowired
-    private HistoryItemRepository historyItemRepository;
+    private MHistoryItemRepository historyItemRepository;
     
     @Autowired
     private RequestProcessor requestProcessor;
@@ -51,7 +51,7 @@ public class AIControllerFacade {
      * @return a list of example calls
      */
 
-    public List<ExampleCall> getExampleCalls() {
+    public List<MExampleCall> getExampleCalls() {
         return pluginLibrary.getExampleCalls();
     }
     
@@ -61,7 +61,7 @@ public class AIControllerFacade {
      *
      * @param amount the amount of historyItems to get
      */
-    public List<ExampleCall> getRandomExampleCalls() {
+    public List<MExampleCall> getRandomExampleCalls() {
         return pluginLibrary.getRandomExampleCalls();
     }
 
@@ -73,19 +73,19 @@ public class AIControllerFacade {
      *            Request containing a string command
      * @return the response of the AI.
      */
-    public Response elaborateRequest(Request request) {
+    public MResponse elaborateRequest(MRequest request) {
         ExtendedRequest extendedRequest = requestProcessor.extend(request);
-        Response response;
+        MResponse response;
         
         if(extendedRequest.getSentence().getPredefinedAnswer() != null){
-        	response = new Response(extendedRequest.getSentence().getPredefinedAnswer());
+        	response = new MResponse(extendedRequest.getSentence().getPredefinedAnswer());
         } else if(extendedRequest.getCalls().size() > 0){
         	response = pluginLibrary.executeRequest(extendedRequest);
         } else {
-        	response = new Response("Sorry, I can't understand you.");
+        	response = new MResponse("Sorry, I can't understand you.");
         }
         
-        historyItemRepository.save(new HistoryItem(request, response));
+        historyItemRepository.save(new MHistoryItem(request, response));
         
         return response;
     }
@@ -94,7 +94,7 @@ public class AIControllerFacade {
      * 
      * @return all the history of requests with the relative responses
      */
-    public List<HistoryItem> getHistory() {
+    public List<MHistoryItem> getHistory() {
         return historyItemRepository.findAll();
     }
     
@@ -104,9 +104,9 @@ public class AIControllerFacade {
      *
      * @param amount the amount of historyItems to get
      */
-    public List<HistoryItem> getLimitedHistory(int amount) {
-    	List<HistoryItem> list = historyItemRepository.getLimitedHistory(new PageRequest(0, amount));
-    	List<HistoryItem> shallowCopy = list.subList(0, list.size());
+    public List<MHistoryItem> getLimitedHistory(int amount) {
+    	List<MHistoryItem> list = historyItemRepository.getLimitedHistory(new PageRequest(0, amount));
+    	List<MHistoryItem> shallowCopy = list.subList(0, list.size());
     	Collections.reverse(shallowCopy);
         return shallowCopy;
     }

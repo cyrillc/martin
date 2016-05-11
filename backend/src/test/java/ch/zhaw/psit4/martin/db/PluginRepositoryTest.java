@@ -16,10 +16,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
-import ch.zhaw.psit4.martin.models.Author;
-import ch.zhaw.psit4.martin.models.Plugin;
-import ch.zhaw.psit4.martin.models.repositories.AuthorRepository;
-import ch.zhaw.psit4.martin.models.repositories.PluginRepository;
+import ch.zhaw.psit4.martin.models.MAuthor;
+import ch.zhaw.psit4.martin.models.MPlugin;
+import ch.zhaw.psit4.martin.models.repositories.MAuthorRepository;
+import ch.zhaw.psit4.martin.models.repositories.MPluginRepository;
 
 
 
@@ -31,10 +31,10 @@ public class PluginRepositoryTest {
 	private LiquibaseTestFramework liquibase;
 
 	@Autowired
-	private PluginRepository pluginRepository;
+	private MPluginRepository pluginRepository;
 
 	@Autowired
-	private AuthorRepository authorRepository;
+	private MAuthorRepository authorRepository;
 
 	private Log log;
 
@@ -46,13 +46,13 @@ public class PluginRepositoryTest {
 
 	@Test
 	public void testListplugins() throws Exception {
-		List<Plugin> plugins = pluginRepository.findAll();
+		List<MPlugin> plugins = pluginRepository.findAll();
 		plugins.stream().forEach(plugin -> printPlugin(plugin));
 		assertEquals(false, plugins.isEmpty());
 
 	}
 
-	private void printPlugin(Plugin plugin) {
+	private void printPlugin(MPlugin plugin) {
 		StringBuilder str = new StringBuilder(plugin.getId());
 		str.append(", ");
 		str.append(plugin.getName());
@@ -69,7 +69,7 @@ public class PluginRepositoryTest {
 
 	@Test
 	public void testGetPluginById() {
-		Plugin plugin = pluginRepository.findOne(1);
+		MPlugin plugin = pluginRepository.findOne(1);
 		assertNotNull(plugin);
 		assertEquals(1, plugin.getId());
 		assertEquals("Tells the weather for a given time and location", plugin.getDescription());
@@ -81,8 +81,8 @@ public class PluginRepositoryTest {
 	@Test
 	public void testAddPlugin() {
 		
-		Plugin newPlugin = new Plugin();
-		Author author = new Author();
+		MPlugin newPlugin = new MPlugin();
+		MAuthor author = new MAuthor();
 		author.setName("TestAuthor");
 		author.setEmail("testAUthor@mail.ch");
 
@@ -95,7 +95,7 @@ public class PluginRepositoryTest {
 		pluginRepository.save(newPlugin);
 
 		int pluginID = newPlugin.getId();
-		Plugin plugin = pluginRepository.findOne(pluginID);
+		MPlugin plugin = pluginRepository.findOne(pluginID);
 
 		assertNotNull(plugin);
 		assertEquals(pluginID, plugin.getId());
