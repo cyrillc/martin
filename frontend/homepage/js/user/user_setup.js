@@ -139,6 +139,5 @@ $(document).ready(function () {
 // function to move through history with *UP* and *DOWN* arrows
 var getPreviousCommand = function (location) {
     var selector = '#historyItems > tbody > tr:nth-child(' + location + ') > td:nth-child(2)';
-    console.log(location);
     $('#commandInput').val($(selector).html());
 }
