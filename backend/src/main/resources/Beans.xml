@@ -84,6 +84,11 @@
 	<bean id="PluginDataAccessor"
 		class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor">
 	</bean>
+	
+	<bean id="PluginInstaller" 
+		class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginInstaller">
+		<constructor-arg value="jar" />
+	</bean>
 
 	<!-- package requestProcessor -->
 	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestprocessor.RequestProcessor">

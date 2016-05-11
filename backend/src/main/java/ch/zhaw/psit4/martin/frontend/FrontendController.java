@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.models.*;
-import ch.zhaw.psit4.martin.pluginInstaller.PluginInstaller;
+import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginInstaller;
 
 import java.util.List;
 
@@ -25,7 +25,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * This class connect the Frontend with the AI using REST.
  *
  * @version 0.0.1-SNAPSHOT
- *
  */
 @RestController
 @MultipartConfig(fileSizeThreshold = 52428800) // upload Max 50MB
@@ -33,6 +32,9 @@ public class FrontendController {
 
     @Autowired
     private AIControllerFacade aiController;
+    
+    @Autowired
+    private PluginInstaller pluginInstaller;
 
     /**
      * Returns the answer to a command to the Frontend. When a request to the
@@ -108,9 +110,8 @@ public class FrontendController {
     public String installPlugin(@RequestParam("name") String name,
             @RequestParam("file") MultipartFile file,
             RedirectAttributes redirectAttributes) throws FileUploadException {
-
-        PluginInstaller installer = new PluginInstaller();
-        return installer.installPlugin(name, file);
+        
+        return pluginInstaller.installPlugin(name, file);
     }
 
 }

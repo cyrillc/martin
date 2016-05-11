@@ -1,5 +1,10 @@
 
 $(document).ready(function () {
+
+    // get backend port
+    getPort(function (port) {
+        backendPort = port;
+    });
     
 
 // upload
