@@ -45,8 +45,8 @@ public class FrontendController {
     @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
             "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping("/command")
-    public Response launchCommand(@RequestParam(value = "command") String command) {
-        Request request = new Request(command);
+    public MResponse launchCommand(@RequestParam(value = "command") String command) {
+        MRequest request = new MRequest(command);
         return aiController.elaborateRequest(request);
     }
 
@@ -60,7 +60,7 @@ public class FrontendController {
     @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
             "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping("/exampleCommands")
-    public List<ExampleCall> sendExampleCommands() {
+    public List<MExampleCall> sendExampleCommands() {
         return aiController.getRandomExampleCalls();
     }
 
@@ -71,7 +71,7 @@ public class FrontendController {
     @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
             "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping("/history")
-    public List<HistoryItem> getHistory(@RequestParam(value = "amount") int amount) {
+    public List<MHistoryItem> getHistory(@RequestParam(value = "amount") int amount) {
         return aiController.getLimitedHistory(amount);
     }
 

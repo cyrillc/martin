@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.models.*;
-import ch.zhaw.psit4.martin.models.repositories.PluginRepository;
+import ch.zhaw.psit4.martin.models.repositories.MPluginRepository;
 
 public class PluginDataAccessor {
 
@@ -36,7 +36,7 @@ public class PluginDataAccessor {
     private static final Log LOG = LogFactory.getLog(PluginDataAccessor.class);
 
     @Autowired
-    private PluginRepository pluginRepository;
+    private MPluginRepository pluginRepository;
 
 
     public PluginDataAccessor() {
@@ -58,10 +58,10 @@ public class PluginDataAccessor {
         }
 
         // get author
-        Author author = getAuthorData(extension);
+        MAuthor author = getAuthorData(extension);
 
         // get plugin
-        Plugin dbPlugin = getPluginMetadata(extension);
+        MPlugin dbPlugin = getPluginMetadata(extension);
 
         if(pluginRepository.findByUuid(dbPlugin.getUuid()) == null) {
             /*
@@ -73,11 +73,11 @@ public class PluginDataAccessor {
              */
             dbPlugin.setAuthor(author);
             // get Functions in the Plugin
-            Set<Function> functionsFromJson = parsePluginFunctions(jsonPluginSource, dbPlugin);
+            Set<MFunction> functionsFromJson = parsePluginFunctions(jsonPluginSource, dbPlugin);
 
             LOG.info("funktionen die zur DB hinzugefügt werden:" + functionsFromJson.size());
-            for (Function function : functionsFromJson) {
-                Set<ch.zhaw.psit4.martin.models.Parameter> parameter = function.getParameters();
+            for (MFunction function : functionsFromJson) {
+                Set<ch.zhaw.psit4.martin.models.MParameter> parameter = function.getParameters();
 
                 if (!functionExistsInDB(function, dbPlugin)) {
                     LOG.info("INSERT Function " + function.getName() + " into DB");
@@ -128,8 +128,8 @@ public class PluginDataAccessor {
      * @param extension The extension to get the plugins from.
      * @return The java plugin object.
      */
-    public Plugin getPluginMetadata(Extension extension) {
-        Plugin plugin = new Plugin();
+    public MPlugin getPluginMetadata(Extension extension) {
+        MPlugin plugin = new MPlugin();
 
         // metadata-parsing (mandatory)
         Parameter pluginName = extension.getParameter("name");
@@ -173,8 +173,8 @@ public class PluginDataAccessor {
      * @param extension The extension to get the data from.
      * @return The author java type.
      */
-    public Author getAuthorData(Extension extension) {
-        Author author = new Author();
+    public MAuthor getAuthorData(Extension extension) {
+        MAuthor author = new MAuthor();
 
         // get data
         Parameter pluginAuthor = extension.getParameter("author");
@@ -193,9 +193,9 @@ public class PluginDataAccessor {
      * @param json The JSON file.
      * @return A set of function objects.
      */
-    public Set<Function> parsePluginFunctions(JSONObject json, Plugin plugin) {
+    public Set<MFunction> parsePluginFunctions(JSONObject json, MPlugin plugin) {
 
-        ArrayList<Function> functions = new ArrayList<>();
+        ArrayList<MFunction> functions = new ArrayList<>();
         JSONArray jsonFunctions = json.getJSONArray("Functions");
         for (int numFuncts = 0; numFuncts < jsonFunctions.length(); numFuncts++) {
             // get function attributes
@@ -203,16 +203,15 @@ public class PluginDataAccessor {
 
             LOG.info("create Function: " + jsonFunction.getString("Name") + " with Plugin ID = "
                     + plugin.getId());
-            Function function = new Function();
+            MFunction function = new MFunction();
             function.setName(jsonFunction.getString("Name"));
             function.setDescription(jsonFunction.getString("Describtion"));
             function.setPlugin(plugin);
 
-            List<ch.zhaw.psit4.martin.models.Parameter> functionParameter =
+            List<ch.zhaw.psit4.martin.models.MParameter> functionParameter =
                     parseFunctionParameters(jsonFunction, function);
 
-            function.setParameter(
-                    new HashSet<ch.zhaw.psit4.martin.models.Parameter>(functionParameter));
+            function.setParameter(new HashSet<MParameter>(functionParameter));
 
             addKeywordsToFunction(jsonFunction, function);
             functions.add(function);
@@ -226,7 +225,7 @@ public class PluginDataAccessor {
      * @param plugin
      * @return true if functionExists in Database
      */
-    private boolean functionExistsInDB(Function function, Plugin plugin) {
+    private boolean functionExistsInDB(MFunction function, MPlugin plugin) {
         return (getExistingFunctionFromDB(function, plugin) != null) ? true : false;
     }
 
@@ -237,10 +236,10 @@ public class PluginDataAccessor {
      * @param plugin
      * @return null if the function does not exist in the Database or the function
      */
-    private Function getExistingFunctionFromDB(Function function, Plugin plugin) {
-        Set<Function> functions = plugin.getFunctions();
+    private MFunction getExistingFunctionFromDB(MFunction function, MPlugin plugin) {
+        Set<MFunction> functions = plugin.getFunctions();
         if (functions != null)
-            for (Function f : functions) {
+            for (MFunction f : functions) {
                 if (f.getName().equals(function.getName())
                         && f.getPlugin().getUuid().equals(plugin.getUuid())) {
                     return f;
@@ -255,9 +254,9 @@ public class PluginDataAccessor {
      * @param jsonFunction The array of JSON function elements.
      * @return A set of Parameter objects.
      */
-    public List<ch.zhaw.psit4.martin.models.Parameter> parseFunctionParameters(
-            JSONObject jsonFunction, Function function) {
-        List<ch.zhaw.psit4.martin.models.Parameter> functionParameter = new ArrayList<>();
+    public List<ch.zhaw.psit4.martin.models.MParameter> parseFunctionParameters(
+            JSONObject jsonFunction, MFunction function) {
+        List<ch.zhaw.psit4.martin.models.MParameter> functionParameter = new ArrayList<>();
 
         JSONArray jsonParameter = jsonFunction.getJSONArray("Parameter");
 
@@ -265,8 +264,8 @@ public class PluginDataAccessor {
             // get parameter
             JSONObject jsonparam = jsonParameter.getJSONObject(i);
 
-            ch.zhaw.psit4.martin.models.Parameter parameter =
-                    new ch.zhaw.psit4.martin.models.Parameter();
+            ch.zhaw.psit4.martin.models.MParameter parameter =
+                    new ch.zhaw.psit4.martin.models.MParameter();
             parameter.setName(jsonparam.getString("Name"));
             parameter.setRequired(jsonparam.getBoolean("Required"));
             parameter.setType(jsonparam.getString("Type"));
@@ -287,10 +286,10 @@ public class PluginDataAccessor {
      * @param jsonFunction The array of JSON function elements.
      * @return A set of keyword objects.
      */
-    public void addKeywordsToFunction(JSONObject jsonFunction, Function function) {
+    public void addKeywordsToFunction(JSONObject jsonFunction, MFunction function) {
         JSONArray jsonKeywords = jsonFunction.getJSONArray("Keywords");
         for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
-            Keyword keyword = new Keyword();
+            MKeyword keyword = new MKeyword();
             keyword.setKeyword(jsonKeywords.getString(keyWordNum));
 
             function.addKeyword(keyword);
@@ -303,14 +302,13 @@ public class PluginDataAccessor {
      * @param jsonParameter The array of JSON function elements.
      * @return A set of keyword objects.
      */
-    public void addKeywordsToParameter(JSONObject jsonParameter,
-            ch.zhaw.psit4.martin.models.Parameter param) {
+    public void addKeywordsToParameter(JSONObject jsonParameter, MParameter param) {
         if (jsonParameter.getJSONArray("Keywords") != null
                 && jsonParameter.getJSONArray("Keywords").length() >= 1) {
 
             JSONArray jsonKeywords = jsonParameter.getJSONArray("Keywords");
             for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
-                Keyword keyword = new Keyword();
+                MKeyword keyword = new MKeyword();
                 keyword.setKeyword(jsonKeywords.getString(keyWordNum));
 
                 param.addKeyword(keyword);

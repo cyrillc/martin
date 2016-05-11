@@ -2,7 +2,7 @@ package ch.zhaw.psit4.martin.api;
 
 import java.util.Map;
 
-import ch.zhaw.psit4.martin.api.types.IMartinType;
+import ch.zhaw.psit4.martin.api.types.IBaseType;
 
 /**
  * Work object used by {@link IMartinContext} with callbacks.
@@ -79,7 +79,7 @@ public class Feature {
      * @throws Exception
      *             An excpetion occured during work start.
      */
-    public void start(final Map<String, IMartinType> args) throws Exception {}
+    public void start(final Map<String, IBaseType> args) throws Exception {}
 
     /**
      * Main method called by MArtIn.

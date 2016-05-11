@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import ch.zhaw.psit4.martin.models.Request;
+import ch.zhaw.psit4.martin.models.MRequest;
 
 /**
  * This class holds extended information about the request. It holds a possible
@@ -22,7 +22,7 @@ public class ExtendedRequest {
 	/**
 	 * The raw Request containing a command string.
 	 */
-	private Request input;
+	private MRequest input;
 	/**
 	 * List of possible Calls for the request ordered by possibility.
 	 */
@@ -47,11 +47,11 @@ public class ExtendedRequest {
 		this.id = id;
 	}
 
-	public Request getInput() {
+	public MRequest getInput() {
 		return this.input;
 	}
 
-	public void setInput(Request input) {
+	public void setInput(MRequest input) {
 		this.input = input;
 	}
 

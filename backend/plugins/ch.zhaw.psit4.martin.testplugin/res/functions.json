@@ -13,9 +13,18 @@
 			],
 			"Parameter": [
 				{
-					"Name": "Name",
+					"Name": "name1",
+					"Required": "true",
+					"Type": "ch.zhaw.psit4.martin.api.types.MPerson",
+					"Tokens-regex": "",
+                    "Keywords": [
+                        "name"
+                    ]
+				},
+				{
+					"Name": "name2",
 					"Required": "false",
-					"Type": "ch.zhaw.psit4.martin.api.types.MartinPerson",
+					"Type": "ch.zhaw.psit4.martin.api.types.MPerson",
 					"Tokens-regex": "",
                     "Keywords": [
                         "name"
