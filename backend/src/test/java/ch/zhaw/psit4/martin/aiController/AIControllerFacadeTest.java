@@ -23,7 +23,7 @@ import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 import ch.zhaw.psit4.martin.common.Sentence;
 import ch.zhaw.psit4.martin.models.*;
-import ch.zhaw.psit4.martin.models.repositories.HistoryItemRepository;
+import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
@@ -33,7 +33,7 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 public class AIControllerFacadeTest {
 
 	@Mock
-	private HistoryItemRepository historyItemServiceMock;
+	private MHistoryItemRepository historyItemServiceMock;
 
 	@Mock
 	private RequestProcessor requestProcessorMock;
@@ -50,10 +50,10 @@ public class AIControllerFacadeTest {
 	@Autowired
 	private StanfordCoreNLPClient stanfordNLP;
 
-	Request request = null;
+	MRequest request = null;
 	ExtendedRequest extRequest = null;
-	Response response = null;
-	HistoryItem historyItem = null;
+	MResponse response = null;
+	MHistoryItem historyItem = null;
 	Call call = null;
 
 	@Before
@@ -61,28 +61,27 @@ public class AIControllerFacadeTest {
 		liquibase.createDatabase("database/db.changeset-schema-latest.xml");
 		MockitoAnnotations.initMocks(this);
 
-		request = new Request("request test", false);
+		request = new MRequest("request test", false);
 		extRequest = new ExtendedRequest();
 		call = new Call();
 		extRequest.addCall(call);
 		extRequest.setSentence(new Sentence("test", stanfordNLP));
-		response = new Response("response test");
-		historyItem = new HistoryItem(request, response);
+		response = new MResponse("response test");
+		historyItem = new MHistoryItem(request, response);
 
 		when(requestProcessorMock.extend(request)).thenReturn(extRequest);
 		when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);
 		
-
-		ArrayList<HistoryItem> getHistoryResult = new ArrayList<>();
-		getHistoryResult.add(new HistoryItem(new Request("command1", false), new Response("response1")));
-		getHistoryResult.add(new HistoryItem(new Request("command2", false), new Response("response2")));
-		getHistoryResult.add(new HistoryItem(new Request("command3", false), new Response("response3")));
+		ArrayList<MHistoryItem> getHistoryResult = new ArrayList<>();
+		getHistoryResult.add(new MHistoryItem(new MRequest("command1", false), new MResponse("response1")));
+		getHistoryResult.add(new MHistoryItem(new MRequest("command2", false), new MResponse("response2")));
+		getHistoryResult.add(new MHistoryItem(new MRequest("command3", false), new MResponse("response3")));
 		when(historyItemServiceMock.findAll()).thenReturn(getHistoryResult);
 	}
 
 	@Test
 	public void canGetAListOfHistoryItems() {
-		List<HistoryItem> list = aiController.getHistory();
+		List<MHistoryItem> list = aiController.getHistory();
 		assertEquals(3, list.size());
 		assertEquals("command1", list.get(0).getRequest().getCommand());
 	}
@@ -99,7 +98,7 @@ public class AIControllerFacadeTest {
 
 	@Test
 	public void checkElaborationOfRequest() {
-		Response responseTest = null;
+		MResponse responseTest = null;
 
 		responseTest = aiController.elaborateRequest(request);
 		assertTrue(responseTest.equals(response));

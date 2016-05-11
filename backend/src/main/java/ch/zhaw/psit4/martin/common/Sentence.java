@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import ch.zhaw.psit4.martin.api.types.EMartinType;
+import ch.zhaw.psit4.martin.api.types.EBaseType;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
@@ -118,7 +118,7 @@ public class Sentence {
 	 * @param type full IMartinType classname as String (with package)
 	 * @return a phrese with the chosen type
 	 */
-	public Phrase popPhraseOfType(EMartinType type) {
+	public Phrase popPhraseOfType(EBaseType type) {
 		Optional<Phrase> token = phrases.stream().filter(o -> o.getType().equals(type)).findFirst();
 
 		if (token.isPresent()) {
@@ -151,7 +151,7 @@ public class Sentence {
 	 * @param iMartinType full IMartinType classname as String (with package)
 	 * @return a list of chosen phrases
 	 */
-	public List<Phrase> getPhrasesOfType(EMartinType iMartinType) {
+	public List<Phrase> getPhrasesOfType(EBaseType iMartinType) {
 		return phrases.stream().filter(o -> o.getType().equals(iMartinType))
 				.collect(Collectors.<Phrase> toList());
 	}

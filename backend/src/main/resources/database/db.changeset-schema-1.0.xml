@@ -85,7 +85,7 @@
             <column name="name" type="VARCHAR(45)">
                 <constraints nullable="false" />
             </column>
-            <column name="type" type="VARCHAR(45)">
+            <column name="type" type="VARCHAR(255)">
                 <constraints nullable="false" />
             </column>
             <column name="function_id" type="INT">

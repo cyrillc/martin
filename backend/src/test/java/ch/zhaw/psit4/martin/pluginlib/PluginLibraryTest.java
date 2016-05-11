@@ -49,10 +49,10 @@ public class PluginLibraryTest {
         mockedRequests = new ExtendedRequest[20];
         for (int i = 0; i < mockedRequests.length; i++) {
             // Create call mocks
-        	Plugin testPlugin = Mockito.mock(Plugin.class);
+        	MPlugin testPlugin = Mockito.mock(MPlugin.class);
         	Mockito.when(testPlugin.getDescription()).thenReturn("TestModule");
         
-        	Function testFunction = Mockito.mock(Function.class);
+        	MFunction testFunction = Mockito.mock(MFunction.class);
         	Mockito.when(testFunction.getDescription()).thenReturn("testFeature");
         	
             List<Call> calls = new ArrayList<Call>();
@@ -80,7 +80,7 @@ public class PluginLibraryTest {
         spyLib.setPluginExtentions(mockedExtensions);
         // Create lib with spy
         for (int i = 0; i < mockedRequests.length; i++) {
-            Response resp = spyLib.executeRequest(mockedRequests[i]);
+            MResponse resp = spyLib.executeRequest(mockedRequests[i]);
             assertNotNull(resp);
         }
     }

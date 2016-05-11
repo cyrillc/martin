@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.models.*;
-import ch.zhaw.psit4.martin.pluginInstaller.PluginInstaller;
+import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginInstaller;
 
 import java.util.List;
 
@@ -25,7 +25,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * This class connect the Frontend with the AI using REST.
  *
  * @version 0.0.1-SNAPSHOT
- *
  */
 @RestController
 @MultipartConfig(fileSizeThreshold = 52428800) // upload Max 50MB
@@ -33,6 +32,9 @@ public class FrontendController {
 
     @Autowired
     private AIControllerFacade aiController;
+    
+    @Autowired
+    private PluginInstaller pluginInstaller;
 
     /**
      * Returns the answer to a command to the Frontend. When a request to the
@@ -46,10 +48,11 @@ public class FrontendController {
     @CrossOrigin(origins = { "http://localhost:4141",
             "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/command")
-    public Response launchCommand(
+
+    public MResponse launchCommand(
             @RequestParam(value = "command") String command,
             @RequestParam(value = "timed", required = false) boolean timed) {
-        Request request = new Request(command, timed);
+        MRequest request = new MRequest(command, timed);
         return aiController.elaborateRequest(request);
     }
 
@@ -64,7 +67,7 @@ public class FrontendController {
     @CrossOrigin(origins = { "http://localhost:4141",
             "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/exampleCommands")
-    public List<ExampleCall> sendExampleCommands() {
+    public List<MExampleCall> sendExampleCommands() {
         return aiController.getRandomExampleCalls();
     }
 
@@ -76,8 +79,8 @@ public class FrontendController {
     @CrossOrigin(origins = { "http://localhost:4141",
             "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/history")
-    public List<HistoryItem> getHistory(
-            @RequestParam(value = "amount") int amount) {
+
+    public List<MHistoryItem> getHistory(@RequestParam(value = "amount") int amount) {
         return aiController.getLimitedHistory(amount);
     }
 
@@ -107,9 +110,8 @@ public class FrontendController {
     public String installPlugin(@RequestParam("name") String name,
             @RequestParam("file") MultipartFile file,
             RedirectAttributes redirectAttributes) throws FileUploadException {
-
-        PluginInstaller installer = new PluginInstaller();
-        return installer.installPlugin(name, file);
+        
+        return pluginInstaller.installPlugin(name, file);
     }
 
 }

@@ -12,10 +12,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
-import ch.zhaw.psit4.martin.models.HistoryItem;
-import ch.zhaw.psit4.martin.models.Request;
-import ch.zhaw.psit4.martin.models.Response;
-import ch.zhaw.psit4.martin.models.repositories.HistoryItemRepository;
+import ch.zhaw.psit4.martin.models.MHistoryItem;
+import ch.zhaw.psit4.martin.models.MRequest;
+import ch.zhaw.psit4.martin.models.MResponse;
+import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
@@ -32,7 +32,7 @@ public class HistoryItemDAOTest {
 	 * The class to test.
 	 */
 	@Autowired
-	private HistoryItemRepository historyItemRepository;
+	private MHistoryItemRepository historyItemRepository;
 
 	@Before
 	public void setUp() {
@@ -43,9 +43,9 @@ public class HistoryItemDAOTest {
 	@Transactional
 	public void aHistoryItemCanBeSavedInDB() throws Exception {
 
-		Request request = new Request("test", false);
-		Response response = new Response("test");
-		HistoryItem historyItem = new HistoryItem(request, response);
+		MRequest request = new MRequest("test", false);
+		MResponse response = new MResponse("test");
+		MHistoryItem historyItem = new MHistoryItem(request, response);
 		this.historyItemRepository.save(historyItem);
 
 		assertEquals(3, this.historyItemRepository.findAll().size());

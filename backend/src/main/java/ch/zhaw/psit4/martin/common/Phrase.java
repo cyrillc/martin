@@ -1,19 +1,19 @@
 package ch.zhaw.psit4.martin.common;
 
-import ch.zhaw.psit4.martin.api.types.EMartinType;
+import ch.zhaw.psit4.martin.api.types.EBaseType;
 
 public class Phrase {
-	private EMartinType type;
+	private EBaseType type;
 	private String value;
 	private String nerTag;
 
 	public Phrase(String nerTag, String value) {
 		this.nerTag = nerTag;
-		this.type = EMartinType.fromNerTag(nerTag);
+		this.type = EBaseType.fromNerTag(nerTag);
 		this.value = value;
 	}
 	
-	public EMartinType getType() {
+	public EBaseType getType() {
 		return type;
 	}
 
@@ -25,7 +25,7 @@ public class Phrase {
 		this.nerTag = nerTag;
 	}
 
-	public void setType(EMartinType type) {
+	public void setType(EBaseType type) {
 		this.type = type;
 	}
 
