@@ -26,300 +26,295 @@ import ch.zhaw.psit4.martin.models.repositories.PluginRepository;
 
 public class PluginDataAccessor {
 
-	/**
-	 * File name of the plugin keywords JSON.
-	 */
-	public static final String PLUGIN_FUNCTIONS = "functions.json";
-	/*
-	 * Log from the common logging api
-	 */
-	private static final Log LOG = LogFactory.getLog(PluginDataAccessor.class);
+    /**
+     * File name of the plugin keywords JSON.
+     */
+    public static final String PLUGIN_FUNCTIONS = "functions.json";
+    /*
+     * Log from the common logging api
+     */
+    private static final Log LOG = LogFactory.getLog(PluginDataAccessor.class);
 
-	@Autowired
-	private PluginRepository pluginRepository;
+    @Autowired
+    private PluginRepository pluginRepository;
 
 
-	public PluginDataAccessor() {
-		// empty
-	}
+    public PluginDataAccessor() {
+        // empty
+    }
 
-	public void savePluginInDB(Extension extension, ClassLoader classLoader) throws KeywordsJSONMissingException {
-		LOG.info("add new Plugin to Database =?==============================================================");
-		// get JSON
-		URL jsonUrl = classLoader.getResource(PLUGIN_FUNCTIONS);
-		JSONObject jsonPluginSource = parseJSON(jsonUrl);
+    public void savePluginInDB(Extension extension, ClassLoader classLoader)
+            throws KeywordsJSONMissingException {
+        LOG.info(
+                "add new Plugin to Database ===============================================================");
+        // get JSON
+        URL jsonUrl = classLoader.getResource(PLUGIN_FUNCTIONS);
+        JSONObject jsonPluginSource = parseJSON(jsonUrl);
 
-		// check if there is a JSON file
-		if (jsonPluginSource == null)
-			throw new KeywordsJSONMissingException(
-					"keywords.json missing for " + extension.getParameter("name").valueAsString());
+        // check if there is a JSON file
+        if (jsonPluginSource == null) {
+            throw new KeywordsJSONMissingException(
+                    "keywords.json missing for " + extension.getParameter("name").valueAsString());
+        }
 
-		// get author
-		Author author = getAuthorData(extension);
-		/*List<Author> possibleAuthors = authorService.getAuthorsByName(author.getName());
-		LOG.info("add author to Database : " + author.getName());
-		if (possibleAuthors.isEmpty()) {
-			authorService.addAuthor(author);
-		} else {
-			author = possibleAuthors.get(0);
-		}*/
+        // get author
+        Author author = getAuthorData(extension);
 
-		// get plugin
-		Plugin dbPlugin = getPluginMetadata(extension);
-		/*Plugin possiblePlugin = pluginEntityManager.byUUID(dbPlugin.getUuid());
-		LOG.info("add Plugin to Database: " + dbPlugin.getName());
+        // get plugin
+        Plugin dbPlugin = getPluginMetadata(extension);
 
-		if (possiblePlugin != null) {
-			dbPlugin.setAuthor(author);
-		} else {
-			dbPlugin = possiblePlugin;
-		}
-*/
-		dbPlugin.setAuthor(author);
-		// get Functions in the Plugin
-		Set<Function> functionsFromJson = parsePluginFunctions(jsonPluginSource, dbPlugin);
+        if(pluginRepository.findByUuid(dbPlugin.getUuid()) == null) {
+            /*
+             * Plugin possiblePlugin = pluginEntityManager.byUUID(dbPlugin.getUuid()); LOG.info(
+             * "add Plugin to Database: " + dbPlugin.getName());
+             * 
+             * if (possiblePlugin != null) { dbPlugin.setAuthor(author); } else { dbPlugin =
+             * possiblePlugin; }
+             */
+            dbPlugin.setAuthor(author);
+            // get Functions in the Plugin
+            Set<Function> functionsFromJson = parsePluginFunctions(jsonPluginSource, dbPlugin);
 
-		LOG.info("funktionen die zur DB hinzugefügt werden:" + functionsFromJson.size());
-		for (Function function : functionsFromJson) {
-			Set<ch.zhaw.psit4.martin.models.Parameter> parameter = function.getParameters();
+            LOG.info("funktionen die zur DB hinzugefügt werden:" + functionsFromJson.size());
+            for (Function function : functionsFromJson) {
+                Set<ch.zhaw.psit4.martin.models.Parameter> parameter = function.getParameters();
 
-			
-			if (!functionExistsInDB(function, dbPlugin)) {
-				LOG.info("INSERT Function " + function.getName() + " into DB");
-			} else {
-				LOG.warn("Function " + function.getName() + " allready in Database");
-				// replace function with the function from the database
-				function = getExistingFunctionFromDB(function, dbPlugin);
-				// add parameter from newly loaded function
-				function.addParameters(parameter);
-			}
-			
-		
-			
-			dbPlugin.setFunctions(functionsFromJson);
-			// Persist parameter
-			// parameter.stream().forEach(p ->
-			// parameterService.addParameter(p));
+                if (!functionExistsInDB(function, dbPlugin)) {
+                    LOG.info("INSERT Function " + function.getName() + " into DB");
+                } else {
+                    LOG.warn("Function " + function.getName() + " allready in Database");
+                    // replace function with the function from the database
+                    function = getExistingFunctionFromDB(function, dbPlugin);
+                    // add parameter from newly loaded function
+                    function.addParameters(parameter);
+                }
 
-		}
-		pluginRepository.save(dbPlugin);
-	}
+                dbPlugin.setFunctions(functionsFromJson);
+                // Persist parameter
+                // parameter.stream().forEach(p ->
+                // parameterService.addParameter(p));
 
-	/**
-	 * Get the plugin JSON file for the keywords and functions.
-	 * 
-	 * @param keywordsUrl
-	 *            The URL of the file on the filesystem.
-	 * @return The loaded JSON-file or null if an error occurred.
-	 */
-	public JSONObject parseJSON(URL url) {
-		// keywords JSON loading
-		JSONObject json = null;
-		try {
-			// Get JSON
-			InputStream is = url.openStream();
-			json = new JSONObject(IOUtils.toString(is));
-			is.close();
-		} catch (JSONException | IOException e) {
-			LOG.error("keywords.json could not be accessed.", e);
-		}
+            }
+            pluginRepository.save(dbPlugin);
+        } else {
+            LOG.info("Plugin "+dbPlugin.getName()+" already exists in DB");
+        }
+    }
 
-		return json;
-	}
+    /**
+     * Get the plugin JSON file for the keywords and functions.
+     * 
+     * @param keywordsUrl The URL of the file on the filesystem.
+     * @return The loaded JSON-file or null if an error occurred.
+     */
+    public JSONObject parseJSON(URL url) {
+        // keywords JSON loading
+        JSONObject json = null;
+        try {
+            // Get JSON
+            InputStream is = url.openStream();
+            json = new JSONObject(IOUtils.toString(is));
+            is.close();
+        } catch (JSONException | IOException e) {
+            LOG.error("keywords.json could not be accessed.", e);
+        }
 
-	/**
-	 * Gets the plugin metadata from the plugin.xml and parses it to a Java
-	 * object.
-	 * 
-	 * @param extension
-	 *            The extension to get the plugins from.
-	 * @return The java plugin object.
-	 */
-	public Plugin getPluginMetadata(Extension extension) {
-		Plugin plugin = new Plugin();
+        return json;
+    }
 
-		// metadata-parsing (mandatory)
-		Parameter pluginName = extension.getParameter("name");
+    /**
+     * Gets the plugin metadata from the plugin.xml and parses it to a Java object.
+     * 
+     * @param extension The extension to get the plugins from.
+     * @return The java plugin object.
+     */
+    public Plugin getPluginMetadata(Extension extension) {
+        Plugin plugin = new Plugin();
 
-		// metadata-parsing (optional)
-		Parameter pluginDesctibtion = extension.getParameter("description");
-		Parameter pluginDate = extension.getParameter("date");
-		String uuid = extension.getId();
+        // metadata-parsing (mandatory)
+        Parameter pluginName = extension.getParameter("name");
 
-		if (uuid == null) {
-			LOG.error("Extension ID not accessible, generating new UUID");
-			uuid = UUID.randomUUID().toString();
-		}
+        // metadata-parsing (optional)
+        Parameter pluginDesctibtion = extension.getParameter("description");
+        Parameter pluginDate = extension.getParameter("date");
+        String uuid = extension.getId();
 
-		// update DB-object
-		plugin.setName(pluginName.valueAsString());
-		if (pluginDesctibtion != null)
-			plugin.setDescription(pluginDesctibtion.valueAsString());
-		else
-			plugin.setDescription("No description provided.");
-		if (pluginDate != null) {
-			String date = pluginDate.valueAsString();
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			java.util.Date parsed = null;
-			try {
-				parsed = format.parse(date);
-				java.sql.Date sqlDate = new java.sql.Date(parsed.getTime());
-				plugin.setDate(sqlDate);
-			} catch (ParseException e) {
-				LOG.warn("Could not parse date.", e);
-			}
-		}
-		plugin.setUuid(uuid);
+        if (uuid == null) {
+            LOG.error("Extension ID not accessible, generating new UUID");
+            uuid = UUID.randomUUID().toString();
+        }
 
-		return plugin;
-	}
+        // update DB-object
+        plugin.setName(pluginName.valueAsString());
+        if (pluginDesctibtion != null)
+            plugin.setDescription(pluginDesctibtion.valueAsString());
+        else
+            plugin.setDescription("No description provided.");
+        if (pluginDate != null) {
+            String date = pluginDate.valueAsString();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsed = null;
+            try {
+                parsed = format.parse(date);
+                java.sql.Date sqlDate = new java.sql.Date(parsed.getTime());
+                plugin.setDate(sqlDate);
+            } catch (ParseException e) {
+                LOG.warn("Could not parse date.", e);
+            }
+        }
+        plugin.setUuid(uuid);
 
-	/**
-	 * Get the author Metadata from plugins.xml
-	 * 
-	 * @param extension
-	 *            The extension to get the data from.
-	 * @return The author java type.
-	 */
-	public Author getAuthorData(Extension extension) {
-		Author author = new Author();
+        return plugin;
+    }
 
-		// get data
-		Parameter pluginAuthor = extension.getParameter("author");
-		Parameter pluginMail = extension.getParameter("e-mail");
+    /**
+     * Get the author Metadata from plugins.xml
+     * 
+     * @param extension The extension to get the data from.
+     * @return The author java type.
+     */
+    public Author getAuthorData(Extension extension) {
+        Author author = new Author();
 
-		// update DB-object
-		author.setName(pluginAuthor.valueAsString());
-		author.setEmail(pluginMail.valueAsString());
+        // get data
+        Parameter pluginAuthor = extension.getParameter("author");
+        Parameter pluginMail = extension.getParameter("e-mail");
 
-		return author;
-	}
+        // update DB-object
+        author.setName(pluginAuthor.valueAsString());
+        author.setEmail(pluginMail.valueAsString());
 
-	/**
-	 * Gets a set of function attributes from the JSON file.
-	 * 
-	 * @param json
-	 *            The JSON file.
-	 * @return A set of function objects.
-	 */
-	public Set<Function> parsePluginFunctions(JSONObject json, Plugin plugin) {
+        return author;
+    }
 
-		ArrayList<Function> functions = new ArrayList<>();
-		JSONArray jsonFunctions = json.getJSONArray("Functions");
-		for (int numFuncts = 0; numFuncts < jsonFunctions.length(); numFuncts++) {
-			// get function attributes
-			JSONObject jsonFunction = jsonFunctions.getJSONObject(numFuncts);
+    /**
+     * Gets a set of function attributes from the JSON file.
+     * 
+     * @param json The JSON file.
+     * @return A set of function objects.
+     */
+    public Set<Function> parsePluginFunctions(JSONObject json, Plugin plugin) {
 
-			LOG.info("create Function: " + jsonFunction.getString("Name") + "with Plugin ID = " + plugin.getId());
-			Function function = new Function();
-			function.setName(jsonFunction.getString("Name"));
-			function.setDescription(jsonFunction.getString("Describtion"));
-			function.setPlugin(plugin);
+        ArrayList<Function> functions = new ArrayList<>();
+        JSONArray jsonFunctions = json.getJSONArray("Functions");
+        for (int numFuncts = 0; numFuncts < jsonFunctions.length(); numFuncts++) {
+            // get function attributes
+            JSONObject jsonFunction = jsonFunctions.getJSONObject(numFuncts);
 
-			List<ch.zhaw.psit4.martin.models.Parameter> functionParameter = parseFunctionParameters(jsonFunction, function);
+            LOG.info("create Function: " + jsonFunction.getString("Name") + " with Plugin ID = "
+                    + plugin.getId());
+            Function function = new Function();
+            function.setName(jsonFunction.getString("Name"));
+            function.setDescription(jsonFunction.getString("Describtion"));
+            function.setPlugin(plugin);
 
-			function.setParameter(new HashSet<ch.zhaw.psit4.martin.models.Parameter>(functionParameter));
+            List<ch.zhaw.psit4.martin.models.Parameter> functionParameter =
+                    parseFunctionParameters(jsonFunction, function);
 
-			addKeywordsToFunction(jsonFunction, function);
-			functions.add(function);
+            function.setParameter(
+                    new HashSet<ch.zhaw.psit4.martin.models.Parameter>(functionParameter));
 
-		}
-		return new HashSet<>(functions);
-	}
+            addKeywordsToFunction(jsonFunction, function);
+            functions.add(function);
 
-	/**
-	 * @param function
-	 * @param plugin
-	 * @return true if functionExists in Database
-	 */
-	private boolean functionExistsInDB(Function function, Plugin plugin) {
-		return (getExistingFunctionFromDB(function, plugin) != null) ? true : false;
-	}
+        }
+        return new HashSet<>(functions);
+    }
 
-	/**
-	 * Checks if a function exists in the DB and returns the given function form
-	 * the database
-	 * 
-	 * @param function
-	 * @param plugin
-	 * @return null if the function does not exist in the Database or the
-	 *         function
-	 */
-	private Function getExistingFunctionFromDB(Function function, Plugin plugin) {
-		Set<Function> functions = plugin.getFunctions();
-		if (functions != null)
-			for (Function f : functions) {
-				if (f.getName().equals(function.getName()) && f.getPlugin().getUuid().equals(plugin.getUuid())) {
-					return f;
-				}
-			}
-		return null;
-	}
+    /**
+     * @param function
+     * @param plugin
+     * @return true if functionExists in Database
+     */
+    private boolean functionExistsInDB(Function function, Plugin plugin) {
+        return (getExistingFunctionFromDB(function, plugin) != null) ? true : false;
+    }
 
-	/**
-	 * Gets a set of parameters from the JSON file for a specific function.
-	 * 
-	 * @param jsonFunction
-	 *            The array of JSON function elements.
-	 * @return A set of Parameter objects.
-	 */
-	public List<ch.zhaw.psit4.martin.models.Parameter> parseFunctionParameters(JSONObject jsonFunction, Function function) {
-		List<ch.zhaw.psit4.martin.models.Parameter> functionParameter = new ArrayList<>();
+    /**
+     * Checks if a function exists in the DB and returns the given function form the database
+     * 
+     * @param function
+     * @param plugin
+     * @return null if the function does not exist in the Database or the function
+     */
+    private Function getExistingFunctionFromDB(Function function, Plugin plugin) {
+        Set<Function> functions = plugin.getFunctions();
+        if (functions != null)
+            for (Function f : functions) {
+                if (f.getName().equals(function.getName())
+                        && f.getPlugin().getUuid().equals(plugin.getUuid())) {
+                    return f;
+                }
+            }
+        return null;
+    }
 
-		JSONArray jsonParameter = jsonFunction.getJSONArray("Parameter");
+    /**
+     * Gets a set of parameters from the JSON file for a specific function.
+     * 
+     * @param jsonFunction The array of JSON function elements.
+     * @return A set of Parameter objects.
+     */
+    public List<ch.zhaw.psit4.martin.models.Parameter> parseFunctionParameters(
+            JSONObject jsonFunction, Function function) {
+        List<ch.zhaw.psit4.martin.models.Parameter> functionParameter = new ArrayList<>();
 
-		for (int i = 0; i < jsonParameter.length(); i++) {
-			// get parameter
-			JSONObject jsonparam = jsonParameter.getJSONObject(i);
+        JSONArray jsonParameter = jsonFunction.getJSONArray("Parameter");
 
-			ch.zhaw.psit4.martin.models.Parameter parameter = new ch.zhaw.psit4.martin.models.Parameter();
-			parameter.setName(jsonparam.getString("Name"));
-			parameter.setRequired(jsonparam.getBoolean("Required"));
-			parameter.setType(jsonparam.getString("Type"));
+        for (int i = 0; i < jsonParameter.length(); i++) {
+            // get parameter
+            JSONObject jsonparam = jsonParameter.getJSONObject(i);
 
-			functionParameter.add(parameter);
+            ch.zhaw.psit4.martin.models.Parameter parameter =
+                    new ch.zhaw.psit4.martin.models.Parameter();
+            parameter.setName(jsonparam.getString("Name"));
+            parameter.setRequired(jsonparam.getBoolean("Required"));
+            parameter.setType(jsonparam.getString("Type"));
 
-			addKeywordsToParameter(jsonparam, parameter);
-			
-			//parseKeywords(jsonFunction, param)
-		}
+            functionParameter.add(parameter);
 
-		return functionParameter;
-	}
+            addKeywordsToParameter(jsonparam, parameter);
 
-	/**
-	 * Gets a set of keywords from the JSON file for a specific function.
-	 * 
-	 * @param jsonFunction
-	 *            The array of JSON function elements.
-	 * @return A set of keyword objects.
-	 */
-	public void addKeywordsToFunction(JSONObject jsonFunction, Function function) {
-		JSONArray jsonKeywords = jsonFunction.getJSONArray("Keywords");
-		for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
-			Keyword keyword = new Keyword();
-			keyword.setKeyword(jsonKeywords.getString(keyWordNum));
+            // parseKeywords(jsonFunction, param)
+        }
 
-			function.addKeyword(keyword);
-		} 
-	}
-	/**
-	 * Gets a set of keywords from the JSON file for a specific function.
-	 * 
-	 * @param jsonParameter
-	 *            The array of JSON function elements.
-	 * @return A set of keyword objects.
-	 */
-	public void addKeywordsToParameter(JSONObject jsonParameter, ch.zhaw.psit4.martin.models.Parameter param) {
-	    if(jsonParameter.getJSONArray("Keywords") != null && jsonParameter.getJSONArray("Keywords").length() >=1){
-	        
-		JSONArray jsonKeywords = jsonParameter.getJSONArray("Keywords") ;
-		for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
-			Keyword keyword = new Keyword();
-			keyword.setKeyword(jsonKeywords.getString(keyWordNum));
+        return functionParameter;
+    }
 
-			param.addKeyword(keyword);
-		} 
-	    }
-	}
+    /**
+     * Gets a set of keywords from the JSON file for a specific function.
+     * 
+     * @param jsonFunction The array of JSON function elements.
+     * @return A set of keyword objects.
+     */
+    public void addKeywordsToFunction(JSONObject jsonFunction, Function function) {
+        JSONArray jsonKeywords = jsonFunction.getJSONArray("Keywords");
+        for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
+            Keyword keyword = new Keyword();
+            keyword.setKeyword(jsonKeywords.getString(keyWordNum));
+
+            function.addKeyword(keyword);
+        }
+    }
+
+    /**
+     * Gets a set of keywords from the JSON file for a specific function.
+     * 
+     * @param jsonParameter The array of JSON function elements.
+     * @return A set of keyword objects.
+     */
+    public void addKeywordsToParameter(JSONObject jsonParameter,
+            ch.zhaw.psit4.martin.models.Parameter param) {
+        if (jsonParameter.getJSONArray("Keywords") != null
+                && jsonParameter.getJSONArray("Keywords").length() >= 1) {
+
+            JSONArray jsonKeywords = jsonParameter.getJSONArray("Keywords");
+            for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
+                Keyword keyword = new Keyword();
+                keyword.setKeyword(jsonKeywords.getString(keyWordNum));
+
+                param.addKeyword(keyword);
+            }
+        }
+    }
 }
