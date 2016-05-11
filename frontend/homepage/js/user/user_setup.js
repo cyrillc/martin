@@ -86,7 +86,11 @@ var sendCommand = function () {
 
         if (wantTimingInformation) {
             var timingChartRenderer = new TimingChartRenderer();
-            timingChartRenderer.renderTimingChart(response.timingInfo);
+            try {
+                timingChartRenderer.renderTimingChart(response.timingInfo);
+            } catch (err) {
+                console.log('Could not render timing information');
+            }
         } else {
             $('#timingContainer').html('');
         }

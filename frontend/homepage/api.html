@@ -56,7 +56,7 @@
     </nav>
 
     <!-- Plugin List Section -->
-    <section id="pluginListSection" class="pluginList-section">
+    <section id="apiSection" class="api-section">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -65,13 +65,14 @@
                 <div id="API-documantation-text" class="col-lg-offset-3 col-lg-6">
                     <h2><a id="Grundstzliches_2"></a>Grundsätzliches</h2>
 					<p>MArtIn benutzt die <a href="http://jpf.sourceforge.net/">JPF-Bibliothek</a> für die Einbindung von Modulen. Im folgenden Text werden wir Module immer Plugins nennen. Alles was du benötigst, um ein MArtIn Plugin zu entwickeln befindet sich im <code>./distributable/target</code> Ordner. Der Ordner enthält folgende Dateien:</p>
-					<pre><code class="language-java">./distributable
-					  |_ /src
-					  |_ /target
-					  |  |_ plugin.dtd
-					  |  |_ martin-api-&lt;version&gt;.jar
-					  |_ pom.xml
-					</code></pre>
+					<pre>
+<code class="language-java">./distributable
+	|_ /src
+	|_ /target
+	|  |_ plugin.dtd
+	|  |_ martin-api-&lt;version&gt;.jar
+	|_ pom.xml</code>
+					</pre>
 					<h3><a id="Datei_plugindtd_DocumentTypeDefinition_14"></a>Datei plugin.dtd (Document-Type-Definition)</h3>
 					<p>Definiert die Struktur des XML-Files für dein Plugin. Die Datei plugin.xml ist das Herzstück jedes Plugins, halte dich unbedingt an die vorgegebene Struktur, um Kompatibilitätsprobleme zu vermeiden. Detaillierte Informationen entnimmst du den Kommentaren im File selbst oder der <a href="http://jpf.sourceforge.net/tutorial.html">JPF-Tutorial-Seite</a>.</p>
 					<h3><a id="Datei_martinapiversionjar_Java_Archive_17"></a>Datei martin-api-&lt;version&gt;.jar (Java Archive)</h3>
@@ -79,33 +80,35 @@
 					<h2><a id="PluginErstellung_20"></a>Plugin-Erstellung</h2>
 					<p>Grundsätzlich kannst du dein Plugin nach <a href="http://jpf.sourceforge.net/tutorial.html">diesem Tutorial</a> entwickeln, jedoch braucht es am Ende noch einige zusätzliche Schritte, um es mit MArtIn kompatibel zu machen.</p>
 					<h3><a id="PluginCode_23"></a>Plugin-Code</h3>
-					<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyPlugin</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">PluginService</span> </span>{
-					    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">init</span><span class="hljs-params">(IMartinContext context, String feature, <span class="hljs-keyword">long</span> requestID)</span> </span>{
-					        TestPluginWork feature1 = <span class="hljs-keyword">new</span> TestPluginWork(requestID);
-					        context.registerWorkItem(feature1);
-					    }
-					}
-					</code></pre>
+					<pre>
+<code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyPlugin</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">PluginService</span> </span>{
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">init</span><span class="hljs-params">(IMartinContext context, String feature, <span class="hljs-keyword">long</span> requestID)</span> </span>{
+		TestPluginWork feature1 = <span class="hljs-keyword">new</span> TestPluginWork(requestID);
+		context.registerWorkItem(feature1);
+	}
+}</code>
+					</pre>
 					<ul>
 					<li><code>public void init(IMartinContext context, String feature, long requestID){}</code> übergibt dem Plugin eine Referenz auf den Kontext der MArtIn API und erlaubt es einem Plugin WorkItems in Form von Callbacks für MArtIn zu registrieren, für Tasks welche zu einem späteren Zeitpunkt ausgeführt werden sollten. Ausserdem spezifiziert MArtIn das auszuführende Feature und übergibt die requestID.</li>
 					<li><code>TestPluginWork workItem = new TestPluginWork(requestID);</code> implementiert Callback-Objekt, welches nacher dem Context übergeben werden kann. Dabei wird die requestID dem Task übergeben, damit MArtIn den Task einem Request zuordnen kann.</li>
 					</ul>
 					<p>Die Callback-Methode sieht folgendermassen aus:</p>
-					<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestPluginWork</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">WorkItem</span></span>{
-					    <span class="hljs-annotation">@Override</span>
-					    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onWorkStart</span><span class="hljs-params">(Map&lt;String, IMartinType&gt; args)</span> <span class="hljs-keyword">throws</span> Exception </span>{
-					        Text text = (Text)args.get(<span class="hljs-string">"name"</span>);
-					    }
-					    <span class="hljs-annotation">@Override</span>
-					    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">doWork</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception </span>{
-					        <span class="hljs-comment">// Do work</span>
-					    }
-					    <span class="hljs-annotation">@Override</span>
-					    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">onWorkDone</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception </span>{
-					        <span class="hljs-keyword">return</span> <span class="hljs-string">"Bla"</span>;
-					    }
-					}
-					</code></pre>
+<pre>
+<code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestPluginWork</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">WorkItem</span></span>{
+	<span class="hljs-annotation">@Override</span>
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onWorkStart</span><span class="hljs-params">(Map&lt;String, IMartinType&gt; args)</span> <span class="hljs-keyword">throws</span> Exception </span>{
+		Text text = (Text)args.get(<span class="hljs-string">"name"</span>);
+	}
+	<span class="hljs-annotation">@Override</span>
+	<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">doWork</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception </span>{
+		<span class="hljs-comment">// Do work</span>
+	}
+	<span class="hljs-annotation">@Override</span>
+	<span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">onWorkDone</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception </span>{
+		<span class="hljs-keyword">return</span> <span 	class="hljs-string">"Foo"</span>;
+	}
+}</code>
+					</pre>
 					<ul>
 					<li><strong>onWorkStart</strong> übergibt Argumente an das Plugin.</li>
 					<li><strong>doWork</strong> ist sozusagen die main-Methode deines Plugins.</li>
@@ -114,53 +117,57 @@
 					<p>Alle drei Methoden können eine Exception werfen, ist dies der Fall, wird die Ausführing deines Plugins von MArtIn unterbrochen.</p>
 					<h3><a id="Datei_pluginxml_61"></a>Datei plugin.xml</h3>
 					<p>Als nächstes erstellst du eine XML-Datei mit dem Namen plugin.xml. Sie muss den Regeln aus der plugin.dtd Datei folgen.</p>
-					<pre><code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">plugin</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"ch.orgamization.psit4.martin.myplugin"</span> <span class="hljs-attribute">version</span>=<span class="hljs-value">"0.0.1"</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"ch.orgamization.psit4.martin.myplugin.PluginInplementation"</span>&gt;</span>
-					</code></pre>
+					<pre>
+<code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">plugin</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"ch.orgamization.psit4.martin.myplugin"</span> <span class="hljs-attribute">version</span>=<span class="hljs-value">"0.0.1"</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"ch.orgamization.psit4.martin.myplugin.PluginInplementation"</span>&gt;</span></code>
+					</pre>
 					<ul>
 					<li><strong>ch.orgamization.psit4.martin.myplugin</strong> ist der eindeutige Bezeichner deines Plugins.</li>
 					<li><strong>0.0.1</strong> bezeichet die Plugin-Version.</li>
 					<li><strong>ch.orgamization.psit4.martin.meinplugin.PluginInplementation</strong> bezeichnet die Startklasse des Plugins (kann in den meisten Fällen weggelassen werden).</li>
 					</ul>
-					<pre><code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">requires</span>&gt;</span>
-					    <span class="hljs-tag">&lt;<span class="hljs-title">import</span> <span class="hljs-attribute">plugin-id</span>=<span class="hljs-value">"ch.zhaw.psit4.martin.api"</span>/&gt;</span>
-					<span class="hljs-tag">&lt;/<span class="hljs-title">requires</span>&gt;</span>
-					</code></pre>
+					<pre>
+<code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">requires</span>&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-title">import</span> <span class="hljs-attribute">plugin-id</span>=<span class="hljs-value">"ch.zhaw.psit4.martin.api"</span>/&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">requires</span>&gt;</span></code>
+					</pre>
 					<p>Diese Zeile erlaubt es MArtIn dein Plugin als API-kompatibel zu erkennen. Diese Abhängigkeit ist die einzige, die absolut notwendig ist. Dein Plugin kann aber auch noch von anderen Plugins abhängig sein.</p>
 					<p>Folgeden optionale Bibliotheksabhängigkeiten werden nur benötigt, wenn du in deinem Plugin Drittanbieterbibliotheken verwendest, die MArtIn nicht kennt.</p>
-					<pre><code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">runtime</span>&gt;</span>
-					    <span class="hljs-tag">&lt;<span class="hljs-title">library</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"my_plugin"</span> <span class="hljs-attribute">path</span>=<span class="hljs-value">"classes/"</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"code"</span>&gt;</span>
-					        <span class="hljs-tag">&lt;<span class="hljs-title">doc</span> <span class="hljs-attribute">caption</span>=<span class="hljs-value">"Plugin documentation"</span>&gt;</span>
-					            <span class="hljs-tag">&lt;<span class="hljs-title">doc-ref</span> <span class="hljs-attribute">path</span>=<span class="hljs-value">"doc/index.html"</span> <span class="hljs-attribute">caption</span>=<span class="hljs-value">"javadoc"</span> /&gt;</span>
-					        <span class="hljs-tag">&lt;/<span class="hljs-title">doc</span>&gt;</span>
-					    <span class="hljs-tag">&lt;/<span class="hljs-title">library</span>&gt;</span>
-					    <span class="hljs-tag">&lt;<span class="hljs-title">library</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"java2html"</span> <span class="hljs-attribute">path</span>=<span class="hljs-value">"lib/java2html.jar"</span>
-					        <span class="hljs-attribute">type</span>=<span class="hljs-value">"code"</span>&gt;</span>
-					        <span class="hljs-tag">&lt;<span class="hljs-title">doc</span> <span class="hljs-attribute">caption</span>=<span class="hljs-value">"Java2html Library by Markus Gebhard"</span>&gt;</span>
-					            <span class="hljs-tag">&lt;<span class="hljs-title">doc-ref</span> <span class="hljs-attribute">path</span>=<span class="hljs-value">"docs/java2html"</span>
-					                <span class="hljs-attribute">caption</span>=<span class="hljs-value">"java2html library"</span>/&gt;</span>
-					        <span class="hljs-tag">&lt;/<span class="hljs-title">doc</span>&gt;</span>
-					    <span class="hljs-tag">&lt;/<span class="hljs-title">library</span>&gt;</span>
-					        <span class="hljs-tag">&lt;<span class="hljs-title">library</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"resources"</span> <span class="hljs-attribute">path</span>=<span class="hljs-value">"res/"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"resources"</span>/&gt;</span>
-					<span class="hljs-tag">&lt;/<span class="hljs-title">runtime</span>&gt;</span>
-					</code></pre>
+					<pre>
+<code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">runtime</span>&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-title">library</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"my_plugin"</span> <span class="hljs-attribute">path</span>=<span class="hljs-value">"classes/"</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"code"</span>&gt;</span>
+		<span class="hljs-tag">&lt;<span class="hljs-title">doc</span> <span class="hljs-attribute">caption</span>=<span class="hljs-value">"Plugin documentation"</span>&gt;</span>
+			<span class="hljs-tag">&lt;<span class="hljs-title">doc-ref</span> <span class="hljs-attribute">path</span>=<span class="hljs-value">"doc/index.html"</span> <span class="hljs-attribute">caption</span>=<span class="hljs-value">"javadoc"</span> /&gt;</span>
+		<span class="hljs-tag">&lt;/<span class="hljs-title">doc</span>&gt;</span>
+	<span class="hljs-tag">&lt;/<span class="hljs-title">library</span>&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-title">library</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"java2html"</span> <span class="hljs-attribute">path</span>=<span class="hljs-value">"lib/java2html.jar"</span>
+	<span class="hljs-attribute">type</span>=<span class="hljs-value">"code"</span>&gt;</span>
+		<span class="hljs-tag">&lt;<span class="hljs-title">doc</span> <span class="hljs-attribute">caption</span>=<span class="hljs-value">"Java2html Library by Markus Gebhard"</span>&gt;</span>
+			<span class="hljs-tag">&lt;<span class="hljs-title">doc-ref</span> <span class="hljs-attribute">path</span>=<span class="hljs-value">"docs/java2html"</span>
+		<span class="hljs-attribute">caption</span>=<span class="hljs-value">"java2html library"</span>/&gt;</span>
+		<span class="hljs-tag">&lt;/<span class="hljs-title">doc</span>&gt;</span>
+	<span class="hljs-tag">&lt;/<span class="hljs-title">library</span>&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-title">library</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"resources"</span> <span class="hljs-attribute">path</span>=<span class="hljs-value">"res/"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"resources"</span>/&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">runtime</span>&gt;</span></code>
+					</pre>
 					<ul>
 					<li><strong>my_plugin</strong> bezieht sich auf die kompilierten Klassen des Plugins selbst. Das Attribut “path” bestimmt, wo die Dateien sich relativ zum plugin.xml befinden, und “type” definiert, dass es Java-Code ist.</li>
 					<li><strong>ava2html</strong> bezieht sich auf eine externe Bibliothek, dessen Klassen sich in lib/java2html.jar befinden.</li>
 					</ul>
 					<p>Als nächstes deklarierst du die Metadaten, welche MArtIn über das Plugin benötgt.</p>
-					<pre><code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">extension</span> <span class="hljs-attribute">plugin-id</span>=<span class="hljs-value">"ch.zhaw.psit4.martin.api"</span>
-					    <span class="hljs-attribute">point-id</span>=<span class="hljs-value">"MartinPlugin"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"02f013c8-73f3-46ab-962c-acdcde9ac3e3"</span>&gt;</span>
-					    <span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"class"</span>
-					        <span class="hljs-attribute">value</span>=<span class="hljs-value">"ch.orgamization.psit4.martin.myplugin.PluginServiceImplementation"</span> /&gt;</span>
-					    <span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"name"</span> <span class="hljs-attribute">value</span>=<span class="hljs-value">"Mein Plugin"</span> /&gt;</span>
-					    <span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"description"</span>
-					        <span class="hljs-attribute">value</span>=<span class="hljs-value">"Mein super tolles Plugin."</span> /&gt;</span>
-					    <span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"author"</span> <span class="hljs-attribute">value</span>=<span class="hljs-value">"Hans Muster"</span> /&gt;</span>
-					    <span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"e-mail"</span> <span class="hljs-attribute">value</span>=<span class="hljs-value">"mymail@gmail.com"</span> /&gt;</span>
-					    <span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"homepage"</span> <span class="hljs-attribute">value</span>=<span class="hljs-value">"http://www.mypage.com"</span> /&gt;</span>
-					    <span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"date"</span> <span class="hljs-attribute">value</span>=<span class="hljs-value">"13.05.2016"</span> /&gt;</span>
-					<span class="hljs-tag">&lt;/<span class="hljs-title">extension</span>&gt;</span>
-					</code></pre>
+					<pre>
+<code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-title">extension</span> <span class="hljs-attribute">plugin-id</span>=<span class="hljs-value">"ch.zhaw.psit4.martin.api"</span>
+	<span class="hljs-attribute">point-id</span>=<span class="hljs-value">"MartinPlugin"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"02f013c8-73f3-46ab-962c-acdcde9ac3e3"</span>&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"class"</span>
+	<span class="hljs-attribute">value</span>=<span class="hljs-value">"ch.orgamization.psit4.martin.myplugin.PluginServiceImplementation"</span> /&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"name"</span> <span class="hljs-attribute">value</span>=<span class="hljs-value">"Mein Plugin"</span> /&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"description"</span>
+	<span class="hljs-attribute">value</span>=<span class="hljs-value">"Mein super tolles Plugin."</span> /&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"author"</span> <span class="hljs-attribute">value</span>=<span class="hljs-value">"Hans Muster"</span> /&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"e-mail"</span> <span class="hljs-attribute">value</span>=<span class="hljs-value">"mymail@gmail.com"</span> /&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"homepage"</span> <span class="hljs-attribute">value</span>=<span class="hljs-value">"http://www.mypage.com"</span> /&gt;</span>
+	<span class="hljs-tag">&lt;<span class="hljs-title">parameter</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"date"</span> <span class="hljs-attribute">value</span>=<span class="hljs-value">"13.05.2016"</span> /&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">extension</span>&gt;</span></code>
+					</pre>
 					<ul>
 					<li><strong>id</strong> zufällig generierte UUID (unter folgendem <a href="https://www.uuidgenerator.net/">Link</a> generieren).</li>
 					<li><strong>point-id</strong> definiert das Interface, welches das Plugin aus MArtIn implementiert.</li>
@@ -175,16 +182,17 @@
 					<h2><a id="PluginAnbindung_129"></a>Plugin-Anbindung</h2>
 					<p>Um dein fertiges Plugin einbinden zu können, muss es strukturellen Konventionen entsprechen. Nachdem dein Plugin gebuildet wurde, musst du noch die folgenden zwei Unterkapitel befolgen. Anschliessend kannst du es so wie es ist oder als ZIP-Archiv hochladen. Ab diesem Moment kann MArtIn dein Plugin verwenden.</p>
 					<h3><a id="Ordnerstruktur_133"></a>Ordnerstruktur</h3>
-					<pre><code class="language-java">./ch.orgamization.psit4.martin.meinplugin
-					  |_ /classes
-					  |_ /lib
-					  |  |_ java2html.jar
-					  |_ /res
-					  |  |_ functions.json
-					  |  |_ resource2.xml
-					  |_ plugin.xml
-					  |_ plugin.dtd
-					</code></pre>
+					<pre>
+<code class="language-java">./ch.orgamization.psit4.martin.meinplugin
+	|_ /classes
+	|_ /lib
+	|  |_ java2html.jar
+	|_ /res
+	|  |_ functions.json
+	|  |_ resource2.xml
+	|_ plugin.xml
+	|_ plugin.dtd</code>
+					</pre>
 					<ul>
 					<li><strong>classes</strong> enthält alle übersetzten Java-Klassen des Plugins. Diese werden zur Laufzeit von MArtIn aufgerufen.</li>
 					<li><strong>lib</strong> (optional) vorhanden, sofern du unbekannte Java-Bibliotheken verwendest. Diese müssen in plugin.xml erwähnt werden.</li>
@@ -194,35 +202,36 @@
 					<li><strong>plugin.dtd</strong> optional, da auch die online Version referenziert werden kann &quot;<a href="http://jpf.sourceforge.net/plugin_1_0.dtd">http://jpf.sourceforge.net/plugin_1_0.dtd</a>&quot;</li>
 					</ul>
 					<h3><a id="Datei_functionsjson_154"></a>Datei functions.json</h3>
-					<pre><code class="language-json">{
-					    "<span class="hljs-attribute">Functions</span>": <span class="hljs-value">[
-					        {
-					            "<span class="hljs-attribute">Name</span>": <span class="hljs-value"><span class="hljs-string">"hallo"</span></span>,
-					            "<span class="hljs-attribute">Describtion</span>": <span class="hljs-value"><span class="hljs-string">"Greets the greeter."</span></span>,
-					            "<span class="hljs-attribute">Keywords</span>": <span class="hljs-value">[
-					                <span class="hljs-string">"hello"</span>,
-					                <span class="hljs-string">"greetings"</span>,
-					                <span class="hljs-string">"hey"</span>,
-					                <span class="hljs-string">"howdy"</span>,
-					                <span class="hljs-string">"hi-ya"</span>,
-					                <span class="hljs-string">"whazzup"</span>
-					            ]</span>,
-					            "<span class="hljs-attribute">Parameter</span>": <span class="hljs-value">[
-					                {
-					                    "<span class="hljs-attribute">Name</span>": <span class="hljs-value"><span class="hljs-string">"Name"</span></span>,
-					                    "<span class="hljs-attribute">Required</span>": <span class="hljs-value"><span class="hljs-string">"false"</span></span>,
-					                    "<span class="hljs-attribute">Type</span>": <span class="hljs-value"><span class="hljs-string">"ch.zhaw.psit4.martin.api.types.Person"</span></span>,
-					                    "<span class="hljs-attribute">Tokens-regex</span>": <span class="hljs-value"><span class="hljs-string">""</span>
-					                </span>}
-					            ]</span>,
-					            "<span class="hljs-attribute">Examples</span>": <span class="hljs-value">[
-					                <span class="hljs-string">"Hello MArtIn!"</span>,
-					                <span class="hljs-string">"Howdy partner!"</span>
-					            ]
-					        </span>}
-					    ]
-					</span>}
-					</code></pre>
+					<pre>
+<code class="language-json">{
+	"<span class="hljs-attribute">Functions</span>": <span class="hljs-value">[
+		{
+			"<span class="hljs-attribute">Name</span>": <span class="hljs-value"><span class="hljs-string">"hallo"</span></span>,
+			"<span class="hljs-attribute">Describtion</span>": <span class="hljs-value"><span class="hljs-string">"Greets the greeter."</span></span>,
+			"<span class="hljs-attribute">Keywords</span>": <span class="hljs-value">[
+				<span class="hljs-string">"hello"</span>,
+				<span class="hljs-string">"greetings"</span>,
+				<span class="hljs-string">"hey"</span>,
+				<span class="hljs-string">"howdy"</span>,
+				<span class="hljs-string">"hi-ya"</span>,
+				<span class="hljs-string">"whazzup"</span>
+			]</span>,
+			"<span class="hljs-attribute">Parameter</span>": <span class="hljs-value">[
+				{
+					"<span class="hljs-attribute">Name</span>": <span class="hljs-value"><span class="hljs-string">"Name"</span></span>,
+					"<span class="hljs-attribute">Required</span>": <span class="hljs-value"><span class="hljs-string">"false"</span></span>,
+					"<span class="hljs-attribute">Type</span>": <span class="hljs-value"><span class="hljs-string">"ch.zhaw.psit4.martin.api.types.Person"</span></span>,
+					"<span class="hljs-attribute">Tokens-regex</span>": <span class="hljs-value"><span class="hljs-string">""</span>
+				</span>}
+			]</span>,
+			"<span class="hljs-attribute">Examples</span>": <span class="hljs-value">[
+				<span class="hljs-string">"Hello MArtIn!"</span>,
+				<span class="hljs-string">"Howdy partner!"</span>
+			]
+		</span>}
+	]
+</span>}</code>
+					</pre>
 					<ul>
 					<li><strong>Functions</strong> enthält eine Liste der Funktionen, welche das Plugin anbietet.</li>
 					<li><strong>Name</strong> enthält den Namen der Funktion, die vom Plugin angeboten wird (unter <code>String feature</code> bei der Initialisierung übergeben).</li>
