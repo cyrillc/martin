@@ -1,4 +1,4 @@
-parameter_id,name,type,function_id,required
+id,name,type,function_id,required
 1,time,ch.zhaw.psit4.martin.api.types.Timestamp,1,false
 2,location,ch.zhaw.psit4.martin.api.types.Location,1,false
 3,name1,ch.zhaw.psit4.martin.api.types.Person,2,false

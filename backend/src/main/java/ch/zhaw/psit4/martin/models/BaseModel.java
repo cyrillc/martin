@@ -10,7 +10,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Version;
 
 @MappedSuperclass 
 public abstract class BaseModel {
@@ -27,7 +26,7 @@ public abstract class BaseModel {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
 	
-	@Version
+	
     private Integer version;
 
 	public int getId() {
@@ -49,14 +48,21 @@ public abstract class BaseModel {
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-
+	
 	@PrePersist
-	public void setCreationDate() {
+	public void prePersist() {
 		this.createdAt = new Date();
+		this.version = 1;
 	}
 
 	@PreUpdate
-	public void setChangeDate() {
+	public void preUpdate() {
 		this.updatedAt = new Date();
+		if(version == null){
+			version = 1;
+		} else {
+			version++;
+		}
 	}
+
 }

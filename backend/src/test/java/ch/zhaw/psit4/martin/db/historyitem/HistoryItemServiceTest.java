@@ -39,13 +39,13 @@
 //    }
 //
 //    @Autowired
-//    private HistoryItemRepository historyItemService;
+//    private HistoryItemRepository historyItemRepository;
 //    private DaoStub daoStub;
 //
 //    @Before
 //    public void setUp() {
 //        daoStub = new DaoStub();
-//        historyItemService.setHistoryItemDAO(daoStub);
+//        historyItemRepository.setHistoryItemDAO(daoStub);
 //    }
 //
 //    @Test
@@ -54,7 +54,7 @@
 //        Request request = new Request("testRequest");
 //        Response response = new Response("testResponse");
 //        HistoryItem hs = new HistoryItem(request, response);
-//        historyItemService.save(hs);
+//        historyItemRepository.save(hs);
 //
 //        assertTrue(this.daoStub.addIsCalled);
 //    }

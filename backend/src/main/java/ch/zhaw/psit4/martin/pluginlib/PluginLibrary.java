@@ -26,7 +26,6 @@ import ch.zhaw.psit4.martin.common.Call;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.api.validation.FeatureValidator;
 import ch.zhaw.psit4.martin.api.validation.MartinAPITestResult;
 import ch.zhaw.psit4.martin.api.validation.MartinPluginValidator;
 import ch.zhaw.psit4.martin.models.*;
@@ -55,7 +54,8 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     @Autowired
     private MartinContextAccessor martinContextAccessor;
     
-    @Autowired
+    @SuppressWarnings("unused")
+	@Autowired
     private PluginDataAccessor pluginDataAccessor;
     
     @Autowired
