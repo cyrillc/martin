@@ -13,7 +13,7 @@
 	</runtime>
  
 	<!-- define a single plugin extension point (interface) -->
-	<extension-point id="PluginService">
+	<extension-point id="MartinPlugin">
 		<!-- This is required parameter of type String that should contain full Java class name. -->
 		<parameter-def id="class" />
 		<!-- Optional extension point declarations follow here -->

@@ -18,7 +18,7 @@ HistoryRenderer.prototype.renderRequest = function (itemRequest) {
 
 HistoryRenderer.prototype.renderResponse = function (itemResponse) {
 	var response = $('<td></td>');
-	response.append(itemResponse.content);
+	response.append(itemResponse.responseText);
 	return response;
 };
 

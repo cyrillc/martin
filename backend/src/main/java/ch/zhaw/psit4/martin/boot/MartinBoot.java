@@ -3,6 +3,8 @@ package ch.zhaw.psit4.martin.boot;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
+
+
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -19,6 +21,7 @@ public class MartinBoot {
      */
     @SuppressWarnings("unused")
 	private static ApplicationContext context;
+   
 
     /**
      * Main application entry point launches MArtIn and used components.

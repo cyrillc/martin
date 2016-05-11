@@ -2,7 +2,6 @@ package ch.zhaw.psit4.martin.requestprocessor.utils;
 
 import java.util.Properties;
 
-import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 

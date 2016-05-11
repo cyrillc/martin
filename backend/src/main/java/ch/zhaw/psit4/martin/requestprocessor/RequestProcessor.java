@@ -15,14 +15,9 @@ import ch.zhaw.psit4.martin.api.types.IMartinTypeInstanciationException;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Sentence;
-import ch.zhaw.psit4.martin.db.function.Function;
-import ch.zhaw.psit4.martin.db.function.FunctionService;
-import ch.zhaw.psit4.martin.db.keyword.Keyword;
-import ch.zhaw.psit4.martin.db.parameter.Parameter;
-import ch.zhaw.psit4.martin.db.plugin.Plugin;
-import ch.zhaw.psit4.martin.db.request.Request;
+import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.repositories.KeywordRepository;
 import ch.zhaw.psit4.martin.common.Phrase;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
 /**
@@ -33,9 +28,9 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
  * @version 0.1
  **/
 public class RequestProcessor implements IRequestProcessor {
-
+	
 	@Autowired
-	private FunctionService functionService;
+	private KeywordRepository keywordRepository;
 
 	@Autowired
 	private StanfordCoreNLPClient stanfordNLP;
@@ -52,7 +47,7 @@ public class RequestProcessor implements IRequestProcessor {
 	 *         executable function calls.
 	 */
 	@Override
-	public ExtendedRequest extend(Request request) {
+	public ExtendedRequest extend(Request request) {	
 		List<PossibleCall> possibleCalls = new ArrayList<>();
 
 		Sentence sentence = new Sentence(request.getCommand(), stanfordNLP);
@@ -99,25 +94,26 @@ public class RequestProcessor implements IRequestProcessor {
 
 		for (String word : words) {
 
-			List<Object[]> functionsKeywords = functionService.getByKeyword(word);
-			for (Object[] functionsKeyword : functionsKeywords) {
-				Function function = (Function) functionsKeyword[0];
-				Plugin plugin = function.getPlugin();
+			Keyword keyword = keywordRepository.findByKeywordIgnoreCase(word);
 
-				Keyword keyword = (Keyword) functionsKeyword[1];
+			if (keyword != null) {
+				for (Function function : keyword.getFunctions()) {
+					Plugin plugin = function.getPlugin();
 
-				Optional<PossibleCall> optionalPossibleResult = possibleCalls.stream()
-						.filter(o -> o.getPlugin().getId() == plugin.getId())
-						.filter(o -> o.getFunction().getId() == function.getId()).findFirst();
+					Optional<PossibleCall> optionalPossibleResult = possibleCalls.stream()
+							.filter(o -> o.getPlugin().getId() == plugin.getId())
+							.filter(o -> o.getFunction().getId() == function.getId()).findFirst();
 
-				if (optionalPossibleResult.isPresent()) {
-					optionalPossibleResult.get().addMatchingKeyword(keyword);
-				} else {
-					PossibleCall possibleCall = new PossibleCall(plugin, function);
-					possibleCall.addMatchingKeyword(keyword);
-					possibleCalls.add(possibleCall);
+					if (optionalPossibleResult.isPresent()) {
+						optionalPossibleResult.get().addMatchingKeyword(keyword);
+					} else {
+						PossibleCall possibleCall = new PossibleCall(plugin, function);
+						possibleCall.addMatchingKeyword(keyword);
+						possibleCalls.add(possibleCall);
+					}
 				}
 			}
+
 		}
 
 		return possibleCalls;
@@ -146,7 +142,7 @@ public class RequestProcessor implements IRequestProcessor {
 		for (PossibleCall possibleCall : possibleCalls) {
 			Function function = possibleCall.getFunction();
 
-			for (Parameter parameter : function.getParameter()) {
+			for (Parameter parameter : function.getParameters()) {
 				// Create instance of IMartinType for requested type
 				IMartinType parameterValue = getParameterValue(parameter, sentence);
 				possibleCall.addParameter(parameter.getName(), parameterValue);

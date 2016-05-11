@@ -1,7 +1,7 @@
 package ch.zhaw.psit4.martin.common;
 
 import ch.zhaw.psit4.martin.common.FunctionInformation;
-import ch.zhaw.psit4.martin.db.function.Function;
+import ch.zhaw.psit4.martin.models.Function;
 
 import java.util.HashSet;
 import java.util.Set;

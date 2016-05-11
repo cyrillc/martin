@@ -5,7 +5,7 @@
     xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
     <changeSet author="fleppsim" id="schema-1.0.0">
         <createTable tableName="author">
-            <column autoIncrement="true" name="author_id" type="INT">
+            <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true" />
             </column>
             <column name="name" type="VARCHAR(45)" />
@@ -14,7 +14,7 @@
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.1">
         <createTable tableName="example_call">
-            <column autoIncrement="true" name="example_call_id" type="INT">
+            <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true" />
             </column>
             <column name="example_call" type="VARCHAR(100)">
@@ -28,7 +28,7 @@
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.2">
         <createTable tableName="function">
-            <column autoIncrement="true" name="function_id" type="INT">
+            <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true" />
             </column>
             <column name="name" type="VARCHAR(45)">
@@ -54,22 +54,22 @@
         </createTable>
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.4">
-        <createTable tableName="historyItem">
+        <createTable tableName="history_item">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true" />
             </column>
             <column name="date" type="timestamp" />
-            <column name="request" type="INT">
+            <column name="request_id" type="INT">
                 <constraints nullable="false" />
             </column>
-            <column name="response" type="INT">
+            <column name="response_id" type="INT">
                 <constraints nullable="false" />
             </column>
         </createTable>
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.5">
         <createTable tableName="keyword">
-            <column autoIncrement="true" name="keyword_id" type="INT">
+            <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true" />
             </column>
             <column name="keyword" type="VARCHAR(45)">
@@ -77,20 +77,9 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="fleppsim" id="schema-1.0.6">
-        <createTable tableName="option">
-            <column autoIncrement="true" name="option_id" type="INT">
-                <constraints primaryKey="true" />
-            </column>
-            <column name="name" type="VARCHAR(45)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="VARCHAR(200)" />
-        </createTable>
-    </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.7">
         <createTable tableName="parameter">
-            <column autoIncrement="true" name="parameter_id" type="INT">
+            <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true" />
             </column>
             <column name="name" type="VARCHAR(45)">
@@ -100,9 +89,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="function_id" type="INT">
-                <constraints nullable="false" />
-            </column>
-            <column name="option_id" type="INT">
                 <constraints nullable="false" />
             </column>
         </createTable>
@@ -120,7 +106,7 @@
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.9">
         <createTable tableName="plugin">
-            <column autoIncrement="true" name="plugin_id" type="INT">
+            <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true" />
             </column>
             <column name="name" type="VARCHAR(45)">
@@ -205,57 +191,49 @@
             <column name="parameter_id" />
         </createIndex>
     </changeSet>
-    <changeSet author="fleppsim" id="schema-1.0.24">
-        <createIndex indexName="fk_parameter_option1_idx" tableName="parameter">
-            <column name="option_id" />
-        </createIndex>
-    </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.25">
         <createIndex indexName="fk_plugin_author_idx" tableName="plugin">
             <column name="author_id" />
         </createIndex>
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.26">
-        <createIndex indexName="request_idx" tableName="historyItem">
-            <column name="request" />
+        <createIndex indexName="request_idx" tableName="history_item">
+            <column name="request_id" />
         </createIndex>
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.27">
-        <createIndex indexName="response_idx" tableName="historyItem">
-            <column name="response" />
+        <createIndex indexName="response_idx" tableName="history_item">
+            <column name="response_id" />
         </createIndex>
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.28">
-        <addForeignKeyConstraint baseColumnNames="function_id" baseTableName="example_call" constraintName="fk_example_call_function1" deferrable="false" initiallyDeferred="false" referencedColumnNames="function_id" referencedTableName="function" />
+        <addForeignKeyConstraint baseColumnNames="function_id" baseTableName="example_call" constraintName="fk_example_call_function1" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="function" />
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.29">
-        <addForeignKeyConstraint baseColumnNames="function_id" baseTableName="function_has_keyword" constraintName="fk_function_has_keyword_function1" deferrable="false" initiallyDeferred="false" referencedColumnNames="function_id" referencedTableName="function" />
+        <addForeignKeyConstraint baseColumnNames="function_id" baseTableName="function_has_keyword" constraintName="fk_function_has_keyword_function1" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="function" />
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.30">
-        <addForeignKeyConstraint baseColumnNames="keyword_id" baseTableName="function_has_keyword" constraintName="fk_function_has_keyword_keyword1" deferrable="false" initiallyDeferred="false" referencedColumnNames="keyword_id" referencedTableName="keyword" />
+        <addForeignKeyConstraint baseColumnNames="keyword_id" baseTableName="function_has_keyword" constraintName="fk_function_has_keyword_keyword1" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="keyword" />
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.31">
-        <addForeignKeyConstraint baseColumnNames="plugin_id" baseTableName="function" constraintName="fk_function_plugin1" deferrable="false" initiallyDeferred="false" referencedColumnNames="plugin_id" referencedTableName="plugin" />
+        <addForeignKeyConstraint baseColumnNames="plugin_id" baseTableName="function" constraintName="fk_function_plugin1" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="plugin" />
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.32">
-        <addForeignKeyConstraint baseColumnNames="request" baseTableName="historyItem" constraintName="fk_historyItems_request" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="request" />
+        <addForeignKeyConstraint baseColumnNames="request_id" baseTableName="history_item" constraintName="fk_history_items_request" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="request" />
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.33">
-        <addForeignKeyConstraint baseColumnNames="response" baseTableName="historyItem" constraintName="fk_historyItems_response" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="response" />
+        <addForeignKeyConstraint baseColumnNames="response_id" baseTableName="history_item" constraintName="fk_history_items_response" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="response" />
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.34">
-        <addForeignKeyConstraint baseColumnNames="function_id" baseTableName="parameter" constraintName="fk_parameter_function1" deferrable="false" initiallyDeferred="false" referencedColumnNames="function_id" referencedTableName="function" />
+        <addForeignKeyConstraint baseColumnNames="function_id" baseTableName="parameter" constraintName="fk_parameter_function1" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="function" />
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.35">
-        <addForeignKeyConstraint baseColumnNames="keyword_id" baseTableName="parameter_has_keyword" constraintName="fk_parameter_has_keyword_keyword1" deferrable="false" initiallyDeferred="false" referencedColumnNames="keyword_id" referencedTableName="keyword" />
+        <addForeignKeyConstraint baseColumnNames="keyword_id" baseTableName="parameter_has_keyword" constraintName="fk_parameter_has_keyword_keyword1" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="keyword" />
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.36">
-        <addForeignKeyConstraint baseColumnNames="parameter_id" baseTableName="parameter_has_keyword" constraintName="fk_parameter_has_keyword_parameter1" deferrable="false" initiallyDeferred="false" referencedColumnNames="parameter_id" referencedTableName="parameter" />
-    </changeSet>
-    <changeSet author="fleppsim" id="schema-1.0.37">
-        <addForeignKeyConstraint baseColumnNames="option_id" baseTableName="parameter" constraintName="fk_parameter_option1" deferrable="false" initiallyDeferred="false" referencedColumnNames="option_id" referencedTableName="option" />
+        <addForeignKeyConstraint baseColumnNames="parameter_id" baseTableName="parameter_has_keyword" constraintName="fk_parameter_has_keyword_parameter1" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="parameter" />
     </changeSet>
     <changeSet author="fleppsim" id="schema-1.0.38">
-        <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="plugin" constraintName="fk_plugin_author" deferrable="false" initiallyDeferred="false" referencedColumnNames="author_id" referencedTableName="author" />
+        <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="plugin" constraintName="fk_plugin_author" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="author" />
     </changeSet>
 </databaseChangeLog>

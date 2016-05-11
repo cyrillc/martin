@@ -16,20 +16,33 @@ import ch.zhaw.psit4.martin.api.MartinPlugin;
  * The passed instance will be tested for the ability to be instanced as {@link MartinPlugin} and
  * for use of the context at initialization.
  * 
- * @param <Type> The type of the tested object.
  * @version 0.0.1-SNAPSHOT
  */
-public class MartinPluginValidator<Type> {
+public class MartinPluginValidator {
 
     private static final Log LOG = LogFactory.getLog(MartinPluginValidator.class);
-    private Class<Type> className;
-    private Type instance;
+    private Class<?> className;
+    private Object instance;
     private MartinContextAccessorMock context;
+    
+    @SuppressWarnings("unused")
+    private MartinPluginValidator() {
+        // hidden
+    }
+    
+    public <Type> MartinPluginValidator(Class<Type> clazz) {
+        try {
+            this.instance = clazz.newInstance();
+            this.className = clazz;
+        } catch (InstantiationException | IllegalAccessException e) {
+            LOG.error("Could not instanciate generic type: " + clazz.toString(), e);
+        }
+        this.context = new MartinContextAccessorMock();
+    }
 
-    @SuppressWarnings("unchecked")
-    public MartinPluginValidator(Type type) {
-        this.instance = type;
-        this.className = (Class<Type>) type.getClass();
+    public MartinPluginValidator(Object instance) {
+        this.instance = instance;
+        this.className = instance.getClass();
         this.context = new MartinContextAccessorMock();
     }
 
@@ -39,6 +52,9 @@ public class MartinPluginValidator<Type> {
      * @return {@link MartinAPITestResult}
      */
     public MartinAPITestResult runTests() {
+        if(instance == null) {
+            return MartinAPITestResult.ERROR;
+        }
         boolean result = isMartinPlugin();
         if (!result) {
             LOG.error(className.toString() + " cannot be instanced to " + MartinPlugin.class.toString()

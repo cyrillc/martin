@@ -4,10 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.zhaw.psit4.martin.api.types.IMartinType;
-import ch.zhaw.psit4.martin.db.function.Function;
-import ch.zhaw.psit4.martin.db.keyword.Keyword;
-import ch.zhaw.psit4.martin.db.plugin.Plugin;
-
+import ch.zhaw.psit4.martin.models.*;
 /**
  * This class is used to prepare possible calls. The state of the PossibleCall
  * may not be complete and will be changed over the analyzation of the code. A

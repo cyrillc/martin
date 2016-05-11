@@ -13,8 +13,7 @@ public class WeatherPluginTest extends TestCase {
     /**
      * Create the test case
      *
-     * @param testName
-     *            name of the test case
+     * @param testName name of the test case
      */
     public WeatherPluginTest(String testName) {
         super(testName);
@@ -32,8 +31,7 @@ public class WeatherPluginTest extends TestCase {
      */
     public void testApp() {
         assertTrue(true);
-        MartinPluginValidator<WeatherPlugin> validator = new MartinPluginValidator<WeatherPlugin>(
-                new WeatherPlugin());
+        MartinPluginValidator validator = new MartinPluginValidator(new WeatherPlugin());
         assertEquals(MartinAPITestResult.OK, validator.runTests());
     }
 }

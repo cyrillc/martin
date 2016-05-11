@@ -10,5 +10,18 @@ package ch.zhaw.psit4.martin.api.validation;
  * @version 0.0.1-SNAPSHOT
  */
 public enum MartinAPITestResult {
-    OK, WARNING, ERROR
+    OK(2), WARNING(1), ERROR(0);
+    
+    private int value;
+    MartinAPITestResult() {
+        this.value = -1;
+    }
+    MartinAPITestResult(int value) {
+        this.value = value;
+    }
+    
+    public int getValue() {
+        return this.value;
+    }
+    
 }

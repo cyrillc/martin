@@ -58,9 +58,8 @@ public class LiquibaseTest {
 			assertTrue(tables.contains("EXAMPLE_CALL"));
 			assertTrue(tables.contains("FUNCTION"));
 			assertTrue(tables.contains("FUNCTION_HAS_KEYWORD"));
-			assertTrue(tables.contains("HISTORYITEM"));
+			assertTrue(tables.contains("HISTORY_ITEM"));
 			assertTrue(tables.contains("KEYWORD"));
-			assertTrue(tables.contains("OPTION"));
 			assertTrue(tables.contains("PARAMETER"));
 			assertTrue(tables.contains("PARAMETER_HAS_KEYWORD"));
 			assertTrue(tables.contains("PLUGIN"));
@@ -81,7 +80,7 @@ public class LiquibaseTest {
 	public void testDatabaseContent() {
 		try {
 			PreparedStatement statement = datasource.getConnection()
-					.prepareStatement("SELECT name,email FROM author WHERE author_id = 1");
+					.prepareStatement("SELECT name,email FROM author WHERE id = 1");
 			ResultSet result = statement.executeQuery();
 			result.next();
 			String name = result.getString("name");

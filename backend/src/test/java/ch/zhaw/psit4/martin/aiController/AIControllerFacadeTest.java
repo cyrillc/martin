@@ -22,13 +22,10 @@ import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 import ch.zhaw.psit4.martin.common.Sentence;
-import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
-import ch.zhaw.psit4.martin.db.historyitem.HistoryItemService;
-import ch.zhaw.psit4.martin.db.request.Request;
-import ch.zhaw.psit4.martin.db.response.Response;
+import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.repositories.HistoryItemRepository;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -36,7 +33,7 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 public class AIControllerFacadeTest {
 
 	@Mock
-	private HistoryItemService historyItemServiceMock;
+	private HistoryItemRepository historyItemServiceMock;
 
 	@Mock
 	private RequestProcessor requestProcessorMock;
@@ -74,13 +71,13 @@ public class AIControllerFacadeTest {
 
 		when(requestProcessorMock.extend(request)).thenReturn(extRequest);
 		when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);
-		doNothing().when(historyItemServiceMock).addHistoryItem(historyItem);
+		
 
 		ArrayList<HistoryItem> getHistoryResult = new ArrayList<>();
 		getHistoryResult.add(new HistoryItem(new Request("command1"), new Response("response1")));
 		getHistoryResult.add(new HistoryItem(new Request("command2"), new Response("response2")));
 		getHistoryResult.add(new HistoryItem(new Request("command3"), new Response("response3")));
-		when(historyItemServiceMock.getHistory()).thenReturn(getHistoryResult);
+		when(historyItemServiceMock.findAll()).thenReturn(getHistoryResult);
 	}
 
 	@Test
@@ -97,7 +94,7 @@ public class AIControllerFacadeTest {
 		// the elaborateRequestFunction, otherwise the mock will not be the
 		// same as the one generated.
 		historyItem.setDate(new Timestamp(new Date().getTime()));
-		verify(historyItemServiceMock).addHistoryItem(historyItem);
+		verify(historyItemServiceMock).save(historyItem);
 	}
 
 	@Test

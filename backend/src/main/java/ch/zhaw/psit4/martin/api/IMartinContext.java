@@ -17,7 +17,7 @@ public interface IMartinContext {
     /*
      * Plugin extention point that is distributed to module programmers
      */
-    public static final String EXTPOINT_ID = "PluginService";
+    public static final String EXTPOINT_ID = "MartinPlugin";
     
     
     /**Registers a work item in the context.
