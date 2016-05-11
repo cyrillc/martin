@@ -10,7 +10,7 @@ import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 
 import ch.zhaw.psit4.martin.api.types.IMartinTypeInstanciationException;
-import ch.zhaw.psit4.martin.api.types.Location;
+import ch.zhaw.psit4.martin.api.types.MartinLocation;
 import ch.zhaw.psit4.martin.boot.MartinBoot;
 
 public class LocationFactory {
@@ -18,18 +18,18 @@ public class LocationFactory {
 
 	private static final Log LOG = LogFactory.getLog(MartinBoot.class);
 
-	public Location fromString(String rawInput) throws IMartinTypeInstanciationException {
-		Location location = new Location(rawInput);
+	public MartinLocation fromString(String rawInput) throws IMartinTypeInstanciationException {
+		MartinLocation martinLocation = new MartinLocation(rawInput);
 
 		GeocodingResult[] results = getGeolocationFromGoogle(rawInput);
 
 		if (results.length > 0) {
-			location.setFormattedAddress(Optional.ofNullable(results[0].formattedAddress));
-			location.setLatitude(Optional.ofNullable(results[0].geometry.location.lat));
-			location.setLongitude(Optional.ofNullable(results[0].geometry.location.lng));
+			martinLocation.setFormattedAddress(Optional.ofNullable(results[0].formattedAddress));
+			martinLocation.setLatitude(Optional.ofNullable(results[0].geometry.location.lat));
+			martinLocation.setLongitude(Optional.ofNullable(results[0].geometry.location.lng));
 		}
 
-		return location;
+		return martinLocation;
 	}
 
 	private GeocodingResult[] getGeolocationFromGoogle(String rawLocation) {

@@ -1,6 +1,5 @@
 package ch.zhaw.psit4.martin.models;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;

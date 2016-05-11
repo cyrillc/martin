@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,7 +54,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     @Autowired
     private MartinContextAccessor martinContextAccessor;
     
-    @SuppressWarnings("unused")
 	@Autowired
     private PluginDataAccessor pluginDataAccessor;
     
@@ -91,7 +89,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * It will start after all beans have been initialized to prevent crashes during bean
      * initialization and for looser dependencies.
      */
-    @PostConstruct
+    //@PostConstruct
     @Override
     public void startLibrary() {
         // Get plugins

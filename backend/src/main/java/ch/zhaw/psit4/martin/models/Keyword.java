@@ -7,7 +7,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import ch.zhaw.psit4.martin.common.MartinHelper;
-import edu.stanford.nlp.util.ArraySet;
 
 /**
  * Contains a Keyword for a Plugin. Either Funtion or Parameter. The class is

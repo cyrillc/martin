@@ -15,7 +15,6 @@ import ch.zhaw.psit4.martin.common.MartinHelper;
 import ch.zhaw.psit4.martin.models.Keyword;
 import ch.zhaw.psit4.martin.models.Parameter;
 import ch.zhaw.psit4.martin.models.Plugin;
-import edu.stanford.nlp.util.ArraySet;
 
 /**
  * Contains a Paramter for a Plugin Function. The class is used to store

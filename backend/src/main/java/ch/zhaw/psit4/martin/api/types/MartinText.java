@@ -7,8 +7,8 @@ package ch.zhaw.psit4.martin.api.types;
  *
  * @version 0.0.1-SNAPSHOT
  */
-public class Text extends MartinType {
-	public Text(String data) {
+public class MartinText extends MartinBaseType {
+	public MartinText(String data) {
 		super(data);
 	}
 }

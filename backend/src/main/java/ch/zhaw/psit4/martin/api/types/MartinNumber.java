@@ -2,7 +2,7 @@ package ch.zhaw.psit4.martin.api.types;
 
 import java.util.Optional;
 
-public class Number extends MartinType {
+public class MartinNumber extends MartinBaseType {
 	private Optional<Integer> integerNumber = Optional.ofNullable(null);
 	private Optional<Double> doubleNumber = Optional.ofNullable(null);
 	private RawFormat rawFormat = RawFormat.UNKNOWN;
@@ -11,7 +11,7 @@ public class Number extends MartinType {
 		UNKNOWN, NUMERIC, WORD_EN;
 	}
 
-	public Number(String data) {
+	public MartinNumber(String data) {
 		super(data);
 	}
 

@@ -5,10 +5,10 @@ import java.util.Optional;
 import org.joda.time.DateTime;
 import org.json.JSONObject;
 
-public class Timestamp extends MartinType {
+public class MartinTimestamp extends MartinBaseType {
 	private Optional<DateTime> datetime;
 
-	public Timestamp(String data) {
+	public MartinTimestamp(String data) {
 		super(data);
 	}
 

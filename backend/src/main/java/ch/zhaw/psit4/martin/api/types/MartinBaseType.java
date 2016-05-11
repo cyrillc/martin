@@ -2,10 +2,10 @@ package ch.zhaw.psit4.martin.api.types;
 
 import org.json.*;
 
-public abstract class MartinType implements IMartinType {
+public abstract class MartinBaseType implements IMartinType {
 	protected String data;
 	
-	public MartinType(String data){
+	public MartinBaseType(String data){
 		this.data = data;
 	}
 	
