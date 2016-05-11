@@ -30,74 +30,52 @@ public class PluginDataAccessor {
      * File name of the plugin keywords JSON.
      */
     public static final String PLUGIN_FUNCTIONS = "functions.json";
-    /*
-     * Log from the common logging api
-     */
+
     private static final Log LOG = LogFactory.getLog(PluginDataAccessor.class);
 
     @Autowired
     private PluginRepository pluginRepository;
 
-
-    public PluginDataAccessor() {
-        // empty
-    }
-
-    public void savePluginInDB(Extension extension, ClassLoader classLoader)
+    public void savePluginInDB(Extension pluginData, ClassLoader classLoader)
             throws KeywordsJSONMissingException {
-        LOG.info(
-                "add new Plugin to Database ===============================================================");
-        // get JSON
-        URL jsonUrl = classLoader.getResource(PLUGIN_FUNCTIONS);
-        JSONObject jsonPluginSource = parseJSON(jsonUrl);
+
+        JSONObject jsonPluginSource = parseJSON(classLoader.getResource(PLUGIN_FUNCTIONS));
 
         // check if there is a JSON file
         if (jsonPluginSource == null) {
             throw new KeywordsJSONMissingException(
-                    "keywords.json missing for " + extension.getParameter("name").valueAsString());
+                    "keywords.json missing for " + pluginData.getParameter("name").valueAsString());
         }
 
-        // get author
-        Author author = getAuthorData(extension);
-
-        // get plugin
-        Plugin dbPlugin = getPluginMetadata(extension);
+        Plugin dbPlugin = createPluginFromFrameworkData(pluginData);
 
         if(pluginRepository.findByUuid(dbPlugin.getUuid()) == null) {
-            /*
-             * Plugin possiblePlugin = pluginEntityManager.byUUID(dbPlugin.getUuid()); LOG.info(
-             * "add Plugin to Database: " + dbPlugin.getName());
-             * 
-             * if (possiblePlugin != null) { dbPlugin.setAuthor(author); } else { dbPlugin =
-             * possiblePlugin; }
-             */
-            dbPlugin.setAuthor(author);
-            // get Functions in the Plugin
-            Set<Function> functionsFromJson = parsePluginFunctions(jsonPluginSource, dbPlugin);
-
-            LOG.info("funktionen die zur DB hinzugefügt werden:" + functionsFromJson.size());
-            for (Function function : functionsFromJson) {
-                Set<ch.zhaw.psit4.martin.models.Parameter> parameter = function.getParameters();
-
-                if (!functionExistsInDB(function, dbPlugin)) {
-                    LOG.info("INSERT Function " + function.getName() + " into DB");
-                } else {
-                    LOG.warn("Function " + function.getName() + " allready in Database");
-                    // replace function with the function from the database
-                    function = getExistingFunctionFromDB(function, dbPlugin);
-                    // add parameter from newly loaded function
-                    function.addParameters(parameter);
-                }
-
-                dbPlugin.setFunctions(functionsFromJson);
-                // Persist parameter
-                // parameter.stream().forEach(p ->
-                // parameterService.addParameter(p));
-
-            }
+            //Plugin is new
+            fillPluginModel(jsonPluginSource, dbPlugin);
             pluginRepository.save(dbPlugin);
         } else {
             LOG.info("Plugin "+dbPlugin.getName()+" already exists in DB");
+        }
+    }
+
+    private void fillPluginModel(JSONObject jsonPluginSource, Plugin dbPlugin) {
+        Set<Function> functionsFromJson = parsePluginFunctions(jsonPluginSource, dbPlugin);
+
+        for (Function function : functionsFromJson) {
+            Set<ch.zhaw.psit4.martin.models.Parameter> parameter = function.getParameters();
+
+            if (!functionExistsInDB(function, dbPlugin)) {
+                LOG.info("INSERT Function " + function.getName() + " into DB");
+            } else {
+                LOG.warn("Function " + function.getName() + " allready in Database");
+                // replace function with the function from the database
+                function = getExistingFunctionFromDB(function, dbPlugin);
+                // add parameter from newly loaded function
+                function.addParameters(parameter);
+            }
+
+            dbPlugin.setFunctions(functionsFromJson);
+
         }
     }
 
@@ -128,7 +106,7 @@ public class PluginDataAccessor {
      * @param extension The extension to get the plugins from.
      * @return The java plugin object.
      */
-    public Plugin getPluginMetadata(Extension extension) {
+    public Plugin createPluginFromFrameworkData(Extension extension) {
         Plugin plugin = new Plugin();
 
         // metadata-parsing (mandatory)
@@ -163,6 +141,7 @@ public class PluginDataAccessor {
             }
         }
         plugin.setUuid(uuid);
+        plugin.setAuthor(getAuthorData(extension));
 
         return plugin;
     }
