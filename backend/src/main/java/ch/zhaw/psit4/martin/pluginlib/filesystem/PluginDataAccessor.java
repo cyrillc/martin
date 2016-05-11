@@ -55,12 +55,6 @@ public class PluginDataAccessor {
         }
     }
 
-    private void addJSONDataToPlugin(JSONObject jsonPluginSource, MPlugin dbPlugin) {
-        Set<MFunction> functionsFromJson = parsePluginFunctions(jsonPluginSource, dbPlugin);
-        functionsFromJson.stream().forEach(f -> dbPlugin.addFunction(f));
-    }
-
-
     private MPlugin createPluginFromFrameworkData(Extension extension) {
 
         MPlugin plugin = MartinExtensionParser.getPluginFroExtension(extension);
@@ -75,100 +69,56 @@ public class PluginDataAccessor {
         return plugin;
     }
 
-    /**
-     * Gets a set of function attributes from the JSON file.
-     * 
-     * @param json The JSON file.
-     * @return A set of function objects.
-     */
-    public Set<MFunction> parsePluginFunctions(JSONObject json, MPlugin plugin) {
+    private void addJSONDataToPlugin(JSONObject jsonPluginSource, MPlugin dbPlugin) {
+        Set<MFunction> functionsFromJson = parsePluginFunctions(jsonPluginSource, dbPlugin);
+        functionsFromJson.stream().forEach(f -> dbPlugin.addFunction(f));
+    }
+
+    private Set<MFunction> parsePluginFunctions(JSONObject json, MPlugin plugin) {
 
         ArrayList<MFunction> functions = new ArrayList<>();
         JSONArray jsonFunctions = json.getJSONArray("Functions");
         for (int functionNumber = 0; functionNumber < jsonFunctions.length(); functionNumber++) {
-            // get function attributes
             JSONObject jsonFunction = jsonFunctions.getJSONObject(functionNumber);
-
-            LOG.debug("create Function: " + jsonFunction.getString("Name") + " with Plugin ID = "
-                    + plugin.getId());
-            MFunction function = new MFunction(jsonFunction.getString("Name"),
-                                                jsonFunction.getString("Description"));
-
-            Set<MParameter> functionParameter = parseFunctionParameters(jsonFunction, function);
-            functionParameter.stream().forEach(p -> function.addParameter(p));
-
-            addKeywordsToFunction(jsonFunction, function);
-            addExampleCallsToFunction(jsonFunction, function);
-            functions.add(function);
-
+            functions.add(assambleFunctionFromJSON(jsonFunction));
         }
         return new HashSet<>(functions);
     }
 
-    private void addExampleCallsToFunction(JSONObject jsonFunction, MFunction function) {
-        
-        JSONArray jsonCalls = jsonFunction.getJSONArray("Examples");
-        for (int callNumber = 0; callNumber < jsonCalls.length(); callNumber++) {
-            MExampleCall exampleCall = new MExampleCall();
-            exampleCall.setCall(jsonCalls.getString(callNumber));
+    private MFunction assambleFunctionFromJSON(JSONObject jsonFunction) {
+        MFunction function = new MFunction(jsonFunction.getString("Name"),
+                jsonFunction.getString("Description"));
 
-            function.addExampleCall(exampleCall);
-        }
+        Set<MParameter> functionParameter = parseFunctionParameters(jsonFunction, function);
+        functionParameter.stream().forEach(p -> function.addParameter(p));
+
+        addKeywordsToFunction(jsonFunction, function);
+        addExampleCallsToFunction(jsonFunction, function);
+        return function;
     }
 
-    /**
-     * Gets a set of parameters from the JSON file for a specific function.
-     * 
-     * @param jsonFunction The array of JSON function elements.
-     * @return A set of Parameter objects.
-     */
-    public Set<MParameter> parseFunctionParameters(JSONObject jsonFunction, MFunction function) {
+    private Set<MParameter> parseFunctionParameters(JSONObject jsonFunction, MFunction function) {
         List<MParameter> functionParameter = new ArrayList<>();
 
         JSONArray jsonParameter = jsonFunction.getJSONArray("Parameter");
 
         for (int i = 0; i < jsonParameter.length(); i++) {
-            // get parameter
             JSONObject jsonparam = jsonParameter.getJSONObject(i);
-
-            MParameter parameter = new MParameter();
-            parameter.setName(jsonparam.getString("Name"));
-            parameter.setRequired(jsonparam.getBoolean("Required"));
-            parameter.setType(jsonparam.getString("Type"));
-
-            functionParameter.add(parameter);
-
-            addKeywordsToParameter(jsonparam, parameter);
-
-            // parseKeywords(jsonFunction, param)
+            functionParameter.add(assambleParameterFromJSON(jsonparam));
         }
 
         return new HashSet<>(functionParameter);
     }
 
-    /**
-     * Gets a set of keywords from the JSON file for a specific function.
-     * 
-     * @param jsonFunction The array of JSON function elements.
-     * @return A set of keyword objects.
-     */
-    public void addKeywordsToFunction(JSONObject jsonFunction, MFunction function) {
-        JSONArray jsonKeywords = jsonFunction.getJSONArray("Keywords");
-        for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
-            MKeyword keyword = new MKeyword();
-            keyword.setKeyword(jsonKeywords.getString(keyWordNum));
-
-            function.addKeyword(keyword);
-        }
+    private MParameter assambleParameterFromJSON(JSONObject jsonparam) {
+        MParameter parameter = new MParameter(jsonparam.getString("Name"),
+                    jsonparam.getBoolean("Required"),
+                    jsonparam.getString("Type"));
+        addKeywordsToParameter(jsonparam, parameter);
+        return parameter;
     }
 
-    /**
-     * Gets a set of keywords from the JSON file for a specific function.
-     * 
-     * @param jsonParameter The array of JSON function elements.
-     * @return A set of keyword objects.
-     */
-    public void addKeywordsToParameter(JSONObject jsonParameter, MParameter param) {
+    private void addKeywordsToParameter(JSONObject jsonParameter, MParameter param) {
         if (jsonParameter.getJSONArray("Keywords") != null
                 && jsonParameter.getJSONArray("Keywords").length() >= 1) {
 
@@ -184,4 +134,25 @@ public class PluginDataAccessor {
             }
         }
     }
+
+    private void addExampleCallsToFunction(JSONObject jsonFunction, MFunction function) {
+        JSONArray jsonCalls = jsonFunction.getJSONArray("Examples");
+        for (int callNumber = 0; callNumber < jsonCalls.length(); callNumber++) {
+            MExampleCall exampleCall = new MExampleCall();
+            exampleCall.setCall(jsonCalls.getString(callNumber));
+            function.addExampleCall(exampleCall);
+        }
+    }
+
+
+    private void addKeywordsToFunction(JSONObject jsonFunction, MFunction function) {
+        JSONArray jsonKeywords = jsonFunction.getJSONArray("Keywords");
+        for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
+            MKeyword keyword = new MKeyword();
+            keyword.setKeyword(jsonKeywords.getString(keyWordNum));
+
+            function.addKeyword(keyword);
+        }
+    }
+
 }
