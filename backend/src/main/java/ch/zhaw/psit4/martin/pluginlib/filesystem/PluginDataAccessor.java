@@ -37,13 +37,13 @@ public class PluginDataAccessor {
     private PluginRepository pluginRepository;
 
     public void savePluginInDB(Extension pluginData, ClassLoader classLoader)
-            throws KeywordsJSONMissingException {
+            throws FunctionsJSONMissingException {
 
         JSONObject jsonPluginSource = parseJSON(classLoader.getResource(PLUGIN_FUNCTIONS));
 
         // check if there is a JSON file
         if (jsonPluginSource == null) {
-            throw new KeywordsJSONMissingException(
+            throw new FunctionsJSONMissingException(
                     "keywords.json missing for " + pluginData.getParameter("name").valueAsString());
         }
 

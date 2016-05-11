@@ -31,7 +31,7 @@ import ch.zhaw.psit4.martin.api.validation.MartinPluginValidator;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.ExampleCallRepository;
 import ch.zhaw.psit4.martin.models.repositories.PluginRepository;
-import ch.zhaw.psit4.martin.pluginlib.filesystem.KeywordsJSONMissingException;
+import ch.zhaw.psit4.martin.pluginlib.filesystem.FunctionsJSONMissingException;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor;
 
 
@@ -142,7 +142,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             try {
                 pluginDataAccessor.savePluginInDB(extension, classLoader);
                 plugins.put(uuid, pluginInstance);
-            } catch (KeywordsJSONMissingException e) {
+            } catch (FunctionsJSONMissingException e) {
                 LOG.warn("Plugin could not be loaded.", e);
             }
             plugins.put(uuid, pluginInstance);
