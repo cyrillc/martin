@@ -35,7 +35,7 @@ public class RequestProcessorTest {
 	
 	@Test
 	public void testMultipleParameterOfSameType() {
-		Request request1 = new Request("Hello Martin, today I met Chuck Norris and and he's such an awsome guy!");
+		Request request1 = new Request("Hello Martin, today I met Chuck Norris and and he's such an awsome guy!", false);
 		ExtendedRequest extRequest1 = requestProcessor.extend(request1);
 		assertEquals(extRequest1.getCalls().isEmpty(), false);
 		assertEquals(extRequest1.getCalls().get(0).getPlugin().getName(), "HelloPlugin");
@@ -52,7 +52,7 @@ public class RequestProcessorTest {
 
 	@Test
 	public void testExtendRequestPluginAndFeature() {
-		Request request0 = new Request("Whats the weather tomorrow in Zürich?");
+		Request request0 = new Request("Whats the weather tomorrow in Zürich?", false);
 		ExtendedRequest extRequest0 = requestProcessor.extend(request0);
 		assertEquals(extRequest0.getCalls().isEmpty(), false);
 		assertEquals(extRequest0.getCalls().get(0).getPlugin().getName(), "WetterPlugin");
@@ -63,7 +63,7 @@ public class RequestProcessorTest {
 	
 	@Test
 	public void testUnknownLocation(){
-		Request request2 = new Request("I'd like to know the weather at the Hugentoblerplatz.");
+		Request request2 = new Request("I'd like to know the weather at the Hugentoblerplatz.", false);
 		ExtendedRequest extRequest2 = requestProcessor.extend(request2);
 		assertEquals(extRequest2.getCalls().isEmpty(), false);
 		assertEquals(extRequest2.getCalls().get(0).getPlugin().getName(), "WetterPlugin");

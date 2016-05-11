@@ -61,7 +61,7 @@ public class AIControllerFacadeTest {
 		liquibase.createDatabase("database/db.changeset-schema-latest.xml");
 		MockitoAnnotations.initMocks(this);
 
-		request = new Request("request test");
+		request = new Request("request test", false);
 		extRequest = new ExtendedRequest();
 		call = new Call();
 		extRequest.addCall(call);
@@ -74,9 +74,9 @@ public class AIControllerFacadeTest {
 		
 
 		ArrayList<HistoryItem> getHistoryResult = new ArrayList<>();
-		getHistoryResult.add(new HistoryItem(new Request("command1"), new Response("response1")));
-		getHistoryResult.add(new HistoryItem(new Request("command2"), new Response("response2")));
-		getHistoryResult.add(new HistoryItem(new Request("command3"), new Response("response3")));
+		getHistoryResult.add(new HistoryItem(new Request("command1", false), new Response("response1")));
+		getHistoryResult.add(new HistoryItem(new Request("command2", false), new Response("response2")));
+		getHistoryResult.add(new HistoryItem(new Request("command3", false), new Response("response3")));
 		when(historyItemServiceMock.findAll()).thenReturn(getHistoryResult);
 	}
 

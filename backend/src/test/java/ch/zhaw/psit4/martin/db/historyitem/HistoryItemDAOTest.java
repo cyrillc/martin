@@ -43,7 +43,7 @@ public class HistoryItemDAOTest {
 	@Transactional
 	public void aHistoryItemCanBeSavedInDB() throws Exception {
 
-		Request request = new Request("test");
+		Request request = new Request("test", false);
 		Response response = new Response("test");
 		HistoryItem historyItem = new HistoryItem(request, response);
 		this.historyItemRepository.save(historyItem);

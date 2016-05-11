@@ -39,7 +39,7 @@ public class FrontendControllerTest {
     public void ElaborateRequestReturnsResponseObjectFromObject(){
         Response response = new Response("Hallo");
         Response response1;
-        Request request = new Request("ciao");
+        Request request = new Request("ciao", false);
         when(aiController.elaborateRequest(request)).thenReturn(response);    
         
         response1 = aiController.elaborateRequest(request);
