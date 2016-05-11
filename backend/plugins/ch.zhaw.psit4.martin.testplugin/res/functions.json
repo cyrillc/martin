@@ -27,7 +27,7 @@
 					"Type": "ch.zhaw.psit4.martin.api.types.MPerson",
 					"Tokens-regex": "",
                     "Keywords": [
-                        "name"
+                        "namen"
                     ]
 				}
 			],
