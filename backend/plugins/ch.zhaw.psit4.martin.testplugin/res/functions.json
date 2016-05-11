@@ -32,7 +32,10 @@
 				}
 			],
 			"Examples": [
-				"Hello Martin, I am Jake!"
+				{
+                    "Call" : "Hello Martin, I am Jake!",
+                    "Description" : "Greets you back"
+                }
 			]
 		}
 	]

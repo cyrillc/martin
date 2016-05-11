@@ -138,8 +138,9 @@ public class PluginDataAccessor {
     private void addExampleCallsToFunction(JSONObject jsonFunction, MFunction function) {
         JSONArray jsonCalls = jsonFunction.getJSONArray("Examples");
         for (int callNumber = 0; callNumber < jsonCalls.length(); callNumber++) {
-            MExampleCall exampleCall = new MExampleCall();
-            exampleCall.setCall(jsonCalls.getString(callNumber));
+            JSONObject jsonCall = jsonCalls.getJSONObject(callNumber);
+            MExampleCall exampleCall = new MExampleCall(jsonCall.getString("Call"),
+                    jsonCall.getString("Description"));
             function.addExampleCall(exampleCall);
         }
     }

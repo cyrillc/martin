@@ -25,7 +25,12 @@ public class MExampleCall extends BaseModel {
 	public MExampleCall() {
 	}
 
-	public void setCall(String message) {
+	public MExampleCall(String call, String description) {
+	    this.example_call = call;
+	    this.description = description;
+    }
+
+    public void setCall(String message) {
 		this.example_call = message;
 	}
 
