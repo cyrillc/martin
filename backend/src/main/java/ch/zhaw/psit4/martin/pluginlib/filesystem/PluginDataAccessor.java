@@ -19,7 +19,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.common.MartinExtensionParser;
+import ch.zhaw.psit4.martin.db.keyword.KeywordServiceTest;
 import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
 import ch.zhaw.psit4.martin.models.repositories.MPluginRepository;
 
 public class PluginDataAccessor {
@@ -33,6 +35,9 @@ public class PluginDataAccessor {
 
     @Autowired
     private MPluginRepository pluginRepository;
+
+    @Autowired
+    private MKeywordRepository keywordRepository;
 
     public void savePluginInDB(Extension pluginData, ClassLoader classLoader)
             throws FunctionsJSONMissingException {
@@ -238,9 +243,12 @@ public class PluginDataAccessor {
 
             JSONArray jsonKeywords = jsonParameter.getJSONArray("Keywords");
             for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
-                MKeyword keyword = new MKeyword();
-                keyword.setKeyword(jsonKeywords.getString(keyWordNum));
-
+                String keywordName =jsonKeywords.getString(keyWordNum);
+                MKeyword keyword = keywordRepository.findByKeywordIgnoreCase(keywordName);
+                if(keyword== null){
+                    keyword = new MKeyword();
+                    keyword.setKeyword(keywordName);
+                }
                 param.addKeyword(keyword);
             }
         }
