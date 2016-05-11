@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
+import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginInstaller;
 
 import java.util.List;
@@ -35,6 +37,9 @@ public class FrontendController {
     
     @Autowired
     private PluginInstaller pluginInstaller;
+    
+    @Autowired
+    private IPluginLibrary pluginlib;
 
     /**
      * Returns the answer to a command to the Frontend. When a request to the
@@ -111,7 +116,9 @@ public class FrontendController {
             @RequestParam("file") MultipartFile file,
             RedirectAttributes redirectAttributes) throws FileUploadException {
         
-        return pluginInstaller.installPlugin(name, file);
+        String response = pluginInstaller.installPlugin(name, file) + "<br>";
+        response += pluginlib.loadNewPlugin(IMartinContext.EXTPOINT_ID);
+        return response;
     }
 
 }

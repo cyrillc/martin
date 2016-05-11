@@ -71,6 +71,7 @@ public class PluginLibraryBootstrap {
         IPluginLibrary lib;
         try {
             lib = initializeLibrary();
+            lib.initialize(collector);
         } catch (Exception e) {
             LOG.error("Plugin library could not be initialized!", e);
             throw new PluginLibraryNotFoundException(e);
@@ -93,5 +94,9 @@ public class PluginLibraryBootstrap {
 
         // finally retrieve the core plugin and start it up
         return (IPluginLibrary) manager.getPlugin(IMartinContext.CORE_PLUGIN_ID);
+    }
+    
+    public DefaultPluginsCollector getCollector() {
+        return this.collector;
     }
 }

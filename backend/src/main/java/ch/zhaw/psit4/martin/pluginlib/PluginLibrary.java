@@ -1,16 +1,19 @@
 package ch.zhaw.psit4.martin.pluginlib;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.java.plugin.JpfException;
 import org.java.plugin.Plugin;
 import org.java.plugin.PluginLifecycleException;
 import org.java.plugin.PluginManager;
+import org.java.plugin.PluginManager.PluginLocation;
+import org.java.plugin.boot.DefaultPluginsCollector;
 import org.java.plugin.registry.Extension;
 import org.java.plugin.registry.ExtensionPoint;
 import org.java.plugin.registry.PluginDescriptor;
@@ -50,19 +53,23 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * Log from the common logging api
      */
     private static final Log LOG = LogFactory.getLog(PluginLibrary.class);
+    /*
+     * The PluginCollector to load plugins dynamically
+     */
+    private DefaultPluginsCollector collector;
 
     @Autowired
     private MartinContextAccessor martinContextAccessor;
-    
-	@Autowired
+
+    @Autowired
     private PluginDataAccessor pluginDataAccessor;
-    
+
     @Autowired
     private MPluginRepository pluginRepository;
 
     @Autowired
     private MExampleCallRepository exampleCallRepository;
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -84,12 +91,19 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     }
 
     /*
+     * Initializes the library
+     */
+    @Override
+    public void initialize(DefaultPluginsCollector collector) {
+        this.collector = collector;
+    }
+
+    /*
      * Start the module and initialize components.
      * 
      * It will start after all beans have been initialized to prevent crashes during bean
      * initialization and for looser dependencies.
      */
-    //@PostConstruct
     @Override
     public void startLibrary() {
         // Get plugins
@@ -108,7 +122,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
         Map<String, MartinPlugin> plugins = new HashMap<>();
         PluginManager manager = this.getManager();
-
         ExtensionPoint extPoint =
                 manager.getRegistry().getExtensionPoint(this.getDescriptor().getId(), extPointId);
 
@@ -126,14 +139,14 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             // parameter access + storage
             Parameter pluginClassName = extension.getParameter("class");
             String uuid = extension.getId();
-            
+
             // plugin loading
             MartinPlugin pluginInstance = loadPlugin(classLoader, pluginClassName);
             if (pluginInstance == null)
                 continue;
-            if(!isValidPlugin(pluginInstance, MartinAPITestResult.WARNING))
+            if (!isValidPlugin(pluginInstance, MartinAPITestResult.WARNING))
                 continue;
-            
+
             LOG.info("Plugin \"" + pluginClassName.valueAsString() + "\" is valid.");
 
             // update DB and memory
@@ -148,7 +161,61 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
         return plugins;
     }
-    
+
+    @Override
+    public String loadNewPlugin(final String extPointId) {
+        String returnVal = "No Plugin found.";
+
+        // try to collect plugins
+        PluginManager manager = this.getManager();
+        try {
+            Collection<PluginLocation> locations = collector.collectPluginLocations();
+            manager.publishPlugins(locations.toArray(new PluginLocation[] {}));
+        } catch (JpfException e) {
+            returnVal = "Could not collect plugin.";
+            LOG.error(returnVal, e);
+            return returnVal;
+        }
+        ExtensionPoint extPoint =
+                manager.getRegistry().getExtensionPoint(this.getDescriptor().getId(), extPointId);
+
+        // iterate through found plugins
+        for (Extension extension : extPoint.getConnectedExtensions()) {
+            PluginDescriptor extensionDescriptor = extension.getDeclaringPluginDescriptor();
+            try {
+                manager.activatePlugin(extensionDescriptor.getId());
+            } catch (PluginLifecycleException e) {
+                LOG.error("An Error occured while activating plugin.", e);
+                continue;
+            }
+            ClassLoader classLoader = manager.getPluginClassLoader(extensionDescriptor);
+
+            // parameter access + storage
+            Parameter pluginClassName = extension.getParameter("class");
+            String uuid = extension.getId();
+
+            // plugin loading
+            MartinPlugin pluginInstance = loadPlugin(classLoader, pluginClassName);
+            if (pluginInstance == null)
+                continue;
+            if (!isValidPlugin(pluginInstance, MartinAPITestResult.WARNING))
+                continue;
+
+            returnVal = "Plugin \"" + pluginClassName.valueAsString() + "\" is valid.";
+            LOG.info(returnVal);
+
+            // update DB and memory
+            try {
+                pluginDataAccessor.savePluginInDB(extension, classLoader);
+                pluginExtentions.put(uuid, pluginInstance);
+            } catch (KeywordsJSONMissingException e) {
+                returnVal = "Plugin could not be loaded.";
+                LOG.warn(returnVal, e);
+            }
+        }
+        return returnVal;
+    }
+
     /**
      * Loads a plugin via framework and returns the {@link MartinPlugin} interface
      * 
@@ -184,15 +251,15 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @return true or false
      */
     @Override
-    public boolean isValidPlugin(MartinPlugin plugin, MartinAPITestResult testLevel) {     
+    public boolean isValidPlugin(MartinPlugin plugin, MartinAPITestResult testLevel) {
         LOG.info("Checking plugin: \"" + plugin.getClass().toString() + "\" for validity.");
-        
+
         // check the interface
         MartinPluginValidator pluginValidator = new MartinPluginValidator(plugin);
         boolean result = pluginValidator.runTests().getValue() >= testLevel.getValue();
-        if(!result)
+        if (!result)
             return result;
-        
+
         // check the features
         // TODO: needs DB connecttion
         return result;
@@ -289,7 +356,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public List<MExampleCall> getExampleCalls() {
-    	return exampleCallRepository.findAll();
+        return exampleCallRepository.findAll();
     }
 
     @Override

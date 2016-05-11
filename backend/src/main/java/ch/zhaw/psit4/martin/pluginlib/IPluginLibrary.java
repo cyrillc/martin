@@ -3,6 +3,7 @@ package ch.zhaw.psit4.martin.pluginlib;
 import java.util.List;
 import java.util.Map;
 
+import org.java.plugin.boot.DefaultPluginsCollector;
 import org.java.plugin.registry.Extension.Parameter;
 
 import ch.zhaw.psit4.martin.api.MartinPlugin;
@@ -17,10 +18,18 @@ import ch.zhaw.psit4.martin.models.*;
  * @version 0.0.1-SNAPSHOT
  */
 public interface IPluginLibrary {
+    
+    /*
+     * Initializes the library
+     */
+    public void initialize(DefaultPluginsCollector collector);
+    
     /*
      * Start the module and initialize components
      */
-    void startLibrary();
+    public void startLibrary();
+    
+    public String loadNewPlugin(final String extPointId);
     
     /**
      * Loads a plugin via framework and returns the {@link MartinPlugin} interface
@@ -30,6 +39,7 @@ public interface IPluginLibrary {
      * @return The loaded class or null, if an error occurred
      */
     public MartinPlugin loadPlugin(ClassLoader classLoader, Parameter pluginClassName);
+    
     
     /**
      * Checks a plugin for validity.
