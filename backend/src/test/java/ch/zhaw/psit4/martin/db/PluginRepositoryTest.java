@@ -21,6 +21,8 @@ import ch.zhaw.psit4.martin.models.Plugin;
 import ch.zhaw.psit4.martin.models.repositories.AuthorRepository;
 import ch.zhaw.psit4.martin.models.repositories.PluginRepository;
 
+
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
 public class PluginRepositoryTest {
@@ -78,20 +80,7 @@ public class PluginRepositoryTest {
 
 	@Test
 	public void testAddPlugin() {
-		Plugin newPlugin = createPlugin();
-		pluginRepository.save(newPlugin);
-
-		int pluginID = newPlugin.getId();
-		Plugin plugin = pluginRepository.findOne(pluginID);
-
-		assertNotNull(plugin);
-		assertEquals(pluginID, plugin.getId());
-		assertEquals("Test Description", plugin.getDescription());
-		assertEquals("Testname", plugin.getName());
-
-	}
-
-	private Plugin createPlugin() {
+		
 		Plugin newPlugin = new Plugin();
 		Author author = new Author();
 		author.setName("TestAuthor");
@@ -102,7 +91,17 @@ public class PluginRepositoryTest {
 		newPlugin.setDescription("Test Description");
 		newPlugin.setName("Testname");
 		newPlugin.setUuid(UUID.randomUUID().toString());
-		return newPlugin;
+
+		pluginRepository.save(newPlugin);
+
+		int pluginID = newPlugin.getId();
+		Plugin plugin = pluginRepository.findOne(pluginID);
+
+		assertNotNull(plugin);
+		assertEquals(pluginID, plugin.getId());
+		assertEquals("Test Description", plugin.getDescription());
+		assertEquals("Testname", plugin.getName());
+
 	}
 
 	@Test

@@ -1,5 +1,6 @@
 package ch.zhaw.psit4.martin.aiController;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -104,7 +105,10 @@ public class AIControllerFacade {
      * @param amount the amount of historyItems to get
      */
     public List<HistoryItem> getLimitedHistory(int amount) {
-        return historyItemRepository.getLimitedHistory(new PageRequest(0, amount));
+    	List<HistoryItem> list = historyItemRepository.getLimitedHistory(new PageRequest(0, amount));
+    	List<HistoryItem> shallowCopy = list.subList(0, list.size());
+    	Collections.reverse(shallowCopy);
+        return shallowCopy;
     }
 
     public List<PluginInformation> getPluginInformation() {
