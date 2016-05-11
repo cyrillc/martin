@@ -62,9 +62,9 @@ public class PluginLibraryTest {
             Mockito.when(mockedCall.getPlugin()).thenReturn(testPlugin);
             calls.add(mockedCall);
 
-            mockedRequests[i] = Mockito.mock(ExtendedRequest.class);
-            Mockito.when(mockedRequests[i].getID()).thenReturn(uuid);
-            Mockito.when(mockedRequests[i].getCalls()).thenReturn(calls);
+            mockedRequests[i] = new ExtendedRequest(new MRequest(), new MResponse());
+            mockedRequests[i].setID(uuid);
+            mockedRequests[i].setCalls(calls);
         }
 
 
@@ -75,7 +75,7 @@ public class PluginLibraryTest {
     }
 
     @Test
-    public void testeEecuteRequest() {
+    public void testeExecuteRequest() {
         // mock library
         spyLib.setPluginExtentions(mockedExtensions);
         // Create lib with spy

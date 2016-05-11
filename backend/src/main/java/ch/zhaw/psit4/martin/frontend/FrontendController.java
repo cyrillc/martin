@@ -11,6 +11,8 @@ import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginInstaller;
+import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
+import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 
 import java.util.List;
 
@@ -35,6 +37,8 @@ public class FrontendController {
     
     @Autowired
     private PluginInstaller pluginInstaller;
+    
+    private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
 
     /**
      * Returns the answer to a command to the Frontend. When a request to the
@@ -52,8 +56,19 @@ public class FrontendController {
     public MResponse launchCommand(
             @RequestParam(value = "command") String command,
             @RequestParam(value = "timed", required = false) boolean timed) {
+    	
+    	TIMING_LOG.startLogging();
+    	
         MRequest request = new MRequest(command, timed);
-        return aiController.elaborateRequest(request);
+        MResponse response = aiController.elaborateRequest(request);
+        
+        response.setTimingInfo(TIMING_LOG.stopLogging());
+        
+        if(!timed){
+        	response.setTimingInfo(null);
+        }
+        
+        return response;
     }
 
     /**

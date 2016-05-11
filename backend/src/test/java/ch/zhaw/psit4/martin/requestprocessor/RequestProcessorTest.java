@@ -33,9 +33,10 @@ public class RequestProcessorTest {
 
 	@Test
 	public void testMultipleParameterOfSameType() {
+		MResponse response1 = new MResponse();
 		MRequest request1 = new MRequest("Hello Martin, today I met Chuck Norris and and he's such an awsome guy!",
 				false);
-		ExtendedRequest extRequest1 = requestProcessor.extend(request1);
+		ExtendedRequest extRequest1 = requestProcessor.extend(request1, response1);
 		assertEquals(extRequest1.getCalls().isEmpty(), false);
 		assertEquals(extRequest1.getCalls().get(0).getPlugin().getName(), "HelloPlugin");
 		assertEquals(extRequest1.getCalls().get(0).getFunction().getName(), "greeting");
@@ -51,9 +52,9 @@ public class RequestProcessorTest {
 
 	@Test
 	public void testExtendRequestPluginAndFeature() {
-
+		MResponse response0 = new MResponse();
 		MRequest request0 = new MRequest("Whats the weather tomorrow in Zürich?", false);
-		ExtendedRequest extRequest0 = requestProcessor.extend(request0);
+		ExtendedRequest extRequest0 = requestProcessor.extend(request0, response0);
 		assertEquals(extRequest0.getCalls().isEmpty(), false);
 		assertEquals(extRequest0.getCalls().get(0).getPlugin().getName(), "WetterPlugin");
 		assertEquals(extRequest0.getCalls().get(0).getFunction().getName(), "getWeatherAtLocation");
@@ -63,9 +64,9 @@ public class RequestProcessorTest {
 
 	@Test
 	public void testUnknownLocation() {
-
+		MResponse response2 = new MResponse();
 		MRequest request2 = new MRequest("I'd like to know the weather at the Hugentoblerplatz.", false);
-		ExtendedRequest extRequest2 = requestProcessor.extend(request2);
+		ExtendedRequest extRequest2 = requestProcessor.extend(request2, response2);
 		assertEquals(extRequest2.getCalls().isEmpty(), false);
 		assertEquals(extRequest2.getCalls().get(0).getPlugin().getName(), "WetterPlugin");
 		assertEquals(extRequest2.getCalls().get(0).getFunction().getName(), "getWeatherAtLocation");

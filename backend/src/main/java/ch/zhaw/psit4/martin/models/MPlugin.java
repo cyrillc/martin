@@ -1,7 +1,6 @@
 package ch.zhaw.psit4.martin.models;
 
 import java.sql.Date;
-import java.text.ParseException;
 import java.util.Set;
 
 import javax.persistence.CascadeType;

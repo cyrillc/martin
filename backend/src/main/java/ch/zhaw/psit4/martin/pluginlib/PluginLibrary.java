@@ -32,6 +32,8 @@ import ch.zhaw.psit4.martin.models.repositories.MExampleCallRepository;
 import ch.zhaw.psit4.martin.models.repositories.MPluginRepository;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.FunctionsJSONMissingException;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor;
+import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
+import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 
 
 /**
@@ -50,6 +52,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * Log from the common logging api
      */
     private static final Log LOG = LogFactory.getLog(PluginLibrary.class);
+    private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
 
     @Autowired
     private MartinContextAccessor martinContextAccessor;
@@ -207,6 +210,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public MResponse executeRequest(ExtendedRequest req) {
+    	TIMING_LOG.logStart(this.getClass().getSimpleName());
         Call call = req.getCalls().get(0);
         String pluginID = call.getPlugin().getUuid();
         String functionName = call.getFunction().getName();
@@ -216,12 +220,15 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
         if (service != null) {
             service.init(martinContextAccessor, functionName, 0);
-
-            return new MResponse(executeCall(call, 0));
+            req.getResponse().setResponseText(executeCall(call, 0));
         } else {
             LOG.error("Could not find a plugin that matches request call.");
-            return new MResponse("ERROR: no plugin found!");
+            req.getResponse().setResponseText("ERROR: no plugin found!");
         }
+        
+        TIMING_LOG.logEnd(this.getClass().getSimpleName());
+        return req.getResponse();
+        
     }
 
     /**
@@ -233,6 +240,8 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     private String executeCall(Call call, long requestID) {
         Feature feature = martinContextAccessor.fetchWorkItem(requestID);
         String ret = "";
+        
+        TIMING_LOG.logStart(call.getPlugin().getName());
         while (feature != null) {
             try {
                 feature.start(call.getArguments());
@@ -262,10 +271,11 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 ret = "I'm sorry, I can not understand you.";
                 break;
             }
-
+            
             ret += "\n";
             feature = martinContextAccessor.fetchWorkItem(requestID);
         }
+        TIMING_LOG.logEnd(call.getPlugin().getName());
 
         return ret;
     }
