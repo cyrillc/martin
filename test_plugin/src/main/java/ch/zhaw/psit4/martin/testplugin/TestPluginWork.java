@@ -12,15 +12,17 @@ public class TestPluginWork extends Feature{
         super(requestID);
     }
 
-    private String name1;
-    private String name2;
+    private MPerson person1;
+    private MPerson person2;
+    private static String MY_NAME = "Martin";
     
     @Override
     public void start(Map<String, IBaseType> args) throws Exception {
-        MPerson person1 = (MPerson)args.get("name1");
-        MPerson person2 = (MPerson)args.get("name2");
-        name1 = person1.toString();
-        name2 = person2.toString();
+        person1 = (MPerson)args.get("name1");
+        
+        if(args.get("name2") != null){
+        	person2 = (MPerson)args.get("name2");
+        }
     }
 
     @Override
@@ -31,7 +33,20 @@ public class TestPluginWork extends Feature{
 
     @Override
     public String stop() throws Exception {
-        return "Hi " + name2 + ", it's me " + name1;
+    	if(person1 == null || person2 == null){
+    		if(person1 != null && !person1.toString().equalsIgnoreCase(MY_NAME)){
+    			return "Who is " + person1.toString() + "?";
+    		}
+    		if(person2 != null && !person2.toString().equalsIgnoreCase(MY_NAME)){
+    			return "Who is " + person2.toString() + "?";
+    		}
+    		return "Hello my friend!";
+    	} else if(person1.toString().equalsIgnoreCase(MY_NAME)){
+    		return "Hello " + person2.toString() + ", it's me " + person1.toString() + "!";
+    	} else if(person2.toString().equalsIgnoreCase(MY_NAME)){
+    		return "Hello " + person1.toString() + ", it's me " + person2.toString() + "!";
+    	} else {
+    		return "Hello " + person1.toString() + " and " + person2.toString() + "!";
+    	}
     }
-
 }

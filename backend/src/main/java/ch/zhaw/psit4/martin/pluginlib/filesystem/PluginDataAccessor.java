@@ -20,7 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.common.MartinExtensionParser;
 import ch.zhaw.psit4.martin.common.MartinHelper;
-import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.MExampleCall;
+import ch.zhaw.psit4.martin.models.MFunction;
+import ch.zhaw.psit4.martin.models.MKeyword;
+import ch.zhaw.psit4.martin.models.MParameter;
+import ch.zhaw.psit4.martin.models.MPlugin;
 import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
 import ch.zhaw.psit4.martin.models.repositories.MPluginRepository;
 

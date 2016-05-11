@@ -17,6 +17,8 @@ import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Sentence;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
+import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
+import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 import ch.zhaw.psit4.martin.common.Phrase;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
@@ -27,8 +29,8 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
  *
  * @version 0.1
  **/
-public class RequestProcessor implements IRequestProcessor {
-	
+public class RequestProcessor {
+
 	@Autowired
 	private MKeywordRepository keywordRepository;
 
@@ -36,6 +38,7 @@ public class RequestProcessor implements IRequestProcessor {
 	private StanfordCoreNLPClient stanfordNLP;
 
 	private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
+	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
 
 	/**
 	 * Extends a request from a basic command and tries to determine possible
@@ -46,11 +49,13 @@ public class RequestProcessor implements IRequestProcessor {
 	 * @return Returns an ExtendedRequest with original-request and a possible
 	 *         executable function calls.
 	 */
-	@Override
-	public ExtendedRequest extend(MRequest request) {	
+	public ExtendedRequest extend(MRequest request, MResponse response) {
+		TIMING_LOG.logStart(this.getClass().getSimpleName());
+		
+		ExtendedRequest extendedRequest = new ExtendedRequest(request, response);
 		List<PossibleCall> possibleCalls = new ArrayList<>();
 
-		Sentence sentence = new Sentence(request.getCommand(), stanfordNLP);
+		Sentence sentence = new Sentence(extendedRequest.getRequest().getCommand(), stanfordNLP);
 
 		// Find possible Calls by keywords
 		addPossibleCallsWithKeywords(possibleCalls, sentence.getWords());
@@ -62,9 +67,6 @@ public class RequestProcessor implements IRequestProcessor {
 		possibleCalls
 				.sort((PossibleCall result1, PossibleCall result2) -> result1.getRelevance() - result2.getRelevance());
 
-		// Create final ExtendedRequest
-		ExtendedRequest extendedRequest = new ExtendedRequest();
-		extendedRequest.setInput(request);
 		extendedRequest.setSentence(sentence);
 
 		for (PossibleCall possibleCall : possibleCalls) {
@@ -77,6 +79,7 @@ public class RequestProcessor implements IRequestProcessor {
 			extendedRequest.addCall(call);
 		}
 
+		TIMING_LOG.logEnd(this.getClass().getSimpleName());
 		return extendedRequest;
 	}
 
@@ -173,8 +176,7 @@ public class RequestProcessor implements IRequestProcessor {
 					// All the rest can be resolved directly
 					Phrase phrase = sentence.popPhraseOfType(EBaseType.fromClassName(parameter.getType()));
 
-					possibilitiesLeft = sentence.getPhrasesOfType(EBaseType.fromClassName(parameter.getType()))
-							.size();
+					possibilitiesLeft = sentence.getPhrasesOfType(EBaseType.fromClassName(parameter.getType())).size();
 
 					if (phrase != null) {
 						data = phrase.getValue();
