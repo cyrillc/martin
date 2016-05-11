@@ -1,7 +1,9 @@
 package ch.zhaw.psit4.martin.models;
 
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -11,6 +13,7 @@ import javax.persistence.Table;
 
 import ch.zhaw.psit4.martin.models.Function;
 import ch.zhaw.psit4.martin.models.Keyword;
+import edu.stanford.nlp.util.ArraySet;
 
 /**
  * Contains a Paramter for a Plugin Function. The class is used to store
@@ -28,7 +31,7 @@ public class Parameter extends BaseModel {
 
 	private String type;
 
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.PERSIST)
 	@JoinTable(name = "parameter_has_keyword", joinColumns = {
 			@JoinColumn(name = "parameter_id", nullable = false, updatable = false) }, inverseJoinColumns = {
 					@JoinColumn(name = "keyword_id", nullable = false, updatable = false) })
@@ -79,5 +82,13 @@ public class Parameter extends BaseModel {
 	public void setFunction(Function function) {
 		this.function = function;
 	}
+
+    public void addKeyword(Keyword keyword) {
+        if(parameterKeywords == null) {
+            parameterKeywords = new ArraySet<>();
+        }
+        parameterKeywords.add(keyword);
+        keyword.addParameter(this);
+    }
 
 }

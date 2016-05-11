@@ -11,9 +11,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import ch.zhaw.psit4.martin.common.MartinHelper;
 import ch.zhaw.psit4.martin.models.Keyword;
 import ch.zhaw.psit4.martin.models.Parameter;
 import ch.zhaw.psit4.martin.models.Plugin;
+import edu.stanford.nlp.util.ArraySet;
 
 /**
  * Contains a Paramter for a Plugin Function. The class is used to store
@@ -31,7 +33,7 @@ public class Function extends BaseModel {
 	@OneToMany(mappedBy = "function", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Parameter> parameters;
 
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.PERSIST)
 	@JoinTable(name = "function_has_keyword", joinColumns = {
 			@JoinColumn(name = "function_id", nullable = false, updatable = false) }, inverseJoinColumns = {
 					@JoinColumn(name = "keyword_id", nullable = false, updatable = false) })
@@ -86,5 +88,12 @@ public class Function extends BaseModel {
 		parameter.stream().forEach(p -> p.setFunction(this));
 		this.parameters.addAll(parameter);
 	}
+
+    public void addKeyword(Keyword keyword) {
+        keywords = MartinHelper.initSetifNull(keywords);
+        keywords.add(keyword);
+        keyword.addFunction(this);
+        
+    }
 
 }

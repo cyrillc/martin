@@ -16,7 +16,10 @@
 					"Name": "Name",
 					"Required": "false",
 					"Type": "ch.zhaw.psit4.martin.api.types.Person",
-					"Tokens-regex": ""
+					"Tokens-regex": "",
+                    "Keywords": [
+                        "name"
+                    ]
 				}
 			],
 			"Examples": [

@@ -6,6 +6,9 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import ch.zhaw.psit4.martin.common.MartinHelper;
+import edu.stanford.nlp.util.ArraySet;
+
 /**
  * Contains a Keyword for a Plugin. Either Funtion or Parameter. The class is
  * used to store a retreived keywords of a plugin.
@@ -59,5 +62,24 @@ public class Keyword extends BaseModel {
 	public void setFunctions(Set<Function> functions) {
 		this.functions = functions;
 	}
+
+	/**
+	 * Only call it if the parameter knows the keyword 
+	 * @param parameter
+	 */
+    public void addParameter(Parameter parameter) {
+        //Mapped by Parameter
+        this.parameter =MartinHelper.initSetifNull(this.parameter);
+       this.parameter.add(parameter);
+    }
+
+	/**
+	 * Only call it if the function knows the keyword 
+	 * @param function
+	 */
+    public void addFunction(Function function) {
+        this.functions =MartinHelper.initSetifNull(this.functions);
+        this.functions.add(function);
+    }
 
 }

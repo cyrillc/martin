@@ -38,6 +38,7 @@ public class PluginDataAccessor {
 	@Autowired
 	private PluginRepository pluginRepository;
 
+
 	public PluginDataAccessor() {
 		// empty
 	}
@@ -82,6 +83,7 @@ public class PluginDataAccessor {
 		for (Function function : functionsFromJson) {
 			Set<ch.zhaw.psit4.martin.models.Parameter> parameter = function.getParameters();
 
+			
 			if (!functionExistsInDB(function, dbPlugin)) {
 				LOG.info("INSERT Function " + function.getName() + " into DB");
 			} else {
@@ -218,6 +220,7 @@ public class PluginDataAccessor {
 
 			function.setParameter(new HashSet<ch.zhaw.psit4.martin.models.Parameter>(functionParameter));
 
+			addKeywordsToFunction(jsonFunction, function);
 			functions.add(function);
 
 		}
@@ -276,21 +279,7 @@ public class PluginDataAccessor {
 
 			functionParameter.add(parameter);
 
-			/*
-			 * // check if param is allready in DB
-			 * Set<ch.zhaw.psit4.martin.db.parameter.Parameter> parameter =
-			 * function.getParameter(); boolean paramExisting = false; if
-			 * (parameter != null) for
-			 * (ch.zhaw.psit4.martin.db.parameter.Parameter p : parameter) { if
-			 * (p.getName().equals(param.getName()) &&
-			 * p.getFunction().getName().equals(function.getName()) &&
-			 * p.getFunction().getPlugin().getUuid()
-			 * .equals(function.getPlugin().getUuid())) { paramExisting = true;
-			 * param = p; break; } } if (!paramExisting) {
-			 * parameterService.addParameter(param); }
-			 * 
-			 * parseKeywords(jsonFunction, param);
-			 */
+			addKeywordsToParameter(jsonparam, parameter);
 			
 			//parseKeywords(jsonFunction, param)
 		}
@@ -301,41 +290,36 @@ public class PluginDataAccessor {
 	/**
 	 * Gets a set of keywords from the JSON file for a specific function.
 	 * 
-	 * @param jsonFunct
+	 * @param jsonFunction
 	 *            The array of JSON function elements.
 	 * @return A set of keyword objects.
 	 */
-	public void parseKeywords(JSONObject jsonFunct, ch.zhaw.psit4.martin.models.Parameter param) {
-		/*JSONArray jsonKeywords = jsonFunct.getJSONArray("Examples");
+	public void addKeywordsToFunction(JSONObject jsonFunction, Function function) {
+		JSONArray jsonKeywords = jsonFunction.getJSONArray("Keywords");
 		for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
 			Keyword keyword = new Keyword();
 			keyword.setKeyword(jsonKeywords.getString(keyWordNum));
 
-			List<Keyword> keywords = keywordService.getMatchingKeywords(keyword.getKeyword());
-			if (keywords.isEmpty()) {
-				Set<ch.zhaw.psit4.martin.db.Parameter> params = new HashSet<>();
-				params.add(param);
-				keyword.setParameter(params);
-				keywordService.addKeyword(keyword);
-			} else {
-				keyword = keywords.get(0);
+			function.addKeyword(keyword);
+		} 
+	}
+	/**
+	 * Gets a set of keywords from the JSON file for a specific function.
+	 * 
+	 * @param jsonParameter
+	 *            The array of JSON function elements.
+	 * @return A set of keyword objects.
+	 */
+	public void addKeywordsToParameter(JSONObject jsonParameter, ch.zhaw.psit4.martin.models.Parameter param) {
+	    if(jsonParameter.getJSONArray("Keywords") != null && jsonParameter.getJSONArray("Keywords").length() >=1){
+	        
+		JSONArray jsonKeywords = jsonParameter.getJSONArray("Keywords") ;
+		for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
+			Keyword keyword = new Keyword();
+			keyword.setKeyword(jsonKeywords.getString(keyWordNum));
 
-				// check keyword parameter
-				Set<ch.zhaw.psit4.martin.db.Parameter> parameter = keyword.getParameter();
-				boolean paramExisting = false;
-				for (ch.zhaw.psit4.martin.db.Parameter p : parameter) {
-					if (p.getName().equals(param.getName())
-							&& p.getFunction().getName().equals(param.getFunction().getName()) && p.getFunction()
-									.getPlugin().getUuid().equals(param.getFunction().getPlugin().getUuid())) {
-						paramExisting = true;
-						break;
-					}
-				}
-				if (!paramExisting) {
-					keyword.getParentParameter().add(param);
-					keywordService.updateKeyword(keyword);
-				}
-			}
-		} */
+			param.addKeyword(keyword);
+		} 
+	    }
 	}
 }
