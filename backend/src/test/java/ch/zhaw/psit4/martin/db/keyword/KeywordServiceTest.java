@@ -5,8 +5,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
-import ch.zhaw.psit4.martin.models.Keyword;
-import ch.zhaw.psit4.martin.models.repositories.KeywordRepository;
+import ch.zhaw.psit4.martin.models.MKeyword;
+import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
 
 import static org.junit.Assert.*;
 
@@ -28,7 +28,7 @@ public class KeywordServiceTest {
 	private LiquibaseTestFramework liquibase;
 
 	@Autowired
-    private KeywordRepository keywordService;
+    private MKeywordRepository keywordService;
     private Log log;
 
     @Before
@@ -39,7 +39,7 @@ public class KeywordServiceTest {
     
     @Test
     public void testListKeywords() throws Exception {
-        List<Keyword> keywords = keywordService.findAll();
+        List<MKeyword> keywords = keywordService.findAll();
         keywords.stream().forEach(keyword -> log.info(keyword.getId()+", "+keyword.getKeyword()));
         assertEquals(false,keywords.isEmpty());
         assertEquals(6,keywords.size());
@@ -47,7 +47,7 @@ public class KeywordServiceTest {
     
     @Test
     public void testAddKeyword() throws Exception {
-        Keyword newWord = new Keyword("Hallo Welt");
+        MKeyword newWord = new MKeyword("Hallo Welt");
         keywordService.save(newWord);
         String word = keywordService.findOne(7).getKeyword();
         assertEquals("Hallo Welt", word);
@@ -65,7 +65,7 @@ public class KeywordServiceTest {
 
     @Test
     public void testUpdateKeyword() throws Exception {
-        Keyword toChange = keywordService.findOne(3);
+        MKeyword toChange = keywordService.findOne(3);
         toChange.setKeyword("there");
         keywordService.save(toChange);
         assertEquals("there", keywordService.findOne(3).getKeyword());
@@ -79,7 +79,7 @@ public class KeywordServiceTest {
         
         
         //check
-        List<Keyword> keywords = keywordService.findAll();
+        List<MKeyword> keywords = keywordService.findAll();
         keywords.stream().forEach(keyword -> log.info(keyword.getId()+", "+keyword.getKeyword()));
         assertEquals(4, keywords.size());
         assertEquals(null, keywordService.findOne(6));

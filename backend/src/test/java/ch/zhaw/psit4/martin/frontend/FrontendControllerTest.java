@@ -25,7 +25,7 @@ public class FrontendControllerTest {
     private AIControllerFacade aiController;
     
     @Mock
-    private HistoryItem historyItem;
+    private MHistoryItem historyItem;
     
     @InjectMocks
     FrontendController controller;
@@ -37,9 +37,9 @@ public class FrontendControllerTest {
     
     @Test
     public void ElaborateRequestReturnsResponseObjectFromObject(){
-        Response response = new Response("Hallo");
-        Response response1;
-        Request request = new Request("ciao");
+        MResponse response = new MResponse("Hallo");
+        MResponse response1;
+        MRequest request = new MRequest("ciao", false);
         when(aiController.elaborateRequest(request)).thenReturn(response);    
         
         response1 = aiController.elaborateRequest(request);
@@ -48,8 +48,8 @@ public class FrontendControllerTest {
     
     @Test
     public void checkIfHistoryItemIsreturned() {
-        List<HistoryItem> list = new ArrayList<HistoryItem>();
-        List<HistoryItem> newlist = new ArrayList<HistoryItem>();
+        List<MHistoryItem> list = new ArrayList<MHistoryItem>();
+        List<MHistoryItem> newlist = new ArrayList<MHistoryItem>();
         
         when(aiController.getHistory()).thenReturn(list);
         

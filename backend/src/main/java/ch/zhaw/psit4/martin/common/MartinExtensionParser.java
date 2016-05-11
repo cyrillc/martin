@@ -7,27 +7,27 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.java.plugin.registry.Extension;
 
-import ch.zhaw.psit4.martin.models.Author;
-import ch.zhaw.psit4.martin.models.Plugin;
+import ch.zhaw.psit4.martin.models.MAuthor;
+import ch.zhaw.psit4.martin.models.MPlugin;
 
 public class MartinExtensionParser {
     
     
-    private static final Log LOG = LogFactory.getLog(Plugin.class);
+    private static final Log LOG = LogFactory.getLog(MartinExtensionParser.class);
 
     /** Get the author Metadata from plugins.xml
      * 
      * @param extension The extension to get the data from.
      */
-	public static Author getAuthorFromExtension(Extension pluginFrameWorkData){
-	    Author author = new Author();
+	public static MAuthor getAuthorFromExtension(Extension pluginFrameWorkData){
+	    MAuthor author = new MAuthor();
         // update DB-object
         author.setName(pluginFrameWorkData.getParameter("author").valueAsString());
         author.setEmail(pluginFrameWorkData.getParameter("e-mail").valueAsString());
         return author;
 	}
 
-    public static Plugin getPluginFroExtension(Extension pluginFrameworkData) {
+    public static MPlugin getPluginFroExtension(Extension pluginFrameworkData) {
         org.java.plugin.registry.Extension.Parameter pluginName = pluginFrameworkData.getParameter("name");
 
         org.java.plugin.registry.Extension.Parameter pluginDesctibtion = pluginFrameworkData.getParameter("description");
@@ -41,7 +41,7 @@ public class MartinExtensionParser {
         } catch (ParseException e) {
             LOG.error("Could not parse SQL Date in Plugin");
         }
-        Plugin plugin = new Plugin(uuid,
+        MPlugin plugin = new MPlugin(uuid,
                                     pluginName.valueAsString(),
                                     description,
                                     date);
