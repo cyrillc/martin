@@ -1,6 +1,9 @@
 // variable to move through history with *UP* and *DOWN* arrows
 var historyLocation = 0;
 
+// timing flag to append if timing information is wanted
+var timingFlag = ' -t';
+
 // enabling *RETURN* to submit command
 $(function () {
     $("#commandInput").keydown(function (event) {
@@ -46,8 +49,18 @@ var sendCommand = function () {
     var textInput = $('#commandInput').val();
     $('#commandInput').val('');
 
+    // check for timing flag
+    var wantTimingInformation = false;
+    if (textInput.indexOf(' -t') > -1) {
+        wantTimingInformation = true;
+        textInput = textInput.replace(' -t', '');
+    }
+
     // create object to send to MArtIn
-    var command = { command: textInput };
+    var command = {
+        command: textInput,
+        timed: wantTimingInformation
+    };
 
     // create request URL from current URL
     var backendUrl = createRequestURL(frontendUrl, backendPort, "command");

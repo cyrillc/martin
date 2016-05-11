@@ -28,37 +28,41 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  *
  */
 @RestController
-@MultipartConfig(fileSizeThreshold = 52428800)  // upload Max 50MB
+@MultipartConfig(fileSizeThreshold = 52428800) // upload Max 50MB
 public class FrontendController {
 
     @Autowired
     private AIControllerFacade aiController;
 
     /**
-     * Returns the answer to a command to the Frontend. When a request to the API at /command comes
-     * in, the method querys the AI controller to get an answer for the command. It then returns
-     * that answer to the origin of the request.
+     * Returns the answer to a command to the Frontend. When a request to the
+     * API at /command comes in, the method querys the AI controller to get an
+     * answer for the command. It then returns that answer to the origin of the
+     * request.
      *
      * @param command
      * @return the response of the AI
      */
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
-            "http://srv-lab-t-825.zhaw.ch:4141"})
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/command")
-    public Response launchCommand(@RequestParam(value = "command") String command) {
-        Request request = new Request(command);
+    public Response launchCommand(
+            @RequestParam(value = "command") String command,
+            @RequestParam(value = "timed", required = false) boolean timed) {
+        Request request = new Request(command, timed);
         return aiController.elaborateRequest(request);
     }
 
     /**
-     * Returns a list of example commands to the frontend. When a request to the API at
-     * /exampleCommands comes in (usually on page load), the method querys the AI controller to get
-     * a list of possible commands. It then returns that list to the origin of the request.
+     * Returns a list of example commands to the frontend. When a request to the
+     * API at /exampleCommands comes in (usually on page load), the method
+     * querys the AI controller to get a list of possible commands. It then
+     * returns that list to the origin of the request.
      *
      * @return A list of possible commands
      */
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
-            "http://srv-lab-t-825.zhaw.ch:4141"})
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/exampleCommands")
     public List<ExampleCall> sendExampleCommands() {
         return aiController.getRandomExampleCalls();
@@ -66,24 +70,27 @@ public class FrontendController {
 
     /**
      * 
-     * @return A list of HistoryItems, with all user Requests and relative Responses.
+     * @return A list of HistoryItems, with all user Requests and relative
+     *         Responses.
      */
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
-            "http://srv-lab-t-825.zhaw.ch:4141"})
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/history")
-    public List<HistoryItem> getHistory(@RequestParam(value = "amount") int amount) {
+    public List<HistoryItem> getHistory(
+            @RequestParam(value = "amount") int amount) {
         return aiController.getLimitedHistory(amount);
     }
 
     /**
-     * Returns the information all MArtIn plugins to the Frontend. When a request to the API at
-     * /pluginList comes in, the method querys the AI controller to get an answer for the command.
-     * It then returns that answer to the origin of the request.
+     * Returns the information all MArtIn plugins to the Frontend. When a
+     * request to the API at /pluginList comes in, the method querys the AI
+     * controller to get an answer for the command. It then returns that answer
+     * to the origin of the request.
      *
      * @return the information all MArtIn plugins
      */
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
-            "http://srv-lab-t-825.zhaw.ch:4141"})
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/pluginList")
     public List<PluginInformation> getPluginList() {
         return aiController.getPluginInformation();
@@ -92,21 +99,17 @@ public class FrontendController {
     /**
      * 
      * @return saves the uploaded file from the frontend
-     * @throws FileUploadException 
+     * @throws FileUploadException
      */
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
-    "http://srv-lab-t-825.zhaw.ch:4141"})
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping(method = RequestMethod.POST, value = "/plugin/install")
     public String installPlugin(@RequestParam("name") String name,
             @RequestParam("file") MultipartFile file,
             RedirectAttributes redirectAttributes) throws FileUploadException {
-        
+
         PluginInstaller installer = new PluginInstaller();
         return installer.installPlugin(name, file);
     }
-
-
-
-
 
 }

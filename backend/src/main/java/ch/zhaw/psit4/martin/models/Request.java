@@ -2,6 +2,7 @@ package ch.zhaw.psit4.martin.models;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -10,12 +11,16 @@ public class Request extends BaseModel {
 
 	@NotNull
 	private String command;
+	
+	@Transient
+	private boolean timed;
 
 	public Request() {
 	}
 
-	public Request(String command) {
+	public Request(String command, boolean timed) {
 		setCommand(command);
+		this.timed = timed;
 	}
 
 	public String getCommand() {
@@ -24,6 +29,10 @@ public class Request extends BaseModel {
 
 	public void setCommand(String command) {
 		this.command = command;
+	}
+	
+	public boolean isTimed(){
+	    return this.timed;
 	}
 
 	@Override
@@ -38,11 +47,14 @@ public class Request extends BaseModel {
 		if (this.getId() != r.getId() || !this.getCommand().equals(r.getCommand())) {
 			return false;
 		}
+		if (this.timed != r.isTimed()) {
+		    return false;
+		}
 		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		return (int) super.hashCode() * (this.getId() + this.getCommand().hashCode()) * 13;
+		return (int) super.hashCode() * (this.getId() + this.getCommand().hashCode() + new Boolean(this.timed).hashCode()) * 13;
 	}
 }
