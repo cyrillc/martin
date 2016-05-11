@@ -1,5 +1,8 @@
 package ch.zhaw.psit4.martin.common;
 
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Set;
 
 import edu.stanford.nlp.util.ArraySet;
@@ -20,4 +23,13 @@ public class MartinHelper {
         return set;
     }
 
+    public static Date parseToSQLDate(String date) throws ParseException {
+        if (date != null) {
+            java.util.Date parsed = (new SimpleDateFormat("yyyy-MM-dd")).parse(date);
+            java.sql.Date sqlDate = new java.sql.Date(parsed.getTime());
+            return sqlDate;
+        } else {
+            throw new ParseException("empty Date given",0);
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package ch.zhaw.psit4.martin.models;
 
 import java.sql.Date;
+import java.text.ParseException;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,8 +11,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.java.plugin.registry.Extension;
+
+import com.mysql.jdbc.SocketMetadata.Helper;
+
+import ch.zhaw.psit4.martin.common.MartinHelper;
 import ch.zhaw.psit4.martin.models.Author;
 import ch.zhaw.psit4.martin.models.Function;
+import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor;
 
 /**
  * Contains a Paramter for a Plugin Function. The class is used to store
@@ -35,10 +44,20 @@ public class Plugin extends BaseModel {
 	@OneToMany(mappedBy = "plugin", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Function> functions;
 
-	public Plugin() {
-	}
 
-	public void setName(String name) {
+	public Plugin(){}
+	
+	
+	public Plugin(String uuid, String name, String description, Date date) {
+	    this.name = name;
+	    this.uuid = uuid;
+	    this.description = description;
+	    if(date != null){
+	        this.date = date;
+	    }
+    }
+
+    public void setName(String name) {
 		this.name = name;
 	}
 

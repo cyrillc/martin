@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.java.plugin.registry.Extension;
+
 import ch.zhaw.psit4.martin.models.Plugin;
 
 /**
@@ -27,6 +29,7 @@ public class Author extends BaseModel {
 
 	public Author() {
 	}
+	
 
 	public void setName(String name) {
 		this.name = name;

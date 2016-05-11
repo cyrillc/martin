@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ch.zhaw.psit4.martin.common.MartinExtensionParser;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.PluginRepository;
 
@@ -107,65 +108,21 @@ public class PluginDataAccessor {
      * @return The java plugin object.
      */
     public Plugin createPluginFromFrameworkData(Extension extension) {
-        Plugin plugin = new Plugin();
 
-        // metadata-parsing (mandatory)
-        Parameter pluginName = extension.getParameter("name");
+        Plugin plugin = MartinExtensionParser.getPluginFroExtension(extension);
 
-        // metadata-parsing (optional)
-        Parameter pluginDesctibtion = extension.getParameter("description");
-        Parameter pluginDate = extension.getParameter("date");
-        String uuid = extension.getId();
-
-        if (uuid == null) {
+        if (plugin.getUuid() == null) {
             LOG.error("Extension ID not accessible, generating new UUID");
-            uuid = UUID.randomUUID().toString();
+            plugin.setUuid(UUID.randomUUID().toString());
         }
 
-        // update DB-object
-        plugin.setName(pluginName.valueAsString());
-        if (pluginDesctibtion != null)
-            plugin.setDescription(pluginDesctibtion.valueAsString());
-        else
-            plugin.setDescription("No description provided.");
-        if (pluginDate != null) {
-            String date = pluginDate.valueAsString();
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            java.util.Date parsed = null;
-            try {
-                parsed = format.parse(date);
-                java.sql.Date sqlDate = new java.sql.Date(parsed.getTime());
-                plugin.setDate(sqlDate);
-            } catch (ParseException e) {
-                LOG.warn("Could not parse date.", e);
-            }
-        }
-        plugin.setUuid(uuid);
-        plugin.setAuthor(getAuthorData(extension));
+        plugin.setAuthor(MartinExtensionParser.getAuthorFromExtension(extension));
 
         return plugin;
     }
-
-    /**
-     * Get the author Metadata from plugins.xml
-     * 
-     * @param extension The extension to get the data from.
-     * @return The author java type.
-     */
-    public Author getAuthorData(Extension extension) {
-        Author author = new Author();
-
-        // get data
-        Parameter pluginAuthor = extension.getParameter("author");
-        Parameter pluginMail = extension.getParameter("e-mail");
-
-        // update DB-object
-        author.setName(pluginAuthor.valueAsString());
-        author.setEmail(pluginMail.valueAsString());
-
-        return author;
-    }
-
+    
+    
+    
     /**
      * Gets a set of function attributes from the JSON file.
      * 
@@ -234,7 +191,7 @@ public class PluginDataAccessor {
      * @param jsonFunction The array of JSON function elements.
      * @return A set of Parameter objects.
      */
-    public List<ch.zhaw.psit4.martin.models.Parameter> parseFunctionParameters(
+    private List<ch.zhaw.psit4.martin.models.Parameter> parseFunctionParameters(
             JSONObject jsonFunction, Function function) {
         List<ch.zhaw.psit4.martin.models.Parameter> functionParameter = new ArrayList<>();
 
