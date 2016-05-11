@@ -28,7 +28,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * This class connect the Frontend with the AI using REST.
  *
  * @version 0.0.1-SNAPSHOT
- *
  */
 @RestController
 @MultipartConfig(fileSizeThreshold = 52428800)  // upload Max 50MB
