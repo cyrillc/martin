@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.models.*;
-import ch.zhaw.psit4.martin.pluginInstaller.PluginInstaller;
+import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginInstaller;
 
 import java.util.List;
 
