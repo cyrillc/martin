@@ -37,6 +37,9 @@ public class MFunction extends BaseModel {
 			@JoinColumn(name = "function_id", nullable = false, updatable = false) }, inverseJoinColumns = {
 					@JoinColumn(name = "keyword_id", nullable = false, updatable = false) })
 	private Set<MKeyword> keywords;
+	
+	@OneToMany(mappedBy = "function",cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<MExampleCall> exampleCalls;
 
 	@ManyToOne
 	@JoinColumn(nullable = false)
@@ -45,7 +48,12 @@ public class MFunction extends BaseModel {
 	public MFunction() {
 	}
 
-	public void setName(String name) {
+	public MFunction(String name, String description) {
+	    this.name = name;
+	    this.description = description;
+    }
+
+    public void setName(String name) {
 		this.name = name;
 	}
 
@@ -92,6 +100,19 @@ public class MFunction extends BaseModel {
         keywords = MartinHelper.initSetifNull(keywords);
         keywords.add(keyword);
         keyword.addFunction(this);
+        
+    }
+
+    public void addParameter(MParameter parameter) {
+	    parameters = MartinHelper.initSetifNull(parameters);
+	    parameters.add(parameter);
+	    parameter.setFunction(this);
+    }
+
+    public void addExampleCall(MExampleCall exampleCall) {
+	    exampleCalls = MartinHelper.initSetifNull(exampleCalls);
+	    exampleCalls.add(exampleCall);
+	    exampleCall.setFunction(this);
         
     }
 

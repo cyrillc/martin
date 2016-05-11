@@ -1,6 +1,7 @@
 package ch.zhaw.psit4.martin.models;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -17,6 +18,9 @@ public class MExampleCall extends BaseModel {
 
 	private String example_call;
 	private String description;
+
+	@ManyToOne
+	private MFunction function;
 
 	public MExampleCall() {
 	}
@@ -35,6 +39,10 @@ public class MExampleCall extends BaseModel {
 
 	public String getDescription() {
 		return description;
+	}
+	
+	public void setFunction(MFunction function){
+	    this.function = function;
 	}
 
 }

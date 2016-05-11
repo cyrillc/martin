@@ -11,6 +11,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.jpa.internal.HEMLogging;
+
+import ch.zhaw.psit4.martin.common.MartinHelper;
 import ch.zhaw.psit4.martin.models.MAuthor;
 import ch.zhaw.psit4.martin.models.MFunction;
 
@@ -83,6 +86,12 @@ public class MPlugin extends BaseModel {
 	public void setFunctions(Set<MFunction> functions) {
 		this.functions = functions;
 		functions.stream().forEach(f -> f.setPlugin(this));
+	}
+	
+	public void addFunction(MFunction function) {
+	    functions = MartinHelper.initSetifNull(functions);
+	    functions.add(function);
+	    function.setPlugin(this);
 	}
 
 	public Set<MFunction> getFunctions() {

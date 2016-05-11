@@ -19,7 +19,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.common.MartinExtensionParser;
-import ch.zhaw.psit4.martin.db.keyword.KeywordServiceTest;
+import ch.zhaw.psit4.martin.common.MartinHelper;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
 import ch.zhaw.psit4.martin.models.repositories.MPluginRepository;
@@ -42,74 +42,26 @@ public class PluginDataAccessor {
     public void savePluginInDB(Extension pluginData, ClassLoader classLoader)
             throws FunctionsJSONMissingException {
 
-        JSONObject jsonPluginSource = parseJSON(classLoader.getResource(PLUGIN_FUNCTIONS));
-
-        // check if there is a JSON file
-        if (jsonPluginSource == null) {
-            throw new FunctionsJSONMissingException(
-                    "keywords.json missing for " + pluginData.getParameter("name").valueAsString());
-        }
-
         MPlugin dbPlugin = createPluginFromFrameworkData(pluginData);
 
-        if(pluginRepository.findByUuid(dbPlugin.getUuid()) == null) {
-            //Plugin is new
-            fillPluginModel(jsonPluginSource, dbPlugin);
+        if (pluginRepository.findByUuid(dbPlugin.getUuid()) == null) {
+            // Plugin is new
+            JSONObject jsonPluginSource =
+                    MartinHelper.parseJSON(classLoader.getResource(PLUGIN_FUNCTIONS));
+            addJSONDataToPlugin(jsonPluginSource, dbPlugin);
             pluginRepository.save(dbPlugin);
         } else {
-            LOG.info("Plugin "+dbPlugin.getName()+" already exists in DB");
+            LOG.info("Plugin " + dbPlugin.getName() + " already exists in DB");
         }
     }
 
-    private void fillPluginModel(JSONObject jsonPluginSource, MPlugin dbPlugin) {
+    private void addJSONDataToPlugin(JSONObject jsonPluginSource, MPlugin dbPlugin) {
         Set<MFunction> functionsFromJson = parsePluginFunctions(jsonPluginSource, dbPlugin);
-
-        for (MFunction function : functionsFromJson) {
-            Set<MParameter> parameter = function.getParameters();
-
-            if (!functionExistsInDB(function, dbPlugin)) {
-                LOG.info("INSERT Function " + function.getName() + " into DB");
-            } else {
-                LOG.warn("Function " + function.getName() + " allready in Database");
-                // replace function with the function from the database
-                function = getExistingFunctionFromDB(function, dbPlugin);
-                // add parameter from newly loaded function
-                function.addParameters(parameter);
-            }
-
-            dbPlugin.setFunctions(functionsFromJson);
-
-        }
+        functionsFromJson.stream().forEach(f -> dbPlugin.addFunction(f));
     }
 
-    /**
-     * Get the plugin JSON file for the keywords and functions.
-     * 
-     * @param keywordsUrl The URL of the file on the filesystem.
-     * @return The loaded JSON-file or null if an error occurred.
-     */
-    public JSONObject parseJSON(URL url) {
-        // keywords JSON loading
-        JSONObject json = null;
-        try {
-            // Get JSON
-            InputStream is = url.openStream();
-            json = new JSONObject(IOUtils.toString(is));
-            is.close();
-        } catch (JSONException | IOException e) {
-            LOG.error("keywords.json could not be accessed.", e);
-        }
 
-        return json;
-    }
-
-    /**
-     * Gets the plugin metadata from the plugin.xml and parses it to a Java object.
-     * 
-     * @param extension The extension to get the plugins from.
-     * @return The java plugin object.
-     */
-    public MPlugin createPluginFromFrameworkData(Extension extension) {
+    private MPlugin createPluginFromFrameworkData(Extension extension) {
 
         MPlugin plugin = MartinExtensionParser.getPluginFroExtension(extension);
 
@@ -133,55 +85,35 @@ public class PluginDataAccessor {
 
         ArrayList<MFunction> functions = new ArrayList<>();
         JSONArray jsonFunctions = json.getJSONArray("Functions");
-        for (int numFuncts = 0; numFuncts < jsonFunctions.length(); numFuncts++) {
+        for (int functionNumber = 0; functionNumber < jsonFunctions.length(); functionNumber++) {
             // get function attributes
-            JSONObject jsonFunction = jsonFunctions.getJSONObject(numFuncts);
+            JSONObject jsonFunction = jsonFunctions.getJSONObject(functionNumber);
 
-            LOG.info("create Function: " + jsonFunction.getString("Name") + " with Plugin ID = "
+            LOG.debug("create Function: " + jsonFunction.getString("Name") + " with Plugin ID = "
                     + plugin.getId());
-            MFunction function = new MFunction();
-            function.setName(jsonFunction.getString("Name"));
-            function.setDescription(jsonFunction.getString("Describtion"));
-            function.setPlugin(plugin);
+            MFunction function = new MFunction(jsonFunction.getString("Name"),
+                                                jsonFunction.getString("Description"));
 
-            List<ch.zhaw.psit4.martin.models.MParameter> functionParameter =
-                    parseFunctionParameters(jsonFunction, function);
-
-            function.setParameter(new HashSet<MParameter>(functionParameter));
+            Set<MParameter> functionParameter = parseFunctionParameters(jsonFunction, function);
+            functionParameter.stream().forEach(p -> function.addParameter(p));
 
             addKeywordsToFunction(jsonFunction, function);
+            addExampleCallsToFunction(jsonFunction, function);
             functions.add(function);
 
         }
         return new HashSet<>(functions);
     }
 
-    /**
-     * @param function
-     * @param plugin
-     * @return true if functionExists in Database
-     */
-    private boolean functionExistsInDB(MFunction function, MPlugin plugin) {
-        return (getExistingFunctionFromDB(function, plugin) != null) ? true : false;
-    }
+    private void addExampleCallsToFunction(JSONObject jsonFunction, MFunction function) {
+        
+        JSONArray jsonCalls = jsonFunction.getJSONArray("Examples");
+        for (int callNumber = 0; callNumber < jsonCalls.length(); callNumber++) {
+            MExampleCall exampleCall = new MExampleCall();
+            exampleCall.setCall(jsonCalls.getString(callNumber));
 
-    /**
-     * Checks if a function exists in the DB and returns the given function form the database
-     * 
-     * @param function
-     * @param plugin
-     * @return null if the function does not exist in the Database or the function
-     */
-    private MFunction getExistingFunctionFromDB(MFunction function, MPlugin plugin) {
-        Set<MFunction> functions = plugin.getFunctions();
-        if (functions != null)
-            for (MFunction f : functions) {
-                if (f.getName().equals(function.getName())
-                        && f.getPlugin().getUuid().equals(plugin.getUuid())) {
-                    return f;
-                }
-            }
-        return null;
+            function.addExampleCall(exampleCall);
+        }
     }
 
     /**
@@ -190,8 +122,7 @@ public class PluginDataAccessor {
      * @param jsonFunction The array of JSON function elements.
      * @return A set of Parameter objects.
      */
-    public List<MParameter> parseFunctionParameters(
-            JSONObject jsonFunction, MFunction function) {
+    public Set<MParameter> parseFunctionParameters(JSONObject jsonFunction, MFunction function) {
         List<MParameter> functionParameter = new ArrayList<>();
 
         JSONArray jsonParameter = jsonFunction.getJSONArray("Parameter");
@@ -212,7 +143,7 @@ public class PluginDataAccessor {
             // parseKeywords(jsonFunction, param)
         }
 
-        return functionParameter;
+        return new HashSet<>(functionParameter);
     }
 
     /**
@@ -243,9 +174,9 @@ public class PluginDataAccessor {
 
             JSONArray jsonKeywords = jsonParameter.getJSONArray("Keywords");
             for (int keyWordNum = 0; keyWordNum < jsonKeywords.length(); keyWordNum++) {
-                String keywordName =jsonKeywords.getString(keyWordNum);
+                String keywordName = jsonKeywords.getString(keyWordNum);
                 MKeyword keyword = keywordRepository.findByKeywordIgnoreCase(keywordName);
-                if(keyword== null){
+                if (keyword == null) {
                     keyword = new MKeyword();
                     keyword.setKeyword(keywordName);
                 }

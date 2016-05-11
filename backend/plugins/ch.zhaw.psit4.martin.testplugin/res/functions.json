@@ -2,7 +2,7 @@
 	"Functions": [
 		{
 			"Name": "hallo",
-			"Describtion": "Greets the greeter.",
+			"Description": "Greets the greeter.",
 			"Keywords": [
 				"hello",
 				"greetings",
