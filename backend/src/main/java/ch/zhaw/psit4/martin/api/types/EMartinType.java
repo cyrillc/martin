@@ -4,31 +4,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum EMartinType {
-	DATE(Date.class.getName()), DURATION(Duration.class.getName()), LOCATION(Location.class.getName()), MISC(
-			Misc.class.getName()), MONEY(Money.class.getName()), NUMBER(Number.class.getName()), ORDINAL(
-					Ordinal.class.getName()), ORGANIZATION(Organization.class.getName()), PERCENT(
-							Percent.class.getName()), PERSON(Person.class.getName()), SET(Set.class.getName()), TEXT(
-									Text.class.getName()), TIME(
-											Time.class.getName()), TIMESTAMP(Timestamp.class.getName());
+	DATE(MartinDate.class.getName()), DURATION(MartinDuration.class.getName()), LOCATION(MartinLocation.class.getName()), MISC(
+			MartinMisc.class.getName()), MONEY(MartinMoney.class.getName()), NUMBER(MartinNumber.class.getName()), ORDINAL(
+					MartinOrdinal.class.getName()), ORGANIZATION(MartinOrganization.class.getName()), PERCENT(
+							MartinPercent.class.getName()), PERSON(MartinPerson.class.getName()), SET(MartinSet.class.getName()), TEXT(
+									MartinText.class.getName()), TIME(
+											MartinTime.class.getName()), TIMESTAMP(MartinTimestamp.class.getName());
 
 	private static final Map<String, String> NERTAGS;
 
 	static {
 		NERTAGS = new HashMap<>();
-		NERTAGS.put(Date.class.getName(), "DATE");
-		NERTAGS.put(Duration.class.getName(), "DURATION");
-		NERTAGS.put(Location.class.getName(), "LOCATION");
-		NERTAGS.put(Misc.class.getName(), "MISC");
-		NERTAGS.put(Money.class.getName(), "MONEY");
-		NERTAGS.put(Number.class.getName(), "NUMBER");
-		NERTAGS.put(Ordinal.class.getName(), "ORDINAL");
-		NERTAGS.put(Organization.class.getName(), "ORGANIZATION");
-		NERTAGS.put(Percent.class.getName(), "PERCENT");
-		NERTAGS.put(Person.class.getName(), "PERSON");
-		NERTAGS.put(Set.class.getName(), "SET");
-		NERTAGS.put(Text.class.getName(), "O");
-		NERTAGS.put(Time.class.getName(), "TIME");
-		NERTAGS.put(Timestamp.class.getName(), "DATE TIME");
+		NERTAGS.put(MartinDate.class.getName(), "DATE");
+		NERTAGS.put(MartinDuration.class.getName(), "DURATION");
+		NERTAGS.put(MartinLocation.class.getName(), "LOCATION");
+		NERTAGS.put(MartinMisc.class.getName(), "MISC");
+		NERTAGS.put(MartinMoney.class.getName(), "MONEY");
+		NERTAGS.put(MartinNumber.class.getName(), "NUMBER");
+		NERTAGS.put(MartinOrdinal.class.getName(), "ORDINAL");
+		NERTAGS.put(MartinOrganization.class.getName(), "ORGANIZATION");
+		NERTAGS.put(MartinPercent.class.getName(), "PERCENT");
+		NERTAGS.put(MartinPerson.class.getName(), "PERSON");
+		NERTAGS.put(MartinSet.class.getName(), "SET");
+		NERTAGS.put(MartinText.class.getName(), "O");
+		NERTAGS.put(MartinTime.class.getName(), "TIME");
+		NERTAGS.put(MartinTimestamp.class.getName(), "DATE TIME");
 	}
 
 	private String value;

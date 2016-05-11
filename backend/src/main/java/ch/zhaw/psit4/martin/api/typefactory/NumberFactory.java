@@ -8,55 +8,55 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.zhaw.psit4.martin.api.types.IMartinTypeInstanciationException;
-import ch.zhaw.psit4.martin.api.types.Number;
+import ch.zhaw.psit4.martin.api.types.MartinNumber;
 import ch.zhaw.psit4.martin.boot.MartinBoot;
 
 public class NumberFactory {
 	private static final Log LOG = LogFactory.getLog(MartinBoot.class);
 
-	public Number fromString(String rawInput) throws IMartinTypeInstanciationException {
-		return this.fromString(rawInput, Number.RawFormat.UNKNOWN);
+	public MartinNumber fromString(String rawInput) throws IMartinTypeInstanciationException {
+		return this.fromString(rawInput, MartinNumber.RawFormat.UNKNOWN);
 	}
 
-	public Number fromString(String rawInput, Number.RawFormat rawFormat) throws IMartinTypeInstanciationException {
-		Number number = new Number(rawInput);
-		number.setRawFormat(rawFormat);
+	public MartinNumber fromString(String rawInput, MartinNumber.RawFormat rawFormat) throws IMartinTypeInstanciationException {
+		MartinNumber martinNumber = new MartinNumber(rawInput);
+		martinNumber.setRawFormat(rawFormat);
 
-		if (Number.RawFormat.NUMERIC.equals(number.getRawFormat())
-				|| Number.RawFormat.UNKNOWN.equals(number.getRawFormat())) {
+		if (MartinNumber.RawFormat.NUMERIC.equals(martinNumber.getRawFormat())
+				|| MartinNumber.RawFormat.UNKNOWN.equals(martinNumber.getRawFormat())) {
 			try {
 				// try numeric format (e.g. "1000")
-				number.setDoubleNumber(Optional.ofNullable(Double.parseDouble(rawInput)));
-				number.setIntegerNumber(Optional.ofNullable(Integer.parseInt(rawInput)));
-				number.setRawFormat(Number.RawFormat.NUMERIC);
+				martinNumber.setDoubleNumber(Optional.ofNullable(Double.parseDouble(rawInput)));
+				martinNumber.setIntegerNumber(Optional.ofNullable(Integer.parseInt(rawInput)));
+				martinNumber.setRawFormat(MartinNumber.RawFormat.NUMERIC);
 			} catch (Exception e) {
 				LOG.debug(e);
-				number.setRawFormat(Number.RawFormat.UNKNOWN);
+				martinNumber.setRawFormat(MartinNumber.RawFormat.UNKNOWN);
 			}
 		}
 
-		if (Number.RawFormat.WORD_EN.equals(number.getRawFormat())
-				|| Number.RawFormat.UNKNOWN.equals(number.getRawFormat())) {
+		if (MartinNumber.RawFormat.WORD_EN.equals(martinNumber.getRawFormat())
+				|| MartinNumber.RawFormat.UNKNOWN.equals(martinNumber.getRawFormat())) {
 			try {
 				// try word format (e.g. "thousand")
 				Double result = stringToDouble(rawInput);
 				if (result != null) {
-					number.setDoubleNumber(Optional.ofNullable(result));
-					number.setIntegerNumber(Optional.ofNullable(result.intValue()));
-					number.setRawFormat(Number.RawFormat.WORD_EN);
+					martinNumber.setDoubleNumber(Optional.ofNullable(result));
+					martinNumber.setIntegerNumber(Optional.ofNullable(result.intValue()));
+					martinNumber.setRawFormat(MartinNumber.RawFormat.WORD_EN);
 				}
 			} catch (Exception e) {
 				LOG.debug(e);
-				number.setRawFormat(Number.RawFormat.UNKNOWN);
+				martinNumber.setRawFormat(MartinNumber.RawFormat.UNKNOWN);
 			}
 		}
 
-		if (Number.RawFormat.UNKNOWN.equals(number.getRawFormat())) {
+		if (MartinNumber.RawFormat.UNKNOWN.equals(martinNumber.getRawFormat())) {
 			throw new IMartinTypeInstanciationException(
 					"Could not instanciate Number with raw-data \"" + rawInput + "\"");
 		}
 
-		return number;
+		return martinNumber;
 	}
 
 	public Double stringToDouble(String rawInput) {

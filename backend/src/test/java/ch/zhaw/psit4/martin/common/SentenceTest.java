@@ -14,7 +14,6 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
 public class SentenceTest {
-
 	@Autowired
 	private StanfordCoreNLPClient stanfordNLP;
 

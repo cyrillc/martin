@@ -5,8 +5,8 @@ package ch.zhaw.psit4.martin.api.types;
  * @author simonflepp
  *
  */
-public class Person extends MartinType {
-	public Person(String data) {
+public class MartinPerson extends MartinBaseType {
+	public MartinPerson(String data) {
 		super(data);
 	}
 }

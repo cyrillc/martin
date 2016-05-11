@@ -14,9 +14,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.api.types.EMartinType;
-import ch.zhaw.psit4.martin.api.types.Location;
-import ch.zhaw.psit4.martin.api.types.Number;
-import ch.zhaw.psit4.martin.api.types.Timestamp;
+import ch.zhaw.psit4.martin.api.types.MartinLocation;
+import ch.zhaw.psit4.martin.api.types.MartinNumber;
+import ch.zhaw.psit4.martin.api.types.MartinTimestamp;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
@@ -26,25 +26,25 @@ public class TypeFactoryTest {
 	public void testNumber() {
 
 		try {
-			Number one = (Number) MartinTypeFactory.fromType(EMartinType.NUMBER, "1");
+			MartinNumber one = (MartinNumber) MartinTypeFactory.fromType(EMartinType.NUMBER, "1");
 			assertEquals(one.getIntegerNumber().get(), (Integer) 1);
 			assertEquals(one.getDoubleNumber().get(), (Double) 1.0);
-			assertEquals(one.getRawFormat(), Number.RawFormat.NUMERIC);
+			assertEquals(one.getRawFormat(), MartinNumber.RawFormat.NUMERIC);
 
-			Number oneWord = (Number) MartinTypeFactory.fromType(EMartinType.NUMBER, "one");
+			MartinNumber oneWord = (MartinNumber) MartinTypeFactory.fromType(EMartinType.NUMBER, "one");
 			assertEquals(oneWord.getIntegerNumber().get(), (Integer) 1);
 			assertEquals(oneWord.getDoubleNumber().get(), (Double) 1.0);
-			assertEquals(oneWord.getRawFormat(), Number.RawFormat.WORD_EN);
+			assertEquals(oneWord.getRawFormat(), MartinNumber.RawFormat.WORD_EN);
 
-			Number twoThousand = (Number) MartinTypeFactory.fromType(EMartinType.NUMBER, "two thousand");
+			MartinNumber twoThousand = (MartinNumber) MartinTypeFactory.fromType(EMartinType.NUMBER, "two thousand");
 			assertEquals(twoThousand.getIntegerNumber().get(), (Integer) 2000);
 			assertEquals(twoThousand.getDoubleNumber().get(), (Double) 2000.0);
-			assertEquals(twoThousand.getRawFormat(), Number.RawFormat.WORD_EN);
+			assertEquals(twoThousand.getRawFormat(), MartinNumber.RawFormat.WORD_EN);
 
-			Number eleven = (Number) MartinTypeFactory.fromType(EMartinType.NUMBER, "eleven");
+			MartinNumber eleven = (MartinNumber) MartinTypeFactory.fromType(EMartinType.NUMBER, "eleven");
 			assertEquals(eleven.getIntegerNumber().get(), (Integer) 11);
 			assertEquals(eleven.getDoubleNumber().get(), (Double) 11.0);
-			assertEquals(eleven.getRawFormat(), Number.RawFormat.WORD_EN);
+			assertEquals(eleven.getRawFormat(), MartinNumber.RawFormat.WORD_EN);
 
 		} catch (Exception e) {
 			fail("Expected no exception, but got: " + e.getMessage());
@@ -57,7 +57,7 @@ public class TypeFactoryTest {
 			DateTimeZone timeZone = DateTimeZone.forID("Europe/Paris");
 
 			// Today
-			Timestamp today = (Timestamp) MartinTypeFactory.fromType(EMartinType.TIMESTAMP, "today");
+			MartinTimestamp today = (MartinTimestamp) MartinTypeFactory.fromType(EMartinType.TIMESTAMP, "today");
 			DateTime correctToday = DateTime.now(timeZone);
 
 			assertEquals(today.getDatetime().get().getYear(), correctToday.getYear());
@@ -65,7 +65,7 @@ public class TypeFactoryTest {
 			assertEquals(today.getDatetime().get().getDayOfMonth(), correctToday.getDayOfMonth());
 
 			// Yesterday
-			Timestamp yesterday = (Timestamp) MartinTypeFactory.fromType(EMartinType.TIMESTAMP, "yesterday");
+			MartinTimestamp yesterday = (MartinTimestamp) MartinTypeFactory.fromType(EMartinType.TIMESTAMP, "yesterday");
 			DateTime correctYesterday = DateTime.now(timeZone).minusDays(1);
 
 			assertEquals(yesterday.getDatetime().get().getYear(), correctYesterday.getYear());
@@ -86,13 +86,13 @@ public class TypeFactoryTest {
 		}
 
 		try {
-			Location zurich = (Location) MartinTypeFactory.fromType(EMartinType.LOCATION, "Zürich");
+			MartinLocation zurich = (MartinLocation) MartinTypeFactory.fromType(EMartinType.LOCATION, "Zürich");
 
 			assertEquals(zurich.getFormattedAddress().get(), "Zürich, Switzerland");
 			assertEquals(zurich.getLatitude().get(), (Double) 47.3768866);
 			assertEquals(zurich.getLongitude().get(), (Double) 8.541694);
 
-			Location honolulu = (Location) MartinTypeFactory.fromType(EMartinType.LOCATION, "Honolulu");
+			MartinLocation honolulu = (MartinLocation) MartinTypeFactory.fromType(EMartinType.LOCATION, "Honolulu");
 			
 			assertEquals(honolulu.getFormattedAddress().get(), "Honolulu, HI, USA");
 			assertEquals(honolulu.getLatitude().get(), (Double)21.3069444);

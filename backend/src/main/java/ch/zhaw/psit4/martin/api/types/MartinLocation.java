@@ -12,12 +12,12 @@ import org.json.JSONObject;
  * @author simonflepp
  *
  */
-public class Location extends MartinType {
+public class MartinLocation extends MartinBaseType {
 	Optional<String> formattedAddress = Optional.ofNullable(null);
 	Optional<Double> latitude = Optional.ofNullable(null);
 	Optional<Double> longitude = Optional.ofNullable(null);
 
-	public Location(String data) {
+	public MartinLocation(String data) {
 		super(data);
 	}
 
