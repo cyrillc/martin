@@ -241,6 +241,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         Feature feature = martinContextAccessor.fetchWorkItem(requestID);
         String ret = "";
         
+        TIMING_LOG.logEnd(this.getClass().getSimpleName());
         TIMING_LOG.logStart(call.getPlugin().getName());
         while (feature != null) {
             try {
@@ -276,6 +277,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             feature = martinContextAccessor.fetchWorkItem(requestID);
         }
         TIMING_LOG.logEnd(call.getPlugin().getName());
+        TIMING_LOG.logStart(this.getClass().getSimpleName());
 
         return ret;
     }

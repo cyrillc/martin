@@ -55,7 +55,9 @@ public class RequestProcessor {
 		ExtendedRequest extendedRequest = new ExtendedRequest(request, response);
 		List<PossibleCall> possibleCalls = new ArrayList<>();
 
+		TIMING_LOG.logEnd(this.getClass().getSimpleName());
 		Sentence sentence = new Sentence(extendedRequest.getRequest().getCommand(), stanfordNLP);
+		TIMING_LOG.logStart(this.getClass().getSimpleName());
 
 		// Find possible Calls by keywords
 		addPossibleCallsWithKeywords(possibleCalls, sentence.getWords());
@@ -184,12 +186,15 @@ public class RequestProcessor {
 				}
 
 				if (!"".equals(data)) {
+					TIMING_LOG.logEnd(this.getClass().getSimpleName());
 					try {
 						IBaseType parameterValue = BaseTypeFactory
 								.fromType(EBaseType.fromClassName(parameter.getType()), data);
 						LOG.info("\n Parameter found via Name Entity Recognition: " + parameterValue.toJson());
+						TIMING_LOG.logStart(this.getClass().getSimpleName());
 						return parameterValue;
 					} catch (BaseTypeInstanciationException e) {
+						TIMING_LOG.logStart(this.getClass().getSimpleName());
 						LOG.debug(e);
 					}
 				}

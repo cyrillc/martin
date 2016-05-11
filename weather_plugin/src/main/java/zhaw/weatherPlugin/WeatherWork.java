@@ -28,7 +28,7 @@ public class WeatherWork extends Feature {
 	public void start(Map<String, IBaseType> args) throws Exception {
 		MLocation location = (MLocation) args.get("city");
 
-		this.city = location.getData();
+		this.city = location.toString();
 
 		if (location.getLatitude().isPresent() && location.getLongitude().isPresent()) {
 			this.latitude = location.getLatitude().get();
@@ -47,7 +47,13 @@ public class WeatherWork extends Feature {
 
 	@Override
 	public void run() throws Exception {
-		response = weatherService.getWeatherAtCity(this.city);
+		if(this.dateTime == null){
+			response = weatherService.getWeatherAtCity(this.city);
+		} else {
+			response = weatherService.getForecastAtCityForSpecificTime(this.city, this.dateTime.toDate());
+		}
+		
+		
 		if (response == null) {
 			response = "No weather info found for " + city;
 		}

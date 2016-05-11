@@ -78,17 +78,20 @@ public class AIControllerFacade {
 	 * @return the response of the AI.
 	 */
 	public MResponse elaborateRequest(MRequest request) {
-
+		TIMING_LOG.logStart(this.getClass().getSimpleName());
+		
 		MResponse response = new MResponse();
 
-		TIMING_LOG.logStart(this.getClass().getSimpleName());
-
+		TIMING_LOG.logEnd(this.getClass().getSimpleName());
 		ExtendedRequest extendedRequest = requestProcessor.extend(request, response);
+		TIMING_LOG.logStart(this.getClass().getSimpleName());
 
 		if (extendedRequest.getSentence().getPredefinedAnswer() != null) {
 			extendedRequest.getResponse().setResponseText(extendedRequest.getSentence().getPredefinedAnswer());
 		} else if (extendedRequest.getCalls().size() > 0) {
+			TIMING_LOG.logEnd(this.getClass().getSimpleName());
 			extendedRequest.setResponse(pluginLibrary.executeRequest(extendedRequest));
+			TIMING_LOG.logStart(this.getClass().getSimpleName());
 		} else {
 			extendedRequest.getResponse().setResponseText("Sorry, I can't understand you.");
 		}

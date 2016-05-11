@@ -26,7 +26,7 @@ public class TimingInfoLogger {
 	}
 
 	public void logEnd(String label) {
-		Optional<TimingInfo> timingInfo = timingInfoLog.stream().filter(p -> p.getLabel().equals(label)).findFirst();
+		Optional<TimingInfo> timingInfo = timingInfoLog.stream().filter(p -> p.getLabel().equals(label) && p.getEndTime() == null).findFirst();
 
 		if (timingInfo.isPresent()) {
 			timingInfo.get().setEndTime(new Date());
