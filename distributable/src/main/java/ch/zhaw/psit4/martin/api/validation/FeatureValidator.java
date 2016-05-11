@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.MartinPlugin;
-import ch.zhaw.psit4.martin.api.types.IMartinType;
+import ch.zhaw.psit4.martin.api.types.IBaseType;
 
 /**
  * Tests a possible implementation of {@link Feature}.
@@ -23,7 +23,7 @@ public class FeatureValidator {
     private static final Log LOG = LogFactory.getLog(FeatureValidator.class);
     private Class<?> className;
     private Object instance;
-    private Map<String, IMartinType> args;
+    private Map<String, IBaseType> args;
     
     @SuppressWarnings("unused")
     private FeatureValidator() {
@@ -122,7 +122,7 @@ public class FeatureValidator {
         return (message != null) && !message.isEmpty();
     }
     
-    public void setExpectedArguments(Map<String, IMartinType> args) {
+    public void setExpectedArguments(Map<String, IBaseType> args) {
         this.args = args;
     }
     

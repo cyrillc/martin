@@ -9,8 +9,7 @@ import ch.zhaw.psit4.martin.api.MartinPlugin;
 import ch.zhaw.psit4.martin.api.validation.MartinAPITestResult;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
-import ch.zhaw.psit4.martin.db.response.Response;
+import ch.zhaw.psit4.martin.models.*;
 
 /**
  * Interface for class <code>PluginLibrary</code>.
@@ -48,9 +47,9 @@ public interface IPluginLibrary {
      * 
      * @param req The {@link ExtendedQequest} to answer.
      * 
-     * @return The generated {@link Response}.
+     * @return The generated {@link MResponse}.
      */
-    public Response executeRequest(ExtendedRequest req);
+    public MResponse executeRequest(ExtendedRequest req);
 
     
     public List<PluginInformation> getPluginInformation();
@@ -62,7 +61,7 @@ public interface IPluginLibrary {
      * 
      * @return a list of example calls
      */
-    public List<ExampleCall> getExampleCalls();
+    public List<MExampleCall> getExampleCalls();
     
     /**
      * Returns a list of 5 randomly choosen example calls read from the plugin database. Is usually
@@ -71,7 +70,7 @@ public interface IPluginLibrary {
      * 
      * @return a list of 5 randomly choosen example calls
      */
-    public List<ExampleCall> getRandomExampleCalls();
+    public List<MExampleCall> getRandomExampleCalls();
     
     public Map<String, MartinPlugin> getPluginExtentions();
 }

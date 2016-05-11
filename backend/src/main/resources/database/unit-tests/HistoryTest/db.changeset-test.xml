@@ -14,7 +14,7 @@
     <changeSet author="moretgio" id="test-1">
         <loadData tableName="request" file="request.csv" relativeToChangelogFile="true"/>
         <loadData tableName="response" file="response.csv" relativeToChangelogFile="true"/>
-        <loadData tableName="historyItem" file="historyItem.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="history_item" file="historyItem.csv" relativeToChangelogFile="true"/>
     </changeSet>
 
 </databaseChangeLog>

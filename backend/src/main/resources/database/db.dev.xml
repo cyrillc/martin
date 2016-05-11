@@ -7,9 +7,8 @@
 
 
    <!-- Includes the version of the database to be used on the dev-branch -->
-
    <include file="db.changeset-schema-latest.xml" relativeToChangelogFile="true"/> 
-   <include file="db.changeset-data-latest.xml" relativeToChangelogFile="true"/> 
+   <include file="db.changeset-data-latest.xml" relativeToChangelogFile="true"/>
 
 
 </databaseChangeLog>

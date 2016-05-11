@@ -14,8 +14,8 @@
 		<library type="resources" path="res/" id="resources" />
 	</runtime>
  
-	<extension plugin-id="ch.zhaw.psit4.martin.api" point-id="PluginService"
-		id="testPlugin">
+	<extension plugin-id="ch.zhaw.psit4.martin.api" point-id="MartinPlugin"
+		id="2416811e-4492-4212-8741-9f3c36bfb320">
 		<parameter id="class"
 			value="ch.zhaw.psit4.martin.testplugin.TestPlugin" />
 		<parameter id="name" value="Test Plugin" />
@@ -23,6 +23,6 @@
 			value="A plugin to test the pPlugin system." />
 		<parameter id="author" value="Daniel Fabian" />
 		<parameter id="e-mail" value="jtek.fdlt@gmail.com" />
-		<parameter id="date" value="30.03.2016" />
+		<parameter id="date" value="2016-04-25" />
 	</extension>
 </plugin>

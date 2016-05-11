@@ -14,11 +14,11 @@
 
 	<!-- Make changes to schema -->
     <changeSet author="fleppsim" id="schema-1.1.0">
-        <dropForeignKeyConstraint baseTableName="historyItem" constraintName="fk_historyItems_request"/>
+        <dropForeignKeyConstraint baseTableName="history_item" constraintName="fk_history_items_request"/>
         <dropTable cascadeConstraints="true"
             tableName="request"/>
         <createTable tableName="request">
-            <column autoIncrement="true" name="request_id" type="INT">
+            <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true"/>
             </column>
             <column name="command" type="VARCHAR(100)">
@@ -26,23 +26,23 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseColumnNames="request" baseTableName="historyItem" constraintName="fk_historyItems_request" deferrable="false" initiallyDeferred="false" referencedColumnNames="request_id" referencedTableName="request"/>
+        <addForeignKeyConstraint baseColumnNames="request_id" baseTableName="history_item" constraintName="fk_history_items_request" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="request"/>
     </changeSet>
 
     <changeSet author="fleppsim" id="schema-1.1.1">
-		<dropForeignKeyConstraint baseTableName="historyItem" constraintName="fk_historyItems_response"/>
+		<dropForeignKeyConstraint baseTableName="history_item" constraintName="fk_history_items_response"/>
         <dropTable cascadeConstraints="true"
             tableName="response"/>
 
    
         <createTable tableName="response">
-            <column autoIncrement="true" name="response_id" type="INT">
+            <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true"/>
             </column>
             <column name="responsetext" type="VARCHAR(500)"/>
         </createTable>
 
-        <addForeignKeyConstraint baseColumnNames="response" baseTableName="historyItem" constraintName="fk_historyItems_response" deferrable="false" initiallyDeferred="false" referencedColumnNames="response_id" referencedTableName="response"/>
+        <addForeignKeyConstraint baseColumnNames="response_id" baseTableName="history_item" constraintName="fk_history_items_response" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="response"/>
     </changeSet>
 
 </databaseChangeLog>

@@ -71,7 +71,6 @@ public class PluginLibraryBootstrap {
         IPluginLibrary lib;
         try {
             lib = initializeLibrary();
-            lib.startLibrary();
         } catch (Exception e) {
             LOG.error("Plugin library could not be initialized!", e);
             throw new PluginLibraryNotFoundException(e);

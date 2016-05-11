@@ -8,21 +8,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ch.zhaw.psit4.martin.api.typefactory.MartinTypeFactory;
-import ch.zhaw.psit4.martin.api.types.EMartinType;
-import ch.zhaw.psit4.martin.api.types.IMartinType;
-import ch.zhaw.psit4.martin.api.types.IMartinTypeInstanciationException;
+import ch.zhaw.psit4.martin.api.typefactory.BaseTypeFactory;
+import ch.zhaw.psit4.martin.api.types.EBaseType;
+import ch.zhaw.psit4.martin.api.types.IBaseType;
+import ch.zhaw.psit4.martin.api.types.BaseTypeInstanciationException;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.Sentence;
-import ch.zhaw.psit4.martin.db.function.Function;
-import ch.zhaw.psit4.martin.db.function.FunctionService;
-import ch.zhaw.psit4.martin.db.keyword.Keyword;
-import ch.zhaw.psit4.martin.db.parameter.Parameter;
-import ch.zhaw.psit4.martin.db.plugin.Plugin;
-import ch.zhaw.psit4.martin.db.request.Request;
+import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
 import ch.zhaw.psit4.martin.common.Phrase;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
 /**
@@ -33,9 +28,9 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
  * @version 0.1
  **/
 public class RequestProcessor implements IRequestProcessor {
-
+	
 	@Autowired
-	private FunctionService functionService;
+	private MKeywordRepository keywordRepository;
 
 	@Autowired
 	private StanfordCoreNLPClient stanfordNLP;
@@ -52,7 +47,7 @@ public class RequestProcessor implements IRequestProcessor {
 	 *         executable function calls.
 	 */
 	@Override
-	public ExtendedRequest extend(Request request) {
+	public ExtendedRequest extend(MRequest request) {	
 		List<PossibleCall> possibleCalls = new ArrayList<>();
 
 		Sentence sentence = new Sentence(request.getCommand(), stanfordNLP);
@@ -99,25 +94,26 @@ public class RequestProcessor implements IRequestProcessor {
 
 		for (String word : words) {
 
-			List<Object[]> functionsKeywords = functionService.getByKeyword(word);
-			for (Object[] functionsKeyword : functionsKeywords) {
-				Function function = (Function) functionsKeyword[0];
-				Plugin plugin = function.getPlugin();
+			MKeyword keyword = keywordRepository.findByKeywordIgnoreCase(word);
 
-				Keyword keyword = (Keyword) functionsKeyword[1];
+			if (keyword != null) {
+				for (MFunction function : keyword.getFunctions()) {
+					MPlugin plugin = function.getPlugin();
 
-				Optional<PossibleCall> optionalPossibleResult = possibleCalls.stream()
-						.filter(o -> o.getPlugin().getId() == plugin.getId())
-						.filter(o -> o.getFunction().getId() == function.getId()).findFirst();
+					Optional<PossibleCall> optionalPossibleResult = possibleCalls.stream()
+							.filter(o -> o.getPlugin().getId() == plugin.getId())
+							.filter(o -> o.getFunction().getId() == function.getId()).findFirst();
 
-				if (optionalPossibleResult.isPresent()) {
-					optionalPossibleResult.get().addMatchingKeyword(keyword);
-				} else {
-					PossibleCall possibleCall = new PossibleCall(plugin, function);
-					possibleCall.addMatchingKeyword(keyword);
-					possibleCalls.add(possibleCall);
+					if (optionalPossibleResult.isPresent()) {
+						optionalPossibleResult.get().addMatchingKeyword(keyword);
+					} else {
+						PossibleCall possibleCall = new PossibleCall(plugin, function);
+						possibleCall.addMatchingKeyword(keyword);
+						possibleCalls.add(possibleCall);
+					}
 				}
 			}
+
 		}
 
 		return possibleCalls;
@@ -144,11 +140,11 @@ public class RequestProcessor implements IRequestProcessor {
 	 */
 	public List<PossibleCall> resolveParameters(List<PossibleCall> possibleCalls, Sentence sentence) {
 		for (PossibleCall possibleCall : possibleCalls) {
-			Function function = possibleCall.getFunction();
+			MFunction function = possibleCall.getFunction();
 
-			for (Parameter parameter : function.getParameter()) {
+			for (MParameter parameter : function.getParameters()) {
 				// Create instance of IMartinType for requested type
-				IMartinType parameterValue = getParameterValue(parameter, sentence);
+				IBaseType parameterValue = getParameterValue(parameter, sentence);
 				possibleCall.addParameter(parameter.getName(), parameterValue);
 			}
 		}
@@ -156,7 +152,7 @@ public class RequestProcessor implements IRequestProcessor {
 		return possibleCalls;
 	}
 
-	public IMartinType getParameterValue(Parameter parameter, Sentence sentence) {
+	public IBaseType getParameterValue(MParameter parameter, Sentence sentence) {
 		try {
 
 			Integer possibilitiesLeft;
@@ -164,20 +160,20 @@ public class RequestProcessor implements IRequestProcessor {
 				// Perform Name Entity Recognition
 				String data = "";
 
-				if (EMartinType.TIMESTAMP.equals(EMartinType.fromClassName(parameter.getType()))) {
+				if (EBaseType.TIMESTAMP.equals(EBaseType.fromClassName(parameter.getType()))) {
 					// Timestamp consists of Date and Time
-					Phrase date = sentence.popPhraseOfType(EMartinType.DATE);
-					Phrase time = sentence.popPhraseOfType(EMartinType.TIME);
+					Phrase date = sentence.popPhraseOfType(EBaseType.DATE);
+					Phrase time = sentence.popPhraseOfType(EBaseType.TIME);
 
-					possibilitiesLeft = sentence.getPhrasesOfType(EMartinType.DATE).size()
-							+ sentence.getPhrasesOfType(EMartinType.TIME).size();
+					possibilitiesLeft = sentence.getPhrasesOfType(EBaseType.DATE).size()
+							+ sentence.getPhrasesOfType(EBaseType.TIME).size();
 
 					data = (date.getValue() + " " + time.getValue()).trim();
 				} else {
 					// All the rest can be resolved directly
-					Phrase phrase = sentence.popPhraseOfType(EMartinType.fromClassName(parameter.getType()));
+					Phrase phrase = sentence.popPhraseOfType(EBaseType.fromClassName(parameter.getType()));
 
-					possibilitiesLeft = sentence.getPhrasesOfType(EMartinType.fromClassName(parameter.getType()))
+					possibilitiesLeft = sentence.getPhrasesOfType(EBaseType.fromClassName(parameter.getType()))
 							.size();
 
 					if (phrase != null) {
@@ -187,11 +183,11 @@ public class RequestProcessor implements IRequestProcessor {
 
 				if (!"".equals(data)) {
 					try {
-						IMartinType parameterValue = MartinTypeFactory
-								.fromType(EMartinType.fromClassName(parameter.getType()), data);
+						IBaseType parameterValue = BaseTypeFactory
+								.fromType(EBaseType.fromClassName(parameter.getType()), data);
 						LOG.info("\n Parameter found via Name Entity Recognition: " + parameterValue.toJson());
 						return parameterValue;
-					} catch (IMartinTypeInstanciationException e) {
+					} catch (BaseTypeInstanciationException e) {
 						LOG.debug(e);
 					}
 				}

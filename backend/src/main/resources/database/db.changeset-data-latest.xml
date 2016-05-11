@@ -8,7 +8,7 @@
 
    <!-- Includes the latest version of the database-data -->
 
-   <include file="db.changeset-data-1.0.xml" relativeToChangelogFile="true"/> 
+   <include file="db.changeset-data-1.2.xml" relativeToChangelogFile="true"/> 
 
 
 </databaseChangeLog>

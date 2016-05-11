@@ -3,11 +3,8 @@ package ch.zhaw.psit4.martin.requestprocessor;
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.zhaw.psit4.martin.api.types.IMartinType;
-import ch.zhaw.psit4.martin.db.function.Function;
-import ch.zhaw.psit4.martin.db.keyword.Keyword;
-import ch.zhaw.psit4.martin.db.plugin.Plugin;
-
+import ch.zhaw.psit4.martin.api.types.IBaseType;
+import ch.zhaw.psit4.martin.models.*;
 /**
  * This class is used to prepare possible calls. The state of the PossibleCall
  * may not be complete and will be changed over the analyzation of the code. A
@@ -18,10 +15,10 @@ import ch.zhaw.psit4.martin.db.plugin.Plugin;
  *
  */
 class PossibleCall {
-	private Plugin plugin;
-	private Function function;
-	private HashMap<String, IMartinType> parameters = new HashMap<>();
-	private HashMap<Integer, Keyword> matchingKeywords = new HashMap<>();
+	private MPlugin plugin;
+	private MFunction function;
+	private HashMap<String, IBaseType> parameters = new HashMap<>();
+	private HashMap<Integer, MKeyword> matchingKeywords = new HashMap<>();
 
 	/**
 	 * Is used to determine how important the keyword-count for a usable result
@@ -30,7 +27,7 @@ class PossibleCall {
 	private static final Integer RELEVANCE_WEIGHT_KEYWORD_COUNT = 10;
 	// TODO: Add more weights to get better results
 
-	public PossibleCall(Plugin plugin, Function function) {
+	public PossibleCall(MPlugin plugin, MFunction function) {
 		this.plugin = plugin;
 		this.function = function;
 	}
@@ -43,35 +40,35 @@ class PossibleCall {
 		return RELEVANCE_WEIGHT_KEYWORD_COUNT * this.matchingKeywords.size();
 	}
 
-	public void setPlugin(Plugin plugin) {
+	public void setPlugin(MPlugin plugin) {
 		this.plugin = plugin;
 	}
 
-	public Plugin getPlugin() {
+	public MPlugin getPlugin() {
 		return plugin;
 	}
 
-	public void setFunction(Function function) {
+	public void setFunction(MFunction function) {
 		this.function = function;
 	}
 
-	public Function getFunction() {
+	public MFunction getFunction() {
 		return function;
 	}
 
-	public void addMatchingKeyword(Keyword keyword) {
+	public void addMatchingKeyword(MKeyword keyword) {
 		matchingKeywords.put(keyword.getId(), keyword);
 	}
 
-	public Map<Integer, Keyword> getMatchingKeywords() {
+	public Map<Integer, MKeyword> getMatchingKeywords() {
 		return matchingKeywords;
 	}
 
-	public void addParameter(String key, IMartinType value) {
+	public void addParameter(String key, IBaseType value) {
 		parameters.put(key, value);
 	}
 
-	public Map<String, IMartinType> getParameters() {
+	public Map<String, IBaseType> getParameters() {
 		return parameters;
 	}
 }

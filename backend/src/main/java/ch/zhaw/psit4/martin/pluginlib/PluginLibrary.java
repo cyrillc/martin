@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,13 +25,14 @@ import ch.zhaw.psit4.martin.common.Call;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.db.examplecall.ExampleCall;
-import ch.zhaw.psit4.martin.db.examplecall.ExampleCallService;
-import ch.zhaw.psit4.martin.db.plugin.PluginService;
-import ch.zhaw.psit4.martin.db.response.Response;
-import ch.zhaw.psit4.martin.api.validation.FeatureValidator;
 import ch.zhaw.psit4.martin.api.validation.MartinAPITestResult;
 import ch.zhaw.psit4.martin.api.validation.MartinPluginValidator;
+import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.repositories.MExampleCallRepository;
+import ch.zhaw.psit4.martin.models.repositories.MPluginRepository;
+import ch.zhaw.psit4.martin.pluginlib.filesystem.KeywordsJSONMissingException;
+import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor;
+
 
 /**
  * PluginLibrary logic entry point.
@@ -53,14 +53,16 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
     @Autowired
     private MartinContextAccessor martinContextAccessor;
+    
+	@Autowired
+    private PluginDataAccessor pluginDataAccessor;
+    
+    @Autowired
+    private MPluginRepository pluginRepository;
 
     @Autowired
-    private PluginService pluginService;
-
-    @Autowired
-    private ExampleCallService exampleCallService;
-
-
+    private MExampleCallRepository exampleCallRepository;
+    
     /*
      * (non-Javadoc)
      * 
@@ -87,7 +89,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * It will start after all beans have been initialized to prevent crashes during bean
      * initialization and for looser dependencies.
      */
-    @PostConstruct
+    //@PostConstruct
     @Override
     public void startLibrary() {
         // Get plugins
@@ -124,18 +126,29 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             // parameter access + storage
             Parameter pluginClassName = extension.getParameter("class");
             String uuid = extension.getId();
-
+            
             // plugin loading
             MartinPlugin pluginInstance = loadPlugin(classLoader, pluginClassName);
-            if (pluginInstance == null || !isValidPlugin(pluginInstance, MartinAPITestResult.WARNING))
+            if (pluginInstance == null)
                 continue;
+            if(!isValidPlugin(pluginInstance, MartinAPITestResult.WARNING))
+                continue;
+            
+            LOG.info("Plugin \"" + pluginClassName.valueAsString() + "\" is valid.");
 
+            // update DB and memory
+            try {
+                pluginDataAccessor.savePluginInDB(extension, classLoader);
+                plugins.put(uuid, pluginInstance);
+            } catch (KeywordsJSONMissingException e) {
+                LOG.warn("Plugin could not be loaded.", e);
+            }
             plugins.put(uuid, pluginInstance);
         }
 
         return plugins;
     }
-
+    
     /**
      * Loads a plugin via framework and returns the {@link MartinPlugin} interface
      * 
@@ -143,7 +156,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @param pluginClassName The java name of the class to load.
      * @return The loaded class or null, if an error occurred
      */
-    @Override
     @SuppressWarnings("unchecked")
     public MartinPlugin loadPlugin(ClassLoader classLoader, Parameter pluginClassName) {
         MartinPlugin pluginInstance = null;
@@ -172,8 +184,8 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @return true or false
      */
     @Override
-    public boolean isValidPlugin(MartinPlugin plugin, MartinAPITestResult testLevel) {        
-        LOG.info("Checking plugin: " + plugin.getClass().toString() + " for validity.");
+    public boolean isValidPlugin(MartinPlugin plugin, MartinAPITestResult testLevel) {     
+        LOG.info("Checking plugin: \"" + plugin.getClass().toString() + "\" for validity.");
         
         // check the interface
         MartinPluginValidator pluginValidator = new MartinPluginValidator(plugin);
@@ -191,10 +203,10 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * 
      * @param req The {@link ExtendedQequest} to answer.
      * 
-     * @return The generated {@link Response}.
+     * @return The generated {@link MResponse}.
      */
     @Override
-    public Response executeRequest(ExtendedRequest req) {
+    public MResponse executeRequest(ExtendedRequest req) {
         Call call = req.getCalls().get(0);
         String pluginID = call.getPlugin().getUuid();
         String functionName = call.getFunction().getName();
@@ -205,10 +217,10 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         if (service != null) {
             service.init(martinContextAccessor, functionName, 0);
 
-            return new Response(executeCall(call, 0));
+            return new MResponse(executeCall(call, 0));
         } else {
             LOG.error("Could not find a plugin that matches request call.");
-            return new Response("ERROR: no plugin found!");
+            return new MResponse("ERROR: no plugin found!");
         }
     }
 
@@ -260,9 +272,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
     @Override
     public List<PluginInformation> getPluginInformation() {
-        List<ch.zhaw.psit4.martin.db.plugin.Plugin> pluginList = pluginService.listPlugins();
+        Iterable<ch.zhaw.psit4.martin.models.MPlugin> pluginList = pluginRepository.findAll();
         List<PluginInformation> pluginInformationList = new ArrayList<PluginInformation>();
-        for (ch.zhaw.psit4.martin.db.plugin.Plugin plugin : pluginList) {
+        for (ch.zhaw.psit4.martin.models.MPlugin plugin : pluginList) {
             pluginInformationList.add(new PluginInformation(plugin.getName(),
                     plugin.getDescription(), plugin.getFunctions()));
         }
@@ -276,16 +288,15 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @return a list of example calls
      */
     @Override
-    public List<ExampleCall> getExampleCalls() {
-        return exampleCallService.listExampleCalls();
+    public List<MExampleCall> getExampleCalls() {
+    	return exampleCallRepository.findAll();
     }
 
     @Override
-    public List<ExampleCall> getRandomExampleCalls() {
-        return exampleCallService.getRandomExcampleCalls();
+    public List<MExampleCall> getRandomExampleCalls() {
+        return exampleCallRepository.findAll();
     }
 
-    @Override
     public Map<String, MartinPlugin> getPluginExtentions() {
         return pluginExtentions;
     }

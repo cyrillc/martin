@@ -10,8 +10,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
-import ch.zhaw.psit4.martin.db.parameter.Parameter;
-import ch.zhaw.psit4.martin.db.parameter.ParameterService;
+import ch.zhaw.psit4.martin.models.MParameter;
+import ch.zhaw.psit4.martin.models.repositories.MParameterRepository;
 
 import static org.junit.Assert.*;
 
@@ -25,7 +25,7 @@ public class ParameterServiceTest {
 	private LiquibaseTestFramework liquibase;
 
 	@Autowired
-    private ParameterService parameterService;
+    private MParameterRepository parameterService;
     private Log log;
 
     @Before
@@ -36,14 +36,14 @@ public class ParameterServiceTest {
 
     @Test
     public void testListParameters() throws Exception {
-        List<Parameter> parameter = parameterService.listParameters();
+        List<MParameter> parameter = parameterService.findAll();
         parameter.stream().forEach(param -> printParam(param));
         assertEquals(false,parameter.isEmpty());
         assertEquals(4,parameter.size());
 
     }
 
-    private void printParam(Parameter param) {
+    private void printParam(MParameter param) {
         log.info(param.getId()+", "+param.getName()+", "+param.getType());
         log.info("Keywords for "+param.getName());
         param.getKeywords().stream().forEach(keyword -> log.info(keyword.getKeyword()));
