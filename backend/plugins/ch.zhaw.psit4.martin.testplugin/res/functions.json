@@ -27,13 +27,15 @@
 					"Type": "ch.zhaw.psit4.martin.api.types.MPerson",
 					"Tokens-regex": "",
                     "Keywords": [
-                        "name"
+                        "namen"
                     ]
 				}
 			],
 			"Examples": [
-				"Hello MArtIn!",
-				"Howdy partner!"
+				{
+                    "Call" : "Hello Martin, I am Jake!",
+                    "Description" : "Greets you back"
+                }
 			]
 		}
 	]
