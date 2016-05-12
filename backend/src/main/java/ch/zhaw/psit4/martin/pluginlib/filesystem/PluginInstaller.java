@@ -191,7 +191,7 @@ public class PluginInstaller {
                 .replace(File.separatorChar, '.').replace(TEMP_FOLDER + ".", "");
         val = val.replace(".class", "");
         int lastDot = val.lastIndexOf('.');
-        return val.substring(0, lastDot);// + "." + pluginName;
+        return val.substring(0, lastDot) + "." + pluginName;
     }
 
     /**
@@ -256,7 +256,7 @@ public class PluginInstaller {
      * Copies files from a list to a given plugin directory, creating any missing folders in the
      * process.
      * 
-     * @param files The List of files to copy.
+     * @param files The List of files to copy
      * @param pluginName The final plugin directory name.
      * @param pluginInternalPath The path inside the plugin folder to copy the files to.
      * @throws IOException Any file operation can throw an exception.

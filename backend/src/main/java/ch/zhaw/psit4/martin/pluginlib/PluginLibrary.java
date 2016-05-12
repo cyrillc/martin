@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -113,7 +114,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     @Override
     public void startLibrary() {
         // Get plugins
-        pluginExtentions = fetchPlugins(IMartinContext.EXTPOINT_ID);
+        loadAllPlugins(IMartinContext.EXTPOINT_ID);
         LOG.info("Plugin library booted, " + pluginExtentions.size() + " plugins loaded.");
     }
 
@@ -124,13 +125,55 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * 
      * @return The gathered plugins in a LinkedList
      */
-    protected Map<String, MartinPlugin> fetchPlugins(final String extPointId) {
-
-        Map<String, MartinPlugin> plugins = new HashMap<>();
+    @Override
+    public void loadAllPlugins(final String extPointId) {
         PluginManager manager = this.getManager();
         ExtensionPoint extPoint =
                 manager.getRegistry().getExtensionPoint(this.getDescriptor().getId(), extPointId);
+        
+        pluginExtentions = new HashMap<>();
+        fetchPlugins(pluginExtentions, manager, extPoint);
+    }
+    
+    /*
+     * Fetches new extensions for the given extension point qualifiers.
+     * 
+     * @param extPointId The extension point id to gather plugins for
+     * 
+     * @return A human readable string
+     */
+    @Override
+    public String loadNewPlugin(final String extPointId) {
+        String returnVal = "No Plugin found.";
+        
+        // try to collect plugins
+        PluginManager manager = this.getManager();
+        try {
+            Collection<PluginLocation> locations = collector.collectPluginLocations();
+            filterExistingPlugins(locations, extPointId);
+            manager.publishPlugins(locations.toArray(new PluginLocation[] {}));
+        } catch (JpfException e) {
+            returnVal = "Could not collect plugin.";
+            LOG.error(returnVal, e);
+            return returnVal;
+        }
+        ExtensionPoint extPoint =
+                manager.getRegistry().getExtensionPoint(this.getDescriptor().getId(), extPointId);
 
+        returnVal = fetchPlugins(pluginExtentions, manager, extPoint);
+        return returnVal;
+    }
+    
+    
+    /**
+     * Fetch plugins an store them in a given map.
+     * @param plugins The {@link Map} to store the plugins in.
+     * @param manager The plugin manager
+     * @param extPoint The extension point object to use.
+     * @return
+     */
+    protected String fetchPlugins(Map<String, MartinPlugin> plugins, PluginManager manager, ExtensionPoint extPoint) {
+        String returnVal = null;
         // iterate through found plugins
         for (Extension extension : extPoint.getConnectedExtensions()) {
             PluginDescriptor extensionDescriptor = extension.getDeclaringPluginDescriptor();
@@ -160,65 +203,11 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 pluginDataAccessor.savePluginInDB(extension, classLoader);
                 plugins.put(uuid, pluginInstance);
             } catch (FunctionsJSONMissingException e) {
-                LOG.warn("Plugin could not be loaded.", e);
-            }
-            plugins.put(uuid, pluginInstance);
-        }
-
-        return plugins;
-    }
-
-    @Override
-    public String loadNewPlugin(final String extPointId) {
-        String returnVal = "No Plugin found.";
-
-        // try to collect plugins
-        PluginManager manager = this.getManager();
-        try {
-            Collection<PluginLocation> locations = collector.collectPluginLocations();
-            filterExistingPlugins(locations, extPointId);
-            manager.publishPlugins(locations.toArray(new PluginLocation[] {}));
-        } catch (JpfException e) {
-            returnVal = "Could not collect plugin.";
-            LOG.error(returnVal, e);
-            return returnVal;
-        }
-        ExtensionPoint extPoint =
-                manager.getRegistry().getExtensionPoint(this.getDescriptor().getId(), extPointId);
-
-        // iterate through found plugins
-        for (Extension extension : extPoint.getConnectedExtensions()) {
-            PluginDescriptor extensionDescriptor = extension.getDeclaringPluginDescriptor();
-            try {
-                manager.activatePlugin(extensionDescriptor.getId());
-            } catch (PluginLifecycleException e) {
-                LOG.error("An Error occured while activating plugin.", e);
-                continue;
-            }
-            ClassLoader classLoader = manager.getPluginClassLoader(extensionDescriptor);
-
-            // parameter access + storage
-            Parameter pluginClassName = extension.getParameter("class");
-            String uuid = extension.getId();
-
-            // plugin loading
-            MartinPlugin pluginInstance = loadPlugin(classLoader, pluginClassName);
-            if (pluginInstance == null)
-                continue;
-            if (!isValidPlugin(pluginInstance, MartinAPITestResult.WARNING))
-                continue;
-
-            returnVal = "Plugin \"" + pluginClassName.valueAsString() + "\" is valid.";
-            LOG.info(returnVal);
-
-            // update DB and memory
-            try {
-                pluginDataAccessor.savePluginInDB(extension, classLoader);
-                pluginExtentions.put(uuid, pluginInstance);
-            } catch (FunctionsJSONMissingException e) {
                 returnVal = "Plugin could not be loaded.";
-                LOG.warn(returnVal);
+                LOG.warn(returnVal, e);
             }
+            
+            returnVal = "Plugin started.";
         }
         return returnVal;
     }
@@ -232,13 +221,19 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     private void filterExistingPlugins(Collection<PluginLocation> locations,
             final String extPointId) {
+        // copy locations to iterte
+        Collection<PluginLocation> tempLocations = new HashSet<>(locations.size());
+        tempLocations.addAll(locations);
+        
+        // remove ouplictes
         ExtensionPoint extPoint = this.getManager().getRegistry()
                 .getExtensionPoint(this.getDescriptor().getId(), extPointId);
-        for (PluginLocation loc : locations) {
+        for (PluginLocation loc : tempLocations) {
             PluginDescriptor extensionDescriptor = extPoint.getDeclaringPluginDescriptor();
             URL extensionLoc = extensionDescriptor.getLocation();
             if (extensionLoc.sameFile(loc.getManifestLocation())) {
                 locations.remove(loc);
+                continue;
             }
             for (Extension extension : extPoint.getConnectedExtensions()) {
                 extensionDescriptor = extension.getDeclaringPluginDescriptor();

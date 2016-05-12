@@ -29,6 +29,22 @@ public interface IPluginLibrary {
      */
     public void startLibrary();
     
+    /*
+     * Fetches all extensions for the given extension point qualifiers.
+     * 
+     * @param extPointId The extension point id to gather plugins for
+     * 
+     * @return The gathered plugins in a LinkedList
+     */
+    public void loadAllPlugins(final String extPointId);
+    
+    /*
+     * Fetches new extensions for the given extension point qualifiers.
+     * 
+     * @param extPointId The extension point id to gather plugins for
+     * 
+     * @return A human readable string
+     */
     public String loadNewPlugin(final String extPointId);
     
     /**
