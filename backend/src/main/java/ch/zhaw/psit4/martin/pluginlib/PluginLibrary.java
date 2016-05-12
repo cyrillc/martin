@@ -212,15 +212,13 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             LOG.info(returnVal);
 
             // update DB and memory
-            /*
             try {
                 pluginDataAccessor.savePluginInDB(extension, classLoader);
                 pluginExtentions.put(uuid, pluginInstance);
-            } catch (FunctionJSONMissingException e) {
+            } catch (FunctionsJSONMissingException e) {
                 returnVal = "Plugin could not be loaded.";
-                LOG.warn(returnVal, e);
+                LOG.warn(returnVal);
             }
-            */
         }
         return returnVal;
     }
