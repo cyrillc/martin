@@ -3,9 +3,8 @@ package ch.zhaw.psit4.martin.common;
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.zhaw.psit4.martin.api.types.IMartinType;
-import ch.zhaw.psit4.martin.db.function.Function;
-import ch.zhaw.psit4.martin.db.plugin.Plugin;
+import ch.zhaw.psit4.martin.api.types.IBaseType;
+import ch.zhaw.psit4.martin.models.*;
 
 /**
 * This class holds information about a Plugin feature call. It holds the
@@ -14,27 +13,27 @@ import ch.zhaw.psit4.martin.db.plugin.Plugin;
 * @version 0.1
 **/
 public class Call {
-	private Plugin plugin;
-	private Function function;
-	private Map<String, IMartinType> arguments;
+	private MPlugin plugin;
+	private MFunction function;
+	private Map<String, IBaseType> arguments;
 	
 	public Call(){
 		this.arguments = new HashMap<>();
 	}
 
-	public Plugin getPlugin() {
+	public MPlugin getPlugin() {
 		return this.plugin;
 	}
 
-	public void setPlugin(Plugin plugin) {
+	public void setPlugin(MPlugin plugin) {
 		this.plugin = plugin;
 	}
 
-	public Function getFunction() {
+	public MFunction getFunction() {
 		return this.function;
 	}
 
-	public void setFunction(Function feature) {
+	public void setFunction(MFunction feature) {
 		this.function = feature;
 	}
 	
@@ -43,18 +42,18 @@ public class Call {
 	 * @param key the argument name
 	 * @param value the argument content packed into a IMartinType
 	 */
-	public void addArgument(String key, IMartinType value){
+	public void addArgument(String key, IBaseType value){
 		this.arguments.put(key, value);
 	}
 	
-	public void setParameters(Map<String, IMartinType> parameters){
+	public void setParameters(Map<String, IBaseType> parameters){
 		this.arguments = parameters;
 	}
 	
 	/**
 	 * @return A map of all arguments.
 	 */
-	public Map<String, IMartinType> getArguments(){
+	public Map<String, IBaseType> getArguments(){
 		return arguments;
 	}
 

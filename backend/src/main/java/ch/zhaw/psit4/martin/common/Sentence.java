@@ -6,14 +6,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import ch.zhaw.psit4.martin.api.types.EMartinType;
+import ch.zhaw.psit4.martin.api.types.EBaseType;
+import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
+import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 import edu.stanford.nlp.util.CoreMap;
 
 /**
@@ -23,15 +25,17 @@ import edu.stanford.nlp.util.CoreMap;
  *
  */
 public class Sentence {
+	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
+	
 	private String rawSentence;
 
-	private StanfordCoreNLP textAnalyzer;
+	private StanfordCoreNLPClient textAnalyzer;
 
 	List<Phrase> phrases = new ArrayList<>();
 	
 	String predefinedAnswer;
 
-	public Sentence(String sentence, StanfordCoreNLP textAnalyzer) {
+	public Sentence(String sentence, StanfordCoreNLPClient textAnalyzer) {
 		this.rawSentence = sentence;
 		this.textAnalyzer = textAnalyzer;
 		this.generateNamedEntityRecognitionTokens();
@@ -48,6 +52,7 @@ public class Sentence {
 	 * NormalizedNamedEntityTagAnnotation.
 	 */
 	private void generateNamedEntityRecognitionTokens() {
+		TIMING_LOG.logStart("Text analyzation");
 		Annotation document = new Annotation(rawSentence);
 		textAnalyzer.annotate(document);
 
@@ -89,6 +94,7 @@ public class Sentence {
 				previousNerToken = currentNerToken;
 			}
 		}
+		TIMING_LOG.logEnd("Text analyzation");
 	}
 
 	/**
@@ -118,7 +124,7 @@ public class Sentence {
 	 * @param type full IMartinType classname as String (with package)
 	 * @return a phrese with the chosen type
 	 */
-	public Phrase popPhraseOfType(EMartinType type) {
+	public Phrase popPhraseOfType(EBaseType type) {
 		Optional<Phrase> token = phrases.stream().filter(o -> o.getType().equals(type)).findFirst();
 
 		if (token.isPresent()) {
@@ -151,7 +157,7 @@ public class Sentence {
 	 * @param iMartinType full IMartinType classname as String (with package)
 	 * @return a list of chosen phrases
 	 */
-	public List<Phrase> getPhrasesOfType(EMartinType iMartinType) {
+	public List<Phrase> getPhrasesOfType(EBaseType iMartinType) {
 		return phrases.stream().filter(o -> o.getType().equals(iMartinType))
 				.collect(Collectors.<Phrase> toList());
 	}

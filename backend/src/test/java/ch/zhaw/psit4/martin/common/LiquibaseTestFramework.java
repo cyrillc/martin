@@ -2,6 +2,8 @@ package ch.zhaw.psit4.martin.common;
 
 import java.sql.Connection;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 
 import liquibase.Liquibase;
@@ -17,6 +19,9 @@ public class LiquibaseTestFramework {
 	private DataSource dataSource;
 	private Liquibase liquibase;
 	private Connection connection;
+	
+	@PersistenceContext
+    private EntityManager entityManager;
 
 	/**
 	 * Initializes a database with a given Liquibase changeset.
@@ -30,7 +35,12 @@ public class LiquibaseTestFramework {
 			liquibase.getLog().setLogLevel(LogLevel.WARNING);
 			liquibase.dropAll();
 			liquibase.update("");
+		
 			connection.close();
+			
+			// Flush EntityManager Cache
+			entityManager.getEntityManagerFactory().getCache().evictAll();
+			entityManager.clear();
 		} catch(Exception e){
 			System.err.println(e.getMessage());
 		}

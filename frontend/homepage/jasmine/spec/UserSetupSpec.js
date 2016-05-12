@@ -79,7 +79,7 @@ describe("MArtIn Frontend", function () {
                     id: 2,
                     content: "No"
                 }
-            }
+            };
 
             historyList = [historyItem1, historyItem2];
             historyRenderer = new HistoryRenderer(historyList);

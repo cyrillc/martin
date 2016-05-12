@@ -22,20 +22,18 @@ import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 import ch.zhaw.psit4.martin.common.Sentence;
-import ch.zhaw.psit4.martin.db.historyitem.HistoryItem;
-import ch.zhaw.psit4.martin.db.historyitem.HistoryItemService;
-import ch.zhaw.psit4.martin.db.request.Request;
-import ch.zhaw.psit4.martin.db.response.Response;
+import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
 public class AIControllerFacadeTest {
 
 	@Mock
-	private HistoryItemService historyItemServiceMock;
+	private MHistoryItemRepository historyItemServiceMock;
 
 	@Mock
 	private RequestProcessor requestProcessorMock;
@@ -50,12 +48,12 @@ public class AIControllerFacadeTest {
 	private LiquibaseTestFramework liquibase;
 	
 	@Autowired
-	private StanfordCoreNLP stanfordNLP;
+	private StanfordCoreNLPClient stanfordNLP;
 
-	Request request = null;
+	MRequest request = null;
 	ExtendedRequest extRequest = null;
-	Response response = null;
-	HistoryItem historyItem = null;
+	MResponse response = null;
+	MHistoryItem historyItem = null;
 	Call call = null;
 
 	@Before
@@ -63,28 +61,28 @@ public class AIControllerFacadeTest {
 		liquibase.createDatabase("database/db.changeset-schema-latest.xml");
 		MockitoAnnotations.initMocks(this);
 
-		request = new Request("request test");
-		extRequest = new ExtendedRequest();
+		request = new MRequest("request test", false);
+		response = new MResponse();
+		extRequest = new ExtendedRequest(request, response);
 		call = new Call();
 		extRequest.addCall(call);
 		extRequest.setSentence(new Sentence("test", stanfordNLP));
-		response = new Response("response test");
-		historyItem = new HistoryItem(request, response);
+		response = new MResponse("response test");
+		historyItem = new MHistoryItem(request, response);
 
-		when(requestProcessorMock.extend(request)).thenReturn(extRequest);
+		when(requestProcessorMock.extend(any(), any())).thenReturn(extRequest);
 		when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);
-		doNothing().when(historyItemServiceMock).addHistoryItem(historyItem);
-
-		ArrayList<HistoryItem> getHistoryResult = new ArrayList<>();
-		getHistoryResult.add(new HistoryItem(new Request("command1"), new Response("response1")));
-		getHistoryResult.add(new HistoryItem(new Request("command2"), new Response("response2")));
-		getHistoryResult.add(new HistoryItem(new Request("command3"), new Response("response3")));
-		when(historyItemServiceMock.getHistory()).thenReturn(getHistoryResult);
+		
+		ArrayList<MHistoryItem> getHistoryResult = new ArrayList<>();
+		getHistoryResult.add(new MHistoryItem(new MRequest("command1", false), new MResponse("response1")));
+		getHistoryResult.add(new MHistoryItem(new MRequest("command2", false), new MResponse("response2")));
+		getHistoryResult.add(new MHistoryItem(new MRequest("command3", false), new MResponse("response3")));
+		when(historyItemServiceMock.findAll()).thenReturn(getHistoryResult);
 	}
 
 	@Test
 	public void canGetAListOfHistoryItems() {
-		List<HistoryItem> list = aiController.getHistory();
+		List<MHistoryItem> list = aiController.getHistory();
 		assertEquals(3, list.size());
 		assertEquals("command1", list.get(0).getRequest().getCommand());
 	}
@@ -96,14 +94,12 @@ public class AIControllerFacadeTest {
 		// the elaborateRequestFunction, otherwise the mock will not be the
 		// same as the one generated.
 		historyItem.setDate(new Timestamp(new Date().getTime()));
-		verify(historyItemServiceMock).addHistoryItem(historyItem);
+		verify(historyItemServiceMock).save(historyItem);
 	}
 
 	@Test
 	public void checkElaborationOfRequest() {
-		Response responseTest = null;
-
-		responseTest = aiController.elaborateRequest(request);
+		MResponse responseTest = aiController.elaborateRequest(request);
 		assertTrue(responseTest.equals(response));
 	}
 

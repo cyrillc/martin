@@ -1,6 +1,12 @@
 // variable to move through history with *UP* and *DOWN* arrows
 var historyLocation = 0;
 
+// timing flag to append if timing information is wanted
+var timingFlag = ' -t';
+
+// boolean to indicate if timing information is wanted
+var wantTimingInformation = false;
+
 // enabling *RETURN* to submit command
 $(function () {
     $("#commandInput").keydown(function (event) {
@@ -46,8 +52,19 @@ var sendCommand = function () {
     var textInput = $('#commandInput').val();
     $('#commandInput').val('');
 
+    // check for timing flag
+    if (textInput.indexOf(' -t') > -1) {
+        wantTimingInformation = true;
+        textInput = textInput.replace(' -t', '');
+    } else {
+        wantTimingInformation = false;
+    }
+
     // create object to send to MArtIn
-    var command = { command: textInput };
+    var command = {
+        command: textInput,
+        timed: wantTimingInformation
+    };
 
     // create request URL from current URL
     var backendUrl = createRequestURL(frontendUrl, backendPort, "command");
@@ -65,8 +82,20 @@ var sendCommand = function () {
             response: response
         };
 
+
         var martinResponseRenderer = new MartinResponseRenderer();
         martinResponseRenderer.renderResponse(martinStatement);
+
+        if (wantTimingInformation) {
+            var timingChartRenderer = new TimingChartRenderer();
+            try {
+                timingChartRenderer.renderTimingChart(response.timingInfo);
+            } catch (err) {
+                console.log('Could not render timing information');
+            }
+        } else {
+            $('#timingContainer').html('');
+        }
 
         var historyRenderer = new HistoryRenderer(null);
         historyRenderer.renderItem(historyItem);
@@ -101,6 +130,8 @@ $(document).ready(function () {
         $.get(exampleCommandsUrl, function (receivedExampleCommands) {
             var exampleCommandsRenderer = new ExampleCommandsRenderer(receivedExampleCommands);
             exampleCommandsRenderer.renderCommands();
+
+
         })
             // always hide the Section.
             .always(function () {
@@ -126,6 +157,5 @@ $(document).ready(function () {
 // function to move through history with *UP* and *DOWN* arrows
 var getPreviousCommand = function (location) {
     var selector = '#historyItems > tbody > tr:nth-child(' + location + ') > td:nth-child(2)';
-    console.log(location);
     $('#commandInput').val($(selector).html());
 }

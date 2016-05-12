@@ -29,9 +29,7 @@ public class PluginFolderAccessor implements ResourceLoaderAware {
      * The plugin configuration file
      */
     private String configFile;
-    /**
-     * Boots up the module library
-     */
+
     private static final Log LOG = LogFactory.getLog(PluginFolderAccessor.class);
 
     public PluginFolderAccessor(String folderName, String configFile) {
@@ -97,18 +95,17 @@ public class PluginFolderAccessor implements ResourceLoaderAware {
      * @param source The source path to search.
      * @param folder The folder name to search.
      * @return The found folder or null if no folder was found.
-     * @throws IOException 
+     * @throws IOException
      */
     File checkFolder(String source, String folder) throws IOException {
         File out = null;
         String[] sourceParts = source.split("/|\\\\");
         if (sourceParts[sourceParts.length - 1].equals(folder)) {
             out = new FileSystemResource(source).getFile();
-            if(out.exists() && out.isDirectory()) {
+            if (out.exists() && out.isDirectory()) {
                 LOG.info("Source: " + source + " is a plugin folder.");
                 return out;
-            }
-            else {
+            } else {
                 LOG.warn("Path " + out.getCanonicalPath() + " is not a valid plugin folder.");
                 return null;
             }

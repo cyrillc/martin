@@ -10,7 +10,7 @@ public class WeatherDataAdapter {
     public WeatherDataAdapter(WeatherData data) {
         this.owmData = data;
     }
-    
+
     public WeatherData getOwmData() {
         return owmData;
     }
@@ -20,7 +20,7 @@ public class WeatherDataAdapter {
     }
 
     public Date getDate() {
-        //owm returns date as a unix timestamp
+        // owm returns date as a unix timestamp
         return new Date(this.owmData.getDateTime() * 1000);
     }
 
@@ -33,7 +33,15 @@ public class WeatherDataAdapter {
     }
 
     public float getTemperature() {
-        return convertKelvinToCelsius(this.owmData.getTemp());
+        return this.owmData.getTemperature().getTemp();
+    }
+
+    public float getTemperatureMax() {
+        return this.owmData.getTemperature().getTempDayMax();
+    }
+
+    public float getTemperatureMin() {
+        return this.owmData.getTemperature().getTempDayMin();
     }
 
     public float convertKelvinToCelsius(float kelvin) {
@@ -41,13 +49,20 @@ public class WeatherDataAdapter {
     }
 
     public String getBasicWeatherString() {
-        String date = getDate().toString();
-        float temp = getTemperature();
-        String description = getWeatherDescription();
-        int rain = getRain();
+        return getDate().toString().concat("\n").concat(getWeatherDescription()
+                .concat(" ").concat(getTemperatureString()));
+    }
 
-        return date + "\n" + description + " Temperature: " + temp + " Rain: "
-                + rain;
+    public String getTemperatureString() {
+        String temp = "-";
+        if (!Float.isNaN(getTemperatureMax())
+                && !Float.isNaN(getTemperatureMin())) {
+            temp = "Min: " + Float.toString(getTemperatureMin()) + " Max: "
+                    + Float.toString(getTemperatureMax());
+        } else if (!Float.isNaN(getTemperature())) {
+            temp = Float.toString(getTemperature());
+        }
+        return "Temperature: " + temp;
     }
 
 }

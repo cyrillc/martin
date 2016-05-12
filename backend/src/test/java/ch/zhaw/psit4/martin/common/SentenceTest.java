@@ -8,23 +8,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import ch.zhaw.psit4.martin.api.types.EMartinType;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import ch.zhaw.psit4.martin.api.types.EBaseType;
+import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
 public class SentenceTest {
-
 	@Autowired
-	private StanfordCoreNLP stanfordNLP;
+	private StanfordCoreNLPClient stanfordNLP;
 
 	@Test
 	public void testPersonSimple() {
 		Sentence sentence = new Sentence("Hello, my name is Chuck Norris.", stanfordNLP);
 
-		Phrase phrase = sentence.popPhraseOfType(EMartinType.PERSON);
+		Phrase phrase = sentence.popPhraseOfType(EBaseType.PERSON);
 
-		assertEquals(phrase.getType(), EMartinType.PERSON);
+		assertEquals(phrase.getType(), EBaseType.PERSON);
 		assertEquals(phrase.getValue(), "Chuck Norris");
 	}
 
@@ -32,20 +31,20 @@ public class SentenceTest {
 	public void testPersonMultiple() {
 		Sentence sentence = new Sentence("Today I met Donald Trump hanging out with Barack Obama and Putin. They were laughing alot.", stanfordNLP);
 
-		Phrase phrase1 = sentence.popPhraseOfType(EMartinType.PERSON);
+		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.PERSON);
 
-		assertEquals(phrase1.getType(), EMartinType.PERSON);
+		assertEquals(phrase1.getType(), EBaseType.PERSON);
 		assertEquals(phrase1.getValue(), "Donald Trump");
 		
 		
-		Phrase phrase2 = sentence.popPhraseOfType(EMartinType.PERSON);
+		Phrase phrase2 = sentence.popPhraseOfType(EBaseType.PERSON);
 
-		assertEquals(phrase2.getType(), EMartinType.PERSON);
+		assertEquals(phrase2.getType(), EBaseType.PERSON);
 		assertEquals(phrase2.getValue(), "Barack Obama");
 		
-		Phrase phrase3 = sentence.popPhraseOfType(EMartinType.PERSON);
+		Phrase phrase3 = sentence.popPhraseOfType(EBaseType.PERSON);
 
-		assertEquals(phrase3.getType(), EMartinType.PERSON);
+		assertEquals(phrase3.getType(), EBaseType.PERSON);
 		assertEquals(phrase3.getValue(), "Putin");
 	}
 	
@@ -53,9 +52,9 @@ public class SentenceTest {
 	public void testDuration() {
 		Sentence sentence = new Sentence("I was waiting for at least two weeks for my new iPhone.", stanfordNLP);
 
-		Phrase phrase1 = sentence.popPhraseOfType(EMartinType.DURATION);
+		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.DURATION);
 
-		assertEquals(phrase1.getType(), EMartinType.DURATION);
+		assertEquals(phrase1.getType(), EBaseType.DURATION);
 		assertEquals(phrase1.getValue(), "at least two weeks");
 		
 	}
@@ -64,9 +63,9 @@ public class SentenceTest {
 	public void testMoney() {
 		Sentence sentence = new Sentence("My car was on sale and I got a bounty of 100 dollar.", stanfordNLP);
 
-		Phrase phrase1 = sentence.popPhraseOfType(EMartinType.MONEY);
+		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.MONEY);
 
-		assertEquals(phrase1.getType(), EMartinType.MONEY);
+		assertEquals(phrase1.getType(), EBaseType.MONEY);
 		assertEquals(phrase1.getValue(), "100 dollar");
 		
 	}
@@ -75,9 +74,9 @@ public class SentenceTest {
 	public void testLocation() {
 		Sentence sentence = new Sentence("Yesterday I wanted to fly to Dubai.", stanfordNLP);
 
-		Phrase phrase1 = sentence.popPhraseOfType(EMartinType.LOCATION);
+		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.LOCATION);
 
-		assertEquals(phrase1.getType(), EMartinType.LOCATION);
+		assertEquals(phrase1.getType(), EBaseType.LOCATION);
 		assertEquals(phrase1.getValue(), "Dubai");
 		
 	}
@@ -86,9 +85,9 @@ public class SentenceTest {
 	public void testNumber() {
 		Sentence sentence = new Sentence("Thank you thousand times!", stanfordNLP);
 
-		Phrase phrase1 = sentence.popPhraseOfType(EMartinType.NUMBER);
+		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.NUMBER);
 
-		assertEquals(phrase1.getType(), EMartinType.NUMBER);
+		assertEquals(phrase1.getType(), EBaseType.NUMBER);
 		assertEquals(phrase1.getValue(), "thousand");
 		
 	}
@@ -97,9 +96,9 @@ public class SentenceTest {
 	public void testOrdinal() {
 		Sentence sentence = new Sentence("I will be the first in this race!", stanfordNLP);
 
-		Phrase phrase1 = sentence.popPhraseOfType(EMartinType.ORDINAL);
+		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.ORDINAL);
 
-		assertEquals(phrase1.getType(), EMartinType.ORDINAL);
+		assertEquals(phrase1.getType(), EBaseType.ORDINAL);
 		assertEquals(phrase1.getValue(), "first");
 		
 	}
@@ -108,9 +107,9 @@ public class SentenceTest {
 	public void testOrganization() {
 		Sentence sentence = new Sentence("Facebook will take over the world if we don't stop them.", stanfordNLP);
 
-		Phrase phrase1 = sentence.popPhraseOfType(EMartinType.ORGANIZATION);
+		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.ORGANIZATION);
 
-		assertEquals(phrase1.getType(), EMartinType.ORGANIZATION);
+		assertEquals(phrase1.getType(), EBaseType.ORGANIZATION);
 		assertEquals(phrase1.getValue(), "Facebook");
 		
 	}
@@ -119,9 +118,9 @@ public class SentenceTest {
 	public void testPercent() {
 		Sentence sentence = new Sentence("If the glass is half empty, it is only 50 percent full.", stanfordNLP);
 
-		Phrase phrase1 = sentence.popPhraseOfType(EMartinType.PERCENT);
+		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.PERCENT);
 
-		assertEquals(phrase1.getType(), EMartinType.PERCENT);
+		assertEquals(phrase1.getType(), EBaseType.PERCENT);
 		assertEquals(phrase1.getValue(), "50 percent");
 		
 	}
@@ -130,14 +129,14 @@ public class SentenceTest {
 	public void testTime() {
 		Sentence sentence = new Sentence("It was 12 o'clock when the New Year 's Eve rockets hit the sky.", stanfordNLP);
 
-		Phrase phrase1 = sentence.popPhraseOfType(EMartinType.TIME);
+		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.TIME);
 
-		assertEquals(phrase1.getType(), EMartinType.TIME);
+		assertEquals(phrase1.getType(), EBaseType.TIME);
 		assertEquals(phrase1.getValue(), "12 o'clock");
 		
-		Phrase phrase2 = sentence.popPhraseOfType(EMartinType.DATE);
+		Phrase phrase2 = sentence.popPhraseOfType(EBaseType.DATE);
 		
-		assertEquals(phrase2.getType(), EMartinType.DATE);
+		assertEquals(phrase2.getType(), EBaseType.DATE);
 		assertEquals(phrase2.getValue(), "New Year 's Eve");
 		
 	}

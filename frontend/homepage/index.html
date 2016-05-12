@@ -55,10 +55,21 @@
                     <li>
                         <a class="navbar-right" href="/admin" target="_blank">
                             Admin
-                            <img class="newTabIcon" src="/img/open-new-tab.png" alt="open link in new tab icon"/>
+                            <img class="newTabIcon" src="img/open-new-tab.png" alt="open link in new tab icon"/>
                         </a>
                     </li>
-
+                    <li>
+                        <a class="navbar-right" href="/api" target="_blank">
+                            API
+                            <img class="newTabIcon" src="img/open-new-tab.png" alt="open link in new tab icon"/>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="navbar-right" href="/upload" target="_blank">
+                            Upload
+                            <img class="newTabIcon" src="img/open-new-tab.png" alt="open link in new tab icon"/>
+                        </a>
+                    </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -78,6 +89,7 @@
                             <button id="sendCommand" class="btn btn-default" type="button" onclick="sendCommand();">Go!</button>
                         </div>
                     </div>
+                    <div id="timingContainer"></div>
                     <div id="martinResponsesContainer" class="col-lg-offset-3 col-lg-6">
                         <div class="thinking">
                             <p class="loading-text">Let me think about this...</p>
@@ -151,6 +163,11 @@
     <script src="js/user/example_commands.js"></script>
     <script src="js/user/history.js"></script>
     <script src="js/user/user_setup.js"></script>
+
+    <!--MArtIn Chart Skripts-->
+    <script src="js/community/chart.min.js"></script>
+    <script src="js/community/chart_drawer.js"></script>
+
 
 
 </body>

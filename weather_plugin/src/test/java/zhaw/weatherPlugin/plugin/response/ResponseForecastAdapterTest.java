@@ -1,5 +1,6 @@
 package zhaw.weatherPlugin.plugin.response;
 
+
 import org.bitpipeline.lib.owm.ForecastWeatherData;
 import org.bitpipeline.lib.owm.WeatherForecastResponse;
 import org.junit.Before;

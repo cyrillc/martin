@@ -8,21 +8,21 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.zhaw.psit4.martin.api.types.IMartinType;
-import ch.zhaw.psit4.martin.api.types.Text;
+import ch.zhaw.psit4.martin.api.types.IBaseType;
+import ch.zhaw.psit4.martin.api.types.MPerson;
 import ch.zhaw.psit4.martin.api.validation.FeatureValidator;
 import ch.zhaw.psit4.martin.api.validation.MartinAPITestResult;
 
 public class TestPluginWorkTest {
 
-    FeatureValidator<TestPluginWork> featureValidator;
+    FeatureValidator featureValidator;
     
     @Before
     public void setUp() {
-        featureValidator = new FeatureValidator<TestPluginWork>(new TestPluginWork(0));
+        featureValidator = new FeatureValidator(TestPluginWork.class);
         
-        Map<String, IMartinType> args = new HashMap<>();
-        args.put("name", new Text("bla"));
+        Map<String, IBaseType> args = new HashMap<>();
+        args.put("name", new MPerson("bla"));
         featureValidator.setExpectedArguments(args);
     }
     

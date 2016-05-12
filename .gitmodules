@@ -1,0 +1,5 @@
+[submodule "owmClient"]
+	path = owmClient
+	url = https://github.com/gioretti/owmClient.git
+	ignore = dirty
+

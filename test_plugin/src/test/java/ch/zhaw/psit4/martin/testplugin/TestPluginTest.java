@@ -10,11 +10,11 @@ import ch.zhaw.psit4.martin.api.validation.MartinPluginValidator;
 
 public class TestPluginTest {
     
-    MartinPluginValidator<TestPlugin> pluginValidator;
+    MartinPluginValidator pluginValidator;
 
     @Before
     public void setUp() {
-        pluginValidator = new MartinPluginValidator<TestPlugin>(new TestPlugin());
+        pluginValidator = new MartinPluginValidator(TestPlugin.class);
     }
     
     @Test

@@ -7,6 +7,7 @@ import java.util.Date;
 import org.json.JSONException;
 
 import zhaw.weatherPlugin.plugin.exception.WeatherPluginException;
+import zhaw.weatherPlugin.plugin.response.ResponseForecast16Adapter;
 import zhaw.weatherPlugin.plugin.response.ResponseForecastAdapter;
 import zhaw.weatherPlugin.plugin.response.ResponseStatusAdapter;
 
@@ -72,7 +73,27 @@ public class WeatherService {
         } catch (IOException e) {
             throw new WeatherPluginException("Connection failed");
         }
+    }
 
+    public String getForecastAtCityForDay(String city, Date day)
+            throws WeatherPluginException {
+
+        try {
+            ResponseForecast16Adapter response;
+            response = client.dailyForecastAtCity(city);
+            if (response.hasForecast()) {
+                WeatherDataAdapter data;
+                data = response.getForecastForDate(day);
+                return "Weather in " + city + " : "
+                        + data.getBasicWeatherString();
+            } else {
+                return null;
+            }
+        } catch (JSONException e) {
+            throw new WeatherPluginException("OWM Response not valid");
+        } catch (IOException e) {
+            throw new WeatherPluginException("Connection failed");
+        }
     }
 
     /**

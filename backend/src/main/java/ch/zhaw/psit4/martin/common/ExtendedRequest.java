@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import ch.zhaw.psit4.martin.db.request.Request;
+import ch.zhaw.psit4.martin.models.MRequest;
+import ch.zhaw.psit4.martin.models.MResponse;
 
 /**
  * This class holds extended information about the request. It holds a possible
@@ -22,7 +23,13 @@ public class ExtendedRequest {
 	/**
 	 * The raw Request containing a command string.
 	 */
-	private Request input;
+	private MRequest request;
+	
+	/**
+	 * The response to be returned.
+	 */
+	private MResponse response;
+
 	/**
 	 * List of possible Calls for the request ordered by possibility.
 	 */
@@ -34,9 +41,11 @@ public class ExtendedRequest {
 	private Sentence sentence;
 	
 
-	public ExtendedRequest() {
+	public ExtendedRequest(MRequest request, MResponse response) {
 		this.calls = new ArrayList<Call>();
 		this.id = UUID.randomUUID();
+		this.request = request;
+		this.response = response;
 	}
 
 	public UUID getID() {
@@ -47,16 +56,20 @@ public class ExtendedRequest {
 		this.id = id;
 	}
 
-	public Request getInput() {
-		return this.input;
+	public MRequest getRequest() {
+		return this.request;
 	}
 
-	public void setInput(Request input) {
-		this.input = input;
+	public void setRequest(MRequest request) {
+		this.request = request;
 	}
 
 	public void addCall(Call call) {
 		this.calls.add(call);
+	}
+	
+	public void setCalls(List<Call> calls){
+		this.calls = calls;
 	}
 
 	public List<Call> getCalls() {
@@ -69,5 +82,13 @@ public class ExtendedRequest {
 	
 	public void setSentence(Sentence sentence){
 		this.sentence = sentence;
+	}
+	
+	public MResponse getResponse() {
+		return response;
+	}
+
+	public void setResponse(MResponse response) {
+		this.response = response;
 	}
 }

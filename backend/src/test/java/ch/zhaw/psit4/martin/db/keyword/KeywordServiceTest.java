@@ -5,8 +5,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
-import ch.zhaw.psit4.martin.db.keyword.Keyword;
-import ch.zhaw.psit4.martin.db.keyword.KeywordService;
+import ch.zhaw.psit4.martin.models.MKeyword;
+import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
 
 import static org.junit.Assert.*;
 
@@ -28,7 +28,7 @@ public class KeywordServiceTest {
 	private LiquibaseTestFramework liquibase;
 
 	@Autowired
-    private KeywordService keywordService;
+    private MKeywordRepository keywordService;
     private Log log;
 
     @Before
@@ -39,7 +39,7 @@ public class KeywordServiceTest {
     
     @Test
     public void testListKeywords() throws Exception {
-        List<Keyword> keywords = keywordService.listKeywords();
+        List<MKeyword> keywords = keywordService.findAll();
         keywords.stream().forEach(keyword -> log.info(keyword.getId()+", "+keyword.getKeyword()));
         assertEquals(false,keywords.isEmpty());
         assertEquals(6,keywords.size());
@@ -47,42 +47,42 @@ public class KeywordServiceTest {
     
     @Test
     public void testAddKeyword() throws Exception {
-        Keyword newWord = new Keyword("Hallo Welt");
-        keywordService.addKeyword(newWord);
-        String word = keywordService.getKeywordById(7).getKeyword();
+        MKeyword newWord = new MKeyword("Hallo Welt");
+        keywordService.save(newWord);
+        String word = keywordService.findOne(7).getKeyword();
         assertEquals("Hallo Welt", word);
-        keywordService.removeKeyword(7);
     }
 
 
     @Test
     public void testGetKeywordById() throws Exception {
-        assertEquals("weather", keywordService.getKeywordById(1).getKeyword());
-        assertEquals(1, keywordService.getKeywordById(1).getId());
-        assertEquals("Sunday", keywordService.getKeywordById(6).getKeyword());
+        assertEquals("weather", keywordService.findOne(1).getKeyword());
+        assertEquals(1, keywordService.findOne(1).getId());
+        assertEquals("Sunday", keywordService.findOne(6).getKeyword());
         
-        assertEquals(null, keywordService.getKeywordById(10));
+        assertEquals(null, keywordService.findOne(10));
     }
 
     @Test
     public void testUpdateKeyword() throws Exception {
-        Keyword toChange = keywordService.getKeywordById(3);
+        MKeyword toChange = keywordService.findOne(3);
         toChange.setKeyword("there");
-        keywordService.updateKeyword(toChange);
-        assertEquals("there", keywordService.getKeywordById(3).getKeyword());
+        keywordService.save(toChange);
+        assertEquals("there", keywordService.findOne(3).getKeyword());
     }
 
     @Test
     public void testRemoveKeyword() throws Exception {
         //remove 2 & 6
-        keywordService.removeKeyword(2);
-        keywordService.removeKeyword(6);
+        keywordService.delete(2);
+        keywordService.delete(6);
+        
         
         //check
-        List<Keyword> keywords = keywordService.listKeywords();
+        List<MKeyword> keywords = keywordService.findAll();
         keywords.stream().forEach(keyword -> log.info(keyword.getId()+", "+keyword.getKeyword()));
         assertEquals(4, keywords.size());
-        assertEquals(null, keywordService.getKeywordById(6));
+        assertEquals(null, keywordService.findOne(6));
         
     }
 }

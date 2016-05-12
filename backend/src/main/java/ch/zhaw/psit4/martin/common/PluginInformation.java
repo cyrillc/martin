@@ -1,7 +1,7 @@
 package ch.zhaw.psit4.martin.common;
 
 import ch.zhaw.psit4.martin.common.FunctionInformation;
-import ch.zhaw.psit4.martin.db.function.Function;
+import ch.zhaw.psit4.martin.models.MFunction;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,10 +29,10 @@ public class PluginInformation {
      *            functions that the plugin offers
      */
     public PluginInformation(String name, String description,
-            Set<Function> functions) {
+            Set<MFunction> functions) {
         this.name = name;
         this.description = description;
-        for (Function function : functions) {
+        for (MFunction function : functions) {
             functionInformation
                     .add(new FunctionInformation(function.getName()));
         }

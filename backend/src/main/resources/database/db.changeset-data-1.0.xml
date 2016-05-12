@@ -15,7 +15,6 @@
     	<loadData tableName="function_has_keyword" file="db.changeset-data-1.0/function_has_keyword.csv" relativeToChangelogFile="true"/>
     	<loadData tableName="function_has_keyword" file="db.changeset-data-1.0/historyItem.csv" relativeToChangelogFile="true"/>
     	<loadData tableName="keyword" file="db.changeset-data-1.0/keyword.csv" relativeToChangelogFile="true"/>
-    	<loadData tableName="options" file="db.changeset-data-1.0/options.csv" relativeToChangelogFile="true"/>
     	<loadData tableName="parameter" file="db.changeset-data-1.0/parameter.csv" relativeToChangelogFile="true"/>
     	<loadData tableName="parameter_has_keyword" file="db.changeset-data-1.0/parameter_has_keyword.csv" relativeToChangelogFile="true"/>
     	<loadData tableName="plugin" file="db.changeset-data-1.0/plugin.csv" relativeToChangelogFile="true"/>

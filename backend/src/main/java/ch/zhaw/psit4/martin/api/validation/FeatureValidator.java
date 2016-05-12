@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.MartinPlugin;
-import ch.zhaw.psit4.martin.api.types.IMartinType;
+import ch.zhaw.psit4.martin.api.types.IBaseType;
 
 /**
  * Tests a possible implementation of {@link Feature}.
@@ -18,17 +18,30 @@ import ch.zhaw.psit4.martin.api.types.IMartinType;
  * @param <Type> The type of the tested object.
  * @version 0.0.1-SNAPSHOT
  */
-public class FeatureValidator<Type> {
+public class FeatureValidator {
     
     private static final Log LOG = LogFactory.getLog(FeatureValidator.class);
-    private Class<Type> className;
-    private Type instance;
-    private Map<String, IMartinType> args;
+    private Class<?> className;
+    private Object instance;
+    private Map<String, IBaseType> args;
+    
+    @SuppressWarnings("unused")
+    private FeatureValidator() {
+        // hidden
+    }
+    
+    public <Type> FeatureValidator(Class<Type> clazz) {
+        try {
+            this.instance = clazz.newInstance();
+            this.className = clazz;
+        } catch (InstantiationException | IllegalAccessException e) {
+            LOG.error("Could not instanciate generic type: " + clazz.toString(), e);
+        }
+    }
 
-    @SuppressWarnings("unchecked")
-    public FeatureValidator(Type type) {
-        this.instance = type;
-        this.className = (Class<Type>) type.getClass();
+    public FeatureValidator(Object instance) {
+        this.instance = instance;
+        this.className = instance.getClass();
     }
     
     /**
@@ -109,7 +122,7 @@ public class FeatureValidator<Type> {
         return (message != null) && !message.isEmpty();
     }
     
-    public void setExpectedArguments(Map<String, IMartinType> args) {
+    public void setExpectedArguments(Map<String, IBaseType> args) {
         this.args = args;
     }
     
