@@ -53,7 +53,7 @@ public class RequestProcessorTest {
 	@Test
 	public void testExtendRequestPluginAndFeature() {
 		MResponse response0 = new MResponse();
-		MRequest request0 = new MRequest("Whats the weather tomorrow in Zürich?", false);
+		MRequest request0 = new MRequest("What's the weather in Zürich tomorrow?", false);
 		ExtendedRequest extRequest0 = requestProcessor.extend(request0, response0);
 		assertEquals(extRequest0.getCalls().isEmpty(), false);
 		assertEquals(extRequest0.getCalls().get(0).getPlugin().getName(), "WetterPlugin");
