@@ -45,6 +45,6 @@ TimingChartRenderer.prototype.renderTimingChart = function (timingInfo) {
         chartData.datasets[0].data[dataPosition] += (element.endTime - element.startTime);
     }, this);
 
-    $('#timingContainer').append(canvasDrawer);
+    $('#timingContainer').html(canvasDrawer);
     createTimingChart(chartData);
 };

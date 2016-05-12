@@ -56,6 +56,8 @@ var sendCommand = function () {
     if (textInput.indexOf(' -t') > -1) {
         wantTimingInformation = true;
         textInput = textInput.replace(' -t', '');
+    } else {
+        wantTimingInformation = false;
     }
 
     // create object to send to MArtIn
