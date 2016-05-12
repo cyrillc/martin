@@ -1,5 +1,6 @@
 package ch.zhaw.psit4.martin.pluginlib;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -170,6 +171,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         PluginManager manager = this.getManager();
         try {
             Collection<PluginLocation> locations = collector.collectPluginLocations();
+            filterExistingPlugins(locations, extPointId);
             manager.publishPlugins(locations.toArray(new PluginLocation[] {}));
         } catch (JpfException e) {
             returnVal = "Could not collect plugin.";
@@ -214,6 +216,33 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             }
         }
         return returnVal;
+    }
+
+    /**
+     * Filters the list of given {@link PluginLocation} elements for already connected
+     * {@link Extension} elements.
+     * 
+     * @param locations The modifiable collection of Locations.
+     * @param extPointId The id of the {@link ExtensionPoint} of the {@link PluginLibrary}
+     */
+    private void filterExistingPlugins(Collection<PluginLocation> locations,
+            final String extPointId) {
+        ExtensionPoint extPoint = this.getManager().getRegistry()
+                .getExtensionPoint(this.getDescriptor().getId(), extPointId);
+        for (PluginLocation loc : locations) {
+            PluginDescriptor extensionDescriptor = extPoint.getDeclaringPluginDescriptor();
+            URL extensionLoc = extensionDescriptor.getLocation();
+            if (extensionLoc.sameFile(loc.getManifestLocation())) {
+                locations.remove(loc);
+            }
+            for (Extension extension : extPoint.getConnectedExtensions()) {
+                extensionDescriptor = extension.getDeclaringPluginDescriptor();
+                extensionLoc = extensionDescriptor.getLocation();
+                if (extensionLoc.sameFile(loc.getManifestLocation())) {
+                    locations.remove(loc);
+                }
+            }
+        }
     }
 
     /**

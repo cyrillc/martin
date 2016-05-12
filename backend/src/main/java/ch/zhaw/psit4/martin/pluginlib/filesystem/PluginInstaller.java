@@ -191,7 +191,7 @@ public class PluginInstaller {
                 .replace(File.separatorChar, '.').replace(TEMP_FOLDER + ".", "");
         val = val.replace(".class", "");
         int lastDot = val.lastIndexOf('.');
-        return val.substring(0, lastDot);// + "." + ;
+        return val.substring(0, lastDot);// + "." + pluginName;
     }
 
     /**

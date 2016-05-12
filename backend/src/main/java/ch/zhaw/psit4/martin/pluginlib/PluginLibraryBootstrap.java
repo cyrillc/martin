@@ -95,8 +95,4 @@ public class PluginLibraryBootstrap {
         // finally retrieve the core plugin and start it up
         return (IPluginLibrary) manager.getPlugin(IMartinContext.CORE_PLUGIN_ID);
     }
-    
-    public DefaultPluginsCollector getCollector() {
-        return this.collector;
-    }
 }
