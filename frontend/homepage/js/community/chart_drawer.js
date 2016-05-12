@@ -23,11 +23,11 @@ TimingChartRenderer.prototype.renderTimingChart = function (timingInfo) {
                 "#FFCE56",
                 "#E7E9ED",
                 "#36A2EB",
-                "#FF6384",
-                "#4BC0C0",
-                "#FFCE56",
-                "#E7E9ED",
-                "#36A2EB"
+                "#1485CC",
+                "#CCAE14",
+                "#A714CC",
+                "#90CC14",
+                "#CCCB14"
             ],
         }],
 
