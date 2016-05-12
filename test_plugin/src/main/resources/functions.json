@@ -2,7 +2,7 @@
 	"Functions": [
 		{
 			"Name": "hallo",
-			"Description": "Greets the greeter.",
+			"Describtion": "Greets the greeter.",
 			"Keywords": [
 				"hello",
 				"greetings",
@@ -27,15 +27,13 @@
 					"Type": "ch.zhaw.psit4.martin.api.types.MPerson",
 					"Tokens-regex": "",
                     "Keywords": [
-                        "namen"
+                        "name"
                     ]
 				}
 			],
 			"Examples": [
-				{
-                    "Call" : "Hello Martin, I am Jake!",
-                    "Description" : "Greets you back"
-                }
+				"Hello MArtIn!",
+				"Howdy partner!"
 			]
 		}
 	]
