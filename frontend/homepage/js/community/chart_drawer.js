@@ -49,5 +49,5 @@ TimingChartRenderer.prototype.renderTimingChart = function (timingInfo) {
     }, this);
 
     $('#timingContainer').html(canvasDrawer);
-    tcreateTimingChart(chartData);
+    createTimingChart(chartData);
 };
