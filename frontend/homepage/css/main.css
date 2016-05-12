@@ -215,6 +215,10 @@ div.possible-commands-loading {
     display: none;
 }
 
+#timingChart {
+    margin-bottom: 40px;
+}
+
 
 /* ==========================================================================
    Helper classes
