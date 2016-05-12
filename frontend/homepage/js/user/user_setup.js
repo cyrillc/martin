@@ -53,12 +53,7 @@ var sendCommand = function () {
     $('#commandInput').val('');
 
     // check for timing flag
-    if (textInput.indexOf(' -t') > -1) {
-        wantTimingInformation = true;
-        textInput = textInput.replace(' -t', '');
-    } else {
-        wantTimingInformation = false;
-    }
+    textInput=checkTimingFlag(textInput);
 
     // create object to send to MArtIn
     var command = {
@@ -86,16 +81,8 @@ var sendCommand = function () {
         var martinResponseRenderer = new MartinResponseRenderer();
         martinResponseRenderer.renderResponse(martinStatement);
 
-        if (wantTimingInformation) {
-            var timingChartRenderer = new TimingChartRenderer();
-            try {
-                timingChartRenderer.renderTimingChart(response.timingInfo);
-            } catch (err) {
-                console.log('Could not render timing information');
-            }
-        } else {
-            $('#timingContainer').html('');
-        }
+        // if wantTimingInformation is set, a chart will be drawn
+        drawTimingChart(response);
 
         var historyRenderer = new HistoryRenderer(null);
         historyRenderer.renderItem(historyItem);
@@ -110,6 +97,19 @@ var sendCommand = function () {
     // reset location to move through history with *UP* and *DOWN* arrows
     historyLocation = 0;
 
+};
+
+var drawTimingChart = function (response) {
+    if (wantTimingInformation) {
+        var timingChartRenderer = new TimingChartRenderer();
+        try {
+            timingChartRenderer.renderTimingChart(response.timingInfo);
+        } catch (err) {
+            console.log('Could not render timing information');
+        }
+    } else {
+        $('#timingContainer').html('');
+    }
 };
 
 var addRequestToHistory = function (requestText) {
@@ -153,6 +153,16 @@ $(document).ready(function () {
     });
 
 });
+
+var checkTimingFlag = function (textInput) {
+    if (textInput.indexOf(' -t') > -1) {
+        wantTimingInformation = true;
+        textInput = textInput.replace(' -t', '');
+    } else {
+        wantTimingInformation = false;
+    }
+    return textInput;
+}
 
 // function to move through history with *UP* and *DOWN* arrows
 var getPreviousCommand = function (location) {
