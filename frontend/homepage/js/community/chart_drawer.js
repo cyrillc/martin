@@ -1,6 +1,7 @@
 var canvasDrawer;
-// documentation: http://www.chartjs.org/docs/#doughnut-pie-chart
+// documentation API: http://www.chartjs.org/docs/#doughnut-pie-chart
 
+// Creates a new Thiming Chart with a calculated Data-Set
 var createTimingChart = function (chartData) {
     new Chart(canvasDrawer, {
         type: 'pie',
@@ -8,11 +9,13 @@ var createTimingChart = function (chartData) {
     });
 };
 
-
+// Constructor for the Renderer
 function TimingChartRenderer() { }
 
+// Fills a Chart-Data-Set with the given Informations from MArtIn
 TimingChartRenderer.prototype.renderTimingChart = function (timingInfo) {
     canvasDrawer = $('<canvas id="timingChart">');
+    // Create Data-Set Structure.
     var chartData = {
         labels: [],
         datasets: [{
@@ -46,5 +49,6 @@ TimingChartRenderer.prototype.renderTimingChart = function (timingInfo) {
     }, this);
 
     $('#timingContainer').html(canvasDrawer);
+    console.log("Do This: " + chartData);
     createTimingChart(chartData);
 };

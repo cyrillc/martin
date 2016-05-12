@@ -26,13 +26,14 @@ import edu.stanford.nlp.util.CoreMap;
  */
 public class Sentence {
 	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
-	
+	private static final String UNKNOWN_NER_TAG = "O";
+
 	private String rawSentence;
 
 	private StanfordCoreNLPClient textAnalyzer;
 
 	List<Phrase> phrases = new ArrayList<>();
-	
+
 	String predefinedAnswer;
 
 	public Sentence(String sentence, StanfordCoreNLPClient textAnalyzer) {
@@ -60,40 +61,26 @@ public class Sentence {
 		StringBuilder sb = new StringBuilder();
 
 		for (CoreMap sentence : sentences) {
+			String previousNerToken = UNKNOWN_NER_TAG;
+			String currentNerToken = UNKNOWN_NER_TAG;
 
-			String previousNerToken = "O";
-			String currentNerToken = "O";
-			boolean newToken = true;
 			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+				previousNerToken = currentNerToken;
 				currentNerToken = token.get(NamedEntityTagAnnotation.class);
 				String word = token.get(TextAnnotation.class);
 
-				if (currentNerToken.equals("O")) {
-					if (!previousNerToken.equals("O") && (sb.length() > 0)) {
-						phrases.add(new Phrase(previousNerToken, sb.toString()));
-						sb.setLength(0);
-						newToken = true;
-					}
-					continue;
-				}
-
-				if (newToken) {
-					previousNerToken = currentNerToken;
-					newToken = false;
-					sb.append(word);
-					continue;
-				}
-
-				if (currentNerToken.equals(previousNerToken)) {
+				if (previousNerToken.equals(currentNerToken)) {
 					sb.append(" " + word);
 				} else {
 					phrases.add(new Phrase(previousNerToken, sb.toString()));
 					sb.setLength(0);
-					newToken = true;
+					sb.append(word);
 				}
-				previousNerToken = currentNerToken;
 			}
+			phrases.add(new Phrase(currentNerToken, sb.toString()));
+
 		}
+
 		TIMING_LOG.logEnd("Text analyzation");
 	}
 
@@ -121,7 +108,8 @@ public class Sentence {
 	 * Removes one element of type IMartinType from the internal list and
 	 * returns it.
 	 * 
-	 * @param type full IMartinType classname as String (with package)
+	 * @param type
+	 *            full IMartinType classname as String (with package)
 	 * @return a phrese with the chosen type
 	 */
 	public Phrase popPhraseOfType(EBaseType type) {
@@ -134,32 +122,34 @@ public class Sentence {
 			return new Phrase("", "");
 		}
 	}
-	
+
 	/**
 	 * Generates predefined answers, that can be used for static stentences.
 	 */
-	private void generadePredefinedAnswer(){
-		if("".equalsIgnoreCase(rawSentence)){
+	private void generadePredefinedAnswer() {
+		if ("".equalsIgnoreCase(rawSentence)) {
 			predefinedAnswer = "I can't hear you. Please speak louder.";
 		}
 
-		if((this.getWords().contains("unit") && this.getWords().contains("tests")) || this.getWords().contains("unittests")){
+		if ((this.getWords().contains("unit") && this.getWords().contains("tests"))
+				|| this.getWords().contains("unittests")) {
 			predefinedAnswer = "<img src='http://tclhost.com/gEFAjgp.gif' />";
 		}
-		
-		if(this.rawSentence.toLowerCase().startsWith("can you")){
+
+		if (this.rawSentence.toLowerCase().startsWith("can you")) {
 			predefinedAnswer = "<img src='http://tclhost.com/YXRMgbt.gif'>";
 		}
 	}
 
 	/**
 	 * Gets all phrases with a chosen IMartionType
-	 * @param iMartinType full IMartinType classname as String (with package)
+	 * 
+	 * @param iMartinType
+	 *            full IMartinType classname as String (with package)
 	 * @return a list of chosen phrases
 	 */
 	public List<Phrase> getPhrasesOfType(EBaseType iMartinType) {
-		return phrases.stream().filter(o -> o.getType().equals(iMartinType))
-				.collect(Collectors.<Phrase> toList());
+		return phrases.stream().filter(o -> o.getType().equals(iMartinType)).collect(Collectors.<Phrase> toList());
 	}
 
 	public List<Phrase> getPhrases() {
@@ -171,10 +161,11 @@ public class Sentence {
 	}
 
 	public List<String> getWords() {
-		return new ArrayList<>(Arrays.asList(rawSentence.toLowerCase().replaceAll("[^a-zA-Z0-9- äöüÄÖÜ]", "").split(" ")));
+		return new ArrayList<>(
+				Arrays.asList(rawSentence.toLowerCase().replaceAll("[^a-zA-Z0-9- äöüÄÖÜ]", "").split(" ")));
 	}
-	
-	public String getPredefinedAnswer(){
+
+	public String getPredefinedAnswer() {
 		return predefinedAnswer;
 	}
 
