@@ -4,6 +4,9 @@ var historyLocation = 0;
 // timing flag to append if timing information is wanted
 var timingFlag = ' -t';
 
+// boolean to indicate if timing information is wanted
+var wantTimingInformation = false;
+
 // enabling *RETURN* to submit command
 $(function () {
     $("#commandInput").keydown(function (event) {
@@ -50,10 +53,11 @@ var sendCommand = function () {
     $('#commandInput').val('');
 
     // check for timing flag
-    var wantTimingInformation = false;
     if (textInput.indexOf(' -t') > -1) {
         wantTimingInformation = true;
         textInput = textInput.replace(' -t', '');
+    } else {
+        wantTimingInformation = false;
     }
 
     // create object to send to MArtIn
@@ -78,8 +82,20 @@ var sendCommand = function () {
             response: response
         };
 
+
         var martinResponseRenderer = new MartinResponseRenderer();
         martinResponseRenderer.renderResponse(martinStatement);
+
+        if (wantTimingInformation) {
+            var timingChartRenderer = new TimingChartRenderer();
+            try {
+                timingChartRenderer.renderTimingChart(response.timingInfo);
+            } catch (err) {
+                console.log('Could not render timing information');
+            }
+        } else {
+            $('#timingContainer').html('');
+        }
 
         var historyRenderer = new HistoryRenderer(null);
         historyRenderer.renderItem(historyItem);
@@ -114,6 +130,8 @@ $(document).ready(function () {
         $.get(exampleCommandsUrl, function (receivedExampleCommands) {
             var exampleCommandsRenderer = new ExampleCommandsRenderer(receivedExampleCommands);
             exampleCommandsRenderer.renderCommands();
+
+
         })
             // always hide the Section.
             .always(function () {

@@ -42,7 +42,13 @@ public class MParameter extends BaseModel {
 	public MParameter() {
 	}
 
-	public boolean isRequired() {
+	public MParameter(String name, boolean required, String type) {
+	    this.name = name;
+	    this.required = required;
+	    this.type = type;
+    }
+
+    public boolean isRequired() {
 		return required;
 	}
 

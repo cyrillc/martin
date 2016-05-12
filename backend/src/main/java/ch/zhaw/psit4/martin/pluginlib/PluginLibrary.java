@@ -34,8 +34,10 @@ import ch.zhaw.psit4.martin.api.validation.MartinPluginValidator;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.MExampleCallRepository;
 import ch.zhaw.psit4.martin.models.repositories.MPluginRepository;
-import ch.zhaw.psit4.martin.pluginlib.filesystem.KeywordsJSONMissingException;
+import ch.zhaw.psit4.martin.pluginlib.filesystem.FunctionsJSONMissingException;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor;
+import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
+import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 
 
 /**
@@ -58,6 +60,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * The PluginCollector to load plugins dynamically
      */
     private DefaultPluginsCollector collector;
+
+    private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
+
 
     @Autowired
     private MartinContextAccessor martinContextAccessor;
@@ -154,7 +159,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             try {
                 pluginDataAccessor.savePluginInDB(extension, classLoader);
                 plugins.put(uuid, pluginInstance);
-            } catch (KeywordsJSONMissingException e) {
+            } catch (FunctionsJSONMissingException e) {
                 LOG.warn("Plugin could not be loaded.", e);
             }
             plugins.put(uuid, pluginInstance);
@@ -207,13 +212,15 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             LOG.info(returnVal);
 
             // update DB and memory
+            /*
             try {
                 pluginDataAccessor.savePluginInDB(extension, classLoader);
                 pluginExtentions.put(uuid, pluginInstance);
-            } catch (KeywordsJSONMissingException e) {
+            } catch (FunctionJSONMissingException e) {
                 returnVal = "Plugin could not be loaded.";
                 LOG.warn(returnVal, e);
             }
+            */
         }
         return returnVal;
     }
@@ -303,6 +310,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      */
     @Override
     public MResponse executeRequest(ExtendedRequest req) {
+    	TIMING_LOG.logStart(this.getClass().getSimpleName());
         Call call = req.getCalls().get(0);
         String pluginID = call.getPlugin().getUuid();
         String functionName = call.getFunction().getName();
@@ -312,12 +320,15 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
 
         if (service != null) {
             service.init(martinContextAccessor, functionName, 0);
-
-            return new MResponse(executeCall(call, 0));
+            req.getResponse().setResponseText(executeCall(call, 0));
         } else {
             LOG.error("Could not find a plugin that matches request call.");
-            return new MResponse("ERROR: no plugin found!");
+            req.getResponse().setResponseText("ERROR: no plugin found!");
         }
+        
+        TIMING_LOG.logEnd(this.getClass().getSimpleName());
+        return req.getResponse();
+        
     }
 
     /**
@@ -329,6 +340,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     private String executeCall(Call call, long requestID) {
         Feature feature = martinContextAccessor.fetchWorkItem(requestID);
         String ret = "";
+        
+        TIMING_LOG.logEnd(this.getClass().getSimpleName());
+        TIMING_LOG.logStart(call.getPlugin().getName());
         while (feature != null) {
             try {
                 feature.start(call.getArguments());
@@ -358,10 +372,12 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 ret = "I'm sorry, I can not understand you.";
                 break;
             }
-
+            
             ret += "\n";
             feature = martinContextAccessor.fetchWorkItem(requestID);
         }
+        TIMING_LOG.logEnd(call.getPlugin().getName());
+        TIMING_LOG.logStart(this.getClass().getSimpleName());
 
         return ret;
     }

@@ -62,14 +62,15 @@ public class AIControllerFacadeTest {
 		MockitoAnnotations.initMocks(this);
 
 		request = new MRequest("request test", false);
-		extRequest = new ExtendedRequest();
+		response = new MResponse();
+		extRequest = new ExtendedRequest(request, response);
 		call = new Call();
 		extRequest.addCall(call);
 		extRequest.setSentence(new Sentence("test", stanfordNLP));
 		response = new MResponse("response test");
 		historyItem = new MHistoryItem(request, response);
 
-		when(requestProcessorMock.extend(request)).thenReturn(extRequest);
+		when(requestProcessorMock.extend(any(), any())).thenReturn(extRequest);
 		when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);
 		
 		ArrayList<MHistoryItem> getHistoryResult = new ArrayList<>();
@@ -98,9 +99,7 @@ public class AIControllerFacadeTest {
 
 	@Test
 	public void checkElaborationOfRequest() {
-		MResponse responseTest = null;
-
-		responseTest = aiController.elaborateRequest(request);
+		MResponse responseTest = aiController.elaborateRequest(request);
 		assertTrue(responseTest.equals(response));
 	}
 

@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import ch.zhaw.psit4.martin.api.types.EBaseType;
+import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
+import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
@@ -23,6 +25,8 @@ import edu.stanford.nlp.util.CoreMap;
  *
  */
 public class Sentence {
+	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
+	
 	private String rawSentence;
 
 	private StanfordCoreNLPClient textAnalyzer;
@@ -48,6 +52,7 @@ public class Sentence {
 	 * NormalizedNamedEntityTagAnnotation.
 	 */
 	private void generateNamedEntityRecognitionTokens() {
+		TIMING_LOG.logStart("Text analyzation");
 		Annotation document = new Annotation(rawSentence);
 		textAnalyzer.annotate(document);
 
@@ -89,6 +94,7 @@ public class Sentence {
 				previousNerToken = currentNerToken;
 			}
 		}
+		TIMING_LOG.logEnd("Text analyzation");
 	}
 
 	/**

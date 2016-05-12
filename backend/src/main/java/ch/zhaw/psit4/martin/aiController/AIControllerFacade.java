@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
+import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
+import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.models.*;
@@ -26,94 +28,104 @@ import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
  *
  */
 public class AIControllerFacade {
-    @SuppressWarnings("unused")
+	@SuppressWarnings("unused")
 	private static final Log LOG = LogFactory.getLog(AIControllerFacade.class);
-    
-    @Autowired
-    private IPluginLibrary pluginLibrary;
-    
-    @Autowired
-    private MHistoryItemRepository historyItemRepository;
-    
-    @Autowired
-    private RequestProcessor requestProcessor;
+	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
 
-    @PostConstruct
-    public void postAIControllerFacade() {
-        // does nothing. Is it needed b'cause of beans.xml?
-    }
+	@Autowired
+	private IPluginLibrary pluginLibrary;
 
-    /**
-     * Returns a list of example calls from the plugin library. Is usually only
-     * called from the frontend controller when the user first loads the MArtIn
-     * frontend.
-     * 
-     * @return a list of example calls
-     */
+	@Autowired
+	private MHistoryItemRepository historyItemRepository;
 
-    public List<MExampleCall> getExampleCalls() {
-        return pluginLibrary.getExampleCalls();
-    }
-    
-    /**
-     * 
-     * @return A list of the newest History
-     *
-     * @param amount the amount of historyItems to get
-     */
-    public List<MExampleCall> getRandomExampleCalls() {
-        return pluginLibrary.getRandomExampleCalls();
-    }
+	@Autowired
+	private RequestProcessor requestProcessor;
 
-    /**
-     * This method respond to a request with a response. Try to understand what
-     * it requested and elaborate an appropiate response for the request.
-     * 
-     * @param request
-     *            Request containing a string command
-     * @return the response of the AI.
-     */
-    public MResponse elaborateRequest(MRequest request) {
-        ExtendedRequest extendedRequest = requestProcessor.extend(request);
-        MResponse response;
-        
-        if(extendedRequest.getSentence().getPredefinedAnswer() != null){
-        	response = new MResponse(extendedRequest.getSentence().getPredefinedAnswer());
-        } else if(extendedRequest.getCalls().size() > 0){
-        	response = pluginLibrary.executeRequest(extendedRequest);
-        } else {
-        	response = new MResponse("Sorry, I can't understand you.");
-        }
-        
-        historyItemRepository.save(new MHistoryItem(request, response));
-        
-        return response;
-    }
+	@PostConstruct
+	public void postAIControllerFacade() {
+		// does nothing. Is it needed b'cause of beans.xml?
+	}
 
-    /**
-     * 
-     * @return all the history of requests with the relative responses
-     */
-    public List<MHistoryItem> getHistory() {
-        return historyItemRepository.findAll();
-    }
-    
-    /**
-     * 
-     * @return A list of the newest History
-     *
-     * @param amount the amount of historyItems to get
-     */
-    public List<MHistoryItem> getLimitedHistory(int amount) {
-    	List<MHistoryItem> list = historyItemRepository.getLimitedHistory(new PageRequest(0, amount));
-    	List<MHistoryItem> shallowCopy = list.subList(0, list.size());
-    	Collections.reverse(shallowCopy);
-        return shallowCopy;
-    }
+	/**
+	 * Returns a list of example calls from the plugin library. Is usually only
+	 * called from the frontend controller when the user first loads the MArtIn
+	 * frontend.
+	 * 
+	 * @return a list of example calls
+	 */
 
-    public List<PluginInformation> getPluginInformation() {
-        return pluginLibrary.getPluginInformation();
-    }
+	public List<MExampleCall> getExampleCalls() {
+		return pluginLibrary.getExampleCalls();
+	}
 
-    
+	/**
+	 * 
+	 * @return A list of the newest History
+	 *
+	 * @param amount
+	 *            the amount of historyItems to get
+	 */
+	public List<MExampleCall> getRandomExampleCalls() {
+		return pluginLibrary.getRandomExampleCalls();
+	}
+
+	/**
+	 * This method respond to a request with a response. Try to understand what
+	 * it requested and elaborate an appropiate response for the request.
+	 * 
+	 * @param request
+	 *            Request containing a string command
+	 * @return the response of the AI.
+	 */
+	public MResponse elaborateRequest(MRequest request) {
+		TIMING_LOG.logStart(this.getClass().getSimpleName());
+		
+		MResponse response = new MResponse();
+
+		TIMING_LOG.logEnd(this.getClass().getSimpleName());
+		ExtendedRequest extendedRequest = requestProcessor.extend(request, response);
+		TIMING_LOG.logStart(this.getClass().getSimpleName());
+
+		if (extendedRequest.getSentence().getPredefinedAnswer() != null) {
+			extendedRequest.getResponse().setResponseText(extendedRequest.getSentence().getPredefinedAnswer());
+		} else if (extendedRequest.getCalls().size() > 0) {
+			TIMING_LOG.logEnd(this.getClass().getSimpleName());
+			extendedRequest.setResponse(pluginLibrary.executeRequest(extendedRequest));
+			TIMING_LOG.logStart(this.getClass().getSimpleName());
+		} else {
+			extendedRequest.getResponse().setResponseText("Sorry, I can't understand you.");
+		}
+
+		historyItemRepository.save(new MHistoryItem(extendedRequest.getRequest(), extendedRequest.getResponse()));
+
+		TIMING_LOG.logEnd(this.getClass().getSimpleName());
+		return extendedRequest.getResponse();
+	}
+
+	/**
+	 * 
+	 * @return all the history of requests with the relative responses
+	 */
+	public List<MHistoryItem> getHistory() {
+		return historyItemRepository.findAll();
+	}
+
+	/**
+	 * 
+	 * @return A list of the newest History
+	 *
+	 * @param amount
+	 *            the amount of historyItems to get
+	 */
+	public List<MHistoryItem> getLimitedHistory(int amount) {
+		List<MHistoryItem> list = historyItemRepository.getLimitedHistory(new PageRequest(0, amount));
+		List<MHistoryItem> shallowCopy = list.subList(0, list.size());
+		Collections.reverse(shallowCopy);
+		return shallowCopy;
+	}
+
+	public List<PluginInformation> getPluginInformation() {
+		return pluginLibrary.getPluginInformation();
+	}
+
 }

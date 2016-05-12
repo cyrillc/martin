@@ -1,5 +1,7 @@
 package ch.zhaw.psit4.martin.api.validation;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -12,30 +14,35 @@ import ch.zhaw.psit4.martin.api.types.IBaseType;
 /**
  * Tests a possible implementation of {@link Feature}.
  * 
- * The passed instance will be tested for the ability to be instanced as {@link Feature},
- * for execution without exceptions and return value.
+ * The passed instance will be tested for the ability to be instanced as {@link Feature}, for
+ * execution without exceptions and return value.
  * 
  * @param <Type> The type of the tested object.
  * @version 0.0.1-SNAPSHOT
  */
 public class FeatureValidator {
-    
+
     private static final Log LOG = LogFactory.getLog(FeatureValidator.class);
     private Class<?> className;
     private Object instance;
     private Map<String, IBaseType> args;
-    
+
     @SuppressWarnings("unused")
     private FeatureValidator() {
         // hidden
     }
-    
+
     public <Type> FeatureValidator(Class<Type> clazz) {
-        try {
-            this.instance = clazz.newInstance();
-            this.className = clazz;
-        } catch (InstantiationException | IllegalAccessException e) {
-            LOG.error("Could not instanciate generic type: " + clazz.toString(), e);
+        Constructor<?>[] constructors = clazz.getConstructors();
+        for (Constructor<?> c : constructors) {
+            try {
+                this.instance = c.newInstance(0);
+                this.className = clazz;
+            } catch (IllegalArgumentException | InvocationTargetException | InstantiationException
+                    | IllegalAccessException e) {
+                LOG.error("Could not instanciate generic type: " + clazz.toString(), e);
+                continue;
+            }
         }
     }
 
@@ -43,7 +50,7 @@ public class FeatureValidator {
         this.instance = instance;
         this.className = instance.getClass();
     }
-    
+
     /**
      * Runs all tests on the instance.
      * 
@@ -57,17 +64,17 @@ public class FeatureValidator {
             return MartinAPITestResult.ERROR;
         }
         result = throwsException();
-        if(result)
+        if (result)
             return MartinAPITestResult.ERROR;
         result = returnsMessage();
-        if(!result) {
+        if (!result) {
             LOG.warn(className.toString() + " does not return a message.");
             return MartinAPITestResult.WARNING;
         }
-        
+
         return MartinAPITestResult.OK;
     }
-    
+
     /**
      * Checks if the passed object is an instance of {@link MartinPlugin}.
      * 
@@ -76,9 +83,10 @@ public class FeatureValidator {
     private boolean isMartinPlugin() {
         return instance instanceof Feature;
     }
-    
+
     /**
      * Checks if an exception is thrown while executing plugin.
+     * 
      * @return true or false
      */
     private boolean throwsException() {
@@ -101,12 +109,13 @@ public class FeatureValidator {
             retVal = true;
             LOG.error("Exception thrown at stop.", e);
         }
-        
+
         return retVal;
     }
-    
+
     /**
      * Checks if a message is returned after executing plugin.
+     * 
      * @return true or false
      */
     private boolean returnsMessage() {
@@ -118,12 +127,12 @@ public class FeatureValidator {
         } catch (Exception e) {
             LOG.error("Exception thrown at test: returnsMessage.", e);
         }
-        
+
         return (message != null) && !message.isEmpty();
     }
-    
+
     public void setExpectedArguments(Map<String, IBaseType> args) {
         this.args = args;
     }
-    
+
 }

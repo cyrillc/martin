@@ -2,7 +2,7 @@
     "Functions": [
         {
             "Name": "weather",
-            "Describtion": "Returns the weather in a certain location.",
+            "Description": "Returns the weather in a certain location.",
             "Keywords": [
                 "weather",
                 "forecast"
@@ -11,18 +11,26 @@
                 {
                     "Name": "city",
                     "Required": "true",
-                    "Type": "ch.zhaw.psit4.martin.api.types.Location",
-                    "Tokens-regex": ""
+                    "Type": "ch.zhaw.psit4.martin.api.types.MLocation",
+                    "Tokens-regex": "",
+                    "Keywords": [
+                        "location"
+                    ]
                 },
                 {
                     "Name": "time",
                     "Required": "false",
-                    "Type": "ch.zhaw.psit4.martin.api.types.Timestamp",
-                    "Tokens-regex": ""
+                    "Type": "ch.zhaw.psit4.martin.api.types.MTimestamp",
+                    "Tokens-regex": "",
+                    "Keywords": [
+                        "time"
+                    ]
                 }
             ],
-            "Examples": [
-                "What's the weather in Zürich?"
+            "Examples": [{
+                    "Call" : "What's the weather tomorrow in Zürich?",
+                    "Description" : "Gets the weather for a location and time."
+                }
             ]
         }
     ]

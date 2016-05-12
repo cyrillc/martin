@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+
+import ch.zhaw.psit4.martin.common.MartinHelper;
 import ch.zhaw.psit4.martin.models.MAuthor;
 import ch.zhaw.psit4.martin.models.MFunction;
 
@@ -35,10 +37,19 @@ public class MPlugin extends BaseModel {
 	@OneToMany(mappedBy = "plugin", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<MFunction> functions;
 
-	public MPlugin() {
-	}
 
-	public void setName(String name) {
+	public MPlugin(){}
+
+    public MPlugin(String uuid, String name, String description, Date date) {
+        this.name = name;
+        this.uuid = uuid;
+        this.description = description;
+        if(date != null){
+            this.date = date;
+        }
+    }
+
+    public void setName(String name) {
 		this.name = name;
 	}
 
@@ -73,6 +84,12 @@ public class MPlugin extends BaseModel {
 	public void setFunctions(Set<MFunction> functions) {
 		this.functions = functions;
 		functions.stream().forEach(f -> f.setPlugin(this));
+	}
+	
+	public void addFunction(MFunction function) {
+	    functions = MartinHelper.initSetifNull(functions);
+	    functions.add(function);
+	    function.setPlugin(this);
 	}
 
 	public Set<MFunction> getFunctions() {

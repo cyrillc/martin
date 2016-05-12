@@ -10,7 +10,7 @@
 		<library type="resources" path="res/" id="resources" />
 	</runtime>
  
-	<extension plugin-id="ch.zhaw.psit4.martin.api" point-id="PluginService"
+	<extension plugin-id="ch.zhaw.psit4.martin.api" point-id="MartinPlugin"
 		id="d54f0bc3-5642-425d-bcfd-44a28131ca43">
 		<parameter id="class"
 			value="zhaw.weatherPlugin.WeatherPlugin" />
@@ -19,6 +19,6 @@
 			value="A plugin that checks the current weather in a given location." />
 		<parameter id="author" value="Gioele Moretti" />
 		<parameter id="e-mail" value="gioretti@students.zhaw.ch" />
-		<parameter id="date" value="27.04.2016" />
+		<parameter id="date" value="27-04-2016" />
 	</extension>
 </plugin>

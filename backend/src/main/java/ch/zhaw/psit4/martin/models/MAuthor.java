@@ -27,6 +27,7 @@ public class MAuthor extends BaseModel {
 
 	public MAuthor() {
 	}
+	
 
 	public void setName(String name) {
 		this.name = name;
