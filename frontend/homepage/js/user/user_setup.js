@@ -50,6 +50,7 @@ var sendCommand = function () {
     $('.history-loading').show();
     // get and clear text input
     var textInput = $('#commandInput').val();
+    textInput = textInput.replace(/(<([^>]+)>)/ig,'');
     $('#commandInput').val('');
 
     // check for timing flag
