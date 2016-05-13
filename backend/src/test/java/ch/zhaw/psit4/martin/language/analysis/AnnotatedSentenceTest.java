@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.common;
+package ch.zhaw.psit4.martin.language.analysis;
 
 import static org.junit.Assert.*;
 
@@ -8,18 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
+import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
-public class SentenceTest {
+public class AnnotatedSentenceTest {
 	@Autowired
 	private StanfordCoreNLPClient stanfordNLP;
 
 	@Test
 	public void testPersonSimple() {
-		Sentence sentence = new Sentence("Hello, my name is Chuck Norris.", stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence("Hello, my name is Chuck Norris.", stanfordNLP);
 
 		Phrase phrase = sentence.popPhraseOfType(EBaseType.PERSON);
 
@@ -29,7 +31,7 @@ public class SentenceTest {
 
 	@Test
 	public void testPersonMultiple() {
-		Sentence sentence = new Sentence("Today I met Donald Trump hanging out with Barack Obama and Putin. They were laughing alot.", stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence("Today I met Donald Trump hanging out with Barack Obama and Putin. They were laughing alot.", stanfordNLP);
 
 		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.PERSON);
 
@@ -50,7 +52,7 @@ public class SentenceTest {
 	
 	@Test
 	public void testDuration() {
-		Sentence sentence = new Sentence("I was waiting for at least two weeks for my new iPhone.", stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence("I was waiting for at least two weeks for my new iPhone.", stanfordNLP);
 
 		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.DURATION);
 
@@ -61,7 +63,7 @@ public class SentenceTest {
 	
 	@Test
 	public void testMoney() {
-		Sentence sentence = new Sentence("My car was on sale and I got a bounty of 100 dollar.", stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence("My car was on sale and I got a bounty of 100 dollar.", stanfordNLP);
 
 		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.MONEY);
 
@@ -72,7 +74,7 @@ public class SentenceTest {
 	
 	@Test
 	public void testLocation() {
-		Sentence sentence = new Sentence("Yesterday I wanted to fly to Dubai.", stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence("Yesterday I wanted to fly to Dubai.", stanfordNLP);
 
 		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.LOCATION);
 
@@ -83,7 +85,7 @@ public class SentenceTest {
 	
 	@Test
 	public void testNumber() {
-		Sentence sentence = new Sentence("Thank you thousand times!", stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence("Thank you thousand times!", stanfordNLP);
 
 		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.NUMBER);
 
@@ -94,7 +96,7 @@ public class SentenceTest {
 	
 	@Test
 	public void testOrdinal() {
-		Sentence sentence = new Sentence("I will be the first in this race!", stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence("I will be the first in this race!", stanfordNLP);
 
 		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.ORDINAL);
 
@@ -105,7 +107,7 @@ public class SentenceTest {
 	
 	@Test
 	public void testOrganization() {
-		Sentence sentence = new Sentence("Facebook will take over the world if we don't stop them.", stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence("Facebook will take over the world if we don't stop them.", stanfordNLP);
 
 		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.ORGANIZATION);
 
@@ -116,7 +118,7 @@ public class SentenceTest {
 	
 	@Test
 	public void testPercent() {
-		Sentence sentence = new Sentence("If the glass is half empty, it is only 50 percent full.", stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence("If the glass is half empty, it is only 50 percent full.", stanfordNLP);
 
 		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.PERCENT);
 
@@ -127,7 +129,7 @@ public class SentenceTest {
 	
 	@Test
 	public void testTime() {
-		Sentence sentence = new Sentence("It was 12 o'clock when the New Year 's Eve rockets hit the sky.", stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence("It was 12 o'clock when the New Year 's Eve rockets hit the sky.", stanfordNLP);
 
 		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.TIME);
 

@@ -8,18 +8,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ch.zhaw.psit4.martin.api.typefactory.BaseTypeFactory;
+import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.api.types.IBaseType;
 import ch.zhaw.psit4.martin.api.types.BaseTypeInstanciationException;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
-import ch.zhaw.psit4.martin.common.Sentence;
+import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
+import ch.zhaw.psit4.martin.language.typefactory.BaseTypeFactory;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
-import ch.zhaw.psit4.martin.common.Phrase;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
 /**
@@ -56,7 +56,7 @@ public class RequestProcessor {
 		List<PossibleCall> possibleCalls = new ArrayList<>();
 
 		TIMING_LOG.logEnd(this.getClass().getSimpleName());
-		Sentence sentence = new Sentence(extendedRequest.getRequest().getCommand(), stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence(extendedRequest.getRequest().getCommand(), stanfordNLP);
 		TIMING_LOG.logStart(this.getClass().getSimpleName());
 
 		// Find possible Calls by keywords
@@ -143,7 +143,7 @@ public class RequestProcessor {
 	 * @return A list of PossibleResults with their corresponding parameters
 	 *         filled as good as possible
 	 */
-	public List<PossibleCall> resolveParameters(List<PossibleCall> possibleCalls, Sentence sentence) {
+	public List<PossibleCall> resolveParameters(List<PossibleCall> possibleCalls, AnnotatedSentence sentence) {
 		for (PossibleCall possibleCall : possibleCalls) {
 			MFunction function = possibleCall.getFunction();
 
@@ -157,10 +157,11 @@ public class RequestProcessor {
 		return possibleCalls;
 	}
 
-	public IBaseType getParameterValue(MParameter parameter, Sentence sentence) {
+	public IBaseType getParameterValue(MParameter parameter, AnnotatedSentence sentence) {
 		try {
 
 			Integer possibilitiesLeft;
+			
 			do {
 				// Perform Name Entity Recognition
 				String data = "";

@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
-import ch.zhaw.psit4.martin.common.Sentence;
+import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
@@ -66,7 +66,7 @@ public class AIControllerFacadeTest {
 		extRequest = new ExtendedRequest(request, response);
 		call = new Call();
 		extRequest.addCall(call);
-		extRequest.setSentence(new Sentence("test", stanfordNLP));
+		extRequest.setSentence(new AnnotatedSentence("test", stanfordNLP));
 		response = new MResponse("response test");
 		historyItem = new MHistoryItem(request, response);
 

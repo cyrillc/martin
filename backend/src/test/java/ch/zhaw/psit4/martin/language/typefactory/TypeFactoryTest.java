@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.api.typefactory;
+package ch.zhaw.psit4.martin.language.typefactory;
 
 import static org.junit.Assert.*;
 
@@ -17,6 +17,7 @@ import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.api.types.MLocation;
 import ch.zhaw.psit4.martin.api.types.MNumber;
 import ch.zhaw.psit4.martin.api.types.MTimestamp;
+import ch.zhaw.psit4.martin.language.typefactory.BaseTypeFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })

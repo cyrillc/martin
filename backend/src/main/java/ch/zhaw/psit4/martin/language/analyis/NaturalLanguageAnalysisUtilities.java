@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.requestprocessor.utils;
+package ch.zhaw.psit4.martin.language.analyis;
 
 import java.util.Properties;
 
