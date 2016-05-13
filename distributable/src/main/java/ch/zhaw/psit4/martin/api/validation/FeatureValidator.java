@@ -66,11 +66,6 @@ public class FeatureValidator {
         result = throwsException();
         if (result)
             return MartinAPITestResult.ERROR;
-        result = returnsMessage();
-        if (!result) {
-            LOG.warn(className.toString() + " does not return a message.");
-            return MartinAPITestResult.WARNING;
-        }
 
         return MartinAPITestResult.OK;
     }
@@ -92,43 +87,18 @@ public class FeatureValidator {
     private boolean throwsException() {
         boolean retVal = false;
         try {
-            ((Feature) instance).start(args);
+            ((Feature) instance).initialize(args);
         } catch (Exception e) {
             retVal = true;
             LOG.error("Exception thrown at start.", e);
         }
         try {
-            ((Feature) instance).run();
+            ((Feature) instance).execute();
         } catch (Exception e) {
             retVal = true;
             LOG.error("Exception thrown at run.", e);
         }
-        try {
-            ((Feature) instance).stop();
-        } catch (Exception e) {
-            retVal = true;
-            LOG.error("Exception thrown at stop.", e);
-        }
-
         return retVal;
-    }
-
-    /**
-     * Checks if a message is returned after executing plugin.
-     * 
-     * @return true or false
-     */
-    private boolean returnsMessage() {
-        String message = null;
-        try {
-            ((Feature) instance).start(args);
-            ((Feature) instance).run();
-            message = ((Feature) instance).stop();
-        } catch (Exception e) {
-            LOG.error("Exception thrown at test: returnsMessage.", e);
-        }
-
-        return (message != null) && !message.isEmpty();
     }
 
     public void setExpectedArguments(Map<String, IBaseType> args) {

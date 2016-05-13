@@ -82,7 +82,8 @@ public class Feature {
      * 
      * @throws Exception An excpetion occured during work.
      */
-    public void execute() throws Exception {
+    public String execute() throws Exception {
         // nothing to do
+        return "Nothing to do.";
     }
 }

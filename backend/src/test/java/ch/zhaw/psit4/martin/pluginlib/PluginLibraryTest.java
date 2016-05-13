@@ -20,6 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.api.MartinPlugin;
+import ch.zhaw.psit4.martin.api.util.Pair;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.models.*;
@@ -29,7 +30,7 @@ import ch.zhaw.psit4.martin.models.*;
 public class PluginLibraryTest {
 
     private ExtendedRequest mockedRequests[];
-    private Map<String, MartinPlugin> mockedExtensions;
+    private Map<String, Pair<Boolean, MartinPlugin>> mockedExtensions;
     private UUID uuid;
 
     @Autowired
@@ -70,8 +71,8 @@ public class PluginLibraryTest {
 
         // create Mocked extentions
         MartinPlugin mockedService = Mockito.mock(MartinPlugin.class);
-        mockedExtensions = new HashMap<String, MartinPlugin>();
-        mockedExtensions.put("TestModule", mockedService);
+        mockedExtensions = new HashMap<>();
+        mockedExtensions.put("TestModule", new Pair<Boolean, MartinPlugin>(new Boolean(true), mockedService));
     }
 
     @Test
