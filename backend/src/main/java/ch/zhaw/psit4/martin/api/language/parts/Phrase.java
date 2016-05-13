@@ -36,5 +36,10 @@ public class Phrase {
 	public String getValue() {
 		return value;
 	}
+	
+	@Override
+	public String toString(){
+		return type.toString() + ": " + value;
+	}
 
 }

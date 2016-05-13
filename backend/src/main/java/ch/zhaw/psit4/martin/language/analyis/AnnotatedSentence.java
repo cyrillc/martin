@@ -58,7 +58,7 @@ public class AnnotatedSentence extends Sentence implements ISentence{
 	 * NormalizedNamedEntityTagAnnotation.
 	 */
 	private void generatePhrases() {
-		Annotation document = new Annotation(sentence);
+		Annotation document = new Annotation(text);
 		textAnalyzer.annotate(document);
 
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
@@ -121,7 +121,7 @@ public class AnnotatedSentence extends Sentence implements ISentence{
 	 * Generates predefined answers, that can be used for static stentences.
 	 */
 	private void generadePredefinedAnswer() {
-		if ("".equalsIgnoreCase(sentence)) {
+		if ("".equalsIgnoreCase(text)) {
 			predefinedAnswer = "I can't hear you. Please speak louder.";
 		}
 
@@ -130,7 +130,7 @@ public class AnnotatedSentence extends Sentence implements ISentence{
 			predefinedAnswer = "<img src='http://tclhost.com/gEFAjgp.gif' />";
 		}
 
-		if (this.sentence.toLowerCase().startsWith("can you")) {
+		if (this.text.toLowerCase().startsWith("can you")) {
 			predefinedAnswer = "<img src='http://tclhost.com/YXRMgbt.gif'>";
 		}
 	}

@@ -53,14 +53,13 @@ public class RequestProcessor {
 		TIMING_LOG.logStart(this.getClass().getSimpleName());
 		
 		ExtendedRequest extendedRequest = new ExtendedRequest(request, response);
-		List<PossibleCall> possibleCalls = new ArrayList<>();
 
 		TIMING_LOG.logEnd(this.getClass().getSimpleName());
 		AnnotatedSentence sentence = new AnnotatedSentence(extendedRequest.getRequest().getCommand(), stanfordNLP);
 		TIMING_LOG.logStart(this.getClass().getSimpleName());
 
 		// Find possible Calls by keywords
-		addPossibleCallsWithKeywords(possibleCalls, sentence.getWords());
+		List<PossibleCall> possibleCalls = getPossibleCallsWithKeywords(sentence.getWords());
 
 		// Resolve parameters
 		resolveParameters(possibleCalls, sentence);
@@ -95,7 +94,8 @@ public class RequestProcessor {
 	 *            words to be matched with the keywords.
 	 * @return the extended list
 	 */
-	private List<PossibleCall> addPossibleCallsWithKeywords(List<PossibleCall> possibleCalls, List<String> words) {
+	private List<PossibleCall> getPossibleCallsWithKeywords(List<String> words) {
+		List<PossibleCall> possibleCalls = new ArrayList<>();
 
 		for (String word : words) {
 
@@ -191,6 +191,7 @@ public class RequestProcessor {
 					try {
 						IBaseType parameterValue = BaseTypeFactory
 								.fromType(EBaseType.fromClassName(parameter.getType()), data);
+						parameterValue.setParentSentence(sentence);
 						LOG.info("\n Parameter found via Name Entity Recognition: " + parameterValue.toJson());
 						TIMING_LOG.logStart(this.getClass().getSimpleName());
 						return parameterValue;
