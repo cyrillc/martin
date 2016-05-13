@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.java.plugin.boot.DefaultPluginsCollector;
-import org.java.plugin.registry.Extension.Parameter;
 
 import ch.zhaw.psit4.martin.api.MartinPlugin;
+import ch.zhaw.psit4.martin.api.util.Pair;
 import ch.zhaw.psit4.martin.api.validation.MartinAPITestResult;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
@@ -45,17 +45,7 @@ public interface IPluginLibrary {
      * 
      * @return A human readable string
      */
-    public String loadNewPlugin(final String extPointId);
-    
-    /**
-     * Loads a plugin via framework and returns the {@link MartinPlugin} interface
-     * 
-     * @param classLoader The framework classloader singleton.
-     * @param pluginClassName The java name of the class to load.
-     * @return The loaded class or null, if an error occurred
-     */
-    public MartinPlugin loadPlugin(ClassLoader classLoader, Parameter pluginClassName);
-    
+    public String loadNewPlugin(final String extPointId);    
     
     /**
      * Checks a plugin for validity.
@@ -98,5 +88,5 @@ public interface IPluginLibrary {
      */
     public List<MExampleCall> getRandomExampleCalls();
     
-    public Map<String, MartinPlugin> getPluginExtentions();
+    public Map<String, Pair<Boolean, MartinPlugin> > getPluginExtentions();
 }
