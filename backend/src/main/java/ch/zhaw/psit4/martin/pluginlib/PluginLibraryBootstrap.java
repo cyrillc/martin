@@ -93,6 +93,6 @@ public class PluginLibraryBootstrap {
         manager.publishPlugins(collector.collectPluginLocations().toArray(new PluginLocation[] {}));
 
         // finally retrieve the core plugin and start it up
-        return (IPluginLibrary) manager.getPlugin(MartinAPIDefines.EXTPOINT_ID.getValue());
+        return (IPluginLibrary) manager.getPlugin(MartinAPIDefines.CORE_PLUGIN_ID.getValue());
     }
 }
