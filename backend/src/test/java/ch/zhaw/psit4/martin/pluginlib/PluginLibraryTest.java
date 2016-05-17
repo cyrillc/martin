@@ -51,13 +51,15 @@ public class PluginLibraryTest {
         for (int i = 0; i < mockedRequests.length; i++) {
             // Create call mocks
         	MPlugin testPlugin = Mockito.mock(MPlugin.class);
-        	Mockito.when(testPlugin.getDescription()).thenReturn("TestModule");
+        	Mockito.when(testPlugin.getUuid()).thenReturn("TestModule");
+        	Mockito.when(testPlugin.getName()).thenReturn("TestModule");
         
         	MFunction testFunction = Mockito.mock(MFunction.class);
-        	Mockito.when(testFunction.getDescription()).thenReturn("testFeature");
+        	Mockito.when(testFunction.getName()).thenReturn("testFeature");
         	
             List<Call> calls = new ArrayList<Call>();
             Call mockedCall = Mockito.mock(Call.class);
+            //Mockito.when(mockedCall.)
             Mockito.when(mockedCall.getArguments()).thenReturn(null);
             Mockito.when(mockedCall.getFunction()).thenReturn(testFunction);
             Mockito.when(mockedCall.getPlugin()).thenReturn(testPlugin);
