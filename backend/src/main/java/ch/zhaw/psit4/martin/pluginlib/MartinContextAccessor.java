@@ -13,9 +13,9 @@ import ch.zhaw.psit4.martin.api.IMartinContext;
 /**
  * The MArtIn Context Access object hidden from MArtIn plugins.
  * 
- * This class handles communication of a plugin with the main application by
- * providing the application with an object, that MArtIn is aware of. This
- * implementation of the Context has full access rights to the queue.
+ * This class handles communication of a plugin with the main application by providing the
+ * application with an object, that MArtIn is aware of. This implementation of the Context has full
+ * access rights to the queue.
  *
  * @version 0.0.1-SNAPSHOT
  */
@@ -25,26 +25,32 @@ public class MartinContextAccessor implements IMartinContext {
      */
     private List<Feature> queue;
     /*
+     * The response list.
+     */
+    private List<String> responses;
+    /*
      * The id-counter of this class
      */
     private AtomicLong idCounter;
     /*
      * Log from the common logging api
      */
-    private static final Log LOG = LogFactory
-            .getLog(MartinContextAccessor.class);
+    private static final Log LOG = LogFactory.getLog(MartinContextAccessor.class);
 
     public MartinContextAccessor() {
-        queue = new LinkedList<Feature>();
+        queue = new LinkedList<>();
+        responses = new LinkedList<>();
         idCounter = new AtomicLong();
     }
 
-    /**
-     * Registers a {@link WorkItem} in the context.
+
+    /*
+     * (non-Javadoc)
      * 
-     * @param item
-     *            The {@link WorkItem} to register.
+     * @see
+     * ch.zhaw.psit4.martin.api.IMartinContext#registerWorkItem(ch.zhaw.psit4.martin.api.Feature)
      */
+    @Override
     public void registerWorkItem(Feature item) {
         try {
             item.setID(getnextID());
@@ -62,11 +68,10 @@ public class MartinContextAccessor implements IMartinContext {
     }
 
     /**
-     * Retrieves and removes the head of the {@link WorkItem} queue, or returns
-     * {@code null} if this queue is empty.
+     * Retrieves and removes the head of the {@link WorkItem} queue, or returns {@code null} if this
+     * queue is empty.
      * 
-     * @return the head of the {@link WorkItem} queue, or {@code null} if this
-     *         queue is empty
+     * @return the head of the {@link WorkItem} queue, or {@code null} if this queue is empty
      */
     public Feature fetchWorkItem(long requestID) {
         for (int i = 0; i < queue.size(); i++) {
@@ -75,11 +80,32 @@ public class MartinContextAccessor implements IMartinContext {
         }
         return null;
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see ch.zhaw.psit4.martin.api.IMartinContext#registerResponseMessage(java.lang.String)
+     */
+    @Override
+    public void registerResponseMessage(String response) {
+        responses.add(response);
+    }
     
+    /**
+    * Clears the response list.
+    */
+   public void clearResponseList() {
+       responses.clear();
+   }
+
+   public int getNumberOfResponses() {
+       return responses.size();
+   }
+
     public int getNumberOfFeatures() {
         return queue.size();
     }
-    
+
     private long getnextID() {
         return idCounter.getAndIncrement();
     }

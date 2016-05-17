@@ -24,8 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.java.plugin.registry.Extension.Parameter;
 
 import ch.zhaw.psit4.martin.api.Feature;
-import ch.zhaw.psit4.martin.api.IMartinContext;
+import ch.zhaw.psit4.martin.api.MartinAPIDefines;
 import ch.zhaw.psit4.martin.api.MartinPlugin;
+import ch.zhaw.psit4.martin.api.util.Pair;
 import ch.zhaw.psit4.martin.common.Call;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
@@ -52,7 +53,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     /*
      * List of all the plugins currently registered
      */
-    private Map<String, MartinPlugin> pluginExtentions;
+    private Map<String, Pair<Boolean, MartinPlugin> > pluginExtentions;
     /*
      * Log from the common logging api
      */
@@ -114,7 +115,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     @Override
     public void startLibrary() {
         // Get plugins
-        loadAllPlugins(IMartinContext.EXTPOINT_ID);
+        loadAllPlugins(MartinAPIDefines.EXTPOINT_ID.getValue());
         LOG.info("Plugin library booted, " + pluginExtentions.size() + " plugins loaded.");
     }
 
@@ -132,7 +133,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 manager.getRegistry().getExtensionPoint(this.getDescriptor().getId(), extPointId);
         
         pluginExtentions = new HashMap<>();
-        fetchPlugins(pluginExtentions, manager, extPoint);
+        fetchPlugins(pluginExtentions, extPoint);
     }
     
     /*
@@ -160,58 +161,10 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         ExtensionPoint extPoint =
                 manager.getRegistry().getExtensionPoint(this.getDescriptor().getId(), extPointId);
 
-        returnVal = fetchPlugins(pluginExtentions, manager, extPoint);
+        returnVal = fetchPlugins(pluginExtentions, extPoint);
         return returnVal;
     }
     
-    
-    /**
-     * Fetch plugins an store them in a given map.
-     * @param plugins The {@link Map} to store the plugins in.
-     * @param manager The plugin manager
-     * @param extPoint The extension point object to use.
-     * @return
-     */
-    protected String fetchPlugins(Map<String, MartinPlugin> plugins, PluginManager manager, ExtensionPoint extPoint) {
-        String returnVal = null;
-        // iterate through found plugins
-        for (Extension extension : extPoint.getConnectedExtensions()) {
-            PluginDescriptor extensionDescriptor = extension.getDeclaringPluginDescriptor();
-            try {
-                manager.activatePlugin(extensionDescriptor.getId());
-            } catch (PluginLifecycleException e) {
-                LOG.error("An Error occured while activating plugin.", e);
-                continue;
-            }
-            ClassLoader classLoader = manager.getPluginClassLoader(extensionDescriptor);
-
-            // parameter access + storage
-            Parameter pluginClassName = extension.getParameter("class");
-            String uuid = extension.getId();
-
-            // plugin loading
-            MartinPlugin pluginInstance = loadPlugin(classLoader, pluginClassName);
-            if (pluginInstance == null)
-                continue;
-            if (!isValidPlugin(pluginInstance, MartinAPITestResult.WARNING))
-                continue;
-
-            LOG.info("Plugin \"" + pluginClassName.valueAsString() + "\" is valid.");
-
-            // update DB and memory
-            try {
-                pluginDataAccessor.savePluginInDB(extension, classLoader);
-                plugins.put(uuid, pluginInstance);
-            } catch (FunctionsJSONMissingException e) {
-                returnVal = "Plugin could not be loaded.";
-                LOG.warn(returnVal, e);
-            }
-            
-            returnVal = "Plugin started.";
-        }
-        return returnVal;
-    }
-
     /**
      * Filters the list of given {@link PluginLocation} elements for already connected
      * {@link Extension} elements.
@@ -219,7 +172,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @param locations The modifiable collection of Locations.
      * @param extPointId The id of the {@link ExtensionPoint} of the {@link PluginLibrary}
      */
-    private void filterExistingPlugins(Collection<PluginLocation> locations,
+    protected void filterExistingPlugins(Collection<PluginLocation> locations,
             final String extPointId) {
         // copy locations to iterte
         Collection<PluginLocation> tempLocations = new HashSet<>(locations.size());
@@ -244,6 +197,104 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             }
         }
     }
+    
+    
+    /**
+     * Fetch plugins an store them in a given map.
+     * @param plugins The {@link Map} to store the plugins in.
+     * @param manager The plugin manager
+     * @param extPoint The extension point object to use.
+     * @return
+     */
+    protected String fetchPlugins(Map<String, Pair<Boolean, MartinPlugin> > plugins, ExtensionPoint extPoint) {
+        String returnVal = null;
+        // iterate through found plugins
+        for (Extension extension : extPoint.getConnectedExtensions()) {
+            // plugin activation
+            ClassLoader classLoader = jpfActivation(extension);
+            if(classLoader == null) {
+                returnVal = "Plugin could not be activated.";
+                LOG.warn(returnVal);
+                continue;
+            }
+
+            // parameter access + storage
+            Parameter pluginClassName = extension.getParameter("class");
+            String uuid = extension.getId();
+
+            // plugin loading
+            MartinPlugin pluginInstance = loadPlugin(classLoader, pluginClassName);
+            if (pluginInstance == null) {
+                returnVal = "Plugin " + pluginClassName.valueAsString() + " could not be loaded.";
+                LOG.warn(returnVal);
+                jpfDeactivation(extension);
+                continue;
+            }
+            
+            // plugin validation
+            if (!isValidPlugin(pluginInstance, MartinAPITestResult.WARNING)) {
+                returnVal = "Plugin " + pluginClassName.valueAsString() + " is not valid.";
+                LOG.warn(returnVal);
+                jpfDeactivation(extension);
+                continue;
+            }
+
+            LOG.info("Plugin " + pluginClassName.valueAsString() + " is valid.");
+
+            // update DB and memory
+            try {
+                pluginDataAccessor.savePluginInDB(extension, classLoader);
+            } catch (FunctionsJSONMissingException e) {
+                returnVal = "Plugin could not be loaded.";
+                LOG.warn(returnVal, e);
+                jpfDeactivation(extension);
+                continue;
+            }
+            
+            // try to activate plugin
+            try {
+                pluginInstance.activate(martinContextAccessor);
+            } catch (Exception e) {
+                returnVal = "Plugin " + pluginClassName.valueAsString() + " activation failed.";
+                LOG.warn(returnVal, e);
+                jpfDeactivation(extension);
+                continue;
+            }
+            
+            plugins.put(uuid, new Pair<Boolean, MartinPlugin>(new Boolean(true), pluginInstance));
+            returnVal = "Plugin started.";
+        }
+        return returnVal;
+    }
+    
+    /**
+     * Activates a plugin via JPF
+     * @param extension The plugin extension point
+     * @return The resulting class loader.
+     */
+    protected ClassLoader jpfActivation(Extension extension) {
+        PluginManager manager = this.getManager();
+        PluginDescriptor extensionDescriptor = extension.getDeclaringPluginDescriptor();
+        try {
+            manager.activatePlugin(extensionDescriptor.getId());
+        } catch (PluginLifecycleException e) {
+            LOG.error("An Error occured while activating plugin.", e);
+            return null;
+        }
+        return manager.getPluginClassLoader(extensionDescriptor);
+    }
+    
+    /**
+     * Deactivates and disables a plugin via JPF
+     * @param extension The plugin extension point
+     * @return The resulting class loader.
+     */
+    protected void jpfDeactivation(Extension extension) {
+        PluginManager manager = this.getManager();
+        PluginDescriptor extensionDescriptor = extension.getDeclaringPluginDescriptor();
+        manager.deactivatePlugin(extensionDescriptor.getId());
+        manager.disablePlugin(extensionDescriptor);
+    }
 
     /**
      * Loads a plugin via framework and returns the {@link MartinPlugin} interface
@@ -253,7 +304,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @return The loaded class or null, if an error occurred
      */
     @SuppressWarnings("unchecked")
-    public MartinPlugin loadPlugin(ClassLoader classLoader, Parameter pluginClassName) {
+    protected MartinPlugin loadPlugin(ClassLoader classLoader, Parameter pluginClassName) {
         MartinPlugin pluginInstance = null;
         Class<MartinPlugin> pluginClass = null;
         try {
@@ -289,8 +340,6 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         if (!result)
             return result;
 
-        // check the features
-        // TODO: needs DB connecttion
         return result;
     }
 
@@ -307,16 +356,20 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         Call call = req.getCalls().get(0);
         String pluginID = call.getPlugin().getUuid();
         String functionName = call.getFunction().getName();
-        MartinPlugin service = pluginExtentions.get(pluginID);
+        MartinPlugin service = pluginExtentions.get(pluginID).second;
 
         // if service exists, execute call
-
         if (service != null) {
-            service.init(martinContextAccessor, functionName, 0);
+            try {
+                service.initializeRequest(functionName, 0);
+            } catch (Exception e) {
+                LOG.error("Plugin request initialization failed.", e);
+                req.getResponse().setResponseText("I'm sorry but I can't answer that.");
+            }
             req.getResponse().setResponseText(executeCall(call, 0));
         } else {
             LOG.error("Could not find a plugin that matches request call.");
-            req.getResponse().setResponseText("ERROR: no plugin found!");
+            req.getResponse().setResponseText("I'm sorry but I don't know what that means.");
         }
         
         TIMING_LOG.logEnd(this.getClass().getSimpleName());
@@ -338,7 +391,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         TIMING_LOG.logStart(call.getPlugin().getName());
         while (feature != null) {
             try {
-                feature.start(call.getArguments());
+                feature.initialize(call.getArguments());
             } catch (Exception e) {
                 LOG.error("Could not start plugin feature.", e);
                 ret = "I'm sorry, I can not understand you.";
@@ -346,22 +399,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             }
 
             try {
-                feature.run();
+                ret = feature.execute();
             } catch (Exception e) {
                 LOG.error("Could not run plugin feature.", e);
-                ret = "I'm sorry, I can not understand you.";
-                break;
-            }
-
-            try {
-                String stopValue = feature.stop();
-                if (stopValue == null || stopValue.isEmpty()) {
-                    ret = "I'm sorry, I can not understand you.";
-                } else {
-                    ret = stopValue;
-                }
-            } catch (Exception e) {
-                LOG.error("Could not stop plugin feature.", e);
                 ret = "I'm sorry, I can not understand you.";
                 break;
             }
@@ -378,7 +418,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
     @Override
     public List<PluginInformation> getPluginInformation() {
         Iterable<ch.zhaw.psit4.martin.models.MPlugin> pluginList = pluginRepository.findAll();
-        List<PluginInformation> pluginInformationList = new ArrayList<PluginInformation>();
+        List<PluginInformation> pluginInformationList = new ArrayList<>();
         for (ch.zhaw.psit4.martin.models.MPlugin plugin : pluginList) {
             pluginInformationList.add(new PluginInformation(plugin.getName(),
                     plugin.getDescription(), plugin.getFunctions()));
@@ -402,11 +442,12 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
         return exampleCallRepository.findAll();
     }
 
-    public Map<String, MartinPlugin> getPluginExtentions() {
+    @Override
+    public Map<String, Pair<Boolean, MartinPlugin> > getPluginExtentions() {
         return pluginExtentions;
     }
 
-    public void setPluginExtentions(Map<String, MartinPlugin> pluginExtentions) {
+    public void setPluginExtentions(Map<String, Pair<Boolean, MartinPlugin> > pluginExtentions) {
         this.pluginExtentions = pluginExtentions;
     }
 }

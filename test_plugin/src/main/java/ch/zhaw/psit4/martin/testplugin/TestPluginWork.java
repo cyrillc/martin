@@ -17,7 +17,7 @@ public class TestPluginWork extends Feature{
     private static String MY_NAME = "Martin";
     
     @Override
-    public void start(Map<String, IBaseType> args) throws Exception {
+    public void initialize(Map<String, IBaseType> args) throws Exception {
         person1 = (MPerson)args.get("name1");
         
         if(args.get("name2") != null){
@@ -26,13 +26,7 @@ public class TestPluginWork extends Feature{
     }
 
     @Override
-    public void run() throws Exception {
-        // Do nothing
-        
-    }
-
-    @Override
-    public String stop() throws Exception {
+    public String execute() throws Exception {
     	if(person1 == null || person2 == null){
     		if(person1 != null && !person1.toString().equalsIgnoreCase(MY_NAME)){
     			return "Who is " + person1.toString() + "?";

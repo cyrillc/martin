@@ -61,6 +61,15 @@ public class MartinPluginValidator {
                     + ".");
             return MartinAPITestResult.ERROR;
         }
+        result = isActivatedCorrectly();
+        if (!result) {
+            return MartinAPITestResult.ERROR;
+        }
+        context.clearWorkList();
+        result = isInitializedCorrectly();
+        if (!result) {
+            return MartinAPITestResult.ERROR;
+        }
         result = checkRequestIDAssigned();
         if (!result) {
             LOG.warn("No feature objects created by " + MartinPlugin.class.toString() + ".");
@@ -77,6 +86,34 @@ public class MartinPluginValidator {
     private boolean isMartinPlugin() {
         return instance instanceof MartinPlugin;
     }
+    
+    /**
+     * Try to activate a the {@link MartinPlugin} instance.
+     * @return true or false on a thrown Exception.
+     */
+    private boolean isActivatedCorrectly() {
+        try {
+            ((MartinPlugin) instance).activate(context);
+        } catch (Exception e) {
+            LOG.error(className.toString() + " cannot be activated.", e);
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Try to initialize a request in the {@link MartinPlugin} instance.
+     * @return true or false on a thrown Exception.
+     */
+    private boolean isInitializedCorrectly() {
+        try {
+            ((MartinPlugin) instance).initializeRequest("null", 0);
+        } catch (Exception e) {
+            LOG.error(className.toString() + ": Request cannot be initialized.", e);
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Checks if the {@link MartinPlugin} instance registers any Features in the queue.
@@ -84,9 +121,7 @@ public class MartinPluginValidator {
      * @return true or false;
      */
     private boolean checkRequestIDAssigned() {
-        boolean assigned = false;
-        context.clearWorkList();
-        ((MartinPlugin) instance).init(context, "null", 0);
+        boolean assigned = false;        
         if (context.getNumberOfFeatures() > 0)
             assigned = true;
         context.clearWorkList();
@@ -106,9 +141,14 @@ public class MartinPluginValidator {
          * the work list.
          */
         private List<Feature> queue;
+        /*
+         * The response list.
+         */
+        private List<String> responses;
 
         public MartinContextAccessorMock() {
-            queue = new LinkedList<Feature>();
+            this.queue = new LinkedList<>();
+            this.responses = new LinkedList<>();
         }
 
         /**
@@ -134,6 +174,11 @@ public class MartinPluginValidator {
 
         public int getNumberOfFeatures() {
             return queue.size();
+        }
+
+        @Override
+        public void registerResponseMessage(String response) {
+            responses.add(response);
         }
     }
 
