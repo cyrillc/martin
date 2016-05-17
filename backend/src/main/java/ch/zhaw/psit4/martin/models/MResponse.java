@@ -19,10 +19,11 @@ import ch.zhaw.psit4.martin.timing.TimingInfo;
 @Table(name = "response")
 public class MResponse extends BaseModel {
 
+    @Transient
     private List<MOutput> responses;
 
     public void setResponseList(List<MOutput> responseList) {
-        this.responses = responses;
+        this.responses = responseList;
     }
 
     @Transient
@@ -33,6 +34,9 @@ public class MResponse extends BaseModel {
 
     public MResponse(List<MOutput> responseList) {
         this.responses = responseList;
+    }
+    public MResponse(String text) {
+        setSingleResponse(MOutputType.TEXT, text);
     }
 
     public List<MOutput> getResponseText() {
