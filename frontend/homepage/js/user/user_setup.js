@@ -178,7 +178,7 @@ var getPreviousCommand = function (location) {
 var registerOnServerEvent = function (url) {
 	var source = new EventSource(url);
 		source.onmessage = function(event){
-			alert(event.data);
+			console.log(event.data); 
 		}
 } 
 

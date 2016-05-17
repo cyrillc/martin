@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
-import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.MartinAPIDefines;
+import ch.zhaw.psit4.martin.api.types.output.MOutput;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
@@ -81,14 +81,17 @@ public class FrontendController {
         if (!timed) {
             response.setTimingInfo(null);
         }
-
+        return response;
+    }
+    
+    
+    public void sendOutputToConnectedClients(List<MOutput> outputs) {
         if(!emitters.isEmpty()){
             ListIterator<SseEmitter> iter = emitters.listIterator();
             while(iter.hasNext()){
                 SseEmitter sseEmitter = iter.next();
                 try {
-
-                    sseEmitter.send("HOHOHO IT WORKS",MediaType.APPLICATION_JSON_UTF8);
+                    sseEmitter.send(outputs,MediaType.APPLICATION_JSON_UTF8);
                 } catch (IOException e) {
                     sseEmitter.complete();
                     iter.remove();
@@ -96,8 +99,6 @@ public class FrontendController {
                 }
             }
         }
-
-        return response;
     }
 
     /**

@@ -17,6 +17,7 @@ import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
+import ch.zhaw.psit4.martin.frontend.FrontendController;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
 
@@ -42,6 +43,8 @@ public class AIControllerFacade {
 	@Autowired
 	private RequestProcessor requestProcessor;
 
+	   @Autowired
+	    private FrontendController frontend;
 	@PostConstruct
 	public void postAIControllerFacade() {
 		// does nothing. Is it needed b'cause of beans.xml?
@@ -100,6 +103,7 @@ public class AIControllerFacade {
 		historyItemRepository.save(new MHistoryItem(extendedRequest.getRequest(), extendedRequest.getResponse()));
 
 		TIMING_LOG.logEnd(this.getClass().getSimpleName());
+		//frontend.sendOutputToConnectedClients(extendedRequest.getResponse().getResponses());
 		return extendedRequest.getResponse();
 	}
 
