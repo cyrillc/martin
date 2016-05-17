@@ -14,6 +14,7 @@ import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
+import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.models.*;
@@ -87,13 +88,13 @@ public class AIControllerFacade {
 		TIMING_LOG.logStart(this.getClass().getSimpleName());
 
 		if (extendedRequest.getSentence().getPredefinedAnswer() != null) {
-			extendedRequest.getResponse().setResponseText(extendedRequest.getSentence().getPredefinedAnswer());
+			extendedRequest.getResponse().setSingleResponse(MOutputType.TEXT, extendedRequest.getSentence().getPredefinedAnswer());
 		} else if (extendedRequest.getCalls().size() > 0) {
 			TIMING_LOG.logEnd(this.getClass().getSimpleName());
 			extendedRequest.setResponse(pluginLibrary.executeRequest(extendedRequest));
 			TIMING_LOG.logStart(this.getClass().getSimpleName());
 		} else {
-			extendedRequest.getResponse().setResponseText("Sorry, I can't understand you.");
+			extendedRequest.getResponse().setSingleResponse(MOutputType.TEXT,"Sorry, I can't understand you.");
 		}
 
 		historyItemRepository.save(new MHistoryItem(extendedRequest.getRequest(), extendedRequest.getResponse()));

@@ -1,8 +1,12 @@
 package ch.zhaw.psit4.martin.api;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import ch.zhaw.psit4.martin.api.types.IBaseType;
+import ch.zhaw.psit4.martin.api.types.output.MOutput;
+import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 
 /**
  * Work object used by {@link IMartinContext} with callbacks.
@@ -82,8 +86,10 @@ public class Feature {
      * 
      * @throws Exception An excpetion occured during work.
      */
-    public String execute() throws Exception {
+    public List<MOutput> execute() throws Exception {
         // nothing to do
-        return "Nothing to do.";
+        ArrayList<MOutput> ret = new ArrayList<>();
+        ret.add(new MOutput(MOutputType.TEXT, "Nothing to do."));
+        return ret;
     }
 }

@@ -19,5 +19,8 @@ public class MOutput {
     }
 
 
+    public String toJSON() {
+        return "{"+type+":"+value+"}";
+    }
 
 }
