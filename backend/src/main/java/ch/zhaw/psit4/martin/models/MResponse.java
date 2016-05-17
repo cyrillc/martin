@@ -1,5 +1,6 @@
 package ch.zhaw.psit4.martin.models;
 
+import java.time.chrono.JapaneseChronology;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,11 +12,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import ch.zhaw.psit4.martin.api.types.output.MOutput;
 import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 import ch.zhaw.psit4.martin.common.MartinHelper;
 import ch.zhaw.psit4.martin.timing.TimingInfo;
-
+import java.lang.reflect.Type;
 
 @Entity
 @Table(name = "response")
@@ -84,17 +88,16 @@ public class MResponse extends BaseModel {
     @Column(name = "responsetext")
     @Access(AccessType.PROPERTY)
      String getResponseText() {
-        StringBuilder pStringBuilder = new StringBuilder();
-        pStringBuilder.append("{");
-        responses.stream().forEach(r -> pStringBuilder.append(r.toJSON() + ","));
-        pStringBuilder.deleteCharAt(pStringBuilder.length() - 1);
-        pStringBuilder.append("}");
-        return pStringBuilder.toString();
+        Gson gson = new Gson();
+        return gson.toJson(responses);
+
     }
 
 
      void setResponseText(String jsonText) {
-        // this.responses = MartinHelper.responseListFromJSON(jsonText);
+         Gson gson = new Gson();
+         Type listType = new TypeToken<ArrayList<MOutput>>(){}.getType();
+         responses = gson.fromJson(jsonText,listType);
     }
 
     public void setSingleResponse(MOutputType type, String text) {

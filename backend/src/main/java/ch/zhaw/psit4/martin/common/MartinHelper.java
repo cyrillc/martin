@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -75,11 +76,4 @@ public class MartinHelper {
         return json;
     }
 
-    public static List<MOutput> responseListFromJSON(String jsonText) {
-        List<MOutput> list = new ArrayList<>();
-       
-        JSONObject json  = new JSONObject(jsonText);
-        
-        return list;
-    }
 }
