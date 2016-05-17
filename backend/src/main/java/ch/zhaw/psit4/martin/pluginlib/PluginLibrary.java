@@ -399,7 +399,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
             }
 
             try {
-                feature.execute();
+                ret = feature.execute();
             } catch (Exception e) {
                 LOG.error("Could not run plugin feature.", e);
                 ret = "I'm sorry, I can not understand you.";
