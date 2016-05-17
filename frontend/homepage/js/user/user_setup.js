@@ -151,7 +151,10 @@ $(document).ready(function () {
             .always(function () {
                 $('.history-loading').hide();
             });
+		registerOnServerEvent(createRequestURL(frontendUrl,backendPort,"serverOutput"));
     });
+	
+	
 
 });
 
@@ -170,3 +173,21 @@ var getPreviousCommand = function (location) {
     var selector = '#historyItems > tbody > tr:nth-child(' + location + ') > td:nth-child(2)';
     $('#commandInput').val($(selector).html());
 }
+
+
+var registerOnServerEvent = function (url) {
+	var source = new EventSource(url);
+		source.onmessage = function(event){
+			alert(event.data);
+		}
+} 
+
+
+
+
+
+
+
+
+
+

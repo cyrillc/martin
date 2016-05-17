@@ -17,13 +17,19 @@ import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginInstaller;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -37,57 +43,72 @@ public class FrontendController {
 
     @Autowired
     private AIControllerFacade aiController;
-    
+
     @Autowired
     private PluginInstaller pluginInstaller;
-    
+
     @Autowired
     private IPluginLibrary pluginlib;
-    
+
+    private List<SseEmitter> emitters = new ArrayList<>();
+
+
     private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
 
 
     /**
-     * Returns the answer to a command to the Frontend. When a request to the
-     * API at /command comes in, the method querys the AI controller to get an
-     * answer for the command. It then returns that answer to the origin of the
-     * request.
+     * Returns the answer to a command to the Frontend. When a request to the API at /command comes
+     * in, the method querys the AI controller to get an answer for the command. It then returns
+     * that answer to the origin of the request.
      *
      * @param command
      * @return the response of the AI
      */
-    @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
+            "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping("/command")
 
-    public MResponse launchCommand(
-            @RequestParam(value = "command") String command,
+    public MResponse launchCommand(@RequestParam(value = "command") String command,
             @RequestParam(value = "timed", required = false) boolean timed) {
-    	
-    	TIMING_LOG.startLogging();
-    	
+
+        TIMING_LOG.startLogging();
+
         MRequest request = new MRequest(command, timed);
         MResponse response = aiController.elaborateRequest(request);
-        
+
         response.setTimingInfo(TIMING_LOG.stopLogging());
-        
-        if(!timed){
-        	response.setTimingInfo(null);
+
+        if (!timed) {
+            response.setTimingInfo(null);
         }
-        
+
+        if(!emitters.isEmpty()){
+            ListIterator<SseEmitter> iter = emitters.listIterator();
+            while(iter.hasNext()){
+                SseEmitter sseEmitter = iter.next();
+                try {
+
+                    sseEmitter.send("HOHOHO IT WORKS",MediaType.APPLICATION_JSON_UTF8);
+                } catch (IOException e) {
+                    sseEmitter.complete();
+                    iter.remove();
+                    e.printStackTrace();
+                }
+            }
+        }
+
         return response;
     }
 
     /**
-     * Returns a list of example commands to the frontend. When a request to the
-     * API at /exampleCommands comes in (usually on page load), the method
-     * querys the AI controller to get a list of possible commands. It then
-     * returns that list to the origin of the request.
+     * Returns a list of example commands to the frontend. When a request to the API at
+     * /exampleCommands comes in (usually on page load), the method querys the AI controller to get
+     * a list of possible commands. It then returns that list to the origin of the request.
      *
      * @return A list of possible commands
      */
-    @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
+            "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping("/exampleCommands")
     public List<MExampleCall> sendExampleCommands() {
         return aiController.getRandomExampleCalls();
@@ -95,11 +116,10 @@ public class FrontendController {
 
     /**
      * 
-     * @return A list of HistoryItems, with all user Requests and relative
-     *         Responses.
+     * @return A list of HistoryItems, with all user Requests and relative Responses.
      */
-    @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
+            "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping("/history")
 
     public List<MHistoryItem> getHistory(@RequestParam(value = "amount") int amount) {
@@ -107,15 +127,14 @@ public class FrontendController {
     }
 
     /**
-     * Returns the information all MArtIn plugins to the Frontend. When a
-     * request to the API at /pluginList comes in, the method querys the AI
-     * controller to get an answer for the command. It then returns that answer
-     * to the origin of the request.
+     * Returns the information all MArtIn plugins to the Frontend. When a request to the API at
+     * /pluginList comes in, the method querys the AI controller to get an answer for the command.
+     * It then returns that answer to the origin of the request.
      *
      * @return the information all MArtIn plugins
      */
-    @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
+            "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping("/pluginList")
     public List<PluginInformation> getPluginList() {
         return aiController.getPluginInformation();
@@ -126,16 +145,27 @@ public class FrontendController {
      * @return saves the uploaded file from the frontend
      * @throws FileUploadException
      */
-    @CrossOrigin(origins = { "http://localhost:4141",
-            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
+            "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping(method = RequestMethod.POST, value = "/plugin/install")
     public String installPlugin(@RequestParam("name") String name,
-            @RequestParam("file") MultipartFile file,
-            RedirectAttributes redirectAttributes) throws FileUploadException {
-        
+            @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes)
+            throws FileUploadException {
+
         String response = pluginInstaller.installPlugin(name, file) + "<br>";
         response += pluginlib.loadNewPlugin(MartinAPIDefines.EXTPOINT_ID.getValue());
         return response;
+    }
+
+    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
+    "http://srv-lab-t-825.zhaw.ch:4141"})
+    @RequestMapping("/serverOutput")
+    public SseEmitter getRealtimeMessageAction(HttpServletRequest request) throws IOException {
+        SseEmitter emitter = new SseEmitter(1000000L);
+        emitters.add(emitter);
+        emitter.send("Welcome to the MArtIn Output Stream");
+        emitter.onCompletion(() -> emitters.remove(emitter));
+        return emitter;
     }
 
 }
