@@ -16,6 +16,7 @@ import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 import edu.stanford.nlp.util.CoreMap;
 
@@ -30,22 +31,33 @@ public class AnnotatedSentence extends Sentence implements ISentence{
 	private static final String UNKNOWN_NER_TAG = "O";
 
 
-	private StanfordCoreNLPClient textAnalyzer;
+	public AnnotationPipeline annotationPipeline;
+	private Annotation annotation;
 
 	List<Phrase> phrasesPopState;
 	boolean popStateDirty;
 
 	String predefinedAnswer;
+	
+	public AnnotatedSentence(){
+		super(null);
+	}
 
-	public AnnotatedSentence(String sentence, StanfordCoreNLPClient textAnalyzer) {
+	public AnnotatedSentence(String sentence, AnnotationPipeline annotationPipeline) {
 		super(sentence);
 		
 		TIMING_LOG.logStart("Text analyzation");
-		this.textAnalyzer = textAnalyzer;
+		this.annotationPipeline = annotationPipeline;
+		this.annotate();
 		this.generatePhrases();
 		this.generadePredefinedAnswer();
 		this.resetPopState();
 		TIMING_LOG.logEnd("Text analyzation");
+	}
+	
+	public void annotate(){
+		annotation = new Annotation(text);
+		annotationPipeline.annotate(annotation);
 	}
 
 	/**
@@ -57,11 +69,8 @@ public class AnnotatedSentence extends Sentence implements ISentence{
 	 * entities that require normalization, e.g., dates, are normalized to
 	 * NormalizedNamedEntityTagAnnotation.
 	 */
-	private void generatePhrases() {
-		Annotation document = new Annotation(text);
-		textAnalyzer.annotate(document);
-
-		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+	public void generatePhrases() {
+		List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
 		StringBuilder sb = new StringBuilder();
 
 		for (CoreMap sentence : sentences) {
@@ -120,7 +129,7 @@ public class AnnotatedSentence extends Sentence implements ISentence{
 	/**
 	 * Generates predefined answers, that can be used for static stentences.
 	 */
-	private void generadePredefinedAnswer() {
+	public void generadePredefinedAnswer() {
 		if ("".equalsIgnoreCase(text)) {
 			predefinedAnswer = "I can't hear you. Please speak louder.";
 		}
@@ -138,6 +147,14 @@ public class AnnotatedSentence extends Sentence implements ISentence{
 	
 	public String getPredefinedAnswer() {
 		return predefinedAnswer;
+	}
+	
+	public Annotation getAnnotation() {
+		return annotation;
+	}
+
+	public void setAnnotation(Annotation annotation) {
+		this.annotation = annotation;
 	}
 
 }

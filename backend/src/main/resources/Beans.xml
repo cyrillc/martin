@@ -100,7 +100,7 @@
 	<bean id="NaturalLanguageAnalysisUtilities"
 		class="ch.zhaw.psit4.martin.language.analyis.NaturalLanguageAnalysisUtilities">
 	</bean>
-	<bean id="StanfordCoreNLPClient" class="edu.stanford.nlp.pipeline.StanfordCoreNLPClient"
+	<bean id="AnnotationPipeline" class="edu.stanford.nlp.pipeline.AnnotationPipeline"
 		factory-bean="NaturalLanguageAnalysisUtilities" factory-method="bootStanfordNLPClient">
 	</bean>
 </beans>

@@ -2,8 +2,13 @@ package ch.zhaw.psit4.martin.language.analyis;
 
 import java.util.Properties;
 
+import edu.stanford.nlp.pipeline.AnnotationPipeline;
+import edu.stanford.nlp.pipeline.POSTaggerAnnotator;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
+import edu.stanford.nlp.pipeline.TokenizerAnnotator;
+import edu.stanford.nlp.pipeline.WordsToSentencesAnnotator;
+import edu.stanford.nlp.time.TimeAnnotator;
 
 /**
  * This Class holds some Utilities for analyzing natural language to help
@@ -24,11 +29,11 @@ public class NaturalLanguageAnalysisUtilities {
 	 * 
 	 * @return A usable Stanford NLP pipline.
 	 */
-	public StanfordCoreNLP bootStanfordNLP() {
+	public AnnotationPipeline bootStanfordNLP() {
 		// creates a StanfordCoreNLP object, with POS tagging, lemmatization,
 		// NER, parsing, and coreference resolution
 		Properties props = new Properties();
-		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
+		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
 		
 		return new StanfordCoreNLP(props);
 	}
@@ -44,13 +49,13 @@ public class NaturalLanguageAnalysisUtilities {
 	 * 
 	 * @return A usable Stanford NLP pipline.
 	 */
-	public StanfordCoreNLPClient bootStanfordNLPClient() {
+	public AnnotationPipeline bootStanfordNLPClient() {
 		// creates a StanfordCoreNLP object, with POS tagging, lemmatization,
 		// NER, parsing, and coreference resolution
 		Properties props = new Properties();
 		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
-	
 		return new StanfordCoreNLPClient(props, CORENLP_SERVER, CORENLP_PORT, CORENLP_MAX_THREADS);
+
 	}
 
 }

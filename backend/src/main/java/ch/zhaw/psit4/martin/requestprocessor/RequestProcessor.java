@@ -20,7 +20,7 @@ import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
-import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
+import edu.stanford.nlp.pipeline.AnnotationPipeline;
 
 /**
  * This class is responible for extending a request to a computer readable
@@ -35,7 +35,7 @@ public class RequestProcessor {
 	private MKeywordRepository keywordRepository;
 
 	@Autowired
-	private StanfordCoreNLPClient stanfordNLP;
+	private AnnotationPipeline annotationPipeline;
 
 	private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
 	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
@@ -55,7 +55,7 @@ public class RequestProcessor {
 		ExtendedRequest extendedRequest = new ExtendedRequest(request, response);
 
 		TIMING_LOG.logEnd(this.getClass().getSimpleName());
-		AnnotatedSentence sentence = new AnnotatedSentence(extendedRequest.getRequest().getCommand(), stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence(extendedRequest.getRequest().getCommand(), annotationPipeline);
 		TIMING_LOG.logStart(this.getClass().getSimpleName());
 
 		// Find possible Calls by keywords
@@ -190,8 +190,7 @@ public class RequestProcessor {
 					TIMING_LOG.logEnd(this.getClass().getSimpleName());
 					try {
 						IBaseType parameterValue = BaseTypeFactory
-								.fromType(EBaseType.fromClassName(parameter.getType()), data);
-						parameterValue.setParentSentence(sentence);
+								.fromType(EBaseType.fromClassName(parameter.getType()), data, sentence);
 						LOG.info("\n Parameter found via Name Entity Recognition: " + parameterValue.toJson());
 						TIMING_LOG.logStart(this.getClass().getSimpleName());
 						return parameterValue;
