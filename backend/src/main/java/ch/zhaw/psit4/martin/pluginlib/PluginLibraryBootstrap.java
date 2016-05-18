@@ -14,7 +14,7 @@ import org.java.plugin.boot.DefaultPluginsCollector;
 import org.java.plugin.util.ExtendedProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ch.zhaw.psit4.martin.api.IMartinContext;
+import ch.zhaw.psit4.martin.api.MartinAPIDefines;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginFolderAccessor;
 
 /**
@@ -93,6 +93,6 @@ public class PluginLibraryBootstrap {
         manager.publishPlugins(collector.collectPluginLocations().toArray(new PluginLocation[] {}));
 
         // finally retrieve the core plugin and start it up
-        return (IPluginLibrary) manager.getPlugin(IMartinContext.CORE_PLUGIN_ID);
+        return (IPluginLibrary) manager.getPlugin(MartinAPIDefines.CORE_PLUGIN_ID.getValue());
     }
 }

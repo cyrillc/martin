@@ -14,7 +14,6 @@ public class WeatherWork extends Feature {
 
 	WeatherService weatherService;
 	private String city;
-	private String response;
 	private Double latitude;
 	private Double longitude;
 	private DateTime dateTime;
@@ -25,7 +24,7 @@ public class WeatherWork extends Feature {
 	}
 
 	@Override
-	public void start(Map<String, IBaseType> args) throws Exception {
+	public void initialize(Map<String, IBaseType> args) throws Exception {
 		MLocation location = (MLocation) args.get("city");
 
 		this.city = location.toString();
@@ -46,7 +45,8 @@ public class WeatherWork extends Feature {
 	}
 
 	@Override
-	public void run() throws Exception {
+	public String execute() throws Exception {
+	    String response = null;
 		if(this.dateTime == null){
 			response = weatherService.getWeatherAtCity(this.city);
 		} else {
@@ -57,10 +57,6 @@ public class WeatherWork extends Feature {
 		if (response == null) {
 			response = "No weather info found for " + city;
 		}
-	}
-
-	@Override
-	public String stop() throws Exception {
 		return response;
 	}
 
