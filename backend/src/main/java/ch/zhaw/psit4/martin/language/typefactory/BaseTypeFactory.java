@@ -3,7 +3,6 @@ package ch.zhaw.psit4.martin.language.typefactory;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.api.types.IBaseType;
 import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
-import ch.zhaw.psit4.martin.api.language.parts.ISentence;
 import ch.zhaw.psit4.martin.api.types.BaseTypeInstanciationException;
 
 public class BaseTypeFactory {

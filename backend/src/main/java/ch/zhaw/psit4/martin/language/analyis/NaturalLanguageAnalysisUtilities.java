@@ -3,12 +3,8 @@ package ch.zhaw.psit4.martin.language.analyis;
 import java.util.Properties;
 
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
-import edu.stanford.nlp.pipeline.POSTaggerAnnotator;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
-import edu.stanford.nlp.pipeline.TokenizerAnnotator;
-import edu.stanford.nlp.pipeline.WordsToSentencesAnnotator;
-import edu.stanford.nlp.time.TimeAnnotator;
 
 /**
  * This Class holds some Utilities for analyzing natural language to help
