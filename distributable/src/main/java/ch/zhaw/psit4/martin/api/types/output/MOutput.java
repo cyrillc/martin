@@ -20,7 +20,7 @@ public class MOutput {
 
 
     public String toJSON() {
-        return "{"+type+":"+value+"}";
+        return "\"" + type + "\":\"" + value + "\"";
     }
 
 }

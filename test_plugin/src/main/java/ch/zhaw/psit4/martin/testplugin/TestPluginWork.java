@@ -31,6 +31,9 @@ public class TestPluginWork extends Feature {
 
     @Override
     public List<MOutput> execute() throws Exception {
+        testOutputQueue();
+        
+        
         List<MOutput> ret = new ArrayList<>();
         if (person1 == null || person2 == null) {
             if (person1 != null && !person1.toString().equalsIgnoreCase(MY_NAME)) {
@@ -49,6 +52,22 @@ public class TestPluginWork extends Feature {
             ret.add(createOutputText("Hello " + person1 + " and " + person2 + "!"));
         }
         return ret;
+    }
+
+    private void testOutputQueue() {
+        List<MOutput> ret1 = new ArrayList<>();
+        List<MOutput> ret2 = new ArrayList<>();
+        List<MOutput> ret3 = new ArrayList<>();
+        
+        ret1.add(createOutputText("Hello 1"));
+        ret1.add(createOutputText("Hello 2"));
+        ret2.add(createOutputText("Hello 3"));
+        ret3.add(createOutputText("Hello 4"));
+        ret1.add(createOutputText("Hello 5"));
+
+        TestPlugin.context.addToOutputQueue(ret1);
+        TestPlugin.context.addToOutputQueue(ret2);
+        TestPlugin.context.addToOutputQueue(ret3);
     }
 
     private MOutput createOutputText(String text) {
