@@ -1,0 +1,11 @@
+<div class="martin-statement">
+	<div class="request">
+		{{ request.command }}
+	</div>
+
+	<div class="response">
+		{% for response in response.responses %}
+			{% include "outputTypes/" + response.type + ".html" %}
+		{% endfor %}
+	</div>
+</div>

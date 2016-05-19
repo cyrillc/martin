@@ -8,13 +8,18 @@ MartinResponseRenderer.prototype.renderResponse = function (martinStatement) {
         return;
     }
 
-    var martinCommand = $('<p class="martin-command"></p>');
+
+    console.log(martinStatement);
+
+    /*var martinCommand = $('<p class="martin-command"></p>');
     var martinResponse = $('<p class="martin-response"></p>');
     martinCommand.append(martinStatement.request.command);
     martinResponse.append(martinStatement.response.responseText);
-    $("#martin-responses").prepend(martinResponse).prepend(martinCommand);
+    $("#martin-responses").prepend(martinResponse).prepend(martinCommand); */
 
-
+    nunjucks.configure("/views")
+    var martinStatement_html = nunjucks.render("martin-statement.html", {request: martinStatement.request, response: martinStatement.response});
+    $("#martin-responses").prepend(martinStatement_html);
 
 };
 
