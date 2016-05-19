@@ -1,11 +1,12 @@
-package ch.zhaw.psit4.martin.common;
+package ch.zhaw.psit4.martin.language.analyis;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import ch.zhaw.psit4.martin.api.language.parts.ISentence;
+import ch.zhaw.psit4.martin.api.language.parts.Phrase;
+import ch.zhaw.psit4.martin.api.language.parts.Sentence;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
@@ -15,7 +16,7 @@ import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
+import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.util.CoreMap;
 
 /**
@@ -24,23 +25,38 @@ import edu.stanford.nlp.util.CoreMap;
  * subject and a predicate containing a finite verb
  *
  */
-public class Sentence {
+public class AnnotatedSentence extends Sentence implements ISentence{
 	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
 	private static final String UNKNOWN_NER_TAG = "O";
 
-	private String rawSentence;
 
-	private StanfordCoreNLPClient textAnalyzer;
+	public AnnotationPipeline annotationPipeline;
+	private Annotation annotation;
 
-	List<Phrase> phrases = new ArrayList<>();
+	List<Phrase> phrasesPopState;
+	boolean popStateDirty;
 
 	String predefinedAnswer;
+	
+	public AnnotatedSentence(){
+		super(null);
+	}
 
-	public Sentence(String sentence, StanfordCoreNLPClient textAnalyzer) {
-		this.rawSentence = sentence;
-		this.textAnalyzer = textAnalyzer;
-		this.generateNamedEntityRecognitionTokens();
+	public AnnotatedSentence(String sentence, AnnotationPipeline annotationPipeline) {
+		super(sentence);
+		
+		TIMING_LOG.logStart("Text analyzation");
+		this.annotationPipeline = annotationPipeline;
+		this.annotate();
+		this.generatePhrases();
 		this.generadePredefinedAnswer();
+		this.resetPopState();
+		TIMING_LOG.logEnd("Text analyzation");
+	}
+	
+	public void annotate(){
+		annotation = new Annotation(text);
+		annotationPipeline.annotate(annotation);
 	}
 
 	/**
@@ -52,12 +68,8 @@ public class Sentence {
 	 * entities that require normalization, e.g., dates, are normalized to
 	 * NormalizedNamedEntityTagAnnotation.
 	 */
-	private void generateNamedEntityRecognitionTokens() {
-		TIMING_LOG.logStart("Text analyzation");
-		Annotation document = new Annotation(rawSentence);
-		textAnalyzer.annotate(document);
-
-		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+	public void generatePhrases() {
+		List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
 		StringBuilder sb = new StringBuilder();
 
 		for (CoreMap sentence : sentences) {
@@ -80,30 +92,18 @@ public class Sentence {
 			phrases.add(new Phrase(currentNerToken, sb.toString()));
 
 		}
-
-		TIMING_LOG.logEnd("Text analyzation");
+	}
+	
+	public void resetPopState(){
+		phrasesPopState = new ArrayList<>(phrases);
+		popStateDirty = false;
+	}
+	
+	public boolean isPopStateDirty(){
+		return popStateDirty;
 	}
 
-	/**
-	 * Removes one element of type (LOCATION, PERSON, ORGANIZATION, ...) from
-	 * the internal list and returns it.
-	 * 
-	 * @param type
-	 *            Type (PERSON, LOCATION, ORGANIZATION, MISC, MONEY, NUMBER,
-	 *            ORDINAL, PERCENT, DATE, TIME, DURATION, SET)
-	 * @return a phrese with the chosen type
-	 */
-	public Phrase popPhraseOfNERTag(String NERTag) {
-		Optional<Phrase> token = phrases.stream().filter(o -> o.getType().getNerTag().equals(NERTag)).findFirst();
-
-		if (token.isPresent()) {
-			phrases.remove(phrases.indexOf(token.get()));
-			return token.get();
-		} else {
-			return null;
-		}
-	}
-
+	
 	/**
 	 * Removes one element of type IMartinType from the internal list and
 	 * returns it.
@@ -113,10 +113,12 @@ public class Sentence {
 	 * @return a phrese with the chosen type
 	 */
 	public Phrase popPhraseOfType(EBaseType type) {
-		Optional<Phrase> token = phrases.stream().filter(o -> o.getType().equals(type)).findFirst();
+		popStateDirty = true;
+		
+		Optional<Phrase> token = phrasesPopState.stream().filter(o -> o.getType().equals(type)).findFirst();
 
 		if (token.isPresent()) {
-			phrases.remove(phrases.indexOf(token.get()));
+			phrasesPopState.remove(phrasesPopState.indexOf(token.get()));
 			return token.get();
 		} else {
 			return new Phrase("", "");
@@ -126,8 +128,8 @@ public class Sentence {
 	/**
 	 * Generates predefined answers, that can be used for static stentences.
 	 */
-	private void generadePredefinedAnswer() {
-		if ("".equalsIgnoreCase(rawSentence)) {
+	public void generadePredefinedAnswer() {
+		if ("".equalsIgnoreCase(text)) {
 			predefinedAnswer = "I can't hear you. Please speak louder.";
 		}
 
@@ -136,37 +138,22 @@ public class Sentence {
 			predefinedAnswer = "<img src='http://tclhost.com/gEFAjgp.gif' />";
 		}
 
-		if (this.rawSentence.toLowerCase().startsWith("can you")) {
+		if (this.text.toLowerCase().startsWith("can you")) {
 			predefinedAnswer = "<img src='http://tclhost.com/YXRMgbt.gif'>";
 		}
 	}
 
-	/**
-	 * Gets all phrases with a chosen IMartionType
-	 * 
-	 * @param iMartinType
-	 *            full IMartinType classname as String (with package)
-	 * @return a list of chosen phrases
-	 */
-	public List<Phrase> getPhrasesOfType(EBaseType iMartinType) {
-		return phrases.stream().filter(o -> o.getType().equals(iMartinType)).collect(Collectors.<Phrase> toList());
-	}
-
-	public List<Phrase> getPhrases() {
-		return phrases;
-	}
-
-	public String getRawSentence() {
-		return rawSentence;
-	}
-
-	public List<String> getWords() {
-		return new ArrayList<>(
-				Arrays.asList(rawSentence.toLowerCase().replaceAll("[^a-zA-Z0-9- äöüÄÖÜ]", "").split(" ")));
-	}
-
+	
 	public String getPredefinedAnswer() {
 		return predefinedAnswer;
+	}
+	
+	public Annotation getAnnotation() {
+		return annotation;
+	}
+
+	public void setAnnotation(Annotation annotation) {
+		this.annotation = annotation;
 	}
 
 }

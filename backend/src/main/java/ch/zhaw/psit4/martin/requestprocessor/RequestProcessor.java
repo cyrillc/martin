@@ -8,19 +8,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ch.zhaw.psit4.martin.api.typefactory.BaseTypeFactory;
+import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.api.types.IBaseType;
 import ch.zhaw.psit4.martin.api.types.BaseTypeInstanciationException;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
-import ch.zhaw.psit4.martin.common.Sentence;
+import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
+import ch.zhaw.psit4.martin.language.typefactory.BaseTypeFactory;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
-import ch.zhaw.psit4.martin.common.Phrase;
-import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
+import edu.stanford.nlp.pipeline.AnnotationPipeline;
 
 /**
  * This class is responible for extending a request to a computer readable
@@ -35,7 +35,7 @@ public class RequestProcessor {
 	private MKeywordRepository keywordRepository;
 
 	@Autowired
-	private StanfordCoreNLPClient stanfordNLP;
+	private AnnotationPipeline annotationPipeline;
 
 	private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
 	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
@@ -53,14 +53,13 @@ public class RequestProcessor {
 		TIMING_LOG.logStart(this.getClass().getSimpleName());
 		
 		ExtendedRequest extendedRequest = new ExtendedRequest(request, response);
-		List<PossibleCall> possibleCalls = new ArrayList<>();
 
 		TIMING_LOG.logEnd(this.getClass().getSimpleName());
-		Sentence sentence = new Sentence(extendedRequest.getRequest().getCommand(), stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence(extendedRequest.getRequest().getCommand(), annotationPipeline);
 		TIMING_LOG.logStart(this.getClass().getSimpleName());
 
 		// Find possible Calls by keywords
-		addPossibleCallsWithKeywords(possibleCalls, sentence.getWords());
+		List<PossibleCall> possibleCalls = getPossibleCallsWithKeywords(sentence.getWords());
 
 		// Resolve parameters
 		resolveParameters(possibleCalls, sentence);
@@ -95,7 +94,8 @@ public class RequestProcessor {
 	 *            words to be matched with the keywords.
 	 * @return the extended list
 	 */
-	private List<PossibleCall> addPossibleCallsWithKeywords(List<PossibleCall> possibleCalls, List<String> words) {
+	private List<PossibleCall> getPossibleCallsWithKeywords(List<String> words) {
+		List<PossibleCall> possibleCalls = new ArrayList<>();
 
 		for (String word : words) {
 
@@ -143,7 +143,7 @@ public class RequestProcessor {
 	 * @return A list of PossibleResults with their corresponding parameters
 	 *         filled as good as possible
 	 */
-	public List<PossibleCall> resolveParameters(List<PossibleCall> possibleCalls, Sentence sentence) {
+	public List<PossibleCall> resolveParameters(List<PossibleCall> possibleCalls, AnnotatedSentence sentence) {
 		for (PossibleCall possibleCall : possibleCalls) {
 			MFunction function = possibleCall.getFunction();
 
@@ -157,10 +157,11 @@ public class RequestProcessor {
 		return possibleCalls;
 	}
 
-	public IBaseType getParameterValue(MParameter parameter, Sentence sentence) {
+	public IBaseType getParameterValue(MParameter parameter, AnnotatedSentence sentence) {
 		try {
 
 			Integer possibilitiesLeft;
+			
 			do {
 				// Perform Name Entity Recognition
 				String data = "";
@@ -189,7 +190,7 @@ public class RequestProcessor {
 					TIMING_LOG.logEnd(this.getClass().getSimpleName());
 					try {
 						IBaseType parameterValue = BaseTypeFactory
-								.fromType(EBaseType.fromClassName(parameter.getType()), data);
+								.fromType(EBaseType.fromClassName(parameter.getType()), data, sentence);
 						LOG.info("\n Parameter found via Name Entity Recognition: " + parameterValue.toJson());
 						TIMING_LOG.logStart(this.getClass().getSimpleName());
 						return parameterValue;

@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.api.typefactory;
+package ch.zhaw.psit4.martin.language.typefactory;
 
 import java.util.Optional;
 

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
 import ch.zhaw.psit4.martin.models.MRequest;
 import ch.zhaw.psit4.martin.models.MResponse;
 
@@ -38,7 +39,7 @@ public class ExtendedRequest {
 	/**
 	 * Parsed and analyzed sentence for further analysis.
 	 */
-	private Sentence sentence;
+	private AnnotatedSentence sentence;
 	
 
 	public ExtendedRequest(MRequest request, MResponse response) {
@@ -76,11 +77,11 @@ public class ExtendedRequest {
 		return this.calls;
 	}
 	
-	public Sentence getSentence(){
+	public AnnotatedSentence getSentence(){
 		return this.sentence;
 	}
 	
-	public void setSentence(Sentence sentence){
+	public void setSentence(AnnotatedSentence sentence){
 		this.sentence = sentence;
 	}
 	

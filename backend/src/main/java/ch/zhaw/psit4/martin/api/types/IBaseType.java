@@ -1,7 +1,11 @@
 package ch.zhaw.psit4.martin.api.types;
 
 import java.lang.reflect.Constructor;
+import java.util.Optional;
+
 import org.json.JSONObject;
+
+import ch.zhaw.psit4.martin.api.language.parts.ISentence;
 
 /**
  * Distributed generic Type for MArtIn objects.
@@ -60,4 +64,8 @@ public interface IBaseType {
 			throw new BaseTypeInstanciationException(e);
 		}
 	}
+	
+	public Optional<ISentence> getParentSentence();
+
+	public void setParentSentence(ISentence parentSentence);
 }

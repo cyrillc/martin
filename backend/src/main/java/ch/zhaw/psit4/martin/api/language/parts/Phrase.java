@@ -1,4 +1,4 @@
-package ch.zhaw.psit4.martin.common;
+package ch.zhaw.psit4.martin.api.language.parts;
 
 import ch.zhaw.psit4.martin.api.types.EBaseType;
 
@@ -35,6 +35,11 @@ public class Phrase {
 
 	public String getValue() {
 		return value;
+	}
+	
+	@Override
+	public String toString(){
+		return type.toString() + ": " + value;
 	}
 
 }
