@@ -3,6 +3,7 @@ package ch.zhaw.psit4.martin.language.analyis;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import ch.zhaw.psit4.martin.api.language.parts.ISentence;
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
@@ -15,9 +16,16 @@ import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
+import edu.stanford.nlp.trees.EnglishGrammaticalRelations;
+import edu.stanford.nlp.trees.GrammaticalRelation;
+import edu.stanford.nlp.trees.UniversalEnglishGrammaticalRelations;
 import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.util.Pair;
 
 /**
  * This class represents a sequence of words capable of standing alone to make
@@ -25,135 +33,148 @@ import edu.stanford.nlp.util.CoreMap;
  * subject and a predicate containing a finite verb
  *
  */
-public class AnnotatedSentence extends Sentence implements ISentence{
-	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
-	private static final String UNKNOWN_NER_TAG = "O";
+public class AnnotatedSentence extends Sentence implements ISentence {
+    private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory
+            .getInstance();
+    private static final String UNKNOWN_NER_TAG = "O";
 
+    public AnnotationPipeline annotationPipeline;
+    private Annotation annotation;
 
-	public AnnotationPipeline annotationPipeline;
-	private Annotation annotation;
+    List<Phrase> phrasesPopState;
+    boolean popStateDirty;
+    List<SemanticGraph> semanticGraphs;
 
-	List<Phrase> phrasesPopState;
-	boolean popStateDirty;
+    String predefinedAnswer;
 
-	String predefinedAnswer;
-	
-	public AnnotatedSentence(){
-		super(null);
-	}
+    public AnnotatedSentence() {
+        super(null);
+    }
 
-	public AnnotatedSentence(String sentence, AnnotationPipeline annotationPipeline) {
-		super(sentence);
-		
-		TIMING_LOG.logStart("Text analyzation");
-		this.annotationPipeline = annotationPipeline;
-		this.annotate();
-		this.generatePhrases();
-		this.generadePredefinedAnswer();
-		this.resetPopState();
-		TIMING_LOG.logEnd("Text analyzation");
-	}
-	
-	public void annotate(){
-		annotation = new Annotation(text);
-		annotationPipeline.annotate(annotation);
-	}
+    public AnnotatedSentence(String sentence,
+            AnnotationPipeline annotationPipeline) {
+        super(sentence);
 
-	/**
-	 * Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC), numerical
-	 * (MONEY, NUMBER, ORDINAL, PERCENT), and temporal (DATE, TIME, DURATION,
-	 * SET) entities. Named entities are recognized using a combination of three
-	 * CRF sequence taggers trained on various corpora, such as ACE and MUC.
-	 * Numerical entities are recognized using a rule-based system. Numerical
-	 * entities that require normalization, e.g., dates, are normalized to
-	 * NormalizedNamedEntityTagAnnotation.
-	 */
-	public void generatePhrases() {
-		List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
-		StringBuilder sb = new StringBuilder();
+        TIMING_LOG.logStart("Text analyzation");
+        this.annotationPipeline = annotationPipeline;
+        this.annotate();
+        this.generatePhrasesAndSemanticGraph();
+        this.generadePredefinedAnswer();
+        this.resetPopState();
+        TIMING_LOG.logEnd("Text analyzation");
+    }
 
-		for (CoreMap sentence : sentences) {
-			String previousNerToken = UNKNOWN_NER_TAG;
-			String currentNerToken = UNKNOWN_NER_TAG;
+    public void annotate() {
+        annotation = new Annotation(text);
+        annotationPipeline.annotate(annotation);
+    }
 
-			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
-				previousNerToken = currentNerToken;
-				currentNerToken = token.get(NamedEntityTagAnnotation.class);
-				String word = token.get(TextAnnotation.class);
+    /**
+     * Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC), numerical
+     * (MONEY, NUMBER, ORDINAL, PERCENT), and temporal (DATE, TIME, DURATION,
+     * SET) entities. Named entities are recognized using a combination of three
+     * CRF sequence taggers trained on various corpora, such as ACE and MUC.
+     * Numerical entities are recognized using a rule-based system. Numerical
+     * entities that require normalization, e.g., dates, are normalized to
+     * NormalizedNamedEntityTagAnnotation.
+     */
+    public void generatePhrasesAndSemanticGraph() {
+        List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
 
-				if (previousNerToken.equals(currentNerToken)) {
-					sb.append(" " + word);
-				} else {
-					phrases.add(new Phrase(previousNerToken, sb.toString()));
-					sb.setLength(0);
-					sb.append(word);
-				}
-			}
-			phrases.add(new Phrase(currentNerToken, sb.toString()));
+        for (CoreMap sentence : sentences) {
 
-		}
-	}
-	
-	public void resetPopState(){
-		phrasesPopState = new ArrayList<>(phrases);
-		popStateDirty = false;
-	}
-	
-	public boolean isPopStateDirty(){
-		return popStateDirty;
-	}
+            generateSentencePhrases(sentence.get(TokensAnnotation.class));
+            SemanticGraph dependencies = sentence
+                    .get(CollapsedCCProcessedDependenciesAnnotation.class);
+            semanticGraphs.add(dependencies);
 
-	
-	/**
-	 * Removes one element of type IMartinType from the internal list and
-	 * returns it.
-	 * 
-	 * @param type
-	 *            full IMartinType classname as String (with package)
-	 * @return a phrese with the chosen type
-	 */
-	public Phrase popPhraseOfType(EBaseType type) {
-		popStateDirty = true;
-		
-		Optional<Phrase> token = phrasesPopState.stream().filter(o -> o.getType().equals(type)).findFirst();
+        }
 
-		if (token.isPresent()) {
-			phrasesPopState.remove(phrasesPopState.indexOf(token.get()));
-			return token.get();
-		} else {
-			return new Phrase("", "");
-		}
-	}
+    }
 
-	/**
-	 * Generates predefined answers, that can be used for static stentences.
-	 */
-	public void generadePredefinedAnswer() {
-		if ("".equalsIgnoreCase(text)) {
-			predefinedAnswer = "I can't hear you. Please speak louder.";
-		}
+    public void generateSentencePhrases(List<CoreLabel> tokens) {
 
-		if ((this.getWords().contains("unit") && this.getWords().contains("tests"))
-				|| this.getWords().contains("unittests")) {
-			predefinedAnswer = "<img src='http://tclhost.com/gEFAjgp.gif' />";
-		}
+        StringBuilder sb = new StringBuilder();
 
-		if (this.text.toLowerCase().startsWith("can you")) {
-			predefinedAnswer = "<img src='http://tclhost.com/YXRMgbt.gif'>";
-		}
-	}
+        String previousNerToken = UNKNOWN_NER_TAG;
+        String currentNerToken = UNKNOWN_NER_TAG;
 
-	
-	public String getPredefinedAnswer() {
-		return predefinedAnswer;
-	}
-	
-	public Annotation getAnnotation() {
-		return annotation;
-	}
+        for (CoreLabel token : tokens) {
+            previousNerToken = currentNerToken;
+            currentNerToken = token.get(NamedEntityTagAnnotation.class);
+            String word = token.get(TextAnnotation.class);
 
-	public void setAnnotation(Annotation annotation) {
-		this.annotation = annotation;
-	}
+            if (previousNerToken.equals(currentNerToken)) {
+                sb.append(" " + word);
+            } else {
+                phrases.add(new Phrase(previousNerToken, sb.toString()));
+                sb.setLength(0);
+                sb.append(word);
+            }
+        }
+        phrases.add(new Phrase(currentNerToken, sb.toString()));
+    }
+
+    public void resetPopState() {
+        phrasesPopState = new ArrayList<>(phrases);
+        popStateDirty = false;
+    }
+
+    public boolean isPopStateDirty() {
+        return popStateDirty;
+    }
+
+    /**
+     * Removes one element of type IMartinType from the internal list and
+     * returns it.
+     * 
+     * @param type
+     *            full IMartinType classname as String (with package)
+     * @return a phrese with the chosen type
+     */
+    public Phrase popPhraseOfType(EBaseType type) {
+        popStateDirty = true;
+
+        Optional<Phrase> token = phrasesPopState.stream()
+                .filter(o -> o.getType().equals(type)).findFirst();
+
+        if (token.isPresent()) {
+            phrasesPopState.remove(phrasesPopState.indexOf(token.get()));
+            return token.get();
+        } else {
+            return new Phrase("", "");
+        }
+    }
+
+    /**
+     * Generates predefined answers, that can be used for static stentences.
+     */
+    public void generadePredefinedAnswer() {
+        if ("".equalsIgnoreCase(text)) {
+            predefinedAnswer = "I can't hear you. Please speak louder.";
+        }
+
+        if ((this.getWords().contains("unit")
+                && this.getWords().contains("tests"))
+                || this.getWords().contains("unittests")) {
+            predefinedAnswer = "<img src='http://tclhost.com/gEFAjgp.gif' />";
+        }
+
+        if (this.text.toLowerCase().startsWith("can you")) {
+            predefinedAnswer = "<img src='http://tclhost.com/YXRMgbt.gif'>";
+        }
+    }
+
+    public String getPredefinedAnswer() {
+        return predefinedAnswer;
+    }
+
+    public Annotation getAnnotation() {
+        return annotation;
+    }
+
+    public void setAnnotation(Annotation annotation) {
+        this.annotation = annotation;
+    }
 
 }
