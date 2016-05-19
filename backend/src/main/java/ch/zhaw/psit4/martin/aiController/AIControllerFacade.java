@@ -30,107 +30,116 @@ import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
  *
  */
 public class AIControllerFacade {
-	@SuppressWarnings("unused")
-	private static final Log LOG = LogFactory.getLog(AIControllerFacade.class);
-	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
+    @SuppressWarnings("unused")
+    private static final Log LOG = LogFactory.getLog(AIControllerFacade.class);
+    private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory
+            .getInstance();
 
-	@Autowired
-	private IPluginLibrary pluginLibrary;
+    @Autowired
+    private IPluginLibrary pluginLibrary;
 
-	@Autowired
-	private MHistoryItemRepository historyItemRepository;
+    @Autowired
+    private MHistoryItemRepository historyItemRepository;
 
-	@Autowired
-	private RequestProcessor requestProcessor;
+    @Autowired
+    private RequestProcessor requestProcessor;
 
-	   @Autowired
-	    private FrontendController frontend;
-	@PostConstruct
-	public void postAIControllerFacade() {
-		// does nothing. Is it needed b'cause of beans.xml?
-	}
+    @Autowired
+    private FrontendController frontend;
 
-	/**
-	 * Returns a list of example calls from the plugin library. Is usually only
-	 * called from the frontend controller when the user first loads the MArtIn
-	 * frontend.
-	 * 
-	 * @return a list of example calls
-	 */
+    @PostConstruct
+    public void postAIControllerFacade() {
+        // does nothing. Is it needed b'cause of beans.xml?
+    }
 
-	public List<MExampleCall> getExampleCalls() {
-		return pluginLibrary.getExampleCalls();
-	}
+    /**
+     * Returns a list of example calls from the plugin library. Is usually only
+     * called from the frontend controller when the user first loads the MArtIn
+     * frontend.
+     * 
+     * @return a list of example calls
+     */
 
-	/**
-	 * 
-	 * @return A list of the newest History
-	 *
-	 * @param amount
-	 *            the amount of historyItems to get
-	 */
-	public List<MExampleCall> getRandomExampleCalls() {
-		return pluginLibrary.getRandomExampleCalls();
-	}
+    public List<MExampleCall> getExampleCalls() {
+        return pluginLibrary.getExampleCalls();
+    }
 
-	/**
-	 * This method respond to a request with a response. Try to understand what
-	 * it requested and elaborate an appropiate response for the request.
-	 * 
-	 * @param request
-	 *            Request containing a string command
-	 * @return the response of the AI.
-	 */
-	public MResponse elaborateRequest(MRequest request) {
-		TIMING_LOG.logStart(this.getClass().getSimpleName());
-		
-		MResponse response = new MResponse();
+    /**
+     * 
+     * @return A list of the newest History
+     *
+     * @param amount
+     *            the amount of historyItems to get
+     */
+    public List<MExampleCall> getRandomExampleCalls() {
+        return pluginLibrary.getRandomExampleCalls();
+    }
 
-		TIMING_LOG.logEnd(this.getClass().getSimpleName());
-		ExtendedRequest extendedRequest = requestProcessor.extend(request, response);
-		TIMING_LOG.logStart(this.getClass().getSimpleName());
+    /**
+     * This method respond to a request with a response. Try to understand what
+     * it requested and elaborate an appropiate response for the request.
+     * 
+     * @param request
+     *            Request containing a string command
+     * @return the response of the AI.
+     */
+    public MResponse elaborateRequest(MRequest request) {
+        TIMING_LOG.logStart(this.getClass().getSimpleName());
 
-		if (extendedRequest.getSentence().getPredefinedAnswer() != null) {
-			extendedRequest.getResponse().setSingleResponse(MOutputType.TEXT, extendedRequest.getSentence().getPredefinedAnswer());
-		} else if (extendedRequest.getCalls().size() > 0) {
-			TIMING_LOG.logEnd(this.getClass().getSimpleName());
-			extendedRequest.setResponse(pluginLibrary.executeRequest(extendedRequest));
-			TIMING_LOG.logStart(this.getClass().getSimpleName());
-		} else {
-			extendedRequest.getResponse().setSingleResponse(MOutputType.TEXT,"Sorry, I can't understand you.");
-		}
+        MResponse response = new MResponse();
 
-		historyItemRepository.save(new MHistoryItem(extendedRequest.getRequest(), extendedRequest.getResponse()));
+        TIMING_LOG.logEnd(this.getClass().getSimpleName());
+        ExtendedRequest extendedRequest = requestProcessor.extend(request,
+                response);
+        TIMING_LOG.logStart(this.getClass().getSimpleName());
 
-		TIMING_LOG.logEnd(this.getClass().getSimpleName());
-		//frontend.sendOutputToConnectedClients(extendedRequest.getResponse().getResponses());
-		return extendedRequest.getResponse();
-	}
+        if (extendedRequest.getSentence().getPredefinedAnswer() != null) {
+            extendedRequest.getResponse().setSingleResponse(MOutputType.TEXT,
+                    extendedRequest.getSentence().getPredefinedAnswer());
+        } else if (extendedRequest.getCalls().size() > 0) {
+            TIMING_LOG.logEnd(this.getClass().getSimpleName());
+            extendedRequest
+                    .setResponse(pluginLibrary.executeRequest(extendedRequest));
+            TIMING_LOG.logStart(this.getClass().getSimpleName());
+        } else {
+            extendedRequest.getResponse().setSingleResponse(MOutputType.TEXT,
+                    "Sorry, I can't understand you.");
+        }
 
-	/**
-	 * 
-	 * @return all the history of requests with the relative responses
-	 */
-	public List<MHistoryItem> getHistory() {
-		return historyItemRepository.findAll();
-	}
+        historyItemRepository.save(new MHistoryItem(
+                extendedRequest.getRequest(), extendedRequest.getResponse()));
 
-	/**
-	 * 
-	 * @return A list of the newest History
-	 *
-	 * @param amount
-	 *            the amount of historyItems to get
-	 */
-	public List<MHistoryItem> getLimitedHistory(int amount) {
-		List<MHistoryItem> list = historyItemRepository.getLimitedHistory(new PageRequest(0, amount));
-		List<MHistoryItem> shallowCopy = list.subList(0, list.size());
-		Collections.reverse(shallowCopy);
-		return shallowCopy;
-	}
+        TIMING_LOG.logEnd(this.getClass().getSimpleName());
+        frontend.sendOutputToConnectedClients(
+                extendedRequest.getResponse().getResponses());
+        return extendedRequest.getResponse();
+    }
 
-	public List<PluginInformation> getPluginInformation() {
-		return pluginLibrary.getPluginInformation();
-	}
+    /**
+     * 
+     * @return all the history of requests with the relative responses
+     */
+    public List<MHistoryItem> getHistory() {
+        return historyItemRepository.findAll();
+    }
+
+    /**
+     * 
+     * @return A list of the newest History
+     *
+     * @param amount
+     *            the amount of historyItems to get
+     */
+    public List<MHistoryItem> getLimitedHistory(int amount) {
+        List<MHistoryItem> list = historyItemRepository
+                .getLimitedHistory(new PageRequest(0, amount));
+        List<MHistoryItem> shallowCopy = list.subList(0, list.size());
+        Collections.reverse(shallowCopy);
+        return shallowCopy;
+    }
+
+    public List<PluginInformation> getPluginInformation() {
+        return pluginLibrary.getPluginInformation();
+    }
 
 }

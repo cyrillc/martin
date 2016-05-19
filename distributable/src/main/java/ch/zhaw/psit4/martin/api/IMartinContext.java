@@ -1,5 +1,9 @@
 package ch.zhaw.psit4.martin.api;
 
+import java.util.List;
+
+import ch.zhaw.psit4.martin.api.types.output.MOutput;
+
 /**
  * The MArtIn Context provided to MArtIn Plugins.
  * 
@@ -23,4 +27,12 @@ public interface IMartinContext {
      * @param response The response to register.
      */
     public void registerResponseMessage(String response);
+    
+    
+    /**
+     * Adds an output to the queue to be send to clients.
+     * 
+     * @param output The list of outputs to send
+     */
+    public void addToOutputQueue(List<MOutput> output);
 }

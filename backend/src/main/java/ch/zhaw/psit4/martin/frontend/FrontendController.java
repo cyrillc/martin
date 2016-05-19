@@ -1,5 +1,7 @@
 package ch.zhaw.psit4.martin.frontend;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +42,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RestController
 @MultipartConfig(fileSizeThreshold = 52428800) // upload Max 50MB
 public class FrontendController {
+    
+    private static final Log LOG = LogFactory.getLog(FrontendController.class);
 
     @Autowired
     private AIControllerFacade aiController;
@@ -49,6 +53,8 @@ public class FrontendController {
 
     @Autowired
     private IPluginLibrary pluginlib;
+    
+    
 
     private List<SseEmitter> emitters = new ArrayList<>();
 
@@ -95,7 +101,7 @@ public class FrontendController {
                 } catch (IOException e) {
                     sseEmitter.complete();
                     iter.remove();
-                    e.printStackTrace();
+                    LOG.info("Failed to send ServerSentEvent");
                 }
             }
         }
