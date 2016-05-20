@@ -20,6 +20,7 @@ import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.BasicDependenciesAnnotation;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
 import edu.stanford.nlp.trees.EnglishGrammaticalRelations;
 import edu.stanford.nlp.trees.GrammaticalRelation;
@@ -85,7 +86,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 
             generateSentencePhrases(sentence.get(TokensAnnotation.class));
             SemanticGraph dependencies = sentence
-                    .get(CollapsedCCProcessedDependenciesAnnotation.class);
+                    .get(BasicDependenciesAnnotation.class);
             semanticGraphs.add(dependencies);
 
         }
@@ -176,5 +177,15 @@ public class AnnotatedSentence extends Sentence implements ISentence {
     public void setAnnotation(Annotation annotation) {
         this.annotation = annotation;
     }
+
+    public List<SemanticGraph> getSemanticGraphs() {
+        return semanticGraphs;
+    }
+
+    public void setSemanticGraphs(List<SemanticGraph> semanticGraphs) {
+        this.semanticGraphs = semanticGraphs;
+    }
+    
+    
 
 }
