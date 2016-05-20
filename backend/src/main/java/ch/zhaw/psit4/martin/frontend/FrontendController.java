@@ -126,6 +126,7 @@ public class FrontendController {
                     sseEmitter.complete();
                     iter.remove();
                     LOG.info("Failed to send ServerSentEvent");
+                    LOG.info(e);
                 }
             }
         }

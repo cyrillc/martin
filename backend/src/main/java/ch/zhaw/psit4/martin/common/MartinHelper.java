@@ -6,9 +6,6 @@ import java.net.URL;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
@@ -17,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ch.zhaw.psit4.martin.api.types.output.MOutput;
 import ch.zhaw.psit4.martin.pluginlib.filesystem.FunctionsJSONMissingException;
 import edu.stanford.nlp.util.ArraySet;
 

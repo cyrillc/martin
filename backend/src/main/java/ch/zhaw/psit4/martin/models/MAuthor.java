@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ch.zhaw.psit4.martin.models.MPlugin;
 
 /**
@@ -22,6 +24,7 @@ public class MAuthor extends BaseModel {
 	private String name;
 	private String email;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
 	private Set<MPlugin> plugins;
 

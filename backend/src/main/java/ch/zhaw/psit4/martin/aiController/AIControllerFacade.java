@@ -1,6 +1,5 @@
 package ch.zhaw.psit4.martin.aiController;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -14,17 +13,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import ch.zhaw.psit4.martin.api.types.output.MOutputType;
+import ch.zhaw.psit4.martin.common.ExtendedRequest;
+import ch.zhaw.psit4.martin.common.PluginInformation;
+import ch.zhaw.psit4.martin.frontend.FrontendController;
+import ch.zhaw.psit4.martin.models.MExampleCall;
+import ch.zhaw.psit4.martin.models.MHistoryItem;
+import ch.zhaw.psit4.martin.models.MRequest;
+import ch.zhaw.psit4.martin.models.MResponse;
+import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 import ch.zhaw.psit4.martin.timing.TimingInfo;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
-import ch.zhaw.psit4.martin.api.types.output.MOutputType;
-import ch.zhaw.psit4.martin.common.ExtendedRequest;
-import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.frontend.FrontendController;
-import ch.zhaw.psit4.martin.models.*;
-import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
 
 /**
  * This class represents the AIControllerFacade The class follows the Facade

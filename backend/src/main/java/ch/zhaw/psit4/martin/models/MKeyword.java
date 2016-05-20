@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ch.zhaw.psit4.martin.common.MartinHelper;
 
 /**
@@ -21,9 +23,11 @@ public class MKeyword extends BaseModel {
 	private String keyword;
 
 	// mapped by set in Parameter.java
+	@JsonIgnore
 	@ManyToMany(mappedBy = "parameterKeywords")
 	private Set<MParameter> parameter;
 
+	@JsonIgnore
 	@ManyToMany(mappedBy = "keywords")
 	private Set<MFunction> functions;
 
@@ -50,6 +54,7 @@ public class MKeyword extends BaseModel {
 		this.parameter = parameter;
 	}
 
+	@JsonIgnore
 	public Set<MParameter> getParentParameter() {
 		return this.parameter;
 	}

@@ -1,10 +1,9 @@
 package ch.zhaw.psit4.martin.common;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import org.json.JSONObject;
 import org.springframework.data.annotation.Transient;
 
 import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
