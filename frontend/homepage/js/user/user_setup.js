@@ -46,8 +46,8 @@ var visuallyUnpressButton = function () {
 // sending a command to the backend of MArtIn using an Ajax request
 var sendCommand = function () {
     // shows MArtIn thingking Area
-    $('.thinking').show();
-    $('.history-loading').show();
+    $('.thinking').slideDown("fast");
+    $('.history-loading').slideDown("fast");
     // get and clear text input
     var textInput = $('#commandInput').val();
     textInput = textInput.replace(/(<([^>]+)>)/ig,'');
@@ -80,10 +80,10 @@ var sendCommand = function () {
 
 
         var martinResponseRenderer = new MartinResponseRenderer();
-        martinResponseRenderer.renderResponse(martinStatement);
+        martinResponseRenderer.renderResponse(martinStatement, wantTimingInformation);
 
         // if wantTimingInformation is set, a chart will be drawn
-        drawTimingChart(response);
+        // drawTimingChart(response);
 
         var historyRenderer = new HistoryRenderer(null);
         historyRenderer.renderItem(historyItem);
@@ -91,8 +91,8 @@ var sendCommand = function () {
         // always hide the Section.
         .always(function () {
             // hides thinking Area
-            $('.thinking').hide(300);
-            $('.history-loading').hide();
+            $('.thinking').slideUp("fast");
+            $('.history-loading').slideUp("fast");
         });
 
     // reset location to move through history with *UP* and *DOWN* arrows
@@ -100,18 +100,7 @@ var sendCommand = function () {
 
 };
 
-var drawTimingChart = function (response) {
-    if (wantTimingInformation) {
-        var timingChartRenderer = new TimingChartRenderer();
-        try {
-            timingChartRenderer.renderTimingChart(response.timingInfo);
-        } catch (err) {
-            console.log('Could not render timing information');
-        }
-    } else {
-        $('#timingContainer').html('');
-    }
-};
+
 
 var addRequestToHistory = function (requestText) {
 

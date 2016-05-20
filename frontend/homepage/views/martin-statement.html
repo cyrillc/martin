@@ -1,11 +1,17 @@
 <div class="martin-statement">
 	<div class="request">
-		{{ request.command }}
+		{{ request.command }}&nbsp;
 	</div>
 
 	<div class="response">
 		{% for response in response.responses %}
 			{% include "outputTypes/" + response.type + ".html" %}
 		{% endfor %}
+
+		{% if timingChart %}
+			<div class="timing-info">
+				<canvas id="timingChart" class="timing-chart" />
+			</div>
+		{% endif %}
 	</div>
 </div>

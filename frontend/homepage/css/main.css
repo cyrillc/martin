@@ -205,6 +205,7 @@ img.newTabIcon {
 
 div.thinking {
     display: none;
+    margin-bottom: 20px;
 }
 
 div.history-loading {
@@ -215,8 +216,77 @@ div.possible-commands-loading {
     display: none;
 }
 
-#timingChart {
-    margin-bottom: 40px;
+.martin-statement {
+    display: none;
+    text-align: left;
+    font-weight: 200;
+    background: #f8f8f8;
+    border: 1px solid #e7e7e7;
+    border-bottom: 5px solid #e7e7e7;
+    padding: 20px;
+    border-radius: 3px;
+    margin-bottom: 20px;
+}
+
+.martin-statement .request {
+    margin-right: 40px;
+    margin-bottom: 10px;
+    border: 1px solid #e7e7e7;
+    border-left: 3px solid #e7e7e7;
+    background: white;
+    padding: 10px;
+    border-radius: 3px;
+    overflow: hidden;
+    transition: all .5s;
+}
+
+.martin-statement .response {
+    margin-left: 40px;
+    border: 1px solid #e7e7e7;
+    background: white;
+    border-radius: 3px;
+    overflow: hidden;
+    min-height: 20px;
+    position: relative;
+}
+
+.martin-statement .timing-info {
+    width: 100%;
+    padding: 10px;
+}
+
+/* Output-types */
+
+.output-type-heading {
+    border-bottom: 1px solid #e7e7e7;
+    border-top: 1px solid #e7e7e7;
+    border-right: 2px solid #e7e7e7;
+    text-align: left;
+    padding: 10px;
+    position: relative;
+    top: -1px;
+}
+
+.output-type-heading h2 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.output-type-error {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    padding: 10px;
+}
+
+.output-type-image img {
+    max-width: 100%;
+}
+
+.output-type-text {
+    padding: 10px;
+    border-right: 2px solid #e7e7e7;
 }
 
 

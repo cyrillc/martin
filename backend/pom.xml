@@ -95,13 +95,6 @@
 		</dependency>
 
 
-		<!-- MYSQL CONNECTOR -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
-
-
 		<!-- LIQUIBASE -->
 		<dependency>
 			<groupId>org.liquibase</groupId>

@@ -93,9 +93,8 @@ public class AIControllerFacade {
                 response);
         TIMING_LOG.logStart(this.getClass().getSimpleName());
 
-        if (extendedRequest.getSentence().getPredefinedAnswer() != null) {
-            extendedRequest.getResponse().setSingleResponse(MOutputType.TEXT,
-                    extendedRequest.getSentence().getPredefinedAnswer());
+        if (extendedRequest.getSentence().getPredefinedAnswer().size() > 0) {
+            extendedRequest.getResponse().setResponseList(extendedRequest.getSentence().getPredefinedAnswer());
         } else if (extendedRequest.getCalls().size() > 0) {
             TIMING_LOG.logEnd(this.getClass().getSimpleName());
             extendedRequest
