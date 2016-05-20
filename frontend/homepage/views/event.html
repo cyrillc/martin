@@ -1,0 +1,15 @@
+<div class="martin-statement">
+	<div class="request">
+		{% if event.request.command %}
+			{{ event.request.command }}&nbsp;
+		{% else %}
+			<i>silence</i>
+		{% endif %}
+	</div>
+
+	<div class="response">
+		{% for response in event.response.responses %}
+			{% include "outputTypes/" + response.type + ".html" %}
+		{% endfor %}
+	</div>
+</div>

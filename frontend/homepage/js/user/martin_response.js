@@ -1,43 +1,33 @@
 function MartinResponseRenderer() {
 }
 
-MartinResponseRenderer.prototype.renderResponse = function (martinStatement, timingChart) {
-    // for some fun
-    if (martinStatement.request.command == "EASTEREGG") {
+
+MartinResponseRenderer.prototype.renderEvent = function(event){
+     // for some fun
+    if (event.request.command == "EASTEREGG") {
         $('#main').toggleClass("EASTEREGG");
         return;
     }
 
-    if(timingChart){
-        martinStatement.response.responses.push({"type": "heading", "value": "Timing-Information"})
-    }
-
     // Render View
     nunjucks.configure("/views")
-    var response_html = $(nunjucks.render("martin-statement.html", {
-        request:        martinStatement.request, 
-        response:       martinStatement.response, 
-        timingChart:    timingChart
-    }));
+    var event_html = $(nunjucks.render("event.html", { event: event }));
+    $("#martin-responses").prepend(event_html);
 
-    $("#martin-responses").prepend(response_html);
-
-    if(timingChart){
-        // Render the timing-chart  
-        this.renderTimingChart(martinStatement.response.timingInfo, response_html.find(".timing-chart"));
+    // Render the timing-chart 
+    if(event.request.timed){
+        var chart_element = event_html.find(".timing-chart")[0];
+        this.renderTimingChart(chart_element);
     }
-   
-    $(response_html).slideDown("fast"); 
-};
+
+    // Show the parts
+    $(event_html).slideDown("fast"); 
+
+}
 
 
-MartinResponseRenderer.prototype.renderTimingChart = function(timingInfo, el){
+MartinResponseRenderer.prototype.renderTimingChart = function(el){
     var timingChartRenderer = new TimingChartRenderer();
-    console.log(el);
-    try {
-        timingChartRenderer.renderTimingChart(timingInfo, el);
-
-    } catch(error){
-        console.log(error);
-    }
+    var data = $(el).data("value");
+    timingChartRenderer.renderTimingChart(data, el);
 }

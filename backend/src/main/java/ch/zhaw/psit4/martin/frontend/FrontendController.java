@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
 import ch.zhaw.psit4.martin.api.MartinAPIDefines;
 import ch.zhaw.psit4.martin.api.types.output.MOutput;
+import ch.zhaw.psit4.martin.api.types.output.MOutputType;
+import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
@@ -33,6 +35,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
  * This class connect the Frontend with the AI using REST.
@@ -106,6 +111,25 @@ public class FrontendController {
             }
         }
     }
+    
+    public void sendRequestAndResponseToConnectedClients(ExtendedRequest extendedRequest){
+    	if(!emitters.isEmpty()){
+            ListIterator<SseEmitter> iter = emitters.listIterator();
+            while(iter.hasNext()){
+                SseEmitter sseEmitter = iter.next();
+                try {
+					ObjectMapper mapper = new ObjectMapper();
+					mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
+                    sseEmitter.send(mapper.writeValueAsString(extendedRequest), MediaType.APPLICATION_JSON_UTF8);
+                } catch (IOException e) {
+                    sseEmitter.complete();
+                    iter.remove();
+                    LOG.info("Failed to send ServerSentEvent");
+                }
+            }
+        }
+    }
 
     /**
      * Returns a list of example commands to the frontend. When a request to the API at
@@ -170,7 +194,6 @@ public class FrontendController {
     public SseEmitter getRealtimeMessageAction(HttpServletRequest request) throws IOException {
         SseEmitter emitter = new SseEmitter(1000000L);
         emitters.add(emitter);
-        emitter.send("Welcome to the MArtIn Output Stream");
         emitter.onCompletion(() -> emitters.remove(emitter));
         return emitter;
     }

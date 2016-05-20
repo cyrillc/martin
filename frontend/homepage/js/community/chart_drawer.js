@@ -49,5 +49,4 @@ TimingChartRenderer.prototype.renderTimingChart = function (timingInfo, el) {
     
     console.log("Do This: ", chartData, el);
     createTimingChart(chartData, el);
-    return canvasDrawer;
 };

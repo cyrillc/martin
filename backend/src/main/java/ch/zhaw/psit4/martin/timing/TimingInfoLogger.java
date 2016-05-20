@@ -25,12 +25,15 @@ public class TimingInfoLogger {
 		timingInfoLog.add(timingInfo);
 	}
 
-	public void logEnd(String label) {
-		Optional<TimingInfo> timingInfo = timingInfoLog.stream().filter(p -> p.getLabel().equals(label) && p.getEndTime() == null).findFirst();
+	public List<TimingInfo> logEnd(String label) {
+		Optional<TimingInfo> timingInfo = timingInfoLog.stream()
+				.filter(p -> p.getLabel().equals(label) && p.getEndTime() == null).findFirst();
 
 		if (timingInfo.isPresent()) {
 			timingInfo.get().setEndTime(new Date());
 		}
+
+		return timingInfoLog;
 	}
 
 	public void startLogging() {
@@ -46,9 +49,9 @@ public class TimingInfoLogger {
 	public List<TimingInfo> stopLogging() {
 		List<TimingInfo> timingInfoLogCopy = new ArrayList<>(this.timingInfoLog);
 		this.timingInfoLog = new ArrayList<>();
-		
+
 		pool.release();
-		
+
 		return timingInfoLogCopy;
 	}
 

@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.json.JSONObject;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -26,84 +28,95 @@ import java.lang.reflect.Type;
 @Access(AccessType.FIELD)
 public class MResponse extends BaseModel {
 
-    @Transient
-    private List<MOutput> responses;
+	@Transient
+	private List<MOutput> responses;
 
-    @Transient
-    private List<TimingInfo> timingInfo = new ArrayList<>();
+	@Transient
+	private List<TimingInfo> timingInfo = new ArrayList<>();
 
+	public MResponse() {
+	}
 
-    public MResponse() {}
+	public MResponse(List<MOutput> responseList) {
+		this.responses = responseList;
+	}
 
-    public MResponse(List<MOutput> responseList) {
-        this.responses = responseList;
-    }
+	public MResponse(String text) {
+		setSingleResponse(MOutputType.TEXT, text);
+	}
 
-    public MResponse(String text) {
-        setSingleResponse(MOutputType.TEXT, text);
-    }
+	public List<MOutput> getResponses() {
+		return responses;
+	}
 
-    public List<MOutput> getResponses() {
-        return responses;
-    }
+	public void setResponseList(List<MOutput> responseList) {
+		this.responses = responseList;
+	}
 
-    public void setResponseList(List<MOutput> responseList) {
-        this.responses = responseList;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof MResponse)) {
+			return false;
+		}
+		final MResponse r = (MResponse) obj;
+		if (this.getId() != r.getId() || !this.getResponses().equals(r.getResponses())) {
+			return false;
+		}
+		return true;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof MResponse)) {
-            return false;
-        }
-        final MResponse r = (MResponse) obj;
-        if (this.getId() != r.getId() || !this.getResponses().equals(r.getResponses())) {
-            return false;
-        }
-        return true;
-    }
+	@Override
+	public int hashCode() {
+		return super.hashCode() * (this.getId() + this.getResponses().hashCode()) * 7;
+	}
 
-    @Override
-    public int hashCode() {
-        return super.hashCode() * (this.getId() + this.getResponses().hashCode()) * 7;
-    }
+	public List<TimingInfo> getTimingInfo() {
+		return timingInfo;
+	}
 
-    public List<TimingInfo> getTimingInfo() {
-        return timingInfo;
-    }
+	public void setTimingInfo(List<TimingInfo> timingInfo) {
+		this.timingInfo = timingInfo;
+	}
 
-    public void setTimingInfo(List<TimingInfo> timingInfo) {
-        this.timingInfo = timingInfo;
-    }
+	public void setResponseErrorText(String errorMessage) {
+		setSingleResponse(MOutputType.ERROR, errorMessage);
+	}
 
-    public void setResponseErrorText(String errorMessage) {
-        setSingleResponse(MOutputType.ERROR, errorMessage);
-    }
+	@NotNull
+	@Column(name = "responsetext")
+	@Access(AccessType.PROPERTY)
+	String getResponseText() {
+		Gson gson = new Gson();
+		return gson.toJson(responses);
 
+	}
 
-    @NotNull
-    @Column(name = "responsetext")
-    @Access(AccessType.PROPERTY)
-     String getResponseText() {
-        Gson gson = new Gson();
-        return gson.toJson(responses);
+	void setResponseText(String jsonText) {
+		Gson gson = new Gson();
+		Type listType = new TypeToken<ArrayList<MOutput>>() {
+		}.getType();
+		responses = gson.fromJson(jsonText, listType);
+	}
 
-    }
+	public void setSingleResponse(MOutputType type, String text) {
+		List<MOutput> response = new ArrayList<>();
+		response.add(new MOutput(type, text));
+		this.responses = response;
+	}
 
+	public void addResponse(MOutputType type, String text) {
+		responses.add(new MOutput(type, text));
+	}
 
-     void setResponseText(String jsonText) {
-         Gson gson = new Gson();
-         Type listType = new TypeToken<ArrayList<MOutput>>(){}.getType();
-         responses = gson.fromJson(jsonText,listType);
-    }
+	public String toJSON() {
+		JSONObject json = new JSONObject();
+		json.put("responses", this.responses);
+		json.put("timingInfo", this.timingInfo);
 
-    public void setSingleResponse(MOutputType type, String text) {
-        List<MOutput> response = new ArrayList<>();
-        response.add(new MOutput(type, text));
-        this.responses = response;
-    }
+		return json.toString(4);
+	}
 
 }

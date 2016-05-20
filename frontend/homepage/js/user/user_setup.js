@@ -80,7 +80,7 @@ var sendCommand = function () {
 
 
         var martinResponseRenderer = new MartinResponseRenderer();
-        martinResponseRenderer.renderResponse(martinStatement, wantTimingInformation);
+        //martinResponseRenderer.renderResponse(martinStatement, wantTimingInformation);
 
         // if wantTimingInformation is set, a chart will be drawn
         // drawTimingChart(response);
@@ -167,7 +167,9 @@ var getPreviousCommand = function (location) {
 var registerOnServerEvent = function (url) {
 	var source = new EventSource(url);
 		source.onmessage = function(event){
-			console.log(event.data); 
+			console.log(JSON.parse(event.data)); 
+            var martinResponseRenderer = new MartinResponseRenderer();
+            martinResponseRenderer.renderEvent(JSON.parse(event.data));
 		}
 } 
 
