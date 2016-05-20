@@ -43,7 +43,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 
     List<Phrase> phrasesPopState;
     boolean popStateDirty;
-    List<SemanticGraph> semanticGraphs;
+    List<SemanticGraph> semanticGraphs = new ArrayList<>();
 
     String predefinedAnswer;
 
