@@ -2,7 +2,10 @@ package ch.zhaw.psit4.martin.requestprocessor;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,7 +23,13 @@ import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
+import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.trees.EnglishGrammaticalRelations;
+import edu.stanford.nlp.trees.GrammaticalRelation;
+import edu.stanford.nlp.trees.UniversalEnglishGrammaticalRelations;
+import edu.stanford.nlp.util.Pair;
 
 /**
  * This class is responible for extending a request to a computer readable
@@ -163,7 +172,7 @@ public class RequestProcessor {
             for (MParameter parameter : function.getParameters()) {
                 // Create instance of IMartinType for requested type
                 IBaseType parameterValue = getParameterValue(parameter,
-                        sentence);
+                        sentence, possibleCall.getMatchingKeywords().values());
                 possibleCall.addParameter(parameter.getName(), parameterValue);
             }
         }
@@ -172,15 +181,18 @@ public class RequestProcessor {
     }
 
     public IBaseType getParameterValue(MParameter parameter,
-            AnnotatedSentence sentence) {
+            AnnotatedSentence sentence, Collection<MKeyword> matchingKeywords) {
         try {
 
-            Integer possibilitiesLeft;
-
             while (sentenceHasMoreParameterValues(sentence, parameter)) {
-                String parameterAsString = null;
+
+                String parameterAsString = "";
+
                 if (isParameterTimeStamp(parameter)) {
                     parameterAsString = extractTimeStampParameter(sentence);
+                } else if (isParameterText(parameter)) {
+                    parameterAsString = extractTextParameter(sentence,
+                            matchingKeywords);
                 } else {
                     Phrase phrase = sentence.popPhraseOfType(
                             EBaseType.fromClassName(parameter.getType()));
@@ -188,7 +200,8 @@ public class RequestProcessor {
                         parameterAsString = phrase.getValue();
                     }
                 }
-                if (parameterAsString != null) {
+
+                if (parameterAsString.length() != 0) {
                     TIMING_LOG.logEnd(this.getClass().getSimpleName());
                     try {
                         IBaseType parameterValue = BaseTypeFactory.fromType(
@@ -219,6 +232,11 @@ public class RequestProcessor {
                 EBaseType.fromClassName(parameter.getType())) ? true : false;
     }
 
+    private boolean isParameterText(MParameter parameter) {
+        return EBaseType.TEXT.equals(
+                EBaseType.fromClassName(parameter.getType())) ? true : false;
+    }
+
     private boolean sentenceHasMoreParameterValues(AnnotatedSentence sentence,
             MParameter parameter) {
 
@@ -242,6 +260,37 @@ public class RequestProcessor {
         Phrase date = sentence.popPhraseOfType(EBaseType.DATE);
         Phrase time = sentence.popPhraseOfType(EBaseType.TIME);
         return (date.getValue() + " " + time.getValue()).trim();
+    }
+
+    /**
+     * Build a String with the Nominal Nominal Modifiers of the keywords in the sentence
+     * Example: the sentence "show me a picture of a dog in a hause" returns: "dog hause"
+     * 
+     * @param sentence
+     * @param matchingKeywords
+     * @return
+     */
+    private String extractTextParameter(AnnotatedSentence sentence,
+            Collection<MKeyword> matchingKeywords) {
+        
+        String parameterAsString = "";
+        
+        // Working only with graph of first text sentence
+        SemanticGraph dependencies = sentence.getSemanticGraphs().get(0);
+        for (MKeyword keyword : matchingKeywords) {
+            
+            // Working only with first occurrence of the keyword
+            IndexedWord indKeyWord = dependencies
+                    .getAllNodesByWordPattern(keyword.getKeyword()).get(0);
+                        
+            Set<IndexedWord> nominalMods = dependencies.getChildrenWithReln(indKeyWord, 
+                    UniversalEnglishGrammaticalRelations.NOMINAL_MODIFIER);
+            for(IndexedWord nominalModifier : nominalMods){
+                parameterAsString = parameterAsString.concat(nominalModifier.value() + " ");
+            }
+        }
+
+        return parameterAsString;
     }
 
 }
