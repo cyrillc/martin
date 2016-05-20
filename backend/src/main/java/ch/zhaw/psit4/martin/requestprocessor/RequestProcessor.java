@@ -31,180 +31,217 @@ import edu.stanford.nlp.pipeline.AnnotationPipeline;
  **/
 public class RequestProcessor {
 
-	@Autowired
-	private MKeywordRepository keywordRepository;
+    @Autowired
+    private MKeywordRepository keywordRepository;
 
-	@Autowired
-	private AnnotationPipeline annotationPipeline;
+    @Autowired
+    private AnnotationPipeline annotationPipeline;
 
-	private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
-	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
+    private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
+    private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory
+            .getInstance();
 
-	/**
-	 * Extends a request from a basic command and tries to determine possible
-	 * function calls.
-	 * 
-	 * @param request
-	 *            Raw request to be extended
-	 * @return Returns an ExtendedRequest with original-request and a possible
-	 *         executable function calls.
-	 */
-	public ExtendedRequest extend(MRequest request, MResponse response) {
-		TIMING_LOG.logStart(this.getClass().getSimpleName());
-		
-		ExtendedRequest extendedRequest = new ExtendedRequest(request, response);
+    /**
+     * Extends a request from a basic command and tries to determine possible
+     * function calls.
+     * 
+     * @param request
+     *            Raw request to be extended
+     * @return Returns an ExtendedRequest with original-request and a possible
+     *         executable function calls.
+     */
+    public ExtendedRequest extend(MRequest request, MResponse response) {
+        TIMING_LOG.logStart(this.getClass().getSimpleName());
 
-		TIMING_LOG.logEnd(this.getClass().getSimpleName());
-		AnnotatedSentence sentence = new AnnotatedSentence(extendedRequest.getRequest().getCommand(), annotationPipeline);
-		TIMING_LOG.logStart(this.getClass().getSimpleName());
+        ExtendedRequest extendedRequest = new ExtendedRequest(request,
+                response);
 
-		// Find possible Calls by keywords
-		List<PossibleCall> possibleCalls = getPossibleCallsWithKeywords(sentence.getWords());
+        TIMING_LOG.logEnd(this.getClass().getSimpleName());
+        AnnotatedSentence sentence = new AnnotatedSentence(
+                extendedRequest.getRequest().getCommand(), annotationPipeline);
+        TIMING_LOG.logStart(this.getClass().getSimpleName());
 
-		// Resolve parameters
-		resolveParameters(possibleCalls, sentence);
+        // Find possible Calls by keywords
+        List<PossibleCall> possibleCalls = getPossibleCallsWithKeywords(
+                sentence.getWords());
 
-		// Sort by relevance
-		possibleCalls
-				.sort((PossibleCall result1, PossibleCall result2) -> result1.getRelevance() - result2.getRelevance());
+        // Resolve parameters
+        resolveParameters(possibleCalls, sentence);
 
-		extendedRequest.setSentence(sentence);
+        // Sort by relevance
+        possibleCalls.sort((PossibleCall result1,
+                PossibleCall result2) -> result1.getRelevance()
+                        - result2.getRelevance());
 
-		for (PossibleCall possibleCall : possibleCalls) {
-			// Create Call
-			Call call = new Call();
-			call.setPlugin(possibleCall.getPlugin());
-			call.setFunction(possibleCall.getFunction());
-			call.setParameters(possibleCall.getParameters());
+        extendedRequest.setSentence(sentence);
 
-			extendedRequest.addCall(call);
-		}
+        for (PossibleCall possibleCall : possibleCalls) {
+            // Create Call
+            Call call = new Call();
+            call.setPlugin(possibleCall.getPlugin());
+            call.setFunction(possibleCall.getFunction());
+            call.setParameters(possibleCall.getParameters());
 
-		TIMING_LOG.logEnd(this.getClass().getSimpleName());
-		return extendedRequest;
-	}
+            extendedRequest.addCall(call);
+        }
 
-	/**
-	 * Searches the database for plugins/functions with the keywords provided
-	 * and adds them to the list.
-	 * 
-	 * @param possibleCalls
-	 *            List of possible results.
-	 * @param words
-	 *            words to be matched with the keywords.
-	 * @return the extended list
-	 */
-	private List<PossibleCall> getPossibleCallsWithKeywords(List<String> words) {
-		List<PossibleCall> possibleCalls = new ArrayList<>();
+        TIMING_LOG.logEnd(this.getClass().getSimpleName());
+        return extendedRequest;
+    }
 
-		for (String word : words) {
+    /**
+     * Searches the database for plugins/functions with the keywords provided
+     * and adds them to the list.
+     * 
+     * @param possibleCalls
+     *            List of possible results.
+     * @param words
+     *            words to be matched with the keywords.
+     * @return the extended list
+     */
+    private List<PossibleCall> getPossibleCallsWithKeywords(
+            List<String> words) {
+        List<PossibleCall> possibleCalls = new ArrayList<>();
 
-			MKeyword keyword = keywordRepository.findByKeywordIgnoreCase(word);
+        for (String word : words) {
 
-			if (keyword != null) {
-				for (MFunction function : keyword.getFunctions()) {
-					MPlugin plugin = function.getPlugin();
+            MKeyword keyword = keywordRepository.findByKeywordIgnoreCase(word);
 
-					Optional<PossibleCall> optionalPossibleResult = possibleCalls.stream()
-							.filter(o -> o.getPlugin().getId() == plugin.getId())
-							.filter(o -> o.getFunction().getId() == function.getId()).findFirst();
+            if (keyword != null) {
+                for (MFunction function : keyword.getFunctions()) {
+                    MPlugin plugin = function.getPlugin();
 
-					if (optionalPossibleResult.isPresent()) {
-						optionalPossibleResult.get().addMatchingKeyword(keyword);
-					} else {
-						PossibleCall possibleCall = new PossibleCall(plugin, function);
-						possibleCall.addMatchingKeyword(keyword);
-						possibleCalls.add(possibleCall);
-					}
-				}
-			}
+                    Optional<PossibleCall> optionalPossibleResult = possibleCalls
+                            .stream()
+                            .filter(o -> o.getPlugin().getId() == plugin
+                                    .getId())
+                            .filter(o -> o.getFunction().getId() == function
+                                    .getId())
+                            .findFirst();
 
-		}
+                    if (optionalPossibleResult.isPresent()) {
+                        optionalPossibleResult.get()
+                                .addMatchingKeyword(keyword);
+                    } else {
+                        PossibleCall possibleCall = new PossibleCall(plugin,
+                                function);
+                        possibleCall.addMatchingKeyword(keyword);
+                        possibleCalls.add(possibleCall);
+                    }
+                }
+            }
 
-		return possibleCalls;
-	}
+        }
 
-	/**
-	 * This function tries to determine the best word or phrase in the provided
-	 * sentence to fit into an argument that is needed from the function. It
-	 * uses the Stanford CoreNLP library to search for IMartinTypes in the
-	 * sentence.
-	 * 
-	 * The result of the parameter-filling may not be perfect and is heavy
-	 * dependent on the provided sentence. If the sentence has bad spelling or
-	 * is grammatically incorrect, the results may be not as good as expected.
-	 * The more details and contextual consistent the sentence is, the better
-	 * the results.
-	 * 
-	 * @param possibleCalls
-	 *            A list of possible results, whose parameters should be filled
-	 * @param sentence
-	 *            A sentence which provides the base for the parameter-finding
-	 * @return A list of PossibleResults with their corresponding parameters
-	 *         filled as good as possible
-	 */
-	public List<PossibleCall> resolveParameters(List<PossibleCall> possibleCalls, AnnotatedSentence sentence) {
-		for (PossibleCall possibleCall : possibleCalls) {
-			MFunction function = possibleCall.getFunction();
+        return possibleCalls;
+    }
 
-			for (MParameter parameter : function.getParameters()) {
-				// Create instance of IMartinType for requested type
-				IBaseType parameterValue = getParameterValue(parameter, sentence);
-				possibleCall.addParameter(parameter.getName(), parameterValue);
-			}
-		}
+    /**
+     * This function tries to determine the best word or phrase in the provided
+     * sentence to fit into an argument that is needed from the function. It
+     * uses the Stanford CoreNLP library to search for IMartinTypes in the
+     * sentence.
+     * 
+     * The result of the parameter-filling may not be perfect and is heavy
+     * dependent on the provided sentence. If the sentence has bad spelling or
+     * is grammatically incorrect, the results may be not as good as expected.
+     * The more details and contextual consistent the sentence is, the better
+     * the results.
+     * 
+     * @param possibleCalls
+     *            A list of possible results, whose parameters should be filled
+     * @param sentence
+     *            A sentence which provides the base for the parameter-finding
+     * @return A list of PossibleResults with their corresponding parameters
+     *         filled as good as possible
+     */
+    public List<PossibleCall> resolveParameters(
+            List<PossibleCall> possibleCalls, AnnotatedSentence sentence) {
+        for (PossibleCall possibleCall : possibleCalls) {
+            MFunction function = possibleCall.getFunction();
 
-		return possibleCalls;
-	}
+            for (MParameter parameter : function.getParameters()) {
+                // Create instance of IMartinType for requested type
+                IBaseType parameterValue = getParameterValue(parameter,
+                        sentence);
+                possibleCall.addParameter(parameter.getName(), parameterValue);
+            }
+        }
 
-	public IBaseType getParameterValue(MParameter parameter, AnnotatedSentence sentence) {
-		try {
+        return possibleCalls;
+    }
 
-			Integer possibilitiesLeft;
-			
-			do {
-				// Perform Name Entity Recognition
-				String data = "";
+    public IBaseType getParameterValue(MParameter parameter,
+            AnnotatedSentence sentence) {
+        try {
 
-				if (EBaseType.TIMESTAMP.equals(EBaseType.fromClassName(parameter.getType()))) {
-					// Timestamp consists of Date and Time
-					Phrase date = sentence.popPhraseOfType(EBaseType.DATE);
-					Phrase time = sentence.popPhraseOfType(EBaseType.TIME);
+            Integer possibilitiesLeft;
 
-					possibilitiesLeft = sentence.getPhrasesOfType(EBaseType.DATE).size()
-							+ sentence.getPhrasesOfType(EBaseType.TIME).size();
+            while (sentenceHasMoreParameterValues(sentence, parameter)) {
+                String parameterAsString = null;
+                if (isParameterTimeStamp(parameter)) {
+                    parameterAsString = extractTimeStampParameter(sentence);
+                } else {
+                    Phrase phrase = sentence.popPhraseOfType(
+                            EBaseType.fromClassName(parameter.getType()));
+                    if (phrase != null) {
+                        parameterAsString = phrase.getValue();
+                    }
+                }
+                if (parameterAsString != null) {
+                    TIMING_LOG.logEnd(this.getClass().getSimpleName());
+                    try {
+                        IBaseType parameterValue = BaseTypeFactory.fromType(
+                                EBaseType.fromClassName(parameter.getType()),
+                                parameterAsString, sentence);
+                        LOG.info(
+                                "\n Parameter found via Name Entity Recognition: "
+                                        + parameterValue.toJson());
+                        TIMING_LOG.logStart(this.getClass().getSimpleName());
+                        return parameterValue;
+                    } catch (BaseTypeInstanciationException e) {
+                        TIMING_LOG.logStart(this.getClass().getSimpleName());
+                        LOG.debug(e);
+                    }
+                }
+            }
 
-					data = (date.getValue() + " " + time.getValue()).trim();
-				} else {
-					// All the rest can be resolved directly
-					Phrase phrase = sentence.popPhraseOfType(EBaseType.fromClassName(parameter.getType()));
+        } catch (Exception e) {
+            LOG.debug(e);
+            LOG.error("The IMartinType '" + parameter.getType()
+                    + "' could not be found.");
+        }
+        return null;
+    }
 
-					possibilitiesLeft = sentence.getPhrasesOfType(EBaseType.fromClassName(parameter.getType())).size();
+    private boolean isParameterTimeStamp(MParameter parameter) {
+        return EBaseType.TIMESTAMP.equals(
+                EBaseType.fromClassName(parameter.getType())) ? true : false;
+    }
 
-					if (phrase != null) {
-						data = phrase.getValue();
-					}
-				}
+    private boolean sentenceHasMoreParameterValues(AnnotatedSentence sentence,
+            MParameter parameter) {
 
-				if (!"".equals(data)) {
-					TIMING_LOG.logEnd(this.getClass().getSimpleName());
-					try {
-						IBaseType parameterValue = BaseTypeFactory
-								.fromType(EBaseType.fromClassName(parameter.getType()), data, sentence);
-						LOG.info("\n Parameter found via Name Entity Recognition: " + parameterValue.toJson());
-						TIMING_LOG.logStart(this.getClass().getSimpleName());
-						return parameterValue;
-					} catch (BaseTypeInstanciationException e) {
-						TIMING_LOG.logStart(this.getClass().getSimpleName());
-						LOG.debug(e);
-					}
-				}
-			} while (possibilitiesLeft > 0);
-		} catch (Exception e) {
-			LOG.debug(e);
-			LOG.error("The IMartinType '" + parameter.getType() + "' could not be found.");
-		}
-		return null;
-	}
+        Integer parametersLeft = 0;
+
+        if (isParameterTimeStamp(parameter)) {
+            parametersLeft = sentence.getPhrasesOfType(EBaseType.DATE).size()
+                    + sentence.getPhrasesOfType(EBaseType.TIME).size();
+        } else {
+            parametersLeft = sentence
+                    .getPhrasesOfType(
+                            EBaseType.fromClassName(parameter.getType()))
+                    .size();
+        }
+
+        return parametersLeft > 0 ? true : false;
+    }
+
+    private String extractTimeStampParameter(AnnotatedSentence sentence) {
+        // Timestamp consists of Date and Time
+        Phrase date = sentence.popPhraseOfType(EBaseType.DATE);
+        Phrase time = sentence.popPhraseOfType(EBaseType.TIME);
+        return (date.getValue() + " " + time.getValue()).trim();
+    }
 
 }
