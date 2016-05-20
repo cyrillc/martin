@@ -8,8 +8,6 @@ import ch.zhaw.psit4.martin.api.language.parts.ISentence;
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.language.parts.Sentence;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
-import ch.zhaw.psit4.martin.api.types.output.MOutput;
-import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
@@ -19,6 +17,8 @@ import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.BasicDependenciesAnnotation;
 import edu.stanford.nlp.util.CoreMap;
 
 /**
@@ -27,36 +27,37 @@ import edu.stanford.nlp.util.CoreMap;
  * subject and a predicate containing a finite verb
  *
  */
-public class AnnotatedSentence extends Sentence implements ISentence{
+
+public class AnnotatedSentence extends Sentence implements ISentence {
 	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
 	private static final String UNKNOWN_NER_TAG = "O";
-
 
 	public AnnotationPipeline annotationPipeline;
 	private Annotation annotation;
 
 	List<Phrase> phrasesPopState;
 	boolean popStateDirty;
+	List<SemanticGraph> semanticGraphs = new ArrayList<>();
 
-	List<MOutput> predefinedAnswer = new ArrayList<>();
-	
-	public AnnotatedSentence(){
+	String predefinedAnswer;
+
+	public AnnotatedSentence() {
 		super(null);
 	}
 
 	public AnnotatedSentence(String sentence, AnnotationPipeline annotationPipeline) {
 		super(sentence);
-		
+
 		TIMING_LOG.logStart("Text analyzation");
 		this.annotationPipeline = annotationPipeline;
 		this.annotate();
-		this.generatePhrases();
+		this.generatePhrasesAndSemanticGraph();
 		this.generadePredefinedAnswer();
 		this.resetPopState();
 		TIMING_LOG.logEnd("Text analyzation");
 	}
-	
-	public void annotate(){
+
+	public void annotate() {
 		annotation = new Annotation(text);
 		annotationPipeline.annotate(annotation);
 	}
@@ -70,46 +71,51 @@ public class AnnotatedSentence extends Sentence implements ISentence{
 	 * entities that require normalization, e.g., dates, are normalized to
 	 * NormalizedNamedEntityTagAnnotation.
 	 */
-	public void generatePhrases() {
+	public void generatePhrasesAndSemanticGraph() {
 		List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
-		StringBuilder sb = new StringBuilder();
-		
-		if(sentences == null){
-			return;
-		}
 
 		for (CoreMap sentence : sentences) {
-			String previousNerToken = UNKNOWN_NER_TAG;
-			String currentNerToken = UNKNOWN_NER_TAG;
 
-			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
-				previousNerToken = currentNerToken;
-				currentNerToken = token.get(NamedEntityTagAnnotation.class);
-				String word = token.get(TextAnnotation.class);
-
-				if (previousNerToken.equals(currentNerToken)) {
-					sb.append(" " + word);
-				} else {
-					phrases.add(new Phrase(previousNerToken, sb.toString()));
-					sb.setLength(0);
-					sb.append(word);
-				}
-			}
-			phrases.add(new Phrase(currentNerToken, sb.toString()));
+			generateSentencePhrases(sentence.get(TokensAnnotation.class));
+			SemanticGraph dependencies = sentence.get(BasicDependenciesAnnotation.class);
+			semanticGraphs.add(dependencies);
 
 		}
+
 	}
-	
-	public void resetPopState(){
+
+	public void generateSentencePhrases(List<CoreLabel> tokens) {
+
+		StringBuilder sb = new StringBuilder();
+
+		String previousNerToken = UNKNOWN_NER_TAG;
+		String currentNerToken = UNKNOWN_NER_TAG;
+
+		for (CoreLabel token : tokens) {
+			previousNerToken = currentNerToken;
+			currentNerToken = token.get(NamedEntityTagAnnotation.class);
+			String word = token.get(TextAnnotation.class);
+
+			if (previousNerToken.equals(currentNerToken)) {
+				sb.append(" " + word);
+			} else {
+				phrases.add(new Phrase(previousNerToken, sb.toString()));
+				sb.setLength(0);
+				sb.append(word);
+			}
+		}
+		phrases.add(new Phrase(currentNerToken, sb.toString()));
+	}
+
+	public void resetPopState() {
 		phrasesPopState = new ArrayList<>(phrases);
 		popStateDirty = false;
 	}
-	
-	public boolean isPopStateDirty(){
+
+	public boolean isPopStateDirty() {
 		return popStateDirty;
 	}
 
-	
 	/**
 	 * Removes one element of type IMartinType from the internal list and
 	 * returns it.
@@ -120,7 +126,7 @@ public class AnnotatedSentence extends Sentence implements ISentence{
 	 */
 	public Phrase popPhraseOfType(EBaseType type) {
 		popStateDirty = true;
-		
+
 		Optional<Phrase> token = phrasesPopState.stream().filter(o -> o.getType().equals(type)).findFirst();
 
 		if (token.isPresent()) {
@@ -136,40 +142,37 @@ public class AnnotatedSentence extends Sentence implements ISentence{
 	 */
 	public void generadePredefinedAnswer() {
 		if ("".equalsIgnoreCase(text)) {
-			predefinedAnswer.add(new MOutput(MOutputType.TEXT, "I can't hear you. Please speak louder."));
+			predefinedAnswer = "I can't hear you. Please speak louder.";
 		}
 
 		if ((this.getWords().contains("unit") && this.getWords().contains("tests"))
 				|| this.getWords().contains("unittests")) {
-			predefinedAnswer.add(new MOutput(MOutputType.HEADING, "Just be quiet!"));
-			predefinedAnswer.add(new MOutput(MOutputType.TEXT, "I'm gonna getcha!"));
-			predefinedAnswer.add(new MOutput(MOutputType.IMAGE,"http://tclhost.com/gEFAjgp.gif"));
-			
-		}
-		
-		if ("test".equalsIgnoreCase(text)) {
-			predefinedAnswer.add(new MOutput(MOutputType.HEADING, "Heading"));
-			predefinedAnswer.add(new MOutput(MOutputType.TEXT, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. \n\nAt vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. \n\nStet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."));
-			predefinedAnswer.add(new MOutput(MOutputType.ERROR, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua!"));
-			predefinedAnswer.add(new MOutput(MOutputType.IMAGE,"http://www.aviatorcameragear.com/wp-content/uploads/2012/07/placeholder_2.jpg"));
+			predefinedAnswer = "<img src='http://tclhost.com/gEFAjgp.gif' />";
 		}
 
 		if (this.text.toLowerCase().startsWith("can you")) {
-			predefinedAnswer.add(new MOutput(MOutputType.IMAGE, "http://tclhost.com/YXRMgbt.gif"));
+			predefinedAnswer = "<img src='http://tclhost.com/YXRMgbt.gif'>";
 		}
 	}
 
-	
-	public List<MOutput> getPredefinedAnswer() {
+	public String getPredefinedAnswer() {
 		return predefinedAnswer;
 	}
-	
+
 	public Annotation getAnnotation() {
 		return annotation;
 	}
 
 	public void setAnnotation(Annotation annotation) {
 		this.annotation = annotation;
+	}
+
+	public List<SemanticGraph> getSemanticGraphs() {
+		return semanticGraphs;
+	}
+
+	public void setSemanticGraphs(List<SemanticGraph> semanticGraphs) {
+		this.semanticGraphs = semanticGraphs;
 	}
 
 }
