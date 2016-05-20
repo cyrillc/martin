@@ -5,8 +5,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.json.JSONObject;
-
 @Entity
 @Table(name = "request")
 public class MRequest extends BaseModel {
@@ -59,12 +57,5 @@ public class MRequest extends BaseModel {
 	public int hashCode() {
 		return (int) super.hashCode()
 				* (this.getId() + this.getCommand().hashCode() + new Boolean(this.timed).hashCode()) * 13;
-	}
-
-	public String toJSON() {
-		JSONObject json = new JSONObject();
-		json.put("command", this.command);
-		json.put("timed", this.timed);
-		return json.toString(4);
 	}
 }

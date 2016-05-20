@@ -1,26 +1,5 @@
 package ch.zhaw.psit4.martin.frontend;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
-import ch.zhaw.psit4.martin.api.MartinAPIDefines;
-import ch.zhaw.psit4.martin.api.types.output.MOutput;
-import ch.zhaw.psit4.martin.api.types.output.MOutputType;
-import ch.zhaw.psit4.martin.common.ExtendedRequest;
-import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.models.*;
-import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
-import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginInstaller;
-import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
-import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +8,36 @@ import java.util.ListIterator;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import ch.zhaw.psit4.martin.aiController.AIControllerFacade;
+import ch.zhaw.psit4.martin.api.MartinAPIDefines;
+import ch.zhaw.psit4.martin.api.types.output.MOutput;
+import ch.zhaw.psit4.martin.common.ExtendedRequest;
+import ch.zhaw.psit4.martin.common.PluginInformation;
+import ch.zhaw.psit4.martin.models.MExampleCall;
+import ch.zhaw.psit4.martin.models.MHistoryItem;
+import ch.zhaw.psit4.martin.models.MRequest;
+import ch.zhaw.psit4.martin.models.MResponse;
+import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
+import ch.zhaw.psit4.martin.pluginlib.filesystem.PluginInstaller;
+import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
+import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 
 /**
  * This class connect the Frontend with the AI using REST.
@@ -153,8 +153,8 @@ public class FrontendController {
             "http://srv-lab-t-825.zhaw.ch:4141"})
     @RequestMapping("/history")
 
-    public List<MHistoryItem> getHistory(@RequestParam(value = "amount") int amount) {
-        return aiController.getLimitedHistory(amount);
+    public List<MHistoryItem> getHistory(@RequestParam(value = "amount") int amount, @RequestParam(value = "page") int page) {
+        return aiController.getLimitedHistory(amount, page);
     }
 
     /**

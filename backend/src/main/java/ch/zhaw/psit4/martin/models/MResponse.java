@@ -1,6 +1,6 @@
 package ch.zhaw.psit4.martin.models;
 
-import java.time.chrono.JapaneseChronology;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,16 +12,12 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.json.JSONObject;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import ch.zhaw.psit4.martin.api.types.output.MOutput;
 import ch.zhaw.psit4.martin.api.types.output.MOutputType;
-import ch.zhaw.psit4.martin.common.MartinHelper;
 import ch.zhaw.psit4.martin.timing.TimingInfo;
-import java.lang.reflect.Type;
 
 @Entity
 @Table(name = "response")
@@ -110,13 +106,4 @@ public class MResponse extends BaseModel {
 	public void addResponse(MOutputType type, String text) {
 		responses.add(new MOutput(type, text));
 	}
-
-	public String toJSON() {
-		JSONObject json = new JSONObject();
-		json.put("responses", this.responses);
-		json.put("timingInfo", this.timingInfo);
-
-		return json.toString(4);
-	}
-
 }

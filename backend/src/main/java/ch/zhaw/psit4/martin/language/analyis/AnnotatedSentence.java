@@ -8,6 +8,8 @@ import ch.zhaw.psit4.martin.api.language.parts.ISentence;
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.language.parts.Sentence;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
+import ch.zhaw.psit4.martin.api.types.output.MOutput;
+import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
@@ -39,7 +41,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 	boolean popStateDirty;
 	List<SemanticGraph> semanticGraphs = new ArrayList<>();
 
-	String predefinedAnswer;
+	List<MOutput> predefinedAnswer = new ArrayList<>();
 
 	public AnnotatedSentence() {
 		super(null);
@@ -50,10 +52,14 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 
 		TIMING_LOG.logStart("Text analyzation");
 		this.annotationPipeline = annotationPipeline;
-		this.annotate();
-		this.generatePhrasesAndSemanticGraph();
+		if(!"".equals(sentence)){
+			this.annotate();
+			this.generatePhrasesAndSemanticGraph();
+			this.resetPopState();
+		}
+		
 		this.generadePredefinedAnswer();
-		this.resetPopState();
+		
 		TIMING_LOG.logEnd("Text analyzation");
 	}
 
@@ -142,20 +148,31 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 	 */
 	public void generadePredefinedAnswer() {
 		if ("".equalsIgnoreCase(text)) {
-			predefinedAnswer = "I can't hear you. Please speak louder.";
+			predefinedAnswer.add(new MOutput(MOutputType.TEXT, "I can't hear you. Please speak louder."));
 		}
 
 		if ((this.getWords().contains("unit") && this.getWords().contains("tests"))
 				|| this.getWords().contains("unittests")) {
-			predefinedAnswer = "<img src='http://tclhost.com/gEFAjgp.gif' />";
+			predefinedAnswer.add(new MOutput(MOutputType.HEADING, "Just be quiet!"));
+			predefinedAnswer.add(new MOutput(MOutputType.TEXT, "I'm gonna getcha!"));
+			predefinedAnswer.add(new MOutput(MOutputType.IMAGE,"http://tclhost.com/gEFAjgp.gif"));
+			
+		}
+		
+		if ("test".equalsIgnoreCase(text)) {
+			predefinedAnswer.add(new MOutput(MOutputType.HEADING, "Heading"));
+			predefinedAnswer.add(new MOutput(MOutputType.TEXT, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. \n\nAt vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. \n\nStet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."));
+			predefinedAnswer.add(new MOutput(MOutputType.ERROR, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua!"));
+			predefinedAnswer.add(new MOutput(MOutputType.IMAGE,"http://www.aviatorcameragear.com/wp-content/uploads/2012/07/placeholder_2.jpg"));
 		}
 
 		if (this.text.toLowerCase().startsWith("can you")) {
-			predefinedAnswer = "<img src='http://tclhost.com/YXRMgbt.gif'>";
+			predefinedAnswer.add(new MOutput(MOutputType.IMAGE, "http://tclhost.com/YXRMgbt.gif"));
 		}
 	}
 
-	public String getPredefinedAnswer() {
+
+	public List<MOutput> getPredefinedAnswer() {
 		return predefinedAnswer;
 	}
 

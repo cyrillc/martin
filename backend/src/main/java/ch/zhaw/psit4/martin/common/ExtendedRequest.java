@@ -95,13 +95,4 @@ public class ExtendedRequest {
 	public void setResponse(MResponse response) {
 		this.response = response;
 	}
-
-	public String toJSON() {
-		JSONObject json = new JSONObject();
-		json.put("id", id);
-		json.put("request", request.toJSON());
-		json.put("response", response.toJSON());
-
-		return json.toString(4);
-	}
 }

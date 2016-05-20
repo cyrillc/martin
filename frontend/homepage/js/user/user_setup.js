@@ -46,8 +46,10 @@ var visuallyUnpressButton = function () {
 // sending a command to the backend of MArtIn using an Ajax request
 var sendCommand = function () {
     // shows MArtIn thingking Area
-    $('.thinking').slideDown("fast");
-    $('.history-loading').slideDown("fast");
+    $('.thinking').slideDown({
+        duration: 400,
+        easing: "easeInOutQuart"
+    });
     // get and clear text input
     var textInput = $('#commandInput').val();
     textInput = textInput.replace(/(<([^>]+)>)/ig,'');
@@ -55,6 +57,8 @@ var sendCommand = function () {
 
     // check for timing flag
     textInput=checkTimingFlag(textInput);
+
+    History.commands.unshift(textInput);
 
     // create object to send to MArtIn
     var command = {
@@ -67,42 +71,17 @@ var sendCommand = function () {
 
     // send GET request with data and show response on page
     $.get(backendUrl, command, function (response) {
-        var martinStatement = {
-            request: command,
-            response: response
-        };
-
-        var historyItem = {
-            date: new Date(),
-            request: command,
-            response: response
-        };
-
-
-        var martinResponseRenderer = new MartinResponseRenderer();
-        //martinResponseRenderer.renderResponse(martinStatement, wantTimingInformation);
-
-        // if wantTimingInformation is set, a chart will be drawn
-        // drawTimingChart(response);
-
-        var historyRenderer = new HistoryRenderer(null);
-        historyRenderer.renderItem(historyItem);
-    })
-        // always hide the Section.
-        .always(function () {
-            // hides thinking Area
-            $('.thinking').slideUp("fast");
-            $('.history-loading').slideUp("fast");
+       // Nothing to do at the moment...
+    }).always(function () {
+        // hides thinking Area
+        $('.thinking').slideUp({
+            duration: 400,
+            easing: "easeInOutQuart"
         });
+    });
 
     // reset location to move through history with *UP* and *DOWN* arrows
     historyLocation = 0;
-
-};
-
-
-
-var addRequestToHistory = function (requestText) {
 
 };
 
@@ -122,29 +101,23 @@ $(document).ready(function () {
             exampleCommandsRenderer.renderCommands();
 
 
-        })
-            // always hide the Section.
-            .always(function () {
-                $('.possible-commands-loading').hide();
-            });
+        }).always(function () {
+            $('.possible-commands-loading').hide();
+        });
 
-        HistoryUrl = createRequestURL(frontendUrl, backendPort, "history");
-        var amountOfHistoryItems = { amount: 15 };
-        $('.history-loading').show();
-        // send GET request with data and show response on page
-        $.get(HistoryUrl, amountOfHistoryItems, function (receivedHistory) {
-            var historyRenderer = new HistoryRenderer(receivedHistory);
-            historyRenderer.renderAll();
-        })
-            // always hide the Section.
-            .always(function () {
-                $('.history-loading').hide();
-            });
+        
 		registerOnServerEvent(createRequestURL(frontendUrl,backendPort,"serverOutput"));
-    });
-	
-	
 
+        MartinResponseRenderer.init();
+
+        History.init(frontendUrl, backendPort);
+        History.fetchNextPage(function(){
+            History.renderPage(function(){
+                console.log("History loaded.");
+            });
+        });
+        
+    });
 });
 
 var checkTimingFlag = function (textInput) {
@@ -158,18 +131,15 @@ var checkTimingFlag = function (textInput) {
 }
 
 // function to move through history with *UP* and *DOWN* arrows
-var getPreviousCommand = function (location) {
-    var selector = '#historyItems > tbody > tr:nth-child(' + location + ') > td:nth-child(2)';
-    $('#commandInput').val($(selector).html());
+var getPreviousCommand = function(index) {
+    $('#commandInput').val(History.commands[index - 1]);
 }
 
 
 var registerOnServerEvent = function (url) {
 	var source = new EventSource(url);
 		source.onmessage = function(event){
-			console.log(JSON.parse(event.data)); 
-            var martinResponseRenderer = new MartinResponseRenderer();
-            martinResponseRenderer.renderEvent(JSON.parse(event.data));
+            MartinResponseRenderer.renderEvent(JSON.parse(event.data));
 		}
 } 
 

@@ -142,11 +142,8 @@ public class AIControllerFacade {
 	 * @param amount
 	 *            the amount of historyItems to get
 	 */
-	public List<MHistoryItem> getLimitedHistory(int amount) {
-		List<MHistoryItem> list = historyItemRepository.getLimitedHistory(new PageRequest(0, amount));
-		List<MHistoryItem> shallowCopy = list.subList(0, list.size());
-		Collections.reverse(shallowCopy);
-		return shallowCopy;
+	public List<MHistoryItem> getLimitedHistory(int amount, int page) {
+		return historyItemRepository.getLimitedHistory(new PageRequest(page, amount));
 	}
 
 	public List<PluginInformation> getPluginInformation() {
