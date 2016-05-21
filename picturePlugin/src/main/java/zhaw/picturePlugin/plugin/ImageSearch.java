@@ -29,7 +29,7 @@ public class ImageSearch {
      * search image on bing engine and return random output
      * 
      * @param type
-     * @return
+     * @return random URL of the requested picture type 
      * @throws IOException
      */
     public String getImage(String type) throws IOException {
