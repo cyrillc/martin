@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.api.types.MLocation;
 import ch.zhaw.psit4.martin.api.types.MNumber;
@@ -28,22 +29,30 @@ public class TypeFactoryTest {
 	public void testNumber() {
 
 		try {
-			MNumber one = (MNumber) BaseTypeFactory.fromType(EBaseType.NUMBER, "1", new AnnotatedSentence());
+			Phrase phrase = new Phrase("1");
+			phrase.setType(EBaseType.NUMBER);
+			MNumber one = (MNumber) BaseTypeFactory.fromPhrase(phrase, new AnnotatedSentence());
 			assertEquals(one.getIntegerNumber().get(), (Integer) 1);
 			assertEquals(one.getDoubleNumber().get(), (Double) 1.0);
 			assertEquals(one.getRawFormat(), MNumber.RawFormat.NUMERIC);
 
-			MNumber oneWord = (MNumber) BaseTypeFactory.fromType(EBaseType.NUMBER, "one", new AnnotatedSentence());
+			phrase = new Phrase("one");
+			phrase.setType(EBaseType.NUMBER);
+			MNumber oneWord = (MNumber) BaseTypeFactory.fromPhrase(phrase, new AnnotatedSentence());
 			assertEquals(oneWord.getIntegerNumber().get(), (Integer) 1);
 			assertEquals(oneWord.getDoubleNumber().get(), (Double) 1.0);
 			assertEquals(oneWord.getRawFormat(), MNumber.RawFormat.WORD_EN);
 
-			MNumber twoThousand = (MNumber) BaseTypeFactory.fromType(EBaseType.NUMBER, "two thousand", new AnnotatedSentence());
+			phrase = new Phrase("two thousand");
+			phrase.setType(EBaseType.NUMBER);
+			MNumber twoThousand = (MNumber) BaseTypeFactory.fromPhrase(phrase, new AnnotatedSentence());
 			assertEquals(twoThousand.getIntegerNumber().get(), (Integer) 2000);
 			assertEquals(twoThousand.getDoubleNumber().get(), (Double) 2000.0);
 			assertEquals(twoThousand.getRawFormat(), MNumber.RawFormat.WORD_EN);
 
-			MNumber eleven = (MNumber) BaseTypeFactory.fromType(EBaseType.NUMBER, "eleven", new AnnotatedSentence());
+			phrase = new Phrase("eleven");
+			phrase.setType(EBaseType.NUMBER);
+			MNumber eleven = (MNumber) BaseTypeFactory.fromPhrase(phrase, new AnnotatedSentence());
 			assertEquals(eleven.getIntegerNumber().get(), (Integer) 11);
 			assertEquals(eleven.getDoubleNumber().get(), (Double) 11.0);
 			assertEquals(eleven.getRawFormat(), MNumber.RawFormat.WORD_EN);
@@ -59,7 +68,9 @@ public class TypeFactoryTest {
 			DateTimeZone timeZone = DateTimeZone.forID("Europe/Paris");
 
 			// Today
-			MTimestamp today = (MTimestamp) BaseTypeFactory.fromType(EBaseType.TIMESTAMP, "today", new AnnotatedSentence());
+			Phrase phrase = new Phrase("today");
+			phrase.setType(EBaseType.TIMESTAMP);
+			MTimestamp today = (MTimestamp) BaseTypeFactory.fromPhrase(phrase, new AnnotatedSentence());
 			DateTime correctToday = DateTime.now(timeZone);
 
 			assertEquals(today.getDatetime().get().getYear(), correctToday.getYear());
@@ -67,7 +78,10 @@ public class TypeFactoryTest {
 			assertEquals(today.getDatetime().get().getDayOfMonth(), correctToday.getDayOfMonth());
 
 			// Yesterday
-			MTimestamp yesterday = (MTimestamp) BaseTypeFactory.fromType(EBaseType.TIMESTAMP, "yesterday", new AnnotatedSentence());
+			phrase = new Phrase("yesterday");
+			phrase.setType(EBaseType.TIMESTAMP);
+			
+			MTimestamp yesterday = (MTimestamp) BaseTypeFactory.fromPhrase(phrase, new AnnotatedSentence());
 			DateTime correctYesterday = DateTime.now(timeZone).minusDays(1);
 
 			assertEquals(yesterday.getDatetime().get().getYear(), correctYesterday.getYear());
@@ -88,13 +102,18 @@ public class TypeFactoryTest {
 		}
 
 		try {
-			MLocation zurich = (MLocation) BaseTypeFactory.fromType(EBaseType.LOCATION, "Zürich", new AnnotatedSentence());
+			Phrase phrase = new Phrase("Zürich");
+			phrase.setType(EBaseType.LOCATION);
+			MLocation zurich = (MLocation) BaseTypeFactory.fromPhrase(phrase, new AnnotatedSentence());
 
 			assertEquals(zurich.getFormattedAddress().get(), "Zürich, Switzerland");
 			assertEquals(zurich.getLatitude().get(), (Double) 47.3768866);
 			assertEquals(zurich.getLongitude().get(), (Double) 8.541694);
 
-			MLocation honolulu = (MLocation) BaseTypeFactory.fromType(EBaseType.LOCATION, "Honolulu", new AnnotatedSentence());
+			
+			phrase = new Phrase("Honolulu");
+			phrase.setType(EBaseType.LOCATION);
+			MLocation honolulu = (MLocation) BaseTypeFactory.fromPhrase(phrase, new AnnotatedSentence());
 			
 			assertEquals(honolulu.getFormattedAddress().get(), "Honolulu, HI, USA");
 			assertEquals(honolulu.getLatitude().get(), (Double)21.3069444);

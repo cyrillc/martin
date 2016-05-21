@@ -12,7 +12,9 @@ import ch.zhaw.psit4.martin.api.types.output.MOutput;
 import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
+import edu.stanford.nlp.ling.CoreAnnotations.DocDateAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.NormalizedNamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
@@ -21,6 +23,8 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.BasicDependenciesAnnotation;
+import edu.stanford.nlp.time.TimeAnnotations.TimexAnnotation;
+import edu.stanford.nlp.time.Timex;
 import edu.stanford.nlp.util.CoreMap;
 
 /**
@@ -32,9 +36,8 @@ import edu.stanford.nlp.util.CoreMap;
 
 public class AnnotatedSentence extends Sentence implements ISentence {
 	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
-	private static final String UNKNOWN_NER_TAG = "O";
 
-	public AnnotationPipeline annotationPipeline;
+	private AnnotationPipeline annotationPipeline;
 	private Annotation annotation;
 
 	List<Phrase> phrasesPopState;
@@ -52,14 +55,14 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 
 		TIMING_LOG.logStart("Text analyzation");
 		this.annotationPipeline = annotationPipeline;
-		if(!"".equals(sentence)){
+		if (!"".equals(sentence)) {
 			this.annotate();
 			this.generatePhrasesAndSemanticGraph();
 			this.resetPopState();
 		}
-		
+
 		this.generadePredefinedAnswer();
-		
+
 		TIMING_LOG.logEnd("Text analyzation");
 	}
 
@@ -81,36 +84,74 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 		List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
 
 		for (CoreMap sentence : sentences) {
-
 			generateSentencePhrases(sentence.get(TokensAnnotation.class));
+			generateTimestampPhrases(sentence.get(TokensAnnotation.class));
 			SemanticGraph dependencies = sentence.get(BasicDependenciesAnnotation.class);
 			semanticGraphs.add(dependencies);
-
 		}
-
 	}
 
 	public void generateSentencePhrases(List<CoreLabel> tokens) {
-
 		StringBuilder sb = new StringBuilder();
-
-		String previousNerToken = UNKNOWN_NER_TAG;
-		String currentNerToken = UNKNOWN_NER_TAG;
+		CoreLabel previousToken;
+		CoreLabel currentToken = tokens.get(0);
 
 		for (CoreLabel token : tokens) {
-			previousNerToken = currentNerToken;
-			currentNerToken = token.get(NamedEntityTagAnnotation.class);
-			String word = token.get(TextAnnotation.class);
-
-			if (previousNerToken.equals(currentNerToken)) {
-				sb.append(" " + word);
+			previousToken = currentToken;
+			currentToken = token;
+			
+			if (previousToken.get(NamedEntityTagAnnotation.class).equals(token.get(NamedEntityTagAnnotation.class))) {
+				sb.append(" " + token.get(TextAnnotation.class));
 			} else {
-				phrases.add(new Phrase(previousNerToken, sb.toString()));
+				Phrase phrase = new Phrase(sb.toString().trim());
+				phrase.setNerTag(previousToken.get(NamedEntityTagAnnotation.class));
+				phrase.setNormalizedValue(previousToken.get(NormalizedNamedEntityTagAnnotation.class));
+
+				phrases.add(phrase);
 				sb.setLength(0);
-				sb.append(word);
+				sb.append(token.get(TextAnnotation.class));
 			}
 		}
-		phrases.add(new Phrase(currentNerToken, sb.toString()));
+
+		Phrase phrase = new Phrase(sb.toString().trim());
+		phrase.setNerTag(currentToken.get(NamedEntityTagAnnotation.class));
+		phrase.setNormalizedValue(currentToken.get(NormalizedNamedEntityTagAnnotation.class));
+		phrases.add(phrase);
+
+	}
+
+	public void generateTimestampPhrases(List<CoreLabel> tokens) {
+		String value = null;
+		String normalizedValue = null;
+
+		for (CoreLabel token : tokens) {
+			if (isPartOfTimestamp(token)) {
+				if (value == null) {
+					value = token.get(TextAnnotation.class);
+					normalizedValue = token.get(NormalizedNamedEntityTagAnnotation.class);
+				} else {
+					value += " " + token.get(TextAnnotation.class);
+					
+					Phrase phrase = new Phrase(value);
+					phrase.setType(EBaseType.TIMESTAMP);
+					phrase.setNormalizedValue(normalizedValue);
+					phrases.add(phrase);
+					value = null;
+				}
+			}
+		}
+		
+		if(value != null){
+			Phrase phrase = new Phrase(value);
+			phrase.setType(EBaseType.TIMESTAMP);
+			phrase.setNormalizedValue(normalizedValue);
+			phrases.add(phrase);
+		}
+	}
+
+	public boolean isPartOfTimestamp(CoreLabel token) {
+		return token.get(NamedEntityTagAnnotation.class).equals(EBaseType.DATE.getNerTag())
+				|| token.get(NamedEntityTagAnnotation.class).equals(EBaseType.TIME.getNerTag());
 	}
 
 	public void resetPopState() {
@@ -139,7 +180,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 			phrasesPopState.remove(phrasesPopState.indexOf(token.get()));
 			return token.get();
 		} else {
-			return new Phrase("", "");
+			return new Phrase("");
 		}
 	}
 
@@ -155,22 +196,24 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 				|| this.getWords().contains("unittests")) {
 			predefinedAnswer.add(new MOutput(MOutputType.HEADING, "Just be quiet!"));
 			predefinedAnswer.add(new MOutput(MOutputType.TEXT, "I'm gonna getcha!"));
-			predefinedAnswer.add(new MOutput(MOutputType.IMAGE,"http://tclhost.com/gEFAjgp.gif"));
-			
+			predefinedAnswer.add(new MOutput(MOutputType.IMAGE, "http://tclhost.com/gEFAjgp.gif"));
+
 		}
-		
+
 		if ("test".equalsIgnoreCase(text)) {
 			predefinedAnswer.add(new MOutput(MOutputType.HEADING, "Heading"));
-			predefinedAnswer.add(new MOutput(MOutputType.TEXT, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. \n\nAt vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. \n\nStet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."));
-			predefinedAnswer.add(new MOutput(MOutputType.ERROR, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua!"));
-			predefinedAnswer.add(new MOutput(MOutputType.IMAGE,"http://www.aviatorcameragear.com/wp-content/uploads/2012/07/placeholder_2.jpg"));
+			predefinedAnswer.add(new MOutput(MOutputType.TEXT,
+					"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. \n\nAt vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. \n\nStet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."));
+			predefinedAnswer.add(new MOutput(MOutputType.ERROR,
+					"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua!"));
+			predefinedAnswer.add(new MOutput(MOutputType.IMAGE,
+					"http://www.aviatorcameragear.com/wp-content/uploads/2012/07/placeholder_2.jpg"));
 		}
 
 		if (this.text.toLowerCase().startsWith("can you")) {
 			predefinedAnswer.add(new MOutput(MOutputType.IMAGE, "http://tclhost.com/YXRMgbt.gif"));
 		}
 	}
-
 
 	public List<MOutput> getPredefinedAnswer() {
 		return predefinedAnswer;

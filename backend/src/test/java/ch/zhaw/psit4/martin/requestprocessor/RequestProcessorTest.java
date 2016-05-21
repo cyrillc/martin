@@ -54,6 +54,18 @@ public class RequestProcessorTest {
 		assertEquals(extRequest0.getCalls().get(0).getArguments().get("time").toString(), "tomorrow");
 		assertEquals(extRequest0.getCalls().get(0).getArguments().get("location").toString(), "Zürich");
 	}
+	
+	@Test
+	public void testExtendRequestPluginAndFeature2() {
+		MResponse response0 = new MResponse();
+		MRequest request0 = new MRequest("What's the weather in Zürich tomorrow 2pm?", false);
+		ExtendedRequest extRequest0 = requestProcessor.extend(request0, response0);
+		assertEquals(extRequest0.getCalls().isEmpty(), false);
+		assertEquals(extRequest0.getCalls().get(0).getPlugin().getName(), "WetterPlugin");
+		assertEquals(extRequest0.getCalls().get(0).getFunction().getName(), "getWeatherAtLocation");
+		assertEquals(extRequest0.getCalls().get(0).getArguments().get("time").toString(), "tomorrow");
+		assertEquals(extRequest0.getCalls().get(0).getArguments().get("location").toString(), "Zürich");
+	}
 
 	@Test
 	public void testUnknownLocation() {

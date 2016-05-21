@@ -1,15 +1,16 @@
 package ch.zhaw.psit4.martin.api.language.parts;
 
 import ch.zhaw.psit4.martin.api.types.EBaseType;
+import ch.zhaw.psit4.martin.api.types.MText;
 
 public class Phrase {
 	private EBaseType type;
 	private String value;
 	private String nerTag;
+	private String normalizedValue;
 
-	public Phrase(String nerTag, String value) {
-		this.nerTag = nerTag;
-		this.type = EBaseType.fromNerTag(nerTag);
+	public Phrase(String value) {
+		this.type = EBaseType.fromClassName(MText.class.getName());
 		this.value = value;
 	}
 	
@@ -23,10 +24,12 @@ public class Phrase {
 
 	public void setNerTag(String nerTag) {
 		this.nerTag = nerTag;
+		this.type = EBaseType.fromNerTag(nerTag);
 	}
 
 	public void setType(EBaseType type) {
 		this.type = type;
+		this.nerTag = type.getNerTag();
 	}
 
 	public void setValue(String value) {
@@ -39,7 +42,15 @@ public class Phrase {
 	
 	@Override
 	public String toString(){
-		return type.toString() + ": " + value;
+		return type.toString() + "|" + normalizedValue + "|" + value;
+	}
+	
+	public String getNormalizedValue() {
+		return normalizedValue;
+	}
+
+	public void setNormalizedValue(String normalizedValue) {
+		this.normalizedValue = normalizedValue;
 	}
 
 }

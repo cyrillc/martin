@@ -28,7 +28,7 @@ public enum EBaseType {
 		NERTAGS.put(MSet.class.getName(), "SET");
 		NERTAGS.put(MText.class.getName(), "O");
 		NERTAGS.put(MTime.class.getName(), "TIME");
-		NERTAGS.put(MTimestamp.class.getName(), "DATE TIME");
+		NERTAGS.put(MTimestamp.class.getName(), "TIMESTAMP");
 	}
 
 	private String value;
