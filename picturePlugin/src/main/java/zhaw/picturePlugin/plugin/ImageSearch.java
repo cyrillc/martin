@@ -1,8 +1,10 @@
-package searchengine;
+package zhaw.picturePlugin.plugin;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -17,22 +19,22 @@ import org.jsoup.select.Elements;
 public class ImageSearch {
 
     Document document;
-    
-    public static void main(String[] args) throws IOException {
-        ImageSearch image = new ImageSearch();
-        image.getImage("dog");
-    }  
-    
-    
+
+//    public static void main(String[] args) throws IOException {
+//        ImageSearch image = new ImageSearch();
+//        System.out.println(image.getImage("cat"));
+//    }
+
     /**
-     * search image on bing engine
+     * search image on bing engine and return random output
      * 
      * @param type
      * @return
      * @throws IOException
      */
-    public List<String> getImage(String type) throws IOException {
+    public String getImage(String type) throws IOException {
         ArrayList<String> list = new ArrayList<>();
+        Random randomGenerator = new Random();
         document =
                 Jsoup.connect(
                         "http://www.bing.com/images/search?q=" + type
@@ -44,8 +46,8 @@ public class ImageSearch {
         for (int i = 0; i < elements.size(); i++) {
             String href = elements.get(i).attr("src2");
             list.add(href);
-            System.out.println(href);
         }
-        return list;
-   }
+        int index = randomGenerator.nextInt(list.size());
+        return list.get(index);
+    }
 }
