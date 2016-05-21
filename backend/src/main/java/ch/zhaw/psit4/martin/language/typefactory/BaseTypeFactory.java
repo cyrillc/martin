@@ -7,8 +7,6 @@ import ch.zhaw.psit4.martin.api.types.BaseTypeInstanciationException;
 
 public class BaseTypeFactory {
 	public static IBaseType fromPhrase(Phrase phrase, AnnotatedSentence sentence) throws BaseTypeInstanciationException {
-		System.out.println(phrase.getNormalizedValue());
-		
 		switch (phrase.getType()) {
 		case NUMBER:
 			MNumberFactory numberFactory = new MNumberFactory();

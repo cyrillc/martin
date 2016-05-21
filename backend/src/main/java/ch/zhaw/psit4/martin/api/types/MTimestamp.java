@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 import org.json.JSONObject;
 
 public class MTimestamp extends BaseType {
-	private Optional<DateTime> datetime;
+	private Optional<DateTime> datetime = Optional.ofNullable(null);
 
 	public MTimestamp(String data) {
 		super(data);

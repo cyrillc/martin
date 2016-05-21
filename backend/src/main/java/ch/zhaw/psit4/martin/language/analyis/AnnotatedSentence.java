@@ -12,7 +12,6 @@ import ch.zhaw.psit4.martin.api.types.output.MOutput;
 import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
-import edu.stanford.nlp.ling.CoreAnnotations.DocDateAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.NormalizedNamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
@@ -23,8 +22,6 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.BasicDependenciesAnnotation;
-import edu.stanford.nlp.time.TimeAnnotations.TimexAnnotation;
-import edu.stanford.nlp.time.Timex;
 import edu.stanford.nlp.util.CoreMap;
 
 /**
@@ -99,7 +96,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 		for (CoreLabel token : tokens) {
 			previousToken = currentToken;
 			currentToken = token;
-			
+
 			if (previousToken.get(NamedEntityTagAnnotation.class).equals(token.get(NamedEntityTagAnnotation.class))) {
 				sb.append(" " + token.get(TextAnnotation.class));
 			} else {
@@ -131,7 +128,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 					normalizedValue = token.get(NormalizedNamedEntityTagAnnotation.class);
 				} else {
 					value += " " + token.get(TextAnnotation.class);
-					
+
 					Phrase phrase = new Phrase(value);
 					phrase.setType(EBaseType.TIMESTAMP);
 					phrase.setNormalizedValue(normalizedValue);
@@ -140,8 +137,8 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 				}
 			}
 		}
-		
-		if(value != null){
+
+		if (value != null) {
 			Phrase phrase = new Phrase(value);
 			phrase.setType(EBaseType.TIMESTAMP);
 			phrase.setNormalizedValue(normalizedValue);

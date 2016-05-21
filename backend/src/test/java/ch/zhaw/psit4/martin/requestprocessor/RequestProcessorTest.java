@@ -1,6 +1,6 @@
 package ch.zhaw.psit4.martin.requestprocessor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
-import ch.zhaw.psit4.martin.models.*;
-import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
+import ch.zhaw.psit4.martin.models.MRequest;
+import ch.zhaw.psit4.martin.models.MResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
@@ -54,18 +54,7 @@ public class RequestProcessorTest {
 		assertEquals(extRequest0.getCalls().get(0).getArguments().get("time").toString(), "tomorrow");
 		assertEquals(extRequest0.getCalls().get(0).getArguments().get("location").toString(), "Zürich");
 	}
-	
-	@Test
-	public void testExtendRequestPluginAndFeature2() {
-		MResponse response0 = new MResponse();
-		MRequest request0 = new MRequest("What's the weather in Zürich tomorrow 2pm?", false);
-		ExtendedRequest extRequest0 = requestProcessor.extend(request0, response0);
-		assertEquals(extRequest0.getCalls().isEmpty(), false);
-		assertEquals(extRequest0.getCalls().get(0).getPlugin().getName(), "WetterPlugin");
-		assertEquals(extRequest0.getCalls().get(0).getFunction().getName(), "getWeatherAtLocation");
-		assertEquals(extRequest0.getCalls().get(0).getArguments().get("time").toString(), "tomorrow");
-		assertEquals(extRequest0.getCalls().get(0).getArguments().get("location").toString(), "Zürich");
-	}
+
 
 	@Test
 	public void testUnknownLocation() {
