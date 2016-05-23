@@ -291,7 +291,7 @@ public class RequestProcessor {
             }
         }
 
-        return parameterAsString;
+        return parameterAsString.trim();
     }
 
 }
