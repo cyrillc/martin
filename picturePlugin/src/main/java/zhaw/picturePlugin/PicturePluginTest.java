@@ -31,7 +31,10 @@ public class PicturePluginTest extends TestCase {
     public void testApp() {
         MartinPluginValidator validator = new MartinPluginValidator(
                 new PicturePlugin());
-        assertEquals(MartinAPITestResult.OK, validator.runTests());
+        MartinAPITestResult result = validator.runTests();
+        boolean isOk = MartinAPITestResult.OK.equals(result);
+        boolean hawWarning = MartinAPITestResult.WARNING.equals(result);
+        assertTrue(isOk || hawWarning );
     }
 
 }
