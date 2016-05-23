@@ -13,7 +13,7 @@
                     "Required": "true",
                     "Type": "ch.zhaw.psit4.martin.api.types.MText",
                     "Tokens-regex": "",
-                    "Keywords": ["noKeywordLOLOLO_IDontKnowWhatHappensIfILeaveItEmpty"]
+                    "Keywords": []
                 }
             ],
             "Examples": [{
