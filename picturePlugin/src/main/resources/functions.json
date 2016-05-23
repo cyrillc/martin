@@ -1,0 +1,26 @@
+{
+    "Functions": [
+        {
+            "Name": "picture",
+            "Description": "Return an image of something.",
+            "Keywords": [
+                "picture",
+                "image"
+            ],
+            "Parameter": [
+                {
+                    "Name": "picture",
+                    "Required": "true",
+                    "Type": "ch.zhaw.psit4.martin.api.types.MText",
+                    "Tokens-regex": "",
+                    "Keywords": ["noKeywordLOLOLO_IDontKnowWhatHappensIfILeaveItEmpty"]
+                }
+            ],
+            "Examples": [{
+                    "Call" : "Give me a picture of a dog",
+                    "Description" : "Gets a picture of a dog"
+                }
+            ]
+        }
+    ]
+}
