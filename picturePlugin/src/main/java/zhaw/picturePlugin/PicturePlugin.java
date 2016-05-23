@@ -1,7 +1,6 @@
 package zhaw.picturePlugin;
 
 
-import zhaw.picturePlugin.plugin.ImageSearch;
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.MartinPlugin;
@@ -25,9 +24,10 @@ public class PicturePlugin implements MartinPlugin {
     public void initializeRequest(String feature, long requestID) throws Exception {
         if (active) {
             if(feature.toLowerCase() == "picture") {
-                Feature work = new ImageSearch(requestID);               
+                Feature work = new PictureWork(requestID);
+                context.registerWorkItem(work);
             }
-            context.registerWorkItem(work);
+            
         }
     }
 

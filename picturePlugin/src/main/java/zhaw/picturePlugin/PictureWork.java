@@ -1,8 +1,12 @@
 package zhaw.picturePlugin;
 
 import zhaw.picturePlugin.plugin.ImageSearch;
+
+import java.util.Map;
+
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.types.IBaseType;
+import ch.zhaw.psit4.martin.api.types.MText;
 
 public class PictureWork extends Feature {
 
@@ -16,7 +20,7 @@ public class PictureWork extends Feature {
 
     @Override
     public void initialize(Map<String, IBaseType> args) throws Exception  {
-        MText text = (MText) args.get("picture")
+        MText text = (MText) args.get("picture");
         this.imageType = text.getData();       
     }
 

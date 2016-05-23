@@ -21,8 +21,20 @@
          <artifactId>gson</artifactId>
          <version>2.6.2</version>
      </dependency>
-    
-    
+    <!-- Martin -->
+    <dependency>
+      <groupId>ch.zhaw.psit4.martin.api</groupId>
+      <artifactId>martin-api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/../distributable/target/martin-api-0.0.1-SNAPSHOT.jar</systemPath>
+    </dependency>
+
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>2.9.3</version>
+    </dependency>
    
   </dependencies>
   
