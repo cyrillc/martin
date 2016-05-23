@@ -210,7 +210,7 @@ public class RequestProcessor {
                                 parameterAsString, sentence);
                         LOG.info(
                                 "\n Parameter found via Name Entity Recognition: "
-                                        + parameterValue.toJson());
+                                        + parameterValue.toString());
                         TIMING_LOG.logStart(this.getClass().getSimpleName());
                         return parameterValue;
                     } catch (BaseTypeInstanciationException e) {
