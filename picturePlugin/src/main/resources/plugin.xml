@@ -14,7 +14,7 @@
         id="c4789a78-93a7-497d-92d2-13d6b3dbdf50">
         <parameter id="class"
             value="zhaw.picturePlugin.PicturePlugin" />
-        <parameter id="name" value="Picture Plugin" />
+        <parameter id="name" value="PicturePlugin" />
         <parameter id="description"
             value="A plugin that search for you an image" />
         <parameter id="author" value="Marco Covolan" />
