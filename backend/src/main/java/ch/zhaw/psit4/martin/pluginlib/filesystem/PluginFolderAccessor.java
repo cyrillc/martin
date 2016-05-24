@@ -29,12 +29,29 @@ public class PluginFolderAccessor implements ResourceLoaderAware {
      * The plugin configuration file
      */
     private String configFile;
+    /*
+     * The found plugin folder
+     */
+    private File foundFolder;
 
     private static final Log LOG = LogFactory.getLog(PluginFolderAccessor.class);
 
     public PluginFolderAccessor(String folderName, String configFile) {
         this.folderName = folderName;
         this.configFile = configFile;
+        this.foundFolder = null;
+    }
+
+    /**
+     * Resets the found plugin folder to null allowing the class to search again.
+     */
+    public void resetFoundFolder() {
+        try {
+            LOG.info("Reseting found folder: " + foundFolder.getCanonicalPath() + " to null.");
+        } catch (IOException e) {
+            LOG.info("No folder was found yet.", e);
+        }
+        this.foundFolder = null;
     }
 
     /**
@@ -43,7 +60,9 @@ public class PluginFolderAccessor implements ResourceLoaderAware {
      * @return The plugin folder.
      */
     public File getPluginFolder() {
-        File out = null;
+        if (foundFolder != null)
+            return foundFolder;
+
         // load library config json
         JSONObject libConfig = null;
         try {
@@ -57,12 +76,12 @@ public class PluginFolderAccessor implements ResourceLoaderAware {
 
         // search the json registered paths
         if (libConfig != null) {
-            out = getFolderFromPaths(libConfig.getJSONArray("paths"));
+            foundFolder = getFolderFromPaths(libConfig.getJSONArray("paths"));
         } else {
             LOG.error(configFile + " can't be loaded!");
         }
 
-        return out;
+        return foundFolder;
     }
 
     /**
@@ -111,6 +130,18 @@ public class PluginFolderAccessor implements ResourceLoaderAware {
             }
         }
         return out;
+    }
+
+    public String getFolderPath() {
+        String path = null;
+        if (foundFolder != null)
+            try {
+                path = foundFolder.getCanonicalPath();
+            } catch (IOException e) {
+                LOG.warn("Could not retireve cononical path.", e);
+                path = foundFolder.getAbsolutePath();
+            }
+        return path;
     }
 
     public String getFolderName() {

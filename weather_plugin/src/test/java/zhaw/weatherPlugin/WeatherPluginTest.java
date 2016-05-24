@@ -1,5 +1,8 @@
 package zhaw.weatherPlugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.zhaw.psit4.martin.api.validation.MartinAPITestResult;
 import ch.zhaw.psit4.martin.api.validation.MartinPluginValidator;
 import junit.framework.Test;
@@ -32,6 +35,10 @@ public class WeatherPluginTest extends TestCase {
     public void testApp() {
         assertTrue(true);
         MartinPluginValidator validator = new MartinPluginValidator(new WeatherPlugin());
+        List<String> requests = new ArrayList<>();
+        requests.add("weather");
+        validator.setRequests(requests);
+        
         assertEquals(MartinAPITestResult.OK, validator.runTests());
     }
 }
