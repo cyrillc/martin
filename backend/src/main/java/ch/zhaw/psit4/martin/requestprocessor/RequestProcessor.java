@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.types.BaseTypeInstanciationException;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.api.types.IBaseType;
@@ -27,10 +25,7 @@ import ch.zhaw.psit4.martin.models.MResponse;
 import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
-import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
-import edu.stanford.nlp.semgraph.SemanticGraph;
-import edu.stanford.nlp.trees.UniversalEnglishGrammaticalRelations;
 
 /**
  * This class is responible for extending a request to a computer readable
@@ -183,44 +178,31 @@ public class RequestProcessor {
 
     public IBaseType getParameterValue(MParameter parameter,
             AnnotatedSentence sentence, Collection<MKeyword> matchingKeywords) {
+
+        IBaseType parameterValue = null;
         try {
 
             while (sentenceHasMoreParameterValues(sentence, parameter)) {
 
-                String parameterAsString = "";
+                String parameterAsString = ParameterExtractor.extractParameter(
+                        parameter, sentence, matchingKeywords);
 
-                if (isParameterTimeStamp(parameter)) {
-                    parameterAsString = extractTimeStampParameter(sentence);
-                } else if (isParameterText(parameter)) {
-                    parameterAsString = extractTextParameter(sentence,
-                            matchingKeywords);
-                } else {
-                    Phrase phrase = sentence.popPhraseOfType(
-                            EBaseType.fromClassName(parameter.getType()));
-                    if (phrase != null) {
-                        parameterAsString = phrase.getValue();
-                    }
+                if (parameterAsString == null) {
+                    throw new Exception("parameter not present");
                 }
 
-                if (parameterAsString.length() != 0) {
-                    TIMING_LOG.logEnd(this.getClass().getSimpleName());
-                    try {
-                        IBaseType parameterValue = BaseTypeFactory.fromType(
-                                EBaseType.fromClassName(parameter.getType()),
-                                parameterAsString, sentence);
-                        LOG.info(
-                                "\n Parameter found via Name Entity Recognition: "
-                                        + parameterValue.toString());
-                        TIMING_LOG.logStart(this.getClass().getSimpleName());
-                        return parameterValue;
-                    } catch (BaseTypeInstanciationException e) {
-                        TIMING_LOG.logStart(this.getClass().getSimpleName());
-                        LOG.debug(e);
-                    }
-                } else {
-                    LOG.error("The IMartinType '" + parameter.getType()
-                    + "' could not be found.");
-                    break;
+                TIMING_LOG.logEnd(this.getClass().getSimpleName());
+                try {
+                    parameterValue = BaseTypeFactory.fromType(
+                            EBaseType.fromClassName(parameter.getType()),
+                            parameterAsString, sentence);
+                    LOG.info("\n Parameter found via Name Entity Recognition: "
+                            + parameterValue.toString());
+                    TIMING_LOG.logStart(this.getClass().getSimpleName());
+                    return parameterValue;
+                } catch (BaseTypeInstanciationException e) {
+                    TIMING_LOG.logStart(this.getClass().getSimpleName());
+                    LOG.debug(e);
                 }
             }
 
@@ -229,16 +211,11 @@ public class RequestProcessor {
             LOG.error("The IMartinType '" + parameter.getType()
                     + "' could not be found.");
         }
-        return null;
+        return parameterValue;
     }
 
     private boolean isParameterTimeStamp(MParameter parameter) {
         return EBaseType.TIMESTAMP.equals(
-                EBaseType.fromClassName(parameter.getType())) ? true : false;
-    }
-
-    private boolean isParameterText(MParameter parameter) {
-        return EBaseType.TEXT.equals(
                 EBaseType.fromClassName(parameter.getType())) ? true : false;
     }
 
@@ -258,44 +235,6 @@ public class RequestProcessor {
         }
 
         return parametersLeft > 0 ? true : false;
-    }
-
-    private String extractTimeStampParameter(AnnotatedSentence sentence) {
-        // Timestamp consists of Date and Time
-        Phrase date = sentence.popPhraseOfType(EBaseType.DATE);
-        Phrase time = sentence.popPhraseOfType(EBaseType.TIME);
-        return (date.getValue() + " " + time.getValue()).trim();
-    }
-
-    /**
-     * Build a String with the Nominal Nominal Modifiers of the keywords in the sentence
-     * Example: the sentence "show me a picture of a dog in a hause" returns: "dog hause"
-     * 
-     * @param sentence
-     * @param matchingKeywords
-     * @return
-     */
-    private String extractTextParameter(AnnotatedSentence sentence,
-            Collection<MKeyword> matchingKeywords) {
-        
-        String parameterAsString = "";
-        
-        // Working only with graph of first text sentence
-        SemanticGraph dependencies = sentence.getSemanticGraphs().get(0);
-        for (MKeyword keyword : matchingKeywords) {
-            
-            // Working only with first occurrence of the keyword
-            IndexedWord indKeyWord = dependencies
-                    .getAllNodesByWordPattern(keyword.getKeyword()).get(0);
-                        
-            Set<IndexedWord> nominalMods = dependencies.getChildrenWithReln(indKeyWord, 
-                    UniversalEnglishGrammaticalRelations.NOMINAL_MODIFIER);
-            for(IndexedWord nominalModifier : nominalMods){
-                parameterAsString = parameterAsString.concat(nominalModifier.value() + " ");
-            }
-        }
-
-        return parameterAsString.trim();
     }
 
 }
