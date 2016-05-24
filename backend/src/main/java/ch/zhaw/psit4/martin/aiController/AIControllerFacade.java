@@ -53,6 +53,9 @@ public class AIControllerFacade {
 	@Autowired
 	private FrontendController frontend;
 
+	@Autowired
+	private MOutputQueueThread outputQueue;
+
 	@PostConstruct
 	public void postAIControllerFacade() {
 		// does nothing. Is it needed b'cause of beans.xml?
@@ -90,6 +93,7 @@ public class AIControllerFacade {
 	 * @return the response of the AI.
 	 */
 	public MResponse elaborateRequest(MRequest request) {
+		// TODO: Refactoring!
 		TIMING_LOG.logStart(this.getClass().getSimpleName());
 
 		MResponse response = new MResponse();
@@ -100,7 +104,7 @@ public class AIControllerFacade {
 
 		if (extendedRequest.getSentence().getPredefinedAnswer().size() > 0) {
 			extendedRequest.getResponse().setResponseList(extendedRequest.getSentence().getPredefinedAnswer());
-			frontend.sendOutputToConnectedClients(extendedRequest.getResponse().getResponses());
+			outputQueue.addToOutputQueue(extendedRequest.getResponse().getResponses());
 		} else if (extendedRequest.getCalls().size() > 0) {
 			TIMING_LOG.logEnd(this.getClass().getSimpleName());
 			extendedRequest.setResponse(pluginLibrary.executeRequest(extendedRequest));
