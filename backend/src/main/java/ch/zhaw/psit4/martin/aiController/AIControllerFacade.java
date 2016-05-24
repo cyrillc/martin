@@ -100,6 +100,7 @@ public class AIControllerFacade {
 
 		if (extendedRequest.getSentence().getPredefinedAnswer().size() > 0) {
 			extendedRequest.getResponse().setResponseList(extendedRequest.getSentence().getPredefinedAnswer());
+			frontend.sendOutputToConnectedClients(extendedRequest.getResponse().getResponses());
 		} else if (extendedRequest.getCalls().size() > 0) {
 			TIMING_LOG.logEnd(this.getClass().getSimpleName());
 			extendedRequest.setResponse(pluginLibrary.executeRequest(extendedRequest));
