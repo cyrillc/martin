@@ -217,6 +217,10 @@ public class RequestProcessor {
                         TIMING_LOG.logStart(this.getClass().getSimpleName());
                         LOG.debug(e);
                     }
+                } else {
+                    LOG.error("The IMartinType '" + parameter.getType()
+                    + "' could not be found.");
+                    break;
                 }
             }
 
