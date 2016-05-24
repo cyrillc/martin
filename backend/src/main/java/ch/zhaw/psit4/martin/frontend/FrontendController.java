@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,7 +46,7 @@ import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 @RestController
 @MultipartConfig(fileSizeThreshold = 52428800) // upload Max 50MB
 public class FrontendController {
-    
+
     private static final Log LOG = LogFactory.getLog(FrontendController.class);
 
     @Autowired
@@ -58,28 +57,28 @@ public class FrontendController {
 
     @Autowired
     private IPluginLibrary pluginlib;
-    
-    
 
-    private List<SseEmitter> emitters = new ArrayList<>();
+    private List<SseEmitter> commandResponseEmitters = new ArrayList<>();
+    private List<SseEmitter> pushMessageEmitters = new ArrayList<>();
 
-
-    private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
-
+    private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory
+            .getInstance();
 
     /**
-     * Returns the answer to a command to the Frontend. When a request to the API at /command comes
-     * in, the method querys the AI controller to get an answer for the command. It then returns
-     * that answer to the origin of the request.
+     * Returns the answer to a command to the Frontend. When a request to the
+     * API at /command comes in, the method querys the AI controller to get an
+     * answer for the command. It then returns that answer to the origin of the
+     * request.
      *
      * @param command
      * @return the response of the AI
      */
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
-            "http://srv-lab-t-825.zhaw.ch:4141"})
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/command")
 
-    public MResponse launchCommand(@RequestParam(value = "command") String command,
+    public MResponse launchCommand(
+            @RequestParam(value = "command") String command,
             @RequestParam(value = "timed", required = false) boolean timed) {
 
         TIMING_LOG.startLogging();
@@ -94,34 +93,56 @@ public class FrontendController {
         }
         return response;
     }
-    
-    
+
+    /**
+     * Sends a list of MOutputs to connected clients via server sent events.
+     * Tries to send the list to any client that has previously connected to
+     * /serverOutput. Removes client if connection is not possible.
+     * 
+     * 
+     * @param outputs
+     *            List of outputs to send to clients
+     */
     public void sendOutputToConnectedClients(List<MOutput> outputs) {
-        if(!emitters.isEmpty()){
-            ListIterator<SseEmitter> iter = emitters.listIterator();
-            while(iter.hasNext()){
+        if (!pushMessageEmitters.isEmpty()) {
+            ListIterator<SseEmitter> iter = pushMessageEmitters.listIterator();
+            while (iter.hasNext()) {
                 SseEmitter sseEmitter = iter.next();
                 try {
-                    sseEmitter.send(outputs,MediaType.APPLICATION_JSON_UTF8);
+                    sseEmitter.send(outputs, MediaType.APPLICATION_JSON_UTF8);
                 } catch (IOException e) {
                     sseEmitter.complete();
                     iter.remove();
                     LOG.info("Failed to send ServerSentEvent");
+                    LOG.info(e);
+
                 }
             }
         }
     }
-    
-    public void sendRequestAndResponseToConnectedClients(ExtendedRequest extendedRequest){
-    	if(!emitters.isEmpty()){
-            ListIterator<SseEmitter> iter = emitters.listIterator();
-            while(iter.hasNext()){
+
+    /**
+     * Sends an ExtendedRequest connected clients via server sent events. Tries
+     * to send the ExtendedRequest to any client that has previously connected
+     * to /serverOutput. Removes client if connection is not possible.
+     * 
+     * 
+     * @param extendedRequest
+     *            List of outputs to send to clients
+     */
+    public void sendRequestAndResponseToConnectedClients(
+            ExtendedRequest extendedRequest) {
+        if (!commandResponseEmitters.isEmpty()) {
+            ListIterator<SseEmitter> iter = commandResponseEmitters.listIterator();
+            while (iter.hasNext()) {
                 SseEmitter sseEmitter = iter.next();
                 try {
-					ObjectMapper mapper = new ObjectMapper();
-					mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                    ObjectMapper mapper = new ObjectMapper();
+                    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,
+                            false);
 
-                    sseEmitter.send(mapper.writeValueAsString(extendedRequest), MediaType.APPLICATION_JSON_UTF8);
+                    sseEmitter.send(mapper.writeValueAsString(extendedRequest),
+                            MediaType.APPLICATION_JSON_UTF8);
                 } catch (IOException e) {
                     sseEmitter.complete();
                     iter.remove();
@@ -133,14 +154,15 @@ public class FrontendController {
     }
 
     /**
-     * Returns a list of example commands to the frontend. When a request to the API at
-     * /exampleCommands comes in (usually on page load), the method querys the AI controller to get
-     * a list of possible commands. It then returns that list to the origin of the request.
+     * Returns a list of example commands to the frontend. When a request to the
+     * API at /exampleCommands comes in (usually on page load), the method
+     * querys the AI controller to get a list of possible commands. It then
+     * returns that list to the origin of the request.
      *
      * @return A list of possible commands
      */
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
-            "http://srv-lab-t-825.zhaw.ch:4141"})
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/exampleCommands")
     public List<MExampleCall> sendExampleCommands() {
         return aiController.getRandomExampleCalls();
@@ -148,25 +170,29 @@ public class FrontendController {
 
     /**
      * 
-     * @return A list of HistoryItems, with all user Requests and relative Responses.
+     * @return A list of HistoryItems, with all user Requests and relative
+     *         Responses.
      */
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
-            "http://srv-lab-t-825.zhaw.ch:4141"})
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/history")
 
-    public List<MHistoryItem> getHistory(@RequestParam(value = "amount") int amount, @RequestParam(value = "page") int page) {
+    public List<MHistoryItem> getHistory(
+            @RequestParam(value = "amount") int amount,
+            @RequestParam(value = "page") int page) {
         return aiController.getLimitedHistory(amount, page);
     }
 
     /**
-     * Returns the information all MArtIn plugins to the Frontend. When a request to the API at
-     * /pluginList comes in, the method querys the AI controller to get an answer for the command.
-     * It then returns that answer to the origin of the request.
+     * Returns the information all MArtIn plugins to the Frontend. When a
+     * request to the API at /pluginList comes in, the method querys the AI
+     * controller to get an answer for the command. It then returns that answer
+     * to the origin of the request.
      *
      * @return the information all MArtIn plugins
      */
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
-            "http://srv-lab-t-825.zhaw.ch:4141"})
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/pluginList")
     public List<PluginInformation> getPluginList() {
         return aiController.getPluginInformation();
@@ -177,26 +203,56 @@ public class FrontendController {
      * @return saves the uploaded file from the frontend
      * @throws FileUploadException
      */
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
-            "http://srv-lab-t-825.zhaw.ch:4141"})
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping(method = RequestMethod.POST, value = "/plugin/install")
     public String installPlugin(@RequestParam("name") String name,
-            @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes)
-            throws FileUploadException {
+            @RequestParam("file") MultipartFile file,
+            RedirectAttributes redirectAttributes) throws FileUploadException {
 
         String response = pluginInstaller.installPlugin(name, file) + "<br>";
-        response += pluginlib.loadNewPlugin(MartinAPIDefines.EXTPOINT_ID.getValue());
+        response += pluginlib
+                .loadNewPlugin(MartinAPIDefines.EXTPOINT_ID.getValue());
         return response;
     }
 
-    @CrossOrigin(origins = {"http://localhost:4141", "http://srv-lab-t-825:4141",
-    "http://srv-lab-t-825.zhaw.ch:4141"})
+    /**
+     * 
+     * Takes a request to register for server sent events and saves the client
+     * connection in a list. Returns the event emitter to the client so they can
+     * register on the server sent events.
+     * 
+     * @return event emitter sent to the client
+     * @throws IOException
+     */
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/serverOutput")
-    public SseEmitter getRealtimeMessageAction(HttpServletRequest request) throws IOException {
+    public SseEmitter registerForServerSentEvents() throws IOException {
         SseEmitter emitter = new SseEmitter(1000000L);
-        emitters.add(emitter);
-        emitter.onCompletion(() -> emitters.remove(emitter));
+        pushMessageEmitters.add(emitter);
+        emitter.onCompletion(() -> pushMessageEmitters.remove(emitter));
         return emitter;
     }
+    
+    /**
+     * 
+     * Takes a request to register command responses and saves the client
+     * connection in a list. Returns the event emitter to the client so they can
+     * register on the server sent events.
+     * 
+     * @return event emitter sent to the client
+     * @throws IOException
+     */
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @RequestMapping("/commandResponse")
+    public SseEmitter registerForCommandResponses() throws IOException {
+        SseEmitter emitter = new SseEmitter(1000000L);
+        commandResponseEmitters.add(emitter);
+        emitter.onCompletion(() -> commandResponseEmitters.remove(emitter));
+        return emitter;
+    }
+
 
 }

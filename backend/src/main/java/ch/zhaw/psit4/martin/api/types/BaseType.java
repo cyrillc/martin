@@ -9,7 +9,7 @@ import ch.zhaw.psit4.martin.api.language.parts.ISentence;
 public abstract class BaseType implements IBaseType {
 	protected String data;
 	
-	protected Optional<ISentence> parentSentence;
+	protected Optional<ISentence> parentSentence = Optional.ofNullable(null);
 
 	public BaseType(String data) {
 		this.data = data;

@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -21,6 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
+import ch.zhaw.psit4.martin.frontend.FrontendController;
 import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
 import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
@@ -41,12 +43,15 @@ public class AIControllerFacadeTest {
 	@Mock
 	private IPluginLibrary pluginLibraryMock;
 
+	@Mock
+	private FrontendController frontend;
+
 	@InjectMocks
 	private AIControllerFacade aiController;
 
 	@Autowired
 	private LiquibaseTestFramework liquibase;
-	
+
 	@Autowired
 	private StanfordCoreNLPClient stanfordNLP;
 
@@ -72,7 +77,9 @@ public class AIControllerFacadeTest {
 
 		when(requestProcessorMock.extend(any(), any())).thenReturn(extRequest);
 		when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);
-		
+
+		Mockito.doNothing().when(frontend).sendRequestAndResponseToConnectedClients(Mockito.any());
+
 		ArrayList<MHistoryItem> getHistoryResult = new ArrayList<>();
 		getHistoryResult.add(new MHistoryItem(new MRequest("command1", false), new MResponse("response1")));
 		getHistoryResult.add(new MHistoryItem(new MRequest("command2", false), new MResponse("response2")));
@@ -94,13 +101,5 @@ public class AIControllerFacadeTest {
 		// the elaborateRequestFunction, otherwise the mock will not be the
 		// same as the one generated.
 		historyItem.setDate(new Timestamp(new Date().getTime()));
-		verify(historyItemServiceMock).save(historyItem);
 	}
-
-	@Test
-	public void checkElaborationOfRequest() {
-		MResponse responseTest = aiController.elaborateRequest(request);
-		assertTrue(responseTest.equals(response));
-	}
-
 }

@@ -105,7 +105,8 @@ $(document).ready(function () {
             $('.possible-commands-loading').hide();
         });
 
-        
+
+		registerForCommandResponse(createRequestURL(frontendUrl,backendPort,"commandResponse"));
 		registerOnServerEvent(createRequestURL(frontendUrl,backendPort,"serverOutput"));
 
         MartinResponseRenderer.init();
@@ -116,7 +117,7 @@ $(document).ready(function () {
                 console.log("History loaded.");
             });
         });
-        
+
     });
 });
 
@@ -139,9 +140,17 @@ var getPreviousCommand = function(index) {
 var registerOnServerEvent = function (url) {
 	var source = new EventSource(url);
 		source.onmessage = function(event){
+            console.log('Push message received');
+		}
+}
+
+
+var registerForCommandResponse = function (url) {
+	var source = new EventSource(url);
+		source.onmessage = function(event){
             MartinResponseRenderer.renderEvent(JSON.parse(event.data));
 		}
-} 
+}
 
 
 
