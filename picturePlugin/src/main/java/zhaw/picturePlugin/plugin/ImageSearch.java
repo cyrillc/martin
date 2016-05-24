@@ -23,7 +23,7 @@ public class ImageSearch {
     public static void main(String[] args) throws IOException {
         ImageSearch image = new ImageSearch();
        
-        System.out.println(image.getImage("cat Häuser"));
+        System.out.println(image.getImage("cat"));
     }
 
     /**
@@ -50,6 +50,10 @@ public class ImageSearch {
             list.add(href);
         }
         int index = randomGenerator.nextInt(list.size());
-        return list.get(index);
+        String text = list.get(index);
+        int indexOfAmpersand = text.indexOf("&");
+        text = text.substring(0, indexOfAmpersand);
+        return text;
+        
     }
 }
