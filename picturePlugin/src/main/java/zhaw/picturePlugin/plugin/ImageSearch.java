@@ -20,11 +20,11 @@ public class ImageSearch {
     Document document;
     URLEncoder en;
 
-//    public static void main(String[] args) throws IOException {
-//        ImageSearch image = new ImageSearch();
-//       
-//        System.out.println(image.getImage("cat Häuser"));
-//    }
+    public static void main(String[] args) throws IOException {
+        ImageSearch image = new ImageSearch();
+       
+        System.out.println(image.getImage("cat Häuser"));
+    }
 
     /**
      * search image on bing engine and return random output
