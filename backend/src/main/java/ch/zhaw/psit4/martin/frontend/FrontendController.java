@@ -58,7 +58,8 @@ public class FrontendController {
     @Autowired
     private IPluginLibrary pluginlib;
 
-    private List<SseEmitter> emitters = new ArrayList<>();
+    private List<SseEmitter> commandResponseEmitters = new ArrayList<>();
+    private List<SseEmitter> pushMessageEmitters = new ArrayList<>();
 
     private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory
             .getInstance();
@@ -103,8 +104,8 @@ public class FrontendController {
      *            List of outputs to send to clients
      */
     public void sendOutputToConnectedClients(List<MOutput> outputs) {
-        if (!emitters.isEmpty()) {
-            ListIterator<SseEmitter> iter = emitters.listIterator();
+        if (!pushMessageEmitters.isEmpty()) {
+            ListIterator<SseEmitter> iter = pushMessageEmitters.listIterator();
             while (iter.hasNext()) {
                 SseEmitter sseEmitter = iter.next();
                 try {
@@ -131,8 +132,8 @@ public class FrontendController {
      */
     public void sendRequestAndResponseToConnectedClients(
             ExtendedRequest extendedRequest) {
-        if (!emitters.isEmpty()) {
-            ListIterator<SseEmitter> iter = emitters.listIterator();
+        if (!commandResponseEmitters.isEmpty()) {
+            ListIterator<SseEmitter> iter = commandResponseEmitters.listIterator();
             while (iter.hasNext()) {
                 SseEmitter sseEmitter = iter.next();
                 try {
@@ -229,9 +230,29 @@ public class FrontendController {
     @RequestMapping("/serverOutput")
     public SseEmitter registerForServerSentEvents() throws IOException {
         SseEmitter emitter = new SseEmitter(1000000L);
-        emitters.add(emitter);
-        emitter.onCompletion(() -> emitters.remove(emitter));
+        pushMessageEmitters.add(emitter);
+        emitter.onCompletion(() -> pushMessageEmitters.remove(emitter));
         return emitter;
     }
+    
+    /**
+     * 
+     * Takes a request to register command responses and saves the client
+     * connection in a list. Returns the event emitter to the client so they can
+     * register on the server sent events.
+     * 
+     * @return event emitter sent to the client
+     * @throws IOException
+     */
+    @CrossOrigin(origins = { "http://localhost:4141",
+            "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
+    @RequestMapping("/commandResponse")
+    public SseEmitter registerForCommandResponses() throws IOException {
+        SseEmitter emitter = new SseEmitter(1000000L);
+        commandResponseEmitters.add(emitter);
+        emitter.onCompletion(() -> commandResponseEmitters.remove(emitter));
+        return emitter;
+    }
+
 
 }
