@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -114,6 +113,8 @@ public class FrontendController {
                     sseEmitter.complete();
                     iter.remove();
                     LOG.info("Failed to send ServerSentEvent");
+                    LOG.info(e);
+
                 }
             }
         }
@@ -226,7 +227,7 @@ public class FrontendController {
     @CrossOrigin(origins = { "http://localhost:4141",
             "http://srv-lab-t-825:4141", "http://srv-lab-t-825.zhaw.ch:4141" })
     @RequestMapping("/serverOutput")
-    public SseEmitter getRealtimeMessageAction() throws IOException {
+    public SseEmitter registerForServerSentEvents() throws IOException {
         SseEmitter emitter = new SseEmitter(1000000L);
         emitters.add(emitter);
         emitter.onCompletion(() -> emitters.remove(emitter));
