@@ -1,6 +1,7 @@
 package ch.zhaw.psit4.martin.requestprocessor;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
@@ -37,7 +38,7 @@ public class ParameterExtractor {
         return parameterAsString;
     }
 
-    private static String extractTimeStampParameter(AnnotatedSentence sentence) {
+    public static String extractTimeStampParameter(AnnotatedSentence sentence) {
         // Timestamp consists of Date and Time
         Phrase date = sentence.popPhraseOfType(EBaseType.DATE);
         Phrase time = sentence.popPhraseOfType(EBaseType.TIME);
@@ -53,18 +54,24 @@ public class ParameterExtractor {
      * @param matchingKeywords
      * @return
      */
-    private static String extractTextParameter(AnnotatedSentence sentence,
+    public static String extractTextParameter(AnnotatedSentence sentence,
             Collection<MKeyword> matchingKeywords) {
 
         String parameterAsString = "";
 
         // Working only with graph of first text sentence
+        if(sentence.getSemanticGraphs().isEmpty()){
+            return "";
+        }
         SemanticGraph dependencies = sentence.getSemanticGraphs().get(0);
         for (MKeyword keyword : matchingKeywords) {
 
             // Working only with first occurrence of the keyword
-            IndexedWord indKeyWord = dependencies
-                    .getAllNodesByWordPattern(keyword.getKeyword()).get(0);
+            List<IndexedWord> IndexKeywordList = dependencies.getAllNodesByWordPattern(keyword.getKeyword());
+            if(IndexKeywordList.isEmpty()){
+                return "";
+            }
+            IndexedWord indKeyWord = IndexKeywordList.get(0);
 
             Set<IndexedWord> nominalMods = dependencies.getChildrenWithReln(
                     indKeyWord,
@@ -78,7 +85,7 @@ public class ParameterExtractor {
         return parameterAsString.trim();
     }
 
-    private static String defaultExtraction(MParameter parameter,
+    public static String defaultExtraction(MParameter parameter,
             AnnotatedSentence sentence) {
         Phrase phrase = sentence
                 .popPhraseOfType(EBaseType.fromClassName(parameter.getType()));
