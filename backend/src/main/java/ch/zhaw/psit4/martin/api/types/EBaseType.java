@@ -4,18 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum EBaseType {
-	DATE(MDate.class.getName()), DURATION(MDuration.class.getName()), LOCATION(MLocation.class.getName()), MISC(
+	DURATION(MDuration.class.getName()), LOCATION(MLocation.class.getName()), MISC(
 			MMisc.class.getName()), MONEY(MMoney.class.getName()), NUMBER(MNumber.class.getName()), ORDINAL(
 					MOrdinal.class.getName()), ORGANIZATION(MOrganization.class.getName()), PERCENT(
 							MPercent.class.getName()), PERSON(MPerson.class.getName()), SET(MSet.class.getName()), TEXT(
-									MText.class.getName()), TIME(
-											MTime.class.getName()), TIMESTAMP(MTimestamp.class.getName());
+									MText.class.getName()), TIMESTAMP(MTimestamp.class.getName());
 
 	private static final Map<String, String> NERTAGS;
 
 	static {
 		NERTAGS = new HashMap<>();
-		NERTAGS.put(MDate.class.getName(), "DATE");
 		NERTAGS.put(MDuration.class.getName(), "DURATION");
 		NERTAGS.put(MLocation.class.getName(), "LOCATION");
 		NERTAGS.put(MMisc.class.getName(), "MISC");
@@ -27,7 +25,6 @@ public enum EBaseType {
 		NERTAGS.put(MPerson.class.getName(), "PERSON");
 		NERTAGS.put(MSet.class.getName(), "SET");
 		NERTAGS.put(MText.class.getName(), "O");
-		NERTAGS.put(MTime.class.getName(), "TIME");
 		NERTAGS.put(MTimestamp.class.getName(), "TIMESTAMP");
 	}
 
@@ -52,6 +49,10 @@ public enum EBaseType {
 	}
 
 	public static EBaseType fromNerTag(String tag) {
+		if(tag.equals("DATE") || tag.equals("TIME")){
+			tag = "TIMESTAMP";
+		}
+		
 		for (EBaseType e : EBaseType.values()) {
 			if (tag.equals(e.getNerTag())) {
 				return e;

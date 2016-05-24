@@ -20,14 +20,6 @@ public interface IMartinContext {
      * @param item The item to register.
      */
     public void registerWorkItem(Feature item);
-
-    /**
-     * Registers a response message in MArtIn.
-     * 
-     * @param response The response to register.
-     */
-    public void registerResponseMessage(String response);
-    
     
     /**
      * Adds an output to the queue to be send to clients.

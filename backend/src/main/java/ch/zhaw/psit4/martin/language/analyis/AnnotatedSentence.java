@@ -2,15 +2,11 @@ package ch.zhaw.psit4.martin.language.analyis;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
-
-import org.joda.time.Instant;
 
 import ch.zhaw.psit4.martin.api.language.parts.ISentence;
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
@@ -27,16 +23,12 @@ import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.tokensregex.MatchedExpression;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.BasicDependenciesAnnotation;
-import edu.stanford.nlp.time.SUTime;
 import edu.stanford.nlp.time.SUTime.Temporal;
-import edu.stanford.nlp.time.SUTime.TimexType;
 import edu.stanford.nlp.time.TimeAnnotations;
-import edu.stanford.nlp.time.TimeAnnotator;
 import edu.stanford.nlp.time.TimeExpression;
 import edu.stanford.nlp.util.CoreMap;
 
@@ -114,7 +106,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 		StringBuilder sb = new StringBuilder();
 		CoreLabel previousToken;
 		CoreLabel currentToken = tokens.get(0);
-		List<EBaseType> skip = Arrays.asList(EBaseType.DATE, EBaseType.TIME, EBaseType.SET, EBaseType.DURATION);
+		List<EBaseType> skip = Arrays.asList(EBaseType.TIMESTAMP, EBaseType.SET, EBaseType.DURATION);
 
 		for (CoreLabel token : tokens) {
 			previousToken = currentToken;
@@ -158,12 +150,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 			phrases.add(phrase);
 		}
 	}
-
-	public boolean isPartOfTimestamp(CoreLabel token) {
-		return token.get(NamedEntityTagAnnotation.class).equals(EBaseType.DATE.getNerTag())
-				|| token.get(NamedEntityTagAnnotation.class).equals(EBaseType.TIME.getNerTag());
-	}
-
+	
 	public void resetPopState() {
 		phrasesPopState = new ArrayList<>(phrases);
 		popStateDirty = false;

@@ -12,8 +12,8 @@ public class BaseTypeFactory {
 			return MNumberFactory.fromString(phrase.getValue());
 		case LOCATION:
 			return MLocationFactory.fromString(phrase.getValue());
-		case DATE:
-			return MDateFactory.fromPhrase(phrase, sentence);
+		case TIMESTAMP:
+			return MTmestampFactory.fromPhrase(phrase, sentence);
 		default:
 			return IBaseType.fromString(phrase.getType(), phrase.getValue());
 		}

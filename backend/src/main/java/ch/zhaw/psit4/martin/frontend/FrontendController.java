@@ -210,7 +210,7 @@ public class FrontendController {
             @RequestParam("file") MultipartFile file,
             RedirectAttributes redirectAttributes) throws FileUploadException {
 
-        String response = pluginInstaller.installPlugin(name, file) + "<br>";
+        String response = pluginInstaller.installPlugin(file) + "<br>";
         response += pluginlib
                 .loadNewPlugin(MartinAPIDefines.EXTPOINT_ID.getValue());
         return response;

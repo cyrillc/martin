@@ -1,31 +1,19 @@
 package ch.zhaw.psit4.martin.api.types;
 
-import java.util.Optional;
-
-import org.joda.time.DateTime;
+import org.joda.time.Instant;
+import org.joda.time.Partial;
 import org.json.JSONObject;
 
 public class MTimestamp extends BaseType {
-	private Optional<DateTime> datetime = Optional.ofNullable(null);
+	private Instant instant;
+	private Partial partial;
 
 	public MTimestamp(String data) {
 		super(data);
 	}
 
-	public Optional<DateTime> getDatetime() {
-		return datetime;
-	}
-
-	public void setDatetime(Optional<DateTime> datetime) {
-		this.datetime = datetime;
-	}
-
-	public Optional<Long> getTimestamp() {
-		if (datetime.isPresent()) {
-			return Optional.ofNullable(datetime.get().getMillis());
-		} else {
-			return Optional.ofNullable(null);
-		}
+	public Long getTimestamp() {
+		return instant.getMillis();
 	}
 
 	@Override
@@ -34,11 +22,22 @@ public class MTimestamp extends BaseType {
 		json.put("type", this.getClass().getName());
 		json.put("data", data);
 
-		if (datetime.isPresent()) {
-			json.put("datetime", datetime.get().toString());
-			json.put("timestamp", datetime.get().getMillis());
-		}
-
 		return json.toString(4);
+	}
+	
+	public Instant getInstant() {
+		return instant;
+	}
+
+	public void setInstant(Instant instant) {
+		this.instant = instant;
+	}
+
+	public Partial getPartial() {
+		return partial;
+	}
+
+	public void setPartial(Partial partial) {
+		this.partial = partial;
 	}
 }

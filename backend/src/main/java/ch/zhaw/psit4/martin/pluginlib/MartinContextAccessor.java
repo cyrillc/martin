@@ -1,7 +1,7 @@
 package ch.zhaw.psit4.martin.pluginlib;
 
 import java.util.List;
-import java.util.LinkedList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.logging.Log;
@@ -24,14 +24,6 @@ import ch.zhaw.psit4.martin.api.types.output.MOutput;
  */
 public class MartinContextAccessor implements IMartinContext {
     /*
-     * the work list.
-     */
-    private List<Feature> queue;
-    /*
-     * The response list.
-     */
-    private List<String> responses;
-    /*
      * The id-counter of this class
      */
     private AtomicLong idCounter;
@@ -41,12 +33,15 @@ public class MartinContextAccessor implements IMartinContext {
     private static final Log LOG = LogFactory
             .getLog(MartinContextAccessor.class);
     
+    /*
+     * Thread safe list implementation.
+     */
+    private CopyOnWriteArrayList<Feature> featureQueue;
     @Autowired
     private MOutputQueueThread outputQueue;
 
     public MartinContextAccessor() {
-        queue = new LinkedList<>();
-        responses = new LinkedList<>();
+        featureQueue = new CopyOnWriteArrayList<>();
         idCounter = new AtomicLong();
     }
 
@@ -61,7 +56,7 @@ public class MartinContextAccessor implements IMartinContext {
     public void registerWorkItem(Feature item) {
         try {
             item.setID(getnextID());
-            queue.add(item);
+            featureQueue.add(item);
         } catch (Exception e) {
             LOG.error("An error occured at registerWorkItem()", e);
         }
@@ -71,7 +66,7 @@ public class MartinContextAccessor implements IMartinContext {
      * Clears the work list.
      */
     public void clearWorkList() {
-        queue.clear();
+        featureQueue.clear();
     }
 
     /**
@@ -82,23 +77,11 @@ public class MartinContextAccessor implements IMartinContext {
      *         queue is empty
      */
     public Feature fetchWorkItem(long requestID) {
-        for (int i = 0; i < queue.size(); i++) {
-            if (queue.get(i).getRequestID() == requestID)
-                return queue.remove(i);
+        for (int i = 0; i < featureQueue.size(); i++) {
+            if (featureQueue.get(i).getRequestID() == requestID)
+                return featureQueue.remove(i);
         }
         return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * ch.zhaw.psit4.martin.api.IMartinContext#registerResponseMessage(java.lang
-     * .String)
-     */
-    @Override
-    public void registerResponseMessage(String response) {
-        responses.add(response);
     }
 
     @Override
@@ -106,19 +89,8 @@ public class MartinContextAccessor implements IMartinContext {
         outputQueue.addToOutputQueue(output);
     }
 
-    /**
-     * Clears the response list.
-     */
-    public void clearResponseList() {
-        responses.clear();
-    }
-
-    public int getNumberOfResponses() {
-        return responses.size();
-    }
-
     public int getNumberOfFeatures() {
-        return queue.size();
+        return featureQueue.size();
     }
 
     private long getnextID() {

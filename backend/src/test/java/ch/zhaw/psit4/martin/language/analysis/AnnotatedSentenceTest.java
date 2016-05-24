@@ -126,21 +126,5 @@ public class AnnotatedSentenceTest {
 		assertEquals(phrase1.getValue(), "50 percent");
 		
 	}
-	
-	@Test
-	public void testTime() {
-		AnnotatedSentence sentence = new AnnotatedSentence("It was 12 o'clock when the New Year 's Eve rockets hit the sky.", stanfordNLP);
-
-		Phrase phrase1 = sentence.popPhraseOfType(EBaseType.TIME);
-
-		assertEquals(phrase1.getType(), EBaseType.TIME);
-		assertEquals(phrase1.getValue(), "12 o'clock");
-		
-		Phrase phrase2 = sentence.popPhraseOfType(EBaseType.DATE);
-		
-		assertEquals(phrase2.getType(), EBaseType.DATE);
-		assertEquals(phrase2.getValue(), "New Year 's Eve");
-		
-	}
 
 }

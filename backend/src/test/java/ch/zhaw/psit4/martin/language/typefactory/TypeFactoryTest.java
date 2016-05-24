@@ -17,6 +17,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
+import ch.zhaw.psit4.martin.api.types.BaseType;
+import ch.zhaw.psit4.martin.api.types.EBaseType;
+import ch.zhaw.psit4.martin.api.types.IBaseType;
+import ch.zhaw.psit4.martin.api.types.MTimestamp;
 import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
@@ -208,8 +212,15 @@ public class TypeFactoryTest {
 			
 			for(Phrase phrase : sentence.getPhrases()){
 				try {
-					LOG.info("   -> " + phrase.getNerTag() + " | " + phrase.getNormalizedValue() + " | " + phrase.getValue());
-					BaseTypeFactory.fromPhrase(phrase, sentence);
+					
+					IBaseType baseType = BaseTypeFactory.fromPhrase(phrase, sentence);
+					
+					if(phrase.getType().equals(EBaseType.TIMESTAMP)){
+						MTimestamp timestamp = (MTimestamp)baseType;
+						LOG.info("   -> " + phrase.getNerTag() + " | " + timestamp.getInstant().toString() + " | " + phrase.getValue());
+					} else {
+						LOG.info("   -> " + phrase.getNerTag() + " | " + phrase.getNormalizedValue() + " | " + phrase.getValue());
+					}
 				} catch(Exception e){
 					LOG.error(e);
 				}
