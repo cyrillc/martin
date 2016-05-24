@@ -25,7 +25,7 @@ import ch.zhaw.psit4.martin.timing.TimingInfo;
 public class MResponse extends BaseModel {
 
 	@Transient
-	private List<MOutput> responses;
+	private List<MOutput> responses = new ArrayList<>();
 
 	@Transient
 	private List<TimingInfo> timingInfo = new ArrayList<>();
