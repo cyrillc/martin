@@ -9,7 +9,7 @@ public enum EBaseType {
 					MOrdinal.class.getName()), ORGANIZATION(MOrganization.class.getName()), PERCENT(
 							MPercent.class.getName()), PERSON(MPerson.class.getName()), SET(MSet.class.getName()), TEXT(
 									MText.class.getName()), TIME(
-											MTime.class.getName()), TIMESTAMP(MTimestamp.class.getName());
+											MTime.class.getName()), TIMESTAMP(MTimestamp.class.getName()), UNKOWN(MUnknown.class.getName());
 
 	private static final Map<String, String> NERTAGS;
 
@@ -26,9 +26,10 @@ public enum EBaseType {
 		NERTAGS.put(MPercent.class.getName(), "PERCENT");
 		NERTAGS.put(MPerson.class.getName(), "PERSON");
 		NERTAGS.put(MSet.class.getName(), "SET");
-		NERTAGS.put(MText.class.getName(), "O");
+		NERTAGS.put(MText.class.getName(), "TEXT");
 		NERTAGS.put(MTime.class.getName(), "TIME");
 		NERTAGS.put(MTimestamp.class.getName(), "DATE TIME");
+		NERTAGS.put(MUnknown.class.getName(), "O");
 	}
 
 	private String value;
