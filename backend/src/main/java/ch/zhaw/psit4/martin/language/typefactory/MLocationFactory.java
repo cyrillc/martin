@@ -21,7 +21,7 @@ public class MLocationFactory {
 	private static final Log LOG = LogFactory.getLog(MartinBoot.class);
 	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
 
-	public MLocation fromString(String rawInput) throws BaseTypeInstanciationException {
+	public static MLocation fromString(String rawInput) throws BaseTypeInstanciationException {
 		TIMING_LOG.logStart(GeocodingApi.class.getSimpleName());
 		MLocation martinLocation = new MLocation(rawInput);
 
@@ -37,7 +37,7 @@ public class MLocationFactory {
 		return martinLocation;
 	}
 
-	private GeocodingResult[] getGeolocationFromGoogle(String rawLocation) {
+	private static GeocodingResult[] getGeolocationFromGoogle(String rawLocation) {
 		GeoApiContext context = new GeoApiContext().setApiKey(GOOGLE_GEOLOCATION_API_KEY);
 		try {
 			return GeocodingApi.geocode(context, rawLocation).await();

@@ -1,8 +1,16 @@
 package ch.zhaw.psit4.martin.language.analyis;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+
+import org.joda.time.Instant;
 
 import ch.zhaw.psit4.martin.api.language.parts.ISentence;
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
@@ -12,16 +20,24 @@ import ch.zhaw.psit4.martin.api.types.output.MOutput;
 import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
+import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.NormalizedNamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.ling.tokensregex.MatchedExpression;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.BasicDependenciesAnnotation;
+import edu.stanford.nlp.time.SUTime;
+import edu.stanford.nlp.time.SUTime.Temporal;
+import edu.stanford.nlp.time.SUTime.TimexType;
+import edu.stanford.nlp.time.TimeAnnotations;
+import edu.stanford.nlp.time.TimeAnnotator;
+import edu.stanford.nlp.time.TimeExpression;
 import edu.stanford.nlp.util.CoreMap;
 
 /**
@@ -65,6 +81,12 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 
 	public void annotate() {
 		annotation = new Annotation(text);
+		
+		// Set time reference for all Time-Annotations
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar now = Calendar.getInstance();
+		annotation.set(CoreAnnotations.DocDateAnnotation.class, dateFormat.format(now.getTime()));
+		
 		annotationPipeline.annotate(annotation);
 	}
 
@@ -82,7 +104,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 
 		for (CoreMap sentence : sentences) {
 			generateSentencePhrases(sentence.get(TokensAnnotation.class));
-			generateTimestampPhrases(sentence.get(TokensAnnotation.class));
+			generateTimestampPhrases(sentence.get(TimeAnnotations.TimexAnnotations.class));
 			SemanticGraph dependencies = sentence.get(BasicDependenciesAnnotation.class);
 			semanticGraphs.add(dependencies);
 		}
@@ -92,11 +114,12 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 		StringBuilder sb = new StringBuilder();
 		CoreLabel previousToken;
 		CoreLabel currentToken = tokens.get(0);
+		List<EBaseType> skip = Arrays.asList(EBaseType.DATE, EBaseType.TIME, EBaseType.SET, EBaseType.DURATION);
 
 		for (CoreLabel token : tokens) {
 			previousToken = currentToken;
 			currentToken = token;
-
+		
 			if (previousToken.get(NamedEntityTagAnnotation.class).equals(token.get(NamedEntityTagAnnotation.class))) {
 				sb.append(" " + token.get(TextAnnotation.class));
 			} else {
@@ -104,7 +127,10 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 				phrase.setNerTag(previousToken.get(NamedEntityTagAnnotation.class));
 				phrase.setNormalizedValue(previousToken.get(NormalizedNamedEntityTagAnnotation.class));
 
-				phrases.add(phrase);
+				if(!skip.contains(phrase.getType())){
+					phrases.add(phrase);
+				}
+				
 				sb.setLength(0);
 				sb.append(token.get(TextAnnotation.class));
 			}
@@ -113,35 +139,22 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 		Phrase phrase = new Phrase(sb.toString().trim());
 		phrase.setNerTag(currentToken.get(NamedEntityTagAnnotation.class));
 		phrase.setNormalizedValue(currentToken.get(NormalizedNamedEntityTagAnnotation.class));
-		phrases.add(phrase);
+		
+		if(!skip.contains(phrase.getType())){
+			phrases.add(phrase);
+		}
 
 	}
 
-	public void generateTimestampPhrases(List<CoreLabel> tokens) {
-		String value = null;
-		String normalizedValue = null;
-
-		for (CoreLabel token : tokens) {
-			if (isPartOfTimestamp(token)) {
-				if (value == null) {
-					value = token.get(TextAnnotation.class);
-					normalizedValue = token.get(NormalizedNamedEntityTagAnnotation.class);
-				} else {
-					value += " " + token.get(TextAnnotation.class);
-
-					Phrase phrase = new Phrase(value);
-					phrase.setType(EBaseType.TIMESTAMP);
-					phrase.setNormalizedValue(normalizedValue);
-					phrases.add(phrase);
-					value = null;
-				}
-			}
-		}
-
-		if (value != null) {
-			Phrase phrase = new Phrase(value);
-			phrase.setType(EBaseType.TIMESTAMP);
-			phrase.setNormalizedValue(normalizedValue);
+	public void generateTimestampPhrases(List<CoreMap> tokens) {
+		for (CoreMap map : tokens) {
+			TimeExpression timeExpression = map.get(TimeExpression.Annotation.class);
+			Temporal temporal = timeExpression.getTemporal();
+	
+			Phrase phrase = new Phrase(timeExpression.getText());
+			phrase.setNormalizedValue(temporal.getTimexValue());
+			phrase.setType(EBaseType.fromNerTag(temporal.getTimexType().toString()));
+			phrase.setPayload(temporal);
 			phrases.add(phrase);
 		}
 	}
@@ -230,6 +243,10 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 
 	public void setSemanticGraphs(List<SemanticGraph> semanticGraphs) {
 		this.semanticGraphs = semanticGraphs;
+	}
+	
+	public AnnotationPipeline getAnnotationPipeline(){
+		return this.annotationPipeline;
 	}
 
 }

@@ -14,11 +14,11 @@ import ch.zhaw.psit4.martin.boot.MartinBoot;
 public class MNumberFactory {
 	private static final Log LOG = LogFactory.getLog(MartinBoot.class);
 
-	public MNumber fromString(String rawInput) throws BaseTypeInstanciationException {
-		return this.fromString(rawInput, MNumber.RawFormat.UNKNOWN);
+	public static MNumber fromString(String rawInput) throws BaseTypeInstanciationException {
+		return fromString(rawInput, MNumber.RawFormat.UNKNOWN);
 	}
 
-	public MNumber fromString(String rawInput, MNumber.RawFormat rawFormat) throws BaseTypeInstanciationException {
+	public static MNumber fromString(String rawInput, MNumber.RawFormat rawFormat) throws BaseTypeInstanciationException {
 		MNumber martinNumber = new MNumber(rawInput);
 		martinNumber.setRawFormat(rawFormat);
 
@@ -59,7 +59,7 @@ public class MNumberFactory {
 		return martinNumber;
 	}
 
-	public Double stringToDouble(String rawInput) {
+	public static Double stringToDouble(String rawInput) {
 		String input = rawInput;
 		boolean isValidInput = true;
 		Double result = 0.0;

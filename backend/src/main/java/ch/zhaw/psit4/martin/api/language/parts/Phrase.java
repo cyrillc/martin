@@ -8,6 +8,7 @@ public class Phrase {
 	private String value;
 	private String nerTag;
 	private String normalizedValue;
+	private Object payload;
 
 	public Phrase(String value) {
 		this.type = EBaseType.fromClassName(MText.class.getName());
@@ -51,6 +52,14 @@ public class Phrase {
 
 	public void setNormalizedValue(String normalizedValue) {
 		this.normalizedValue = normalizedValue;
+	}
+	
+	public Object getPayload(){
+		return this.payload;
+	}
+	
+	public void setPayload(Object payload){
+		this.payload = payload;
 	}
 
 }

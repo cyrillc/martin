@@ -9,14 +9,11 @@ public class BaseTypeFactory {
 	public static IBaseType fromPhrase(Phrase phrase, AnnotatedSentence sentence) throws BaseTypeInstanciationException {
 		switch (phrase.getType()) {
 		case NUMBER:
-			MNumberFactory numberFactory = new MNumberFactory();
-			return numberFactory.fromString(phrase.getValue());
-		case TIMESTAMP:
-			MTimestampFactory timestampFactory = new MTimestampFactory();
-			return timestampFactory.fromPhrase(phrase, sentence);
+			return MNumberFactory.fromString(phrase.getValue());
 		case LOCATION:
-			MLocationFactory locationFactory = new MLocationFactory();
-			return locationFactory.fromString(phrase.getValue());
+			return MLocationFactory.fromString(phrase.getValue());
+		case DATE:
+			return MDateFactory.fromPhrase(phrase, sentence);
 		default:
 			return IBaseType.fromString(phrase.getType(), phrase.getValue());
 		}

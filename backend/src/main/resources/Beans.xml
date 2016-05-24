@@ -108,6 +108,6 @@
 		class="ch.zhaw.psit4.martin.language.analyis.NaturalLanguageAnalysisUtilities">
 	</bean>
 	<bean id="AnnotationPipeline" class="edu.stanford.nlp.pipeline.AnnotationPipeline"
-		factory-bean="NaturalLanguageAnalysisUtilities" factory-method="bootStanfordNLPClient">
+		factory-bean="NaturalLanguageAnalysisUtilities" factory-method="bootStanfordNLP">
 	</bean>
 </beans>

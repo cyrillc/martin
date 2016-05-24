@@ -5,6 +5,7 @@ import java.util.Properties;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
+import edu.stanford.nlp.time.TimeAnnotator;
 
 /**
  * This Class holds some Utilities for analyzing natural language to help
@@ -30,8 +31,10 @@ public class NaturalLanguageAnalysisUtilities {
 		// NER, parsing, and coreference resolution
 		Properties props = new Properties();
 		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
+		AnnotationPipeline pipeline = new StanfordCoreNLP(props);
+		pipeline.addAnnotator(new TimeAnnotator("sutime", props));
 		
-		return new StanfordCoreNLP(props);
+		return pipeline;
 	}
 	
 	/**
