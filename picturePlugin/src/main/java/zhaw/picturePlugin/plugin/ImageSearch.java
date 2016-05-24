@@ -34,7 +34,7 @@ public class ImageSearch {
      * @throws IOException
      */
     public String getImage(String type) throws IOException {
-       String encodedString =  URLEncoder.encode("cat house", "UTF-8");     
+       String encodedString =  URLEncoder.encode(type, "UTF-8");     
         ArrayList<String> list = new ArrayList<>();
         Random randomGenerator = new Random();
         document =
