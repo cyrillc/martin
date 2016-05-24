@@ -25,7 +25,8 @@ public class MartinPluginValidator {
     private Class<?> className;
     private Object instance;
     private MartinContextAccessorMock context;
-    
+    private List<String> requests;
+
     @SuppressWarnings("unused")
     private MartinPluginValidator() {
         // hidden
@@ -71,7 +72,7 @@ public class MartinPluginValidator {
         if (!result) {
             return MartinAPITestResult.ERROR;
         }
-        result = checkRequestIDAssigned();
+        result = checkNumRequests();
         if (!result) {
             LOG.warn("No feature objects created by " + MartinPlugin.class.toString() + ".");
             return MartinAPITestResult.WARNING;
@@ -108,7 +109,9 @@ public class MartinPluginValidator {
      */
     private boolean isInitializedCorrectly() {
         try {
-            ((MartinPlugin) instance).initializeRequest("null", 0);
+            for(int i = 0; i < requests.size(); i++) {
+                ((MartinPlugin) instance).initializeRequest(requests.get(i), i);
+            }
         } catch (Exception e) {
             LOG.error(className.toString() + ": Request cannot be initialized.", e);
             return false;
@@ -121,12 +124,20 @@ public class MartinPluginValidator {
      * 
      * @return true or false;
      */
-    private boolean checkRequestIDAssigned() {
+    private boolean checkNumRequests() {
         boolean assigned = false;        
-        if (context.getNumberOfFeatures() > 0)
+        if (context.getNumberOfFeatures() == requests.size() && context.getNumberOfFeatures() > 0)
             assigned = true;
         context.clearWorkList();
         return assigned;
+    }
+    
+    public List<String> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<String> requests) {
+        this.requests = requests;
     }
 
     /**
@@ -142,14 +153,9 @@ public class MartinPluginValidator {
          * the work list.
          */
         private List<Feature> queue;
-        /*
-         * The response list.
-         */
-        private List<String> responses;
 
         public MartinContextAccessorMock() {
             this.queue = new LinkedList<>();
-            this.responses = new LinkedList<>();
         }
 
         /**
@@ -178,14 +184,8 @@ public class MartinPluginValidator {
         }
 
         @Override
-        public void registerResponseMessage(String response) {
-            responses.add(response);
-        }
-
-        @Override
         public void addToOutputQueue(List<MOutput> output) {
             LOG.info(output);
-            
         }
     }
 
