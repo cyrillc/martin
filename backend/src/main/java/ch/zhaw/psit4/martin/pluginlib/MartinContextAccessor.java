@@ -28,10 +28,6 @@ public class MartinContextAccessor implements IMartinContext {
      */
     private List<Feature> queue;
     /*
-     * The response list.
-     */
-    private List<String> responses;
-    /*
      * The id-counter of this class
      */
     private AtomicLong idCounter;
@@ -46,7 +42,6 @@ public class MartinContextAccessor implements IMartinContext {
 
     public MartinContextAccessor() {
         queue = new LinkedList<>();
-        responses = new LinkedList<>();
         idCounter = new AtomicLong();
     }
 
@@ -89,32 +84,9 @@ public class MartinContextAccessor implements IMartinContext {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * ch.zhaw.psit4.martin.api.IMartinContext#registerResponseMessage(java.lang
-     * .String)
-     */
-    @Override
-    public void registerResponseMessage(String response) {
-        responses.add(response);
-    }
-
     @Override
     public void addToOutputQueue(List<MOutput> output) {
         outputQueue.addToOutputQueue(output);
-    }
-
-    /**
-     * Clears the response list.
-     */
-    public void clearResponseList() {
-        responses.clear();
-    }
-
-    public int getNumberOfResponses() {
-        return responses.size();
     }
 
     public int getNumberOfFeatures() {

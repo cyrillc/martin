@@ -153,14 +153,9 @@ public class MartinPluginValidator {
          * the work list.
          */
         private List<Feature> queue;
-        /*
-         * The response list.
-         */
-        private List<String> responses;
 
         public MartinContextAccessorMock() {
             this.queue = new LinkedList<>();
-            this.responses = new LinkedList<>();
         }
 
         /**
@@ -189,14 +184,8 @@ public class MartinPluginValidator {
         }
 
         @Override
-        public void registerResponseMessage(String response) {
-            responses.add(response);
-        }
-
-        @Override
         public void addToOutputQueue(List<MOutput> output) {
             LOG.info(output);
-            
         }
     }
 
