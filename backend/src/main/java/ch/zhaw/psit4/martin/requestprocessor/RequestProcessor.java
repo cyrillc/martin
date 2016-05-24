@@ -1,9 +1,8 @@
 package ch.zhaw.psit4.martin.requestprocessor;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -12,24 +11,26 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
+import ch.zhaw.psit4.martin.api.types.BaseTypeInstanciationException;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.api.types.IBaseType;
-import ch.zhaw.psit4.martin.api.types.BaseTypeInstanciationException;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
 import ch.zhaw.psit4.martin.language.typefactory.BaseTypeFactory;
-import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.MFunction;
+import ch.zhaw.psit4.martin.models.MKeyword;
+import ch.zhaw.psit4.martin.models.MParameter;
+import ch.zhaw.psit4.martin.models.MPlugin;
+import ch.zhaw.psit4.martin.models.MRequest;
+import ch.zhaw.psit4.martin.models.MResponse;
 import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.semgraph.SemanticGraph;
-import edu.stanford.nlp.trees.EnglishGrammaticalRelations;
-import edu.stanford.nlp.trees.GrammaticalRelation;
 import edu.stanford.nlp.trees.UniversalEnglishGrammaticalRelations;
-import edu.stanford.nlp.util.Pair;
 
 /**
  * This class is responible for extending a request to a computer readable
@@ -209,7 +210,7 @@ public class RequestProcessor {
                                 parameterAsString, sentence);
                         LOG.info(
                                 "\n Parameter found via Name Entity Recognition: "
-                                        + parameterValue.toJson());
+                                        + parameterValue.toString());
                         TIMING_LOG.logStart(this.getClass().getSimpleName());
                         return parameterValue;
                     } catch (BaseTypeInstanciationException e) {
@@ -290,7 +291,7 @@ public class RequestProcessor {
             }
         }
 
-        return parameterAsString;
+        return parameterAsString.trim();
     }
 
 }

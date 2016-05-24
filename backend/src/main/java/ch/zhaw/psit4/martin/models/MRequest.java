@@ -11,7 +11,7 @@ public class MRequest extends BaseModel {
 
 	@NotNull
 	private String command;
-	
+
 	@Transient
 	private boolean timed;
 
@@ -30,9 +30,9 @@ public class MRequest extends BaseModel {
 	public void setCommand(String command) {
 		this.command = command;
 	}
-	
-	public boolean isTimed(){
-	    return this.timed;
+
+	public boolean isTimed() {
+		return this.timed;
 	}
 
 	@Override
@@ -48,13 +48,14 @@ public class MRequest extends BaseModel {
 			return false;
 		}
 		if (this.timed != r.isTimed()) {
-		    return false;
+			return false;
 		}
 		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		return (int) super.hashCode() * (this.getId() + this.getCommand().hashCode() + new Boolean(this.timed).hashCode()) * 13;
+		return (int) super.hashCode()
+				* (this.getId() + this.getCommand().hashCode() + new Boolean(this.timed).hashCode()) * 13;
 	}
 }

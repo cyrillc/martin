@@ -1,5 +1,7 @@
 package zhaw.weatherPlugin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -8,14 +10,14 @@ import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.types.IBaseType;
 import ch.zhaw.psit4.martin.api.types.MLocation;
 import ch.zhaw.psit4.martin.api.types.MTimestamp;
+import ch.zhaw.psit4.martin.api.types.output.MOutput;
+import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 import zhaw.weatherPlugin.plugin.WeatherService;
 
 public class WeatherWork extends Feature {
 
 	WeatherService weatherService;
 	private String city;
-	private Double latitude;
-	private Double longitude;
 	private DateTime dateTime;
 
 	public WeatherWork(long requestID) {
@@ -29,11 +31,6 @@ public class WeatherWork extends Feature {
 
 		this.city = location.toString();
 
-		if (location.getLatitude().isPresent() && location.getLongitude().isPresent()) {
-			this.latitude = location.getLatitude().get();
-			this.longitude = location.getLongitude().get();
-		}
-
 		if (args.containsKey("time")) {
 			MTimestamp timestamp = (MTimestamp) args.get("time");
 
@@ -45,18 +42,22 @@ public class WeatherWork extends Feature {
 	}
 
 	@Override
-	public String execute() throws Exception {
-	    String response = null;
-		if(this.dateTime == null){
-			response = weatherService.getWeatherAtCity(this.city);
+	public List<MOutput> execute() throws Exception {
+		List<MOutput> response = new ArrayList<>();
+		String apiResponse;
+
+		if (this.dateTime == null) {
+			apiResponse = weatherService.getWeatherAtCity(this.city);
 		} else {
-			response = weatherService.getForecastAtCityForSpecificTime(this.city, this.dateTime.toDate());
+			apiResponse = weatherService.getForecastAtCityForSpecificTime(this.city, this.dateTime.toDate());
 		}
-		
-		
-		if (response == null) {
-			response = "No weather info found for " + city;
+
+		if (apiResponse == null) {
+			apiResponse = "No weather info found for " + city;
 		}
+		response.add(new MOutput(MOutputType.HEADING, "Weather"));
+		response.add(new MOutput(MOutputType.TEXT, apiResponse));
+
 		return response;
 	}
 

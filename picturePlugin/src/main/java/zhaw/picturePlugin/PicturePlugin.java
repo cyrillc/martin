@@ -23,7 +23,7 @@ public class PicturePlugin implements MartinPlugin {
     @Override
     public void initializeRequest(String feature, long requestID) throws Exception {
         if (active) {
-            if(feature.toLowerCase() == "picture") {
+            if(feature.equals("picture")) {
                 Feature work = new PictureWork(requestID);
                 context.registerWorkItem(work);
             }

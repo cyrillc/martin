@@ -26,6 +26,8 @@ import org.java.plugin.registry.Extension.Parameter;
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.MartinAPIDefines;
 import ch.zhaw.psit4.martin.api.MartinPlugin;
+import ch.zhaw.psit4.martin.api.types.output.MOutput;
+import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 import ch.zhaw.psit4.martin.api.util.Pair;
 import ch.zhaw.psit4.martin.common.Call;
 
@@ -364,12 +366,12 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 service.initializeRequest(functionName, 0);
             } catch (Exception e) {
                 LOG.error("Plugin request initialization failed.", e);
-                req.getResponse().setResponseText("I'm sorry but I can't answer that.");
+                req.getResponse().setResponseErrorText("I'm sorry but I can't answer that.");
             }
-            req.getResponse().setResponseText(executeCall(call, 0));
+            req.getResponse().setResponseList(executeCall(call, 0));
         } else {
             LOG.error("Could not find a plugin that matches request call.");
-            req.getResponse().setResponseText("I'm sorry but I don't know what that means.");
+            req.getResponse().setResponseErrorText("I'm sorry but I don't know what that means.");
         }
         
         TIMING_LOG.logEnd(this.getClass().getSimpleName());
@@ -383,9 +385,9 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
      * @param call The call to execute features for.
      * @return The return value as string.
      */
-    private String executeCall(Call call, long requestID) {
+    private List<MOutput> executeCall(Call call, long requestID) {
         Feature feature = martinContextAccessor.fetchWorkItem(requestID);
-        String ret = "";
+        List<MOutput> ret = new ArrayList<>();
         
         TIMING_LOG.logEnd(this.getClass().getSimpleName());
         TIMING_LOG.logStart(call.getPlugin().getName());
@@ -394,7 +396,7 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 feature.initialize(call.getArguments());
             } catch (Exception e) {
                 LOG.error("Could not start plugin feature.", e);
-                ret = "I'm sorry, I can not understand you.";
+                ret.add(new MOutput(MOutputType.ERROR,"I'm sorry, I can not understand you."));
                 break;
             }
 
@@ -402,11 +404,10 @@ public class PluginLibrary extends Plugin implements IPluginLibrary {
                 ret = feature.execute();
             } catch (Exception e) {
                 LOG.error("Could not run plugin feature.", e);
-                ret = "I'm sorry, I can not understand you.";
+                ret.add(new MOutput(MOutputType.ERROR,"I'm sorry, I can not understand you."));
                 break;
             }
             
-            ret += "\n";
             feature = martinContextAccessor.fetchWorkItem(requestID);
         }
         TIMING_LOG.logEnd(call.getPlugin().getName());

@@ -10,6 +10,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ch.zhaw.psit4.martin.models.MFunction;
 import ch.zhaw.psit4.martin.models.MKeyword;
 import edu.stanford.nlp.util.ArraySet;
@@ -30,12 +32,14 @@ public class MParameter extends BaseModel {
 
 	private String type;
 
+	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.PERSIST)
 	@JoinTable(name = "parameter_has_keyword", joinColumns = {
 			@JoinColumn(name = "parameter_id", nullable = false, updatable = false) }, inverseJoinColumns = {
 					@JoinColumn(name = "keyword_id", nullable = false, updatable = false) })
 	private Set<MKeyword> parameterKeywords;
 
+	@JsonIgnore
 	@ManyToOne
 	private MFunction function;
 

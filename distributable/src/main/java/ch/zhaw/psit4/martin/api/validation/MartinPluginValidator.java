@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.MartinPlugin;
+import ch.zhaw.psit4.martin.api.types.output.MOutput;
 
 /**
  * Tests a possible implementation of {@link MartinPlugin}.
@@ -190,6 +191,12 @@ public class MartinPluginValidator {
         @Override
         public void registerResponseMessage(String response) {
             responses.add(response);
+        }
+
+        @Override
+        public void addToOutputQueue(List<MOutput> output) {
+            LOG.info(output);
+            
         }
     }
 

@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ch.zhaw.psit4.martin.common.MartinHelper;
 import ch.zhaw.psit4.martin.models.MAuthor;
@@ -30,10 +31,12 @@ public class MPlugin extends BaseModel {
 	private String description;
 	private Date date;
 
+	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(nullable = false)
 	private MAuthor author;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "plugin", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<MFunction> functions;
 

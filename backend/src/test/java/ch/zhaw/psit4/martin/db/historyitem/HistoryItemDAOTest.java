@@ -2,6 +2,8 @@ package ch.zhaw.psit4.martin.db.historyitem;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.junit.Before;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 import ch.zhaw.psit4.martin.models.MHistoryItem;
 import ch.zhaw.psit4.martin.models.MRequest;
@@ -44,7 +47,9 @@ public class HistoryItemDAOTest {
 	public void aHistoryItemCanBeSavedInDB() throws Exception {
 
 		MRequest request = new MRequest("test", false);
-		MResponse response = new MResponse("test");
+		MResponse response = new MResponse();
+		response.addResponse(MOutputType.TEXT, "test");
+		
 		MHistoryItem historyItem = new MHistoryItem(request, response);
 		this.historyItemRepository.save(historyItem);
 
@@ -54,6 +59,9 @@ public class HistoryItemDAOTest {
 	@Test
 	@Transactional
 	public void canGetAListOfAllHistoryItems() throws Exception {
-		assertEquals(this.historyItemRepository.findAll().size(), 2);
+		List<MHistoryItem> historyItems = this.historyItemRepository.findAll();
+		
+		
+		assertEquals(historyItems.size(), 2);
 	}
 }
