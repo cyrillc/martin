@@ -21,6 +21,8 @@ public class MTimestamp extends BaseType {
 		JSONObject json = new JSONObject();
 		json.put("type", this.getClass().getName());
 		json.put("data", data);
+		json.put("timestamp", instant.getMillis());
+		json.put("partial", partial.toString());
 
 		return json.toString(4);
 	}

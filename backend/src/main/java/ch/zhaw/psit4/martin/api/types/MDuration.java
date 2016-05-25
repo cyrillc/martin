@@ -2,6 +2,7 @@ package ch.zhaw.psit4.martin.api.types;
 
 import org.joda.time.Duration;
 import org.joda.time.Period;
+import org.json.JSONObject;
 
 
 /*
@@ -34,6 +35,16 @@ public class MDuration extends BaseType {
 
 	public void setPeriod(Period periond) {
 		this.period = periond;
+	}
+	
+	@Override
+	public String toJson() {
+		JSONObject json = new JSONObject();
+		json.put("type", this.getClass().getName());
+		json.put("data", data);
+		json.put("duration", duration.getMillis());
+
+		return json.toString(4);
 	}
 
 }

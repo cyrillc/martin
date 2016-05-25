@@ -174,8 +174,6 @@ public class TypeFactoryTest {
 				"Mr. Smith stayed 48 hours in Boston",
 				"Mr. Smith stayed three weeks in Boston",
 				"Mr. Smith stayed all last night in Boston",
-				"Mr. Smith stayed 20 days in July in Boston",
-				"Mr. Smith stayed 3 hours last Monday in Boston",
 				// Set
 				"John swims twice a week",
 				"John swims every 2 days",
@@ -191,7 +189,6 @@ public class TypeFactoryTest {
 				"no more than 10 days",
 				"at least 10 days",
 				// Points and Durations
-				"the early 1960s, the dawn of 2000",
 				"the middle of the month, mid-February",
 				"the end of the year",
 				"about three years ago"
@@ -209,13 +206,13 @@ public class TypeFactoryTest {
 					
 					if(phrase.getType().equals(EBaseType.TIMESTAMP)){
 						MTimestamp timestamp = (MTimestamp)baseType;
-						LOG.info("   -> " + phrase.getNerTag() + " | " + timestamp.getInstant().getMillis() + " | " + phrase.getValue());
+						LOG.info("   -> " + phrase.getNerTag() + " | " + timestamp.getInstant().toDate() + " | " + phrase.getValue());
 					} else if(phrase.getType().equals(EBaseType.DURATION)){
 						MDuration duration = (MDuration)baseType;
-						LOG.info("   -> " + phrase.getNerTag() + " | " + duration.getDuration().getMillis() + " | " + phrase.getValue());
+						LOG.info("   -> " + phrase.getNerTag() + " | " + duration.getDuration().getMillis() + "ms | " + phrase.getValue());
 					} else if(phrase.getType().equals(EBaseType.SET)) {
 						MSet set = (MSet)baseType;
-						LOG.info("   -> " + phrase.getNerTag() + " | " + set.getDuration() + " | " + phrase.getValue());
+						LOG.info("   -> " + phrase.getNerTag() + " | " + set.getDuration().getMillis() + " ms | " + phrase.getValue());
 					}
 				} catch(Exception e){
 					LOG.error(e);
