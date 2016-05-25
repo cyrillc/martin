@@ -31,7 +31,7 @@ public interface IMartinContext {
      */
     public void addToOutputQueue(List<MOutput> output);
 
-    public void registerOnTopic(String topic,Consumer<Event<MEventData>> consumer);
-
     void throwEvent(MEventData event);
+
+    void registerOnTopic(String topic, MEventListener listener);
 }

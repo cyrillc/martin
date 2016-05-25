@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import ch.zhaw.psit4.martin.aiController.MOutputQueueThread;
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
+import ch.zhaw.psit4.martin.api.MEventListener;
 import ch.zhaw.psit4.martin.api.types.MEventData;
 import ch.zhaw.psit4.martin.api.types.output.MOutput;
 import reactor.Environment;
@@ -79,13 +80,15 @@ public class MartinContextAccessor implements IMartinContext {
     
     
     @Override
-    public void registerOnTopic(String topic, Consumer<Event<MEventData>> consumer ){
-       eventBus.on($(topic),consumer);
+    public void registerOnTopic(String topic, MEventListener listener ){
+       eventBus.on($(topic),listener);
+       LOG.info(listener.toString()+" has registered for the topic \""+topic+"\"");
     }
     
     @Override
     public void throwEvent(MEventData event){
         eventBus.notify(event.getTopic(),Event.wrap(event));
+       LOG.info(event.toString()+" has been thrown on the eventBus");
     }
 
     /**
