@@ -7,11 +7,18 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 
 import ch.zhaw.psit4.martin.aiController.MOutputQueueThread;
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
+import ch.zhaw.psit4.martin.api.types.MEventData;
 import ch.zhaw.psit4.martin.api.types.output.MOutput;
+import reactor.Environment;
+import reactor.bus.Event;
+import static reactor.bus.selector.Selectors.$;
+import reactor.bus.EventBus;
+import reactor.fn.Consumer;
 
 /**
  * The MArtIn Context Access object hidden from MArtIn plugins.
@@ -39,6 +46,14 @@ public class MartinContextAccessor implements IMartinContext {
     private CopyOnWriteArrayList<Feature> featureQueue;
     @Autowired
     private MOutputQueueThread outputQueue;
+    
+    @Bean
+    EventBus createEventBus() {
+        return EventBus.create(Environment.initializeIfEmpty());
+    }
+
+    @Autowired
+    private EventBus eventBus;
 
     public MartinContextAccessor() {
         featureQueue = new CopyOnWriteArrayList<>();
@@ -60,6 +75,17 @@ public class MartinContextAccessor implements IMartinContext {
         } catch (Exception e) {
             LOG.error("An error occured at registerWorkItem()", e);
         }
+    }
+    
+    
+    @Override
+    public void registerOnTopic(String topic, Consumer<Event<MEventData>> consumer ){
+       eventBus.on($(topic),consumer);
+    }
+    
+    @Override
+    public void throwEvent(MEventData event){
+        eventBus.notify(event.getTopic(),Event.wrap(event));
     }
 
     /**

@@ -41,6 +41,11 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
+		<!-- REACTOR EVENT HANDLING -->
+		<dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-bus</artifactId>
+        </dependency>
 		<!-- SPRING TRANSACTIONS -->
 		<dependency>
 			<groupId>org.springframework</groupId>
