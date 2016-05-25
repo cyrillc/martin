@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.types.BaseTypeInstanciationException;
-import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.api.types.IBaseType;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
@@ -191,8 +190,8 @@ public class RequestProcessor {
 		
 		try {
 
-			while (sentenceHasMoreParameterValues(sentence, parameter)) {
-				Phrase parameterPhrase = ParameterExtractor.extractParameter(parameter, sentence, matchingKeywords);
+			while (ParameterExtractor.hasMoreParameterValues(sentence, parameter)) {
+				Phrase parameterPhrase = ParameterExtractor.extractParameter(parameter, sentence);
 
 				if (parameterPhrase == null) {
 					throw new Exception("parameter not present");
@@ -216,9 +215,7 @@ public class RequestProcessor {
 		return parameterValue;
 	}
 
-	private boolean sentenceHasMoreParameterValues(AnnotatedSentence sentence, MParameter parameter) {
-		return sentence.getPhrasesOfTypeFromPopState(EBaseType.fromClassName(parameter.getType())).size() > 0;
-	}
+
 
 	private boolean isCallValid(PossibleCall possibleCall) {
 		// Check if all required parameters are filled

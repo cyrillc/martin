@@ -18,7 +18,7 @@
                 }
             ],
             "Examples": [{
-                    "Call" : "Give me a picture of a dog",
+                    "Call" : "Show me a picture of a dog.",
                     "Description" : "Gets a picture of a dog"
                 }
             ]

@@ -110,7 +110,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 			generateTimestampPhrases(sentence.get(TimeAnnotations.TimexAnnotations.class));
 			SemanticGraph dependencies = sentence.get(BasicDependenciesAnnotation.class);
 			semanticGraphs.add(dependencies);
-			LOG.info("SemanticGraph found: " + dependencies.toCompactString());
+			LOG.info("SemanticGraph: " + dependencies.toCompactString());
 		}
 	}
 
@@ -194,6 +194,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 		phrase.setType(EBaseType.NOMINAL_MODIFIER);
 		
 		if(!"".equals(parameterAsString)){
+			LOG.info("Dependency found: NOMINAL_MODIFIER | " + parameterAsString);
 			phrasesPopState.add(phrase);
 		}
 	}
