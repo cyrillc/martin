@@ -52,11 +52,11 @@ var sendCommand = function () {
     });
     // get and clear text input
     var textInput = $('#commandInput').val();
-    textInput = textInput.replace(/(<([^>]+)>)/ig,'');
+    textInput = textInput.replace(/(<([^>]+)>)/ig, '');
     $('#commandInput').val('');
 
     // check for timing flag
-    textInput=checkTimingFlag(textInput);
+    textInput = checkTimingFlag(textInput);
 
     History.commands.unshift(textInput);
 
@@ -71,7 +71,7 @@ var sendCommand = function () {
 
     // send GET request with data and show response on page
     $.get(backendUrl, command, function (response) {
-       // Nothing to do at the moment...
+        // Nothing to do at the moment...
     }).always(function () {
         // hides thinking Area
         $('.thinking').slideUp({
@@ -106,14 +106,14 @@ $(document).ready(function () {
         });
 
 
-		registerForCommandResponse(createRequestURL(frontendUrl,backendPort,"commandResponse"));
-		registerOnServerEvent(createRequestURL(frontendUrl,backendPort,"serverOutput"));
+        registerForCommandResponse(createRequestURL(frontendUrl, backendPort, "commandResponse"));
+        registerOnServerEvent(createRequestURL(frontendUrl, backendPort, "serverOutput"));
 
         MartinResponseRenderer.init();
 
         History.init(frontendUrl, backendPort);
-        History.fetchNextPage(function(){
-            History.renderPage(function(){
+        History.fetchNextPage(function () {
+            History.renderPage(function () {
                 console.log("History loaded.");
             });
         });
@@ -132,24 +132,25 @@ var checkTimingFlag = function (textInput) {
 }
 
 // function to move through history with *UP* and *DOWN* arrows
-var getPreviousCommand = function(index) {
+var getPreviousCommand = function (index) {
     $('#commandInput').val(History.commands[index - 1]);
 }
 
 
 var registerOnServerEvent = function (url) {
-	var source = new EventSource(url);
-		source.onmessage = function(event){
-            console.log('Push message received');
-		}
+    var source = new EventSource(url);
+    source.onmessage = function (event) {
+        MartinResponseRenderer.renderPushMessage(JSON.parse(event.data));
+        console.log('Push message received');
+    }
 }
 
 
 var registerForCommandResponse = function (url) {
-	var source = new EventSource(url);
-		source.onmessage = function(event){
-            MartinResponseRenderer.renderEvent(JSON.parse(event.data));
-		}
+    var source = new EventSource(url);
+    source.onmessage = function (event) {
+        MartinResponseRenderer.renderEvent(JSON.parse(event.data));
+    }
 }
 
 
