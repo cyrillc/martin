@@ -18,19 +18,8 @@ public class WeatherPlugin implements MartinPlugin {
     @Override
     public void initializeRequest(String feature, long requestID) throws Exception {
         if(active) {
-            Feature work;
-            switch(feature.toLowerCase()){
-                case "weather":
-                    work = new WeatherWork(requestID);
-                    break;
-                case "forecast":
-                    work = new ForecastWork(requestID);
-                    break;
-                default:
-                    // TODO what if no right feature is found?
-                    work = new WeatherWork(requestID);
-            }
-            context.registerWorkItem(work);
+            Feature work = new WeatherWork(requestID);
+            context.registerWorkItem(work);            
         }
     }
 
