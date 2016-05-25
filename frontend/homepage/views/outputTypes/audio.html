@@ -1,0 +1,8 @@
+<div class="output-type-audio" display="none">
+	{{ response.value }}
+</div>
+
+<script>
+	var audioFile = new Audio($('.output-type-audio').text());
+	audioFile.play();
+</script>
