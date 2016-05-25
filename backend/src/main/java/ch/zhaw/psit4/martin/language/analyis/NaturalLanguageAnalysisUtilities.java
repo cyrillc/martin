@@ -30,7 +30,7 @@ public class NaturalLanguageAnalysisUtilities {
 		// creates a StanfordCoreNLP object, with POS tagging, lemmatization,
 		// NER, parsing, and coreference resolution
 		Properties props = new Properties();
-		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner");
+		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
 		AnnotationPipeline pipeline = new StanfordCoreNLP(props);
 		pipeline.addAnnotator(new TimeAnnotator("sutime", props));
 		

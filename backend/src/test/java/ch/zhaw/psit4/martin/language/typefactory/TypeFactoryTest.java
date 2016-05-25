@@ -1,15 +1,7 @@
 package ch.zhaw.psit4.martin.language.typefactory;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +9,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
-import ch.zhaw.psit4.martin.api.types.BaseType;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.api.types.IBaseType;
+import ch.zhaw.psit4.martin.api.types.MDuration;
+import ch.zhaw.psit4.martin.api.types.MSet;
 import ch.zhaw.psit4.martin.api.types.MTimestamp;
 import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
-import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -217,9 +209,13 @@ public class TypeFactoryTest {
 					
 					if(phrase.getType().equals(EBaseType.TIMESTAMP)){
 						MTimestamp timestamp = (MTimestamp)baseType;
-						LOG.info("   -> " + phrase.getNerTag() + " | " + timestamp.getInstant().toString() + " | " + phrase.getValue());
-					} else {
-						LOG.info("   -> " + phrase.getNerTag() + " | " + phrase.getNormalizedValue() + " | " + phrase.getValue());
+						LOG.info("   -> " + phrase.getNerTag() + " | " + timestamp.getInstant().getMillis() + " | " + phrase.getValue());
+					} else if(phrase.getType().equals(EBaseType.DURATION)){
+						MDuration duration = (MDuration)baseType;
+						LOG.info("   -> " + phrase.getNerTag() + " | " + duration.getDuration().getMillis() + " | " + phrase.getValue());
+					} else if(phrase.getType().equals(EBaseType.SET)) {
+						MSet set = (MSet)baseType;
+						LOG.info("   -> " + phrase.getNerTag() + " | " + set.getDuration() + " | " + phrase.getValue());
 					}
 				} catch(Exception e){
 					LOG.error(e);

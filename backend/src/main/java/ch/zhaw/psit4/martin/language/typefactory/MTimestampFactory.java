@@ -4,14 +4,17 @@ import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.types.BaseTypeInstanciationException;
 import ch.zhaw.psit4.martin.api.types.MTimestamp;
 import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
+import edu.stanford.nlp.time.SUTime.Temporal;
+
 public class MTimestampFactory {
-	
-	public MTimestamp fromPhrase(Phrase phrase, AnnotatedSentence sentence) throws BaseTypeInstanciationException {
-		MTimestamp martinTimestamp = new MTimestamp(phrase.getValue());
-		
-		Temporal temporal = new Temporal(phrase.getNormalizedValue());
+	public static MTimestamp fromPhrase(Phrase phrase, AnnotatedSentence sentence)
+			throws BaseTypeInstanciationException {
+		Temporal temporal = (Temporal) phrase.getPayload();
+		MTimestamp timestamp = new MTimestamp(phrase.getValue());
 
-		return martinTimestamp;
+		timestamp.setPartial(temporal.getTime().getJodaTimePartial());
+		timestamp.setInstant(temporal.getTime().getJodaTimeInstant());
+
+		return timestamp;
 	}
-
 }

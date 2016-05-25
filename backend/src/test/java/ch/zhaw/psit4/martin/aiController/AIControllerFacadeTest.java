@@ -28,6 +28,7 @@ import ch.zhaw.psit4.martin.models.*;
 import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
+import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -45,6 +46,9 @@ public class AIControllerFacadeTest {
 
 	@Mock
 	private FrontendController frontend;
+	
+	@Mock
+	private MOutputQueueThread outputQueue;
 
 	@InjectMocks
 	private AIControllerFacade aiController;
@@ -53,7 +57,7 @@ public class AIControllerFacadeTest {
 	private LiquibaseTestFramework liquibase;
 
 	@Autowired
-	private StanfordCoreNLPClient stanfordNLP;
+	private AnnotationPipeline stanfordNLP;
 
 	MRequest request = null;
 	ExtendedRequest extRequest = null;
@@ -79,6 +83,7 @@ public class AIControllerFacadeTest {
 		when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);
 
 		Mockito.doNothing().when(frontend).sendRequestAndResponseToConnectedClients(Mockito.any());
+		Mockito.doNothing().when(outputQueue).addToOutputQueue(Mockito.any());
 
 		ArrayList<MHistoryItem> getHistoryResult = new ArrayList<>();
 		getHistoryResult.add(new MHistoryItem(new MRequest("command1", false), new MResponse("response1")));

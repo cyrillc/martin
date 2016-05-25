@@ -45,18 +45,18 @@ public class ParameterExtractor {
 		String parameterAsString = "";
 
 		// Working only with graph of first text sentence
-		if (sentence.getSemanticGraphs().isEmpty()) {
+		if (sentence.getSemanticGraphs().isEmpty() || sentence.getSemanticGraphs().get(0) == null) {
 			return null;
 		}
 		SemanticGraph dependencies = sentence.getSemanticGraphs().get(0);
 		for (MKeyword keyword : matchingKeywords) {
 
 			// Working only with first occurrence of the keyword
-			List<IndexedWord> IndexKeywordList = dependencies.getAllNodesByWordPattern(keyword.getKeyword());
-			if (IndexKeywordList.isEmpty()) {
+			List<IndexedWord> indexKeywordList = dependencies.getAllNodesByWordPattern(keyword.getKeyword());
+			if (indexKeywordList.isEmpty()) {
 				return null;
 			}
-			IndexedWord indKeyWord = IndexKeywordList.get(0);
+			IndexedWord indKeyWord = indexKeywordList.get(0);
 
 			Set<IndexedWord> nominalMods = dependencies.getChildrenWithReln(indKeyWord,
 					UniversalEnglishGrammaticalRelations.NOMINAL_MODIFIER);
