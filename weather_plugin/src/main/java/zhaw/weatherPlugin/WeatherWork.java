@@ -6,8 +6,7 @@ import java.util.Map;
 
 import org.joda.time.Instant;
 import org.joda.time.Interval;
-import org.joda.time.Period;
-import org.joda.time.Duration;
+import org.joda.time.DateTime;
 
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.types.IBaseType;
@@ -43,7 +42,6 @@ public class WeatherWork extends Feature {
 		
 		if (args.containsKey("duration")) {
             MDuration duration = (MDuration) args.get("duration");
-            
            this.interval = duration.getInterval();
         }
 
@@ -54,12 +52,18 @@ public class WeatherWork extends Feature {
 		List<MOutput> response = new ArrayList<>();
 		String apiResponse;
 
-		if (this.time == null) {
+		if (this.time == null && this.interval == null) {
 			apiResponse = weatherService.getWeatherAtCity(this.city);
 		} else if(this.interval == null) {
-			apiResponse = weatherService.getForecastAtCityForSpecificTime(this.city, this.time.toDate());
+			apiResponse = weatherService.getForecastAtCityForDay(this.city, this.time.toDate());
 		} else {
-		    apiResponse = weatherService.getForecastAtCityForDay(this.city, this.startTime.toDate());
+		    DateTime start = interval.getStart();
+		    apiResponse = weatherService.getForecastAtCityForDay(this.city, start.toDate());
+		    int i = 1;
+		    while(start.plusDays(i).isBefore(interval.getEnd())){
+		        apiResponse += weatherService.getForecastAtCityForDay(this.city, start.plusDays(i).toDate());
+		        i++;
+		    }
 		}
 
 		if (apiResponse == null) {
