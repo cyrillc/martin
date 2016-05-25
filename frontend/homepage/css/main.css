@@ -276,6 +276,10 @@ div.possible-commands-loading {
     position: relative;
 }
 
+.martin-statement .pushMsg .output-type-text{
+    border-right: 3px solid #14cc66;
+}
+
 
 
 /* Output-types */
