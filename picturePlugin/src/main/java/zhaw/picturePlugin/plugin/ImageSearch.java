@@ -20,21 +20,25 @@ public class ImageSearch {
     Document document;
     URLEncoder en;
 
-    public static void main(String[] args) throws IOException {
-        ImageSearch image = new ImageSearch();
-       
-        System.out.println(image.getImage("cat"));
-    }
+//    public static void main(String[] args) throws IOException {
+//        ImageSearch image = new ImageSearch();
+//
+//        System.out.println(image.getImage("you"));
+//    }
 
     /**
      * search image on bing engine and return random output
      * 
      * @param type
-     * @return random URL of the requested picture type 
+     * @return random URL of the requested picture type
      * @throws IOException
      */
     public String getImage(String type) throws IOException {
-       String encodedString =  URLEncoder.encode(type, "UTF-8");     
+        String picture = type;
+        if (picture.contains("you")) {
+            picture = "clown";
+        }
+        String encodedString = URLEncoder.encode(picture, "UTF-8");
         ArrayList<String> list = new ArrayList<>();
         Random randomGenerator = new Random();
         document =
@@ -54,6 +58,6 @@ public class ImageSearch {
         int indexOfAmpersand = text.indexOf("&");
         text = text.substring(0, indexOfAmpersand);
         return text;
-        
+
     }
 }
