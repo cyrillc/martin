@@ -16,8 +16,16 @@ public class TimerPlugin implements MartinPlugin{
     @Override
     public void initializeRequest(String feature, long requestID) throws Exception {
         if(active) {
-            TimerPluginWork feature1 = new TimerPluginWork(requestID);
-            context.registerWorkItem(feature1);
+        	if(feature.equals("timerDuration")){
+        		TimerDurationWork feature1 = new TimerDurationWork(requestID);
+                context.registerWorkItem(feature1);
+        	}
+        	
+        	if(feature.equals("timerTimestamp")){
+        		TimerTimestampWork feature1 = new TimerTimestampWork(requestID);
+                context.registerWorkItem(feature1);
+        	}
+            
         }
     }
 
