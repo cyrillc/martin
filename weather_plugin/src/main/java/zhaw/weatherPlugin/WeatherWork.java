@@ -51,27 +51,30 @@ public class WeatherWork extends Feature {
 	public List<MOutput> execute() throws Exception {
 		List<MOutput> response = new ArrayList<>();
 		String apiResponse;
+		
+		response.add(new MOutput(MOutputType.HEADING, "Weather"));
 
 		if (this.time == null && this.interval == null) {
 			apiResponse = weatherService.getWeatherAtCity(this.city);
+			response.add(new MOutput(MOutputType.TEXT, apiResponse));
 		} else if(this.interval == null) {
 			apiResponse = weatherService.getForecastAtCityForDay(this.city, this.time.toDate());
+			response.add(new MOutput(MOutputType.TEXT, apiResponse));
 		} else {
 		    DateTime start = interval.getStart();
 		    apiResponse = weatherService.getForecastAtCityForDay(this.city, start.toDate());
 		    int i = 1;
 		    while(start.plusDays(i).isBefore(interval.getEnd())){
 		        apiResponse += weatherService.getForecastAtCityForDay(this.city, start.plusDays(i).toDate());
-		        apiResponse.concat("\n");
+		        response.add(new MOutput(MOutputType.TEXT, apiResponse));
 		        i++;
 		    }
 		}
 
 		if (apiResponse == null) {
 			apiResponse = "No weather info found for " + city;
+			response.add(new MOutput(MOutputType.TEXT, apiResponse));
 		}
-		response.add(new MOutput(MOutputType.HEADING, "Weather"));
-		response.add(new MOutput(MOutputType.TEXT, apiResponse));
 
 		return response;
 	}
