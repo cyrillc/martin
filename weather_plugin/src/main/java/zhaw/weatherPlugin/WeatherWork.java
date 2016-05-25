@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.types.IBaseType;
@@ -18,7 +19,7 @@ public class WeatherWork extends Feature {
 
 	WeatherService weatherService;
 	private String city;
-	private DateTime dateTime;
+	private Instant dateTime;
 
 	public WeatherWork(long requestID) {
 		super(requestID);
@@ -34,9 +35,8 @@ public class WeatherWork extends Feature {
 		if (args.containsKey("time")) {
 			MTimestamp timestamp = (MTimestamp) args.get("time");
 
-			if (timestamp.getDatetime().isPresent()) {
-				this.dateTime = timestamp.getDatetime().get();
-			}
+		
+			this.dateTime = timestamp.getInstant();
 		}
 
 	}

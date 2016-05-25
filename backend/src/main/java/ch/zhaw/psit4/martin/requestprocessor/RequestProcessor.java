@@ -196,10 +196,6 @@ public class RequestProcessor {
 		return parameterValue;
 	}
 
-	private boolean isParameterTimeStamp(MParameter parameter) {
-		return EBaseType.TIMESTAMP.equals(EBaseType.fromClassName(parameter.getType())) ? true : false;
-	}
-
 	private boolean sentenceHasMoreParameterValues(AnnotatedSentence sentence, MParameter parameter) {
 		Integer parametersLeft = 0;
 
