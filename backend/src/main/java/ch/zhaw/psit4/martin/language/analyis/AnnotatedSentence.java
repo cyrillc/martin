@@ -8,7 +8,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import ch.zhaw.psit4.martin.api.language.parts.ISentence;
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
@@ -42,9 +43,10 @@ import edu.stanford.nlp.util.CoreMap;
 
 public class AnnotatedSentence extends Sentence implements ISentence {
 	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
+	private static final Log LOG = LogFactory.getLog(AnnotatedSentence.class);
 
 	private AnnotationPipeline annotationPipeline;
-	
+
 	private Annotation annotation;
 
 	private List<Phrase> phrasesPopState;
@@ -62,7 +64,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 
 		TIMING_LOG.logStart("Text analyzation");
 		this.annotationPipeline = annotationPipeline;
-		
+
 		if (!"".equals(sentence)) {
 			this.annotate();
 			this.generatePhrasesAndSemanticGraph();
@@ -76,11 +78,11 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 
 	public void annotate() {
 		annotation = new Annotation(text);
-		
+
 		// Set time reference for all Time-Annotations
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar now = Calendar.getInstance();
-		
+
 		annotation.set(CoreAnnotations.DocDateAnnotation.class, dateFormat.format(now.getTime()));
 		annotationPipeline.annotate(annotation);
 	}
@@ -102,6 +104,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 			generateTimestampPhrases(sentence.get(TimeAnnotations.TimexAnnotations.class));
 			SemanticGraph dependencies = sentence.get(BasicDependenciesAnnotation.class);
 			semanticGraphs.add(dependencies);
+			LOG.info("SemanticGraph found: " + dependencies.toCompactString());
 		}
 	}
 
@@ -109,12 +112,12 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 		StringBuilder sb = new StringBuilder();
 		CoreLabel previousToken;
 		CoreLabel currentToken = tokens.get(0);
-		List<EBaseType> skip = Arrays.asList(EBaseType.TIMESTAMP, EBaseType.SET, EBaseType.DURATION);
+		List<EBaseType> skip = Arrays.asList(EBaseType.TIMESTAMP, EBaseType.SET, EBaseType.DURATION, EBaseType.UNKNOWN);
 
 		for (CoreLabel token : tokens) {
 			previousToken = currentToken;
 			currentToken = token;
-		
+
 			if (previousToken.get(NamedEntityTagAnnotation.class).equals(token.get(NamedEntityTagAnnotation.class))) {
 				sb.append(" " + token.get(TextAnnotation.class));
 			} else {
@@ -122,10 +125,11 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 				phrase.setNerTag(previousToken.get(NamedEntityTagAnnotation.class));
 				phrase.setNormalizedValue(previousToken.get(NormalizedNamedEntityTagAnnotation.class));
 
-				if(!skip.contains(phrase.getType())){
+				if (!skip.contains(phrase.getType())) {
 					phrases.add(phrase);
+					LOG.info("NER-Tag found: " + phrase.toString());
 				}
-				
+
 				sb.setLength(0);
 				sb.append(token.get(TextAnnotation.class));
 			}
@@ -134,9 +138,10 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 		Phrase phrase = new Phrase(sb.toString().trim());
 		phrase.setNerTag(currentToken.get(NamedEntityTagAnnotation.class));
 		phrase.setNormalizedValue(currentToken.get(NormalizedNamedEntityTagAnnotation.class));
-		
-		if(!skip.contains(phrase.getType())){
+
+		if (!skip.contains(phrase.getType())) {
 			phrases.add(phrase);
+			LOG.info("NER-Tag found: " + phrase.toString());
 		}
 
 	}
@@ -145,15 +150,15 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 		for (CoreMap map : tokens) {
 			TimeExpression timeExpression = map.get(TimeExpression.Annotation.class);
 			Temporal temporal = timeExpression.getTemporal();
-	
+
 			Phrase phrase = new Phrase(timeExpression.getText());
 			phrase.setNormalizedValue(temporal.getTimexValue());
-			phrase.setType(EBaseType.fromNerTag(temporal.getTimexType().toString()));
+			phrase.setType(EBaseType.fromNLPTag(temporal.getTimexType().toString()));
 			phrase.setPayload(temporal);
 			phrases.add(phrase);
 		}
 	}
-	
+
 	public void resetPopState() {
 		phrasesPopState = new ArrayList<>(phrases);
 		popStateDirty = false;
@@ -180,7 +185,7 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 			phrasesPopState.remove(phrasesPopState.indexOf(token.get()));
 			return token.get();
 		} else {
-			return new Phrase("");
+			return null;
 		}
 	}
 
@@ -203,8 +208,8 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 	public void setSemanticGraphs(List<SemanticGraph> semanticGraphs) {
 		this.semanticGraphs = semanticGraphs;
 	}
-	
-	public AnnotationPipeline getAnnotationPipeline(){
+
+	public AnnotationPipeline getAnnotationPipeline() {
 		return this.annotationPipeline;
 	}
 

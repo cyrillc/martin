@@ -13,22 +13,32 @@ public class BaseTypeFactory {
 	private static final Log LOG = LogFactory.getLog(BaseTypeFactory.class);
 	public static IBaseType fromPhrase(Phrase phrase, AnnotatedSentence sentence) throws BaseTypeInstanciationException {
 		
-		LOG.info(phrase.getType());
+		IBaseType instance;
 		
 		switch (phrase.getType()) {
 		case NUMBER:
-			return MNumberFactory.fromString(phrase.getValue());
+			instance = MNumberFactory.fromString(phrase.getValue());
+			break;
 		case LOCATION:
-			return MLocationFactory.fromString(phrase.getValue());
+			instance = MLocationFactory.fromString(phrase.getValue());
+			break;
 		case TIMESTAMP:
-			return MTimestampFactory.fromPhrase(phrase, sentence);
+			instance = MTimestampFactory.fromPhrase(phrase, sentence);
+			break;
 		case DURATION:
-			return MDurationFactory.fromPhrase(phrase, sentence);
+			instance = MDurationFactory.fromPhrase(phrase, sentence);
+			break;
 		case SET:
-			return MSetFactory.fromPhrase(phrase, sentence);
+			instance = MSetFactory.fromPhrase(phrase, sentence);
+			break;
 		default:
-			return IBaseType.fromString(phrase.getType(), phrase.getValue());
+			instance = IBaseType.fromString(phrase.getType(), phrase.getValue());
+			break;
 		}
+		
+		LOG.info("Parameter constructed: \n" + instance.toJson());
+		
+		return instance;
 	}
 
 }

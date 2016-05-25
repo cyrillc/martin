@@ -21,11 +21,11 @@ public class ParameterExtractor {
 		Phrase parameterPhrase;
 
 		switch (EBaseType.fromClassName(parameter.getType())) {
-		case TEXT:
-			parameterPhrase = extractTextParameter(sentence, matchingKeywords);
+		case NOMINAL_MODIFIER:
+			parameterPhrase = extractFromDependencyGraph(sentence, matchingKeywords);
 			break;
 		default:
-			parameterPhrase = defaultExtraction(parameter, sentence);
+			parameterPhrase = extractFromPhrases(parameter, sentence);
 		}
 
 		return parameterPhrase;
@@ -40,7 +40,7 @@ public class ParameterExtractor {
 	 * @param matchingKeywords
 	 * @return
 	 */
-	public static Phrase extractTextParameter(AnnotatedSentence sentence, Collection<MKeyword> matchingKeywords) {
+	public static Phrase extractFromDependencyGraph(AnnotatedSentence sentence, Collection<MKeyword> matchingKeywords) {
 
 		String parameterAsString = "";
 
@@ -66,12 +66,12 @@ public class ParameterExtractor {
 		}
 		
 		Phrase phrase = new Phrase(parameterAsString.trim());
-		phrase.setType(EBaseType.TEXT);
+		phrase.setType(EBaseType.NOMINAL_MODIFIER);
 
 		return phrase;
 	}
 
-	public static Phrase defaultExtraction(MParameter parameter, AnnotatedSentence sentence) {
+	public static Phrase extractFromPhrases(MParameter parameter, AnnotatedSentence sentence) {
 		return sentence.popPhraseOfType(EBaseType.fromClassName(parameter.getType()));
 	}
 }

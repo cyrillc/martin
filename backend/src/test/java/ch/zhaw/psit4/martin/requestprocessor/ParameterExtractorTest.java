@@ -36,7 +36,7 @@ public class ParameterExtractorTest {
         Collection<MKeyword> matchingKeywords = new HashSet<MKeyword>();
         matchingKeywords.add(k);
         
-        Phrase par = ParameterExtractor.extractTextParameter(sentence, matchingKeywords);
+        Phrase par = ParameterExtractor.extractFromDependencyGraph(sentence, matchingKeywords);
         assertEquals("dog", par.getValue());
         
     }
