@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.springframework.data.annotation.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
 import ch.zhaw.psit4.martin.models.MRequest;
 import ch.zhaw.psit4.martin.models.MResponse;
@@ -42,6 +44,7 @@ public class ExtendedRequest {
 	 * Parsed and analyzed sentence for further analysis.
 	 */
 	@Transient
+	@JsonIgnore
 	private AnnotatedSentence sentence;
 
 	public ExtendedRequest(MRequest request, MResponse response) {

@@ -3,6 +3,7 @@ package ch.zhaw.psit4.martin.requestprocessor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.logging.Log;
@@ -77,13 +78,15 @@ public class RequestProcessor {
 		extendedRequest.setSentence(sentence);
 
 		for (PossibleCall possibleCall : possibleCalls) {
-			// Create Call
-			Call call = new Call();
-			call.setPlugin(possibleCall.getPlugin());
-			call.setFunction(possibleCall.getFunction());
-			call.setParameters(possibleCall.getParameters());
+			if(isCallValid(possibleCall)){
+				// Create Call
+				Call call = new Call();
+				call.setPlugin(possibleCall.getPlugin());
+				call.setFunction(possibleCall.getFunction());
+				call.setParameters(possibleCall.getParameters());
 
-			extendedRequest.addCall(call);
+				extendedRequest.addCall(call);
+			}	
 		}
 
 		TIMING_LOG.logEnd(this.getClass().getSimpleName());
@@ -157,7 +160,10 @@ public class RequestProcessor {
 				// Create instance of IMartinType for requested type
 				IBaseType parameterValue = getParameterValue(parameter, sentence,
 						possibleCall.getMatchingKeywords().values());
-				possibleCall.addParameter(parameter.getName(), parameterValue);
+				if(parameterValue != null){
+					possibleCall.addParameter(parameter.getName(), parameterValue);
+				}
+				
 			}
 		}
 
@@ -202,5 +208,19 @@ public class RequestProcessor {
 		parametersLeft = sentence.getPhrasesOfType(EBaseType.fromClassName(parameter.getType())).size();
 		
 		return parametersLeft > 0 ? true : false;
+	}
+	
+	private boolean isCallValid(PossibleCall possibleCall){
+		// Check if all required parameters are filled
+		for(MParameter parameter : possibleCall.getFunction().getParameters()){
+			String parameterName = parameter.getName();
+			Map<String, IBaseType> currentParameters = possibleCall.getParameters();
+			
+			if(parameter.isRequired() && currentParameters.get(parameterName) == null){
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

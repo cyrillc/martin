@@ -8,12 +8,13 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ch.zhaw.psit4.martin.api.language.parts.ISentence;
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.language.parts.Sentence;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.api.types.output.MOutput;
-import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 import edu.stanford.nlp.ling.CoreAnnotations;
@@ -43,13 +44,14 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
 
 	private AnnotationPipeline annotationPipeline;
+	
 	private Annotation annotation;
 
-	List<Phrase> phrasesPopState;
+	private List<Phrase> phrasesPopState;
 	boolean popStateDirty;
-	List<SemanticGraph> semanticGraphs = new ArrayList<>();
+	private List<SemanticGraph> semanticGraphs = new ArrayList<>();
 
-	List<MOutput> predefinedAnswer = new ArrayList<>();
+	private List<MOutput> predefinedAnswer = new ArrayList<>();
 
 	public AnnotatedSentence() {
 		super(null);
@@ -60,13 +62,14 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 
 		TIMING_LOG.logStart("Text analyzation");
 		this.annotationPipeline = annotationPipeline;
+		
 		if (!"".equals(sentence)) {
 			this.annotate();
 			this.generatePhrasesAndSemanticGraph();
 			this.resetPopState();
 		}
 
-		this.generadePredefinedAnswer();
+		predefinedAnswer = PredefinedAnswerGenerator.generadePredefinedAnswer(this);
 
 		TIMING_LOG.logEnd("Text analyzation");
 	}
@@ -77,8 +80,8 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 		// Set time reference for all Time-Annotations
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar now = Calendar.getInstance();
-		annotation.set(CoreAnnotations.DocDateAnnotation.class, dateFormat.format(now.getTime()));
 		
+		annotation.set(CoreAnnotations.DocDateAnnotation.class, dateFormat.format(now.getTime()));
 		annotationPipeline.annotate(annotation);
 	}
 
@@ -178,37 +181,6 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 			return token.get();
 		} else {
 			return new Phrase("");
-		}
-	}
-
-	/**
-	 * Generates predefined answers, that can be used for static stentences.
-	 */
-	public void generadePredefinedAnswer() {
-		if ("".equalsIgnoreCase(text)) {
-			predefinedAnswer.add(new MOutput(MOutputType.TEXT, "I can't hear you. Please speak louder."));
-		}
-
-		if ((this.getWords().contains("unit") && this.getWords().contains("tests"))
-				|| this.getWords().contains("unittests")) {
-			predefinedAnswer.add(new MOutput(MOutputType.HEADING, "Just be quiet!"));
-			predefinedAnswer.add(new MOutput(MOutputType.TEXT, "I'm gonna getcha!"));
-			predefinedAnswer.add(new MOutput(MOutputType.IMAGE, "http://tclhost.com/gEFAjgp.gif"));
-
-		}
-
-		if ("test".equalsIgnoreCase(text)) {
-			predefinedAnswer.add(new MOutput(MOutputType.HEADING, "Heading"));
-			predefinedAnswer.add(new MOutput(MOutputType.TEXT,
-					"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. \n\nAt vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. \n\nStet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."));
-			predefinedAnswer.add(new MOutput(MOutputType.ERROR,
-					"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua!"));
-			predefinedAnswer.add(new MOutput(MOutputType.IMAGE,
-					"http://www.aviatorcameragear.com/wp-content/uploads/2012/07/placeholder_2.jpg"));
-		}
-
-		if (this.text.toLowerCase().startsWith("can you")) {
-			predefinedAnswer.add(new MOutput(MOutputType.IMAGE, "http://tclhost.com/YXRMgbt.gif"));
 		}
 	}
 
