@@ -9,7 +9,10 @@ import org.apache.commons.logging.LogFactory;
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.MartinPlugin;
+import ch.zhaw.psit4.martin.api.types.MEventData;
 import ch.zhaw.psit4.martin.api.types.output.MOutput;
+import reactor.bus.Event;
+import reactor.fn.Consumer;
 
 /**
  * Tests a possible implementation of {@link MartinPlugin}.
@@ -186,6 +189,17 @@ public class MartinPluginValidator {
         @Override
         public void addToOutputQueue(List<MOutput> output) {
             LOG.info(output);
+        }
+
+        @Override
+        public void registerOnTopic(String topic,
+                Consumer<Event<MEventData>> consumer) {
+            LOG.info(consumer.getClass().getName()+" registered for the "+topic+" channel");
+        }
+
+        @Override
+        public void throwEvent(MEventData event) {
+            LOG.info(event.toString()+" was thrown");
         }
     }
 

@@ -1,6 +1,5 @@
 package ch.zhaw.psit4.martin.api.language.parts;
 
-
 import java.util.List;
 
 import ch.zhaw.psit4.martin.api.types.EBaseType;

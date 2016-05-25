@@ -2,7 +2,10 @@ package ch.zhaw.psit4.martin.api;
 
 import java.util.List;
 
+import ch.zhaw.psit4.martin.api.types.MEventData;
 import ch.zhaw.psit4.martin.api.types.output.MOutput;
+import reactor.bus.Event;
+import reactor.fn.Consumer;
 
 /**
  * The MArtIn Context provided to MArtIn Plugins.
@@ -27,4 +30,8 @@ public interface IMartinContext {
      * @param output The list of outputs to send
      */
     public void addToOutputQueue(List<MOutput> output);
+
+    public void registerOnTopic(String topic,Consumer<Event<MEventData>> consumer);
+
+    void throwEvent(MEventData event);
 }
