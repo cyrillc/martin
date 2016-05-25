@@ -1,0 +1,20 @@
+{
+    "Functions": [
+        {
+            "Name": "timer",
+            "Description": "Let MArtIn set a timer for you.",
+            "Keywords": [
+                "timer",
+                "start",
+                "alarm"
+            ],
+            "Parameter": [
+                {
+                    "Name": "time",
+                    "Required": "true",
+                    "Type": "ch.zhaw.psit4.martin.api.types."
+                }
+            ]
+        }
+    ]
+}

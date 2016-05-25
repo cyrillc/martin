@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 1.0" "http://jpf.sourceforge.net/plugin_1_0.dtd">
+<!-- DTD available under MartIn\distributable\plugin.dtd -->
+<plugin id="ch.zhaw.psit4.martin.timerplugin" verison="0.0.1">
+    <requires>
+		<import plugin-id="ch.zhaw.psit4.martin.api" />
+	</requires>
+	<runtime>
+		<library id="timer_plugin" path="classes/" type="code">
+			<doc caption="API documentation">
+				<doc-ref path="doc/index.html" caption="javadoc" />
+			</doc>
+		</library>
+		<library type="resources" path="res/" id="resources" />
+	</runtime>
+
+	<extension plugin-id="ch.zhaw.psit4.martin.api" point-id="MartinPlugin"
+		id="2416811e-4492-4212-8741-9f3c36bfb320">
+		<parameter id="class"
+			value="ch.zhaw.psit4.martin.timerplugin.TimerPlugin" />
+		<parameter id="name" value="Timer Plugin" />
+		<parameter id="description"
+			value="A plugin to let MArtIn set a timer for you or activate a stopwatch" />
+		<parameter id="author" value="Hans-Daniel Graf" />
+		<parameter id="e-mail" value="grafhan2@students.zhaw.ch" />
+		<parameter id="date" value="2016-05-22" />
+	</extension>
+</plugin>
