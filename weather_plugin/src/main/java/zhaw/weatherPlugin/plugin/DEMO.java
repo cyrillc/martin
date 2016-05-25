@@ -16,22 +16,30 @@ public class DEMO {
         
         DateTime date = new DateTime(DateTime.now());
         date = date.plusDays(forecastDays);
-        WeatherService weaterService = new WeatherService();
+        WeatherService weatherService = new WeatherService();
         
         //CURRENT WEATHER
         System.out.println("Actual Weather in " + city);
-        String currentWeather = weaterService.getWeatherAtCity(city);
+        String currentWeather = weatherService.getWeatherAtCity(city);
         System.out.println(currentWeather);
         
         //FORECAST
         System.out.println("\n\nWeather in " + city + " in " + forecastHours + " hours");
-        String forecast = weaterService.getForecastAtCityInXHours(city, forecastHours);
+        String forecast = weatherService.getForecastAtCityInXHours(city, forecastHours);
         System.out.println(forecast);
         
         //SINGLE DAY FORECAST
         System.out.println("\n\nWeather in " + city + " in " + forecastDays + " days");
-        String DayForecast = weaterService.getForecastAtCityForDay(city, date.toDate());
+        String DayForecast = weatherService.getForecastAtCityForDay(city, date.toDate());
         System.out.println(DayForecast);
+        
+        //WEEK FORECAST
+        DateTime start = new DateTime();
+        String forecastW;
+        for(int i = 0; i < 20; i++){
+            forecastW = weatherService.getForecastAtCityForDay(city, start.plusDays(i).toDate());
+            System.out.println(forecastW);
+        }
     }
 
 }

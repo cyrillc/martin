@@ -62,6 +62,7 @@ public class WeatherWork extends Feature {
 		    int i = 1;
 		    while(start.plusDays(i).isBefore(interval.getEnd())){
 		        apiResponse += weatherService.getForecastAtCityForDay(this.city, start.plusDays(i).toDate());
+		        apiResponse.concat("\n");
 		        i++;
 		    }
 		}
