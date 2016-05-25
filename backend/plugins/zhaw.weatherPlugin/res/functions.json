@@ -25,7 +25,16 @@
                     "Keywords": [
                         "time"
                     ]
-                }
+                },
+                {
+                    "Name": "duration",
+                    "Required": "false",
+                    "Type": "ch.zhaw.psit4.martin.api.types.MDuration",
+                    "Tokens-regex": "",
+                    "Keywords": [
+                        "duration"
+                    ]
+                },
             ],
             "Examples": [{
                     "Call" : "What's the weather tomorrow in Zürich?",

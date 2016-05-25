@@ -18,8 +18,10 @@ public class WeatherPlugin implements MartinPlugin {
     @Override
     public void initializeRequest(String feature, long requestID) throws Exception {
         if(active) {
-            Feature work = new WeatherWork(requestID);
-            context.registerWorkItem(work);            
+            if(feature.equals("weather")){
+                Feature work = new WeatherWork(requestID);
+                context.registerWorkItem(work);      
+            }
         }
     }
 

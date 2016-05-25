@@ -1,5 +1,7 @@
 package ch.zhaw.psit4.martin.language.typefactory;
 
+import org.joda.time.Instant;
+
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.types.BaseTypeInstanciationException;
 import ch.zhaw.psit4.martin.api.types.MDuration;
@@ -11,9 +13,11 @@ public class MDurationFactory {
 	public static MDuration fromPhrase(Phrase phrase, AnnotatedSentence sentence) throws BaseTypeInstanciationException {
 		DurationWithFields temporal = (DurationWithFields)phrase.getPayload();
 		MDuration duration = new MDuration(phrase.getValue());
+		Instant instant = temporal.getTime().getJodaTimeInstant();
 		
 		duration.setDuration(temporal.getDuration().getJodaTimeDuration());
 		duration.setPeriod(temporal.getDuration().getJodaTimePeriod());
+		duration.setInstantStart(instant);
 		
 		return duration;
 	}
