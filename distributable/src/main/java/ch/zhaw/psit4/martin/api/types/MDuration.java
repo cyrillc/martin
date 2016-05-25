@@ -2,6 +2,7 @@ package ch.zhaw.psit4.martin.api.types;
 
 import org.joda.time.Duration;
 import org.joda.time.Instant;
+import org.joda.time.Interval;
 import org.joda.time.Period;
 import org.json.JSONObject;
 
@@ -10,9 +11,10 @@ import org.json.JSONObject;
  */
 public class MDuration extends BaseType {
 
-    Instant instantStart;
+	Interval interval;
     Duration duration;
     Period period;
+    
 
     public MDuration(String data) {
         super(data);
@@ -38,12 +40,12 @@ public class MDuration extends BaseType {
         this.period = periond;
     }
 
-    public Instant getInstantStart() {
-        return instantStart;
+    public Interval getInterval() {
+        return interval;
     }
 
-    public void setInstantStart(Instant instantStart) {
-        this.instantStart = instantStart;
+    public void setInterval(Interval interval) {
+        this.interval = interval;
     }
 
     @Override

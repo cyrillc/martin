@@ -178,6 +178,7 @@ public class RequestProcessor {
 
 			while (sentenceHasMoreParameterValues(sentence, parameter)) {
 				Phrase parameterPhrase = ParameterExtractor.extractParameter(parameter, sentence, matchingKeywords);
+				
 
 				if (parameterPhrase == null) {
 					throw new Exception("parameter not present");

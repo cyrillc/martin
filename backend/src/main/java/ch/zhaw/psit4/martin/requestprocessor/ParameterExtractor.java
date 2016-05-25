@@ -17,7 +17,7 @@ public class ParameterExtractor {
 
 	public static Phrase extractParameter(MParameter parameter, AnnotatedSentence sentence,
 			Collection<MKeyword> matchingKeywords) {
-
+ 
 		Phrase parameterPhrase;
 
 		switch (EBaseType.fromClassName(parameter.getType())) {

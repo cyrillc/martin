@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.joda.time.Instant;
+import org.joda.time.Interval;
 import org.joda.time.Period;
 import org.joda.time.Duration;
 
@@ -22,9 +23,7 @@ public class WeatherWork extends Feature {
 	WeatherService weatherService;
 	private String city;
 	private Instant time;
-	private Instant startTime;
-	private Duration duration;
-	private Period period;
+	private Interval interval;
 
 	public WeatherWork(long requestID) {
 		super(requestID);
@@ -44,9 +43,8 @@ public class WeatherWork extends Feature {
 		
 		if (args.containsKey("duration")) {
             MDuration duration = (MDuration) args.get("duration");
-            this.startTime = duration.getInstantStart();
-            this.duration = duration.getDuration();
-            this.period = duration.getPeriod();
+            
+           this.interval = duration.getInterval();
         }
 
 	}
@@ -58,7 +56,7 @@ public class WeatherWork extends Feature {
 
 		if (this.time == null) {
 			apiResponse = weatherService.getWeatherAtCity(this.city);
-		} else if(this.duration == null) {
+		} else if(this.interval == null) {
 			apiResponse = weatherService.getForecastAtCityForSpecificTime(this.city, this.time.toDate());
 		} else {
 		    apiResponse = weatherService.getForecastAtCityForDay(this.city, this.startTime.toDate());
