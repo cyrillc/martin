@@ -27,6 +27,7 @@ public class TimerThread implements Runnable {
 			
 			List<MOutput> outputs = new ArrayList<>();
 			outputs.add(new MOutput(MOutputType.TEXT, "Peep, peeep, peeeeeeeeeeep!"));
+			outputs.add(new MOutput(MOutputType.AUDIO, "http://www.orangefreesounds.com/wp-content/uploads/2015/04/Cuckoo-bird-sound.mp3"));
 		
 			context.addToOutputQueue(outputs);
 		} catch (InterruptedException e) {
