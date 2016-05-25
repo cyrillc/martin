@@ -5,8 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +19,7 @@ import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.language.parts.Sentence;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.api.types.output.MOutput;
+import ch.zhaw.psit4.martin.models.MKeyword;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 import edu.stanford.nlp.ling.CoreAnnotations;
@@ -25,11 +29,13 @@ import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.BasicDependenciesAnnotation;
 import edu.stanford.nlp.time.SUTime.Temporal;
+import edu.stanford.nlp.trees.UniversalEnglishGrammaticalRelations;
 import edu.stanford.nlp.time.TimeAnnotations;
 import edu.stanford.nlp.time.TimeExpression;
 import edu.stanford.nlp.util.CoreMap;
@@ -145,6 +151,52 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 		}
 
 	}
+	
+	public void generateNominalModifierPhrases(){
+		
+	}
+	
+	/**
+	 * Build a String with the Nominal Nominal Modifiers of the keywords in the
+	 * sentence Example: the sentence "show me a picture of a dog in a hause"
+	 * returns: "dog hause"
+	 * 
+	 * @param sentence
+	 * @param matchingKeywords
+	 * @return
+	 */
+	public void generateNominalModifierPhrases(Collection<MKeyword> matchingKeywords) {
+
+		String parameterAsString = "";
+
+		// Working only with graph of first text sentence
+		if (getSemanticGraphs().isEmpty() || getSemanticGraphs().get(0) == null) {
+			return;
+		}
+		SemanticGraph dependencies = getSemanticGraphs().get(0);
+		for (MKeyword keyword : matchingKeywords) {
+
+			// Working only with first occurrence of the keyword
+			List<IndexedWord> indexKeywordList = dependencies.getAllNodesByWordPattern(keyword.getKeyword());
+			if (indexKeywordList.isEmpty()) {
+				return;
+			}
+			IndexedWord indKeyWord = indexKeywordList.get(0);
+
+			Set<IndexedWord> nominalMods = dependencies.getChildrenWithReln(indKeyWord,
+					UniversalEnglishGrammaticalRelations.NOMINAL_MODIFIER);
+			for (IndexedWord nominalModifier : nominalMods) {
+				parameterAsString = parameterAsString.concat(nominalModifier.value() + " ");
+			}
+		}
+		
+		Phrase phrase = new Phrase(parameterAsString.trim());
+		phrase.setType(EBaseType.NOMINAL_MODIFIER);
+		
+		if(!"".equals(parameterAsString)){
+			phrasesPopState.add(phrase);
+		}
+	}
 
 	public void generateTimestampPhrases(List<CoreMap> tokens) {
 		for (CoreMap map : tokens) {
@@ -211,6 +263,10 @@ public class AnnotatedSentence extends Sentence implements ISentence {
 
 	public AnnotationPipeline getAnnotationPipeline() {
 		return this.annotationPipeline;
+	}
+	
+	public List<Phrase> getPhrasesOfTypeFromPopState(EBaseType baseType) {
+		return phrasesPopState.stream().filter(o -> o.getType().equals(baseType)).collect(Collectors.<Phrase> toList());
 	}
 
 }

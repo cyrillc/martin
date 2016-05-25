@@ -21,9 +21,9 @@ public class ParameterExtractor {
 		Phrase parameterPhrase;
 
 		switch (EBaseType.fromClassName(parameter.getType())) {
-		case NOMINAL_MODIFIER:
-			parameterPhrase = extractFromDependencyGraph(sentence, matchingKeywords);
-			break;
+//		case NOMINAL_MODIFIER:
+//			parameterPhrase = extractFromDependencyGraph(sentence, matchingKeywords);
+//			break;
 		default:
 			parameterPhrase = extractFromPhrases(parameter, sentence);
 		}
@@ -31,45 +31,45 @@ public class ParameterExtractor {
 		return parameterPhrase;
 	}
 
-	/**
-	 * Build a String with the Nominal Nominal Modifiers of the keywords in the
-	 * sentence Example: the sentence "show me a picture of a dog in a hause"
-	 * returns: "dog hause"
-	 * 
-	 * @param sentence
-	 * @param matchingKeywords
-	 * @return
-	 */
-	public static Phrase extractFromDependencyGraph(AnnotatedSentence sentence, Collection<MKeyword> matchingKeywords) {
-
-		String parameterAsString = "";
-
-		// Working only with graph of first text sentence
-		if (sentence.getSemanticGraphs().isEmpty() || sentence.getSemanticGraphs().get(0) == null) {
-			return null;
-		}
-		SemanticGraph dependencies = sentence.getSemanticGraphs().get(0);
-		for (MKeyword keyword : matchingKeywords) {
-
-			// Working only with first occurrence of the keyword
-			List<IndexedWord> indexKeywordList = dependencies.getAllNodesByWordPattern(keyword.getKeyword());
-			if (indexKeywordList.isEmpty()) {
-				return null;
-			}
-			IndexedWord indKeyWord = indexKeywordList.get(0);
-
-			Set<IndexedWord> nominalMods = dependencies.getChildrenWithReln(indKeyWord,
-					UniversalEnglishGrammaticalRelations.NOMINAL_MODIFIER);
-			for (IndexedWord nominalModifier : nominalMods) {
-				parameterAsString = parameterAsString.concat(nominalModifier.value() + " ");
-			}
-		}
-		
-		Phrase phrase = new Phrase(parameterAsString.trim());
-		phrase.setType(EBaseType.NOMINAL_MODIFIER);
-
-		return phrase;
-	}
+//	/**
+//	 * Build a String with the Nominal Nominal Modifiers of the keywords in the
+//	 * sentence Example: the sentence "show me a picture of a dog in a hause"
+//	 * returns: "dog hause"
+//	 * 
+//	 * @param sentence
+//	 * @param matchingKeywords
+//	 * @return
+//	 */
+//	public static Phrase extractFromDependencyGraph(AnnotatedSentence sentence, Collection<MKeyword> matchingKeywords) {
+//
+//		String parameterAsString = "";
+//
+//		// Working only with graph of first text sentence
+//		if (sentence.getSemanticGraphs().isEmpty() || sentence.getSemanticGraphs().get(0) == null) {
+//			return null;
+//		}
+//		SemanticGraph dependencies = sentence.getSemanticGraphs().get(0);
+//		for (MKeyword keyword : matchingKeywords) {
+//
+//			// Working only with first occurrence of the keyword
+//			List<IndexedWord> indexKeywordList = dependencies.getAllNodesByWordPattern(keyword.getKeyword());
+//			if (indexKeywordList.isEmpty()) {
+//				return null;
+//			}
+//			IndexedWord indKeyWord = indexKeywordList.get(0);
+//
+//			Set<IndexedWord> nominalMods = dependencies.getChildrenWithReln(indKeyWord,
+//					UniversalEnglishGrammaticalRelations.NOMINAL_MODIFIER);
+//			for (IndexedWord nominalModifier : nominalMods) {
+//				parameterAsString = parameterAsString.concat(nominalModifier.value() + " ");
+//			}
+//		}
+//		
+//		Phrase phrase = new Phrase(parameterAsString.trim());
+//		phrase.setType(EBaseType.NOMINAL_MODIFIER);
+//
+//		return phrase;
+//	}
 
 	public static Phrase extractFromPhrases(MParameter parameter, AnnotatedSentence sentence) {
 		return sentence.popPhraseOfType(EBaseType.fromClassName(parameter.getType()));

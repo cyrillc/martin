@@ -153,9 +153,9 @@ public class RequestProcessor {
 	 *         filled as good as possible
 	 */
 	public List<PossibleCall> resolveParameters(List<PossibleCall> possibleCalls, AnnotatedSentence sentence) {
-		for (PossibleCall possibleCall : possibleCalls) {
+		for (PossibleCall possibleCall : possibleCalls) {			
 			MFunction function = possibleCall.getFunction();
-
+			
 			// Sort Parameters by 'id' then 'required'
 			List<MParameter> parameterList = new ArrayList<>(function.getParameters());
 			parameterList.sort((MParameter p1, MParameter p2) -> p1.getId() - p2.getId());
@@ -163,6 +163,8 @@ public class RequestProcessor {
 
 			// Reset pop-state, so all parameters parameters are available again
 			sentence.resetPopState();
+			
+			LOG.info("Resolving '" + function.getPlugin().getName() + "->" + function.getName() + " ( " + parameterList.toString() + " )' ");
 
 			for (MParameter parameter : parameterList) {
 				// Get the value for the current parameter
@@ -184,6 +186,9 @@ public class RequestProcessor {
 			Collection<MKeyword> matchingKeywords) {
 
 		IBaseType parameterValue = null;
+		
+		sentence.generateNominalModifierPhrases(matchingKeywords);
+		
 		try {
 
 			while (sentenceHasMoreParameterValues(sentence, parameter)) {
@@ -212,7 +217,7 @@ public class RequestProcessor {
 	}
 
 	private boolean sentenceHasMoreParameterValues(AnnotatedSentence sentence, MParameter parameter) {
-		return sentence.getPhrasesOfType(EBaseType.fromClassName(parameter.getType())).size() > 0;
+		return sentence.getPhrasesOfTypeFromPopState(EBaseType.fromClassName(parameter.getType())).size() > 0;
 	}
 
 	private boolean isCallValid(PossibleCall possibleCall) {
