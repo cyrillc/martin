@@ -208,7 +208,7 @@ public class RequestProcessor {
 			}
 
 		} catch (Exception e) {
-			LOG.debug(e);
+			LOG.error(e);
 			LOG.error("The Parameter " + parameter.getName() + " of type '" + parameter.getType()
 					+ "' could not be found.");
 		}
