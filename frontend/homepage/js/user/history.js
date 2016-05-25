@@ -36,9 +36,9 @@ var History = {
 				self.commands.push(event.request.command);
 
 				// remove timing rendering from history because it is not saved
-				/*event.response.responses = event.response.responses.filter(function (response) {
+				event.response.responses = event.response.responses.filter(function (response) {
 					return (response.type != 'TIMING_INFO' && !(response.value.indexOf('Timing Information') >= 0 && response.type == 'HEADING'));
-				}); */
+				}); 
 
 
 				// catch last element

@@ -38,6 +38,12 @@ var MartinResponseRenderer = {
 
     renderPushMessage: function (event, direction = "prepend", animation_duration = 400) {
         var push_html = nunjucksConfiguration(event, "pushMessage.html", direction);
+
+        // Play audio
+        var audio_file = new Audio($(push_html.find(".output-type-audio")).text());
+        audio_file.play();
+
+
         showHtmlParts(push_html, animation_duration);
     }
 };

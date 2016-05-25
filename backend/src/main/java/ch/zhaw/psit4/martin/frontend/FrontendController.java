@@ -250,7 +250,7 @@ public class FrontendController {
     public SseEmitter registerForCommandResponses() throws IOException {
         SseEmitter emitter = new SseEmitter(1000000L);
         commandResponseEmitters.add(emitter);
-        emitter.onCompletion(() -> commandResponseEmitters.remove(emitter));
+        //emitter.onCompletion(() -> commandResponseEmitters.remove(emitter));
         return emitter;
     }
 

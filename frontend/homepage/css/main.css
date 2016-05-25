@@ -323,6 +323,10 @@ div.possible-commands-loading {
     border-right: 3px solid #e7e7e7;
 }
 
+.output-type-audio {
+    display: none;
+}
+
 .history-spacer {
     color: #aaa;
     font-weight: 100;
