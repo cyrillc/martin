@@ -10,6 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipInputStream;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,6 +38,8 @@ public class PluginInstaller {
     private static final String LIB_FOLDER = "lib";
     private static final String TEMP_FOLDER = "temp";
     private static final String TEMP_META_FILE = "META.dat";
+    private static final String PLUGIN_XML = "plugin.xml";
+    private static final String PLUGIN_DTD = "plugin.dtd";
 
     /**
      * The file ending of a supported MrtinPlugin upload file
@@ -47,11 +59,10 @@ public class PluginInstaller {
     /**
      * Installs a plugin in martin's plugin directory.
      * 
-     * @param pluginName The user given name of the plugin.
      * @param plugin The uploaded plugin data.
      * @return Returns a human readable message string.
      */
-    public String installPlugin(String pluginName, MultipartFile plugin) {
+    public String installPlugin(MultipartFile plugin) {
         // get the plugin folder
         final FilenameFilter tempFilter = (dir, name) -> name.endsWith(TEMP_FOLDER);
         File pluginFolder = pluginFolderAccessor.getPluginFolder();
@@ -75,24 +86,26 @@ public class PluginInstaller {
             jar = unzipper.unzip();
         } catch (IOException e) {
             // clean temporary folder
-            cleanUpFolder(pluginFolder.listFiles(tempFilter)[0]);
+            cleanUpFolder(pluginFolder.listFiles(tempFilter)[0], false);
             LOG.error("File upload failed.", e);
             return "File upload plugin failed.";
         } finally {
             try {
-                jarStream.close();
-            } catch (NullPointerException | IOException e) {
+                if(jarStream != null)
+                    jarStream.close();
+            } catch (IOException e) {
                 LOG.error("Closing resource failed.", e);
             }
         }
 
         // create folder structure
+        String pluginName = "";
         try {
-            pluginName = getPluginDesignation(jar, pluginName);
+            pluginName = getPluginDesignation(jar);
             createFolderStructure(pluginFolder, pluginName);
-        } catch (IOException e) {
+        } catch (IOException | ParserConfigurationException | SAXException e) {
             // clean temporary folder
-            cleanUpFolder(pluginFolder.listFiles(tempFilter)[0]);
+            cleanUpFolder(pluginFolder.listFiles(tempFilter)[0], false);
             LOG.error("Plugin space allocation failed.", e);
             return "Plugin space allocation failed.";
         }
@@ -102,16 +115,42 @@ public class PluginInstaller {
             installFiles(jar, pluginName);
         } catch (IOException e) {
             // clean temporary folder
-            cleanUpFolder(pluginFolder.listFiles(tempFilter)[0]);
+            cleanUpFolder(pluginFolder.listFiles(tempFilter)[0], false);
             LOG.error("Plugin installation failed.", e);
             return "Plugin installation failed.";
         }
 
         // clean temporary folder
-        cleanUpFolder(pluginFolder.listFiles(tempFilter)[0]);
+        cleanUpFolder(pluginFolder.listFiles(tempFilter)[0], false);
 
         LOG.info("Plugin " + pluginName + " installed correctly.");
         return "Plugin installed correctly.";
+    }
+
+    /**
+     * Cleans the given Folder ignoring {@link TEMP_META_FILE}.
+     * 
+     * @param tempFolder The temporary folder to clean.
+     * @param deleteFolder A flag to delete the root or leave it be
+     */
+    public void cleanUpFolder(File tempFolder, boolean deleteFolder) {
+        if(!tempFolder.exists())
+            return;
+        
+        File[] files = tempFolder.listFiles();
+        // some JVMs return null for empty dirs
+        if (files != null) {
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    cleanUpFolder(f, deleteFolder);
+                } else {
+                    if (deleteFolder || !f.getName().endsWith(TEMP_META_FILE))
+                        f.delete();
+                }
+            }
+        }
+        if(deleteFolder)
+            tempFolder.delete();
     }
 
 
@@ -169,29 +208,55 @@ public class PluginInstaller {
     }
 
     /**
+     * @param jar The jar file in the temporary folder.
+     * @return The found plugin main class name.
+     * @throws IOException Throws an {@link IOException} on read failiure.
+     * @throws ParserConfigurationException {@link DocumentBuilder} throws an Exception on build failiure.
+     * @throws SAXException {@link Document} throws an Exception on parse failiure.
+     */
+    String getClassNameFromXML(File jar) throws IOException, ParserConfigurationException, SAXException {
+        String returnString = "";
+        final FilenameFilter pluginXMLFilter = (dir, name) -> name.contains(PLUGIN_XML);
+        List<String> xmlFiles = listFiles(jar, pluginXMLFilter);
+        if (xmlFiles.isEmpty())
+            throw new IOException(PLUGIN_XML + " could not be located.");
+        File fXmlFile = new File(xmlFiles.get(0));
+
+        // build xml
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(fXmlFile);
+
+        // optional, but recommended
+        // http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
+        doc.getDocumentElement().normalize();
+        NodeList nList = doc.getElementsByTagName("parameter");
+        for (int temp = 0; temp < nList.getLength(); temp++) {
+            Node nNode = nList.item(temp);
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nNode;
+                if (("class").equals(eElement.getAttribute("id"))) {
+                    returnString = eElement.getAttribute("value");
+                }
+            }
+        }
+
+        return returnString;
+    }
+
+    /**
      * Creates the full plugin designation that combines user name and java package name.
      * 
      * @param jar The jar file in the temporary folder.
-     * @param pluginName The user given plugin name.
      * @return The final plugin name.
-     * @throws IOException Throws an {@link IOException} on read failiure or a
-     *         {@link NoClassFileException} if the there are no .class files in the jar.
+     * @throws IOException Throws an {@link IOException} on read failiure.
+     * @throws ParserConfigurationException {@link DocumentBuilder} throws an Exception on build failiure.
+     * @throws SAXException {@link Document} throws an Exception on parse failiure.
      */
-    String getPluginDesignation(File jar, String pluginName) throws IOException {
-        String val;
-        FilenameFilter filter = (dir, name) -> name.toLowerCase().endsWith(".class");
-        List<String> classes = listFiles(jar, filter);
-        if (classes.size() > 0)
-            val = classes.get(0);
-        else
-            throw new NoClassFileException(
-                    supportedType + " file does not contain any class files.");
-        int pluginDesignation = val.lastIndexOf(TEMP_FOLDER);
-        val = val.substring(pluginDesignation + TEMP_FOLDER.length() + 1)
-                .replace(File.separatorChar, '.').replace(TEMP_FOLDER + ".", "");
-        val = val.replace(".class", "");
+    String getPluginDesignation(File jar) throws IOException, ParserConfigurationException, SAXException {
+        String val = getClassNameFromXML(jar);
         int lastDot = val.lastIndexOf('.');
-        return val.substring(0, lastDot) + "." + pluginName;
+        return val.substring(0, lastDot);
     }
 
     /**
@@ -239,12 +304,12 @@ public class PluginInstaller {
      */
     void installFiles(File jar, String pluginName) throws IOException {
         final FilenameFilter classFilter = (dir, name) -> name.endsWith(".class");
-        final FilenameFilter pluginXMLFilter = (dir, name) -> name.contains("plugin.xml");
-        final FilenameFilter pluginDTDFilter = (dir, name) -> name.contains("plugin.dtd");
+        final FilenameFilter pluginXMLFilter = (dir, name) -> name.contains(PLUGIN_XML);
+        final FilenameFilter pluginDTDFilter = (dir, name) -> name.contains(PLUGIN_DTD);
         final FilenameFilter libsFilter = (dir, name) -> name.endsWith(".jar");
         final FilenameFilter resourceFiles =
                 (dir, name) -> !name.endsWith(".class") & !name.endsWith(".jar")
-                        & !name.contains("plugin.dtd") & !name.contains("plugin.xml");
+                        & !name.contains(PLUGIN_DTD) & !name.contains(PLUGIN_XML);
         copyFiles(listFiles(jar, classFilter), pluginName, File.separatorChar + CLASSES_FOLDER);
         copyFiles(listFiles(jar, pluginXMLFilter), pluginName, "");
         copyFiles(listFiles(jar, pluginDTDFilter), pluginName, "");
@@ -256,7 +321,7 @@ public class PluginInstaller {
      * Copies files from a list to a given plugin directory, creating any missing folders in the
      * process.
      * 
-     * @param files The List of files to copy.
+     * @param files The List of files to copy
      * @param pluginName The final plugin directory name.
      * @param pluginInternalPath The path inside the plugin folder to copy the files to.
      * @throws IOException Any file operation can throw an exception.
@@ -273,27 +338,6 @@ public class PluginInstaller {
             destFile.createNewFile();
             Files.copy(Paths.get(sourcePath), Paths.get(destPath),
                     StandardCopyOption.REPLACE_EXISTING);
-        }
-    }
-
-    /**
-     * Cleans the given Folder ignoring {@link TEMP_META_FILE}.
-     * 
-     * @param tempFolder The temporary folder to clean.
-     */
-    void cleanUpFolder(File tempFolder) {
-        File[] files = tempFolder.listFiles();
-        // some JVMs return null for empty dirs
-        if (files != null) {
-            for (File f : files) {
-                if (f.isDirectory()) {
-                    cleanUpFolder(f);
-                    f.delete();
-                } else {
-                    if (!f.getName().endsWith(TEMP_META_FILE))
-                        f.delete();
-                }
-            }
         }
     }
 

@@ -1,20 +1,16 @@
 package ch.zhaw.psit4.martin.pluginlib.filesystem;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.java.plugin.registry.Extension;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 

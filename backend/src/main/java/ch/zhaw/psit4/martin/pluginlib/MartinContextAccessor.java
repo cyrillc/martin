@@ -1,14 +1,25 @@
 package ch.zhaw.psit4.martin.pluginlib;
 
 import java.util.List;
-import java.util.LinkedList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 
+import ch.zhaw.psit4.martin.aiController.MOutputQueueThread;
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
+import ch.zhaw.psit4.martin.api.MEventListener;
+import ch.zhaw.psit4.martin.api.types.MEventData;
+import ch.zhaw.psit4.martin.api.types.output.MOutput;
+import reactor.Environment;
+import reactor.bus.Event;
+import static reactor.bus.selector.Selectors.$;
+import reactor.bus.EventBus;
+import reactor.fn.Consumer;
 
 /**
  * The MArtIn Context Access object hidden from MArtIn plugins.
@@ -21,10 +32,6 @@ import ch.zhaw.psit4.martin.api.IMartinContext;
  */
 public class MartinContextAccessor implements IMartinContext {
     /*
-     * the work list.
-     */
-    private List<Feature> queue;
-    /*
      * The id-counter of this class
      */
     private AtomicLong idCounter;
@@ -33,32 +40,62 @@ public class MartinContextAccessor implements IMartinContext {
      */
     private static final Log LOG = LogFactory
             .getLog(MartinContextAccessor.class);
+    
+    /*
+     * Thread safe list implementation.
+     */
+    private CopyOnWriteArrayList<Feature> featureQueue;
+    @Autowired
+    private MOutputQueueThread outputQueue;
+    
+    @Bean
+    EventBus createEventBus() {
+        return EventBus.create(Environment.initializeIfEmpty());
+    }
+
+    @Autowired
+    private EventBus eventBus;
 
     public MartinContextAccessor() {
-        queue = new LinkedList<Feature>();
+        featureQueue = new CopyOnWriteArrayList<>();
         idCounter = new AtomicLong();
     }
 
-    /**
-     * Registers a {@link WorkItem} in the context.
+    /*
+     * (non-Javadoc)
      * 
-     * @param item
-     *            The {@link WorkItem} to register.
+     * @see
+     * ch.zhaw.psit4.martin.api.IMartinContext#registerWorkItem(ch.zhaw.psit4.
+     * martin.api.Feature)
      */
+    @Override
     public void registerWorkItem(Feature item) {
         try {
             item.setID(getnextID());
-            queue.add(item);
+            featureQueue.add(item);
         } catch (Exception e) {
             LOG.error("An error occured at registerWorkItem()", e);
         }
+    }
+    
+    
+    @Override
+    public void registerOnTopic(String topic, MEventListener listener ){
+       eventBus.on($(topic),new MEventAdapter(listener));
+       LOG.info(listener.toString()+" has registered for the topic \""+topic+"\"");
+    }
+    
+    @Override
+    public void throwEvent(MEventData event){
+        eventBus.notify(event.getTopic(),Event.wrap(event));
+       LOG.info(event.toString()+" has been thrown on the eventBus");
     }
 
     /**
      * Clears the work list.
      */
     public void clearWorkList() {
-        queue.clear();
+        featureQueue.clear();
     }
 
     /**
@@ -69,18 +106,24 @@ public class MartinContextAccessor implements IMartinContext {
      *         queue is empty
      */
     public Feature fetchWorkItem(long requestID) {
-        for (int i = 0; i < queue.size(); i++) {
-            if (queue.get(i).getRequestID() == requestID)
-                return queue.remove(i);
+        for (int i = 0; i < featureQueue.size(); i++) {
+            if (featureQueue.get(i).getRequestID() == requestID)
+                return featureQueue.remove(i);
         }
         return null;
     }
-    
-    public int getNumberOfFeatures() {
-        return queue.size();
+
+    @Override
+    public void addToOutputQueue(List<MOutput> output) {
+        outputQueue.addToOutputQueue(output);
     }
-    
+
+    public int getNumberOfFeatures() {
+        return featureQueue.size();
+    }
+
     private long getnextID() {
         return idCounter.getAndIncrement();
     }
+
 }

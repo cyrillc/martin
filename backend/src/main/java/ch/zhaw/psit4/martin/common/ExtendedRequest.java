@@ -1,9 +1,14 @@
 package ch.zhaw.psit4.martin.common;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.annotation.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
 import ch.zhaw.psit4.martin.models.MRequest;
 import ch.zhaw.psit4.martin.models.MResponse;
 
@@ -24,7 +29,7 @@ public class ExtendedRequest {
 	 * The raw Request containing a command string.
 	 */
 	private MRequest request;
-	
+
 	/**
 	 * The response to be returned.
 	 */
@@ -34,12 +39,13 @@ public class ExtendedRequest {
 	 * List of possible Calls for the request ordered by possibility.
 	 */
 	private List<Call> calls;
-	
+
 	/**
 	 * Parsed and analyzed sentence for further analysis.
 	 */
-	private Sentence sentence;
-	
+	@Transient
+	@JsonIgnore
+	private AnnotatedSentence sentence;
 
 	public ExtendedRequest(MRequest request, MResponse response) {
 		this.calls = new ArrayList<Call>();
@@ -67,23 +73,23 @@ public class ExtendedRequest {
 	public void addCall(Call call) {
 		this.calls.add(call);
 	}
-	
-	public void setCalls(List<Call> calls){
+
+	public void setCalls(List<Call> calls) {
 		this.calls = calls;
 	}
 
 	public List<Call> getCalls() {
 		return this.calls;
 	}
-	
-	public Sentence getSentence(){
+
+	public AnnotatedSentence getSentence() {
 		return this.sentence;
 	}
-	
-	public void setSentence(Sentence sentence){
+
+	public void setSentence(AnnotatedSentence sentence) {
 		this.sentence = sentence;
 	}
-	
+
 	public MResponse getResponse() {
 		return response;
 	}

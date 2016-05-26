@@ -1,6 +1,5 @@
 package ch.zhaw.psit4.martin.aiController;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -10,14 +9,24 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
-import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
-import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
-import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
-import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.PluginInformation;
-import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.frontend.FrontendController;
+import ch.zhaw.psit4.martin.models.MExampleCall;
+import ch.zhaw.psit4.martin.models.MHistoryItem;
+import ch.zhaw.psit4.martin.models.MRequest;
+import ch.zhaw.psit4.martin.models.MResponse;
 import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
+import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
+import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
+import ch.zhaw.psit4.martin.timing.TimingInfo;
+import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
+import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
 
 /**
  * This class represents the AIControllerFacade The class follows the Facade
@@ -40,6 +49,12 @@ public class AIControllerFacade {
 
 	@Autowired
 	private RequestProcessor requestProcessor;
+
+	@Autowired
+	private FrontendController frontend;
+
+	@Autowired
+	private MOutputQueueThread outputQueue;
 
 	@PostConstruct
 	public void postAIControllerFacade() {
@@ -78,27 +93,44 @@ public class AIControllerFacade {
 	 * @return the response of the AI.
 	 */
 	public MResponse elaborateRequest(MRequest request) {
+		// TODO: Refactoring!
 		TIMING_LOG.logStart(this.getClass().getSimpleName());
-		
+
 		MResponse response = new MResponse();
 
 		TIMING_LOG.logEnd(this.getClass().getSimpleName());
 		ExtendedRequest extendedRequest = requestProcessor.extend(request, response);
 		TIMING_LOG.logStart(this.getClass().getSimpleName());
 
-		if (extendedRequest.getSentence().getPredefinedAnswer() != null) {
-			extendedRequest.getResponse().setResponseText(extendedRequest.getSentence().getPredefinedAnswer());
+		if (extendedRequest.getSentence().getPredefinedAnswer().size() > 0) {
+			extendedRequest.getResponse().setResponseList(extendedRequest.getSentence().getPredefinedAnswer());
+			//outputQueue.addToOutputQueue(extendedRequest.getResponse().getResponses());
 		} else if (extendedRequest.getCalls().size() > 0) {
 			TIMING_LOG.logEnd(this.getClass().getSimpleName());
 			extendedRequest.setResponse(pluginLibrary.executeRequest(extendedRequest));
 			TIMING_LOG.logStart(this.getClass().getSimpleName());
 		} else {
-			extendedRequest.getResponse().setResponseText("Sorry, I can't understand you.");
+			extendedRequest.getResponse().setSingleResponse(MOutputType.TEXT, "Sorry, I can't understand you.");
+		}
+
+		List<TimingInfo> timingInfo = TIMING_LOG.logEnd(this.getClass().getSimpleName());
+
+		if (request.isTimed()) {
+			extendedRequest.getResponse().addResponse(MOutputType.HEADING, "Timing Information");
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
+			try {
+				extendedRequest.getResponse().addResponse(MOutputType.TIMING_INFO,
+						mapper.writeValueAsString(timingInfo));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
 		}
 
 		historyItemRepository.save(new MHistoryItem(extendedRequest.getRequest(), extendedRequest.getResponse()));
 
-		TIMING_LOG.logEnd(this.getClass().getSimpleName());
+		frontend.sendRequestAndResponseToConnectedClients(extendedRequest);
 		return extendedRequest.getResponse();
 	}
 
@@ -117,11 +149,8 @@ public class AIControllerFacade {
 	 * @param amount
 	 *            the amount of historyItems to get
 	 */
-	public List<MHistoryItem> getLimitedHistory(int amount) {
-		List<MHistoryItem> list = historyItemRepository.getLimitedHistory(new PageRequest(0, amount));
-		List<MHistoryItem> shallowCopy = list.subList(0, list.size());
-		Collections.reverse(shallowCopy);
-		return shallowCopy;
+	public List<MHistoryItem> getLimitedHistory(int amount, int page) {
+		return historyItemRepository.getLimitedHistory(new PageRequest(page, amount));
 	}
 
 	public List<PluginInformation> getPluginInformation() {

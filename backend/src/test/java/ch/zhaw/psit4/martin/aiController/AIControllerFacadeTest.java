@@ -1,18 +1,20 @@
 package ch.zhaw.psit4.martin.aiController;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -21,12 +23,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
-import ch.zhaw.psit4.martin.common.Sentence;
-import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.frontend.FrontendController;
+import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
+import ch.zhaw.psit4.martin.models.MHistoryItem;
+import ch.zhaw.psit4.martin.models.MRequest;
+import ch.zhaw.psit4.martin.models.MResponse;
 import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
-import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
+import edu.stanford.nlp.pipeline.AnnotationPipeline;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
@@ -41,14 +46,20 @@ public class AIControllerFacadeTest {
 	@Mock
 	private IPluginLibrary pluginLibraryMock;
 
+	@Mock
+	private FrontendController frontend;
+	
+	@Mock
+	private MOutputQueueThread outputQueue;
+
 	@InjectMocks
 	private AIControllerFacade aiController;
 
 	@Autowired
 	private LiquibaseTestFramework liquibase;
-	
+
 	@Autowired
-	private StanfordCoreNLPClient stanfordNLP;
+	private AnnotationPipeline stanfordNLP;
 
 	MRequest request = null;
 	ExtendedRequest extRequest = null;
@@ -66,13 +77,16 @@ public class AIControllerFacadeTest {
 		extRequest = new ExtendedRequest(request, response);
 		call = new Call();
 		extRequest.addCall(call);
-		extRequest.setSentence(new Sentence("test", stanfordNLP));
+		extRequest.setSentence(new AnnotatedSentence("test", stanfordNLP));
 		response = new MResponse("response test");
 		historyItem = new MHistoryItem(request, response);
 
 		when(requestProcessorMock.extend(any(), any())).thenReturn(extRequest);
 		when(pluginLibraryMock.executeRequest(extRequest)).thenReturn(response);
-		
+
+		Mockito.doNothing().when(frontend).sendRequestAndResponseToConnectedClients(Mockito.any());
+		Mockito.doNothing().when(outputQueue).addToOutputQueue(Mockito.any());
+
 		ArrayList<MHistoryItem> getHistoryResult = new ArrayList<>();
 		getHistoryResult.add(new MHistoryItem(new MRequest("command1", false), new MResponse("response1")));
 		getHistoryResult.add(new MHistoryItem(new MRequest("command2", false), new MResponse("response2")));
@@ -94,13 +108,5 @@ public class AIControllerFacadeTest {
 		// the elaborateRequestFunction, otherwise the mock will not be the
 		// same as the one generated.
 		historyItem.setDate(new Timestamp(new Date().getTime()));
-		verify(historyItemServiceMock).save(historyItem);
 	}
-
-	@Test
-	public void checkElaborationOfRequest() {
-		MResponse responseTest = aiController.elaborateRequest(request);
-		assertTrue(responseTest.equals(response));
-	}
-
 }

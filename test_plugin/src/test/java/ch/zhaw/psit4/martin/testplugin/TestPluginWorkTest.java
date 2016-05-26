@@ -22,7 +22,7 @@ public class TestPluginWorkTest {
         featureValidator = new FeatureValidator(TestPluginWork.class);
         
         Map<String, IBaseType> args = new HashMap<>();
-        args.put("name", new MPerson("bla"));
+        args.put("name1", new MPerson("bla"));
         featureValidator.setExpectedArguments(args);
     }
     

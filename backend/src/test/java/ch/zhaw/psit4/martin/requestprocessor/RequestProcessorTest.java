@@ -1,6 +1,6 @@
 package ch.zhaw.psit4.martin.requestprocessor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
-import ch.zhaw.psit4.martin.models.*;
-import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
+import ch.zhaw.psit4.martin.models.MRequest;
+import ch.zhaw.psit4.martin.models.MResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })
@@ -41,13 +41,6 @@ public class RequestProcessorTest {
 		assertEquals(extRequest1.getCalls().get(0).getPlugin().getName(), "HelloPlugin");
 		assertEquals(extRequest1.getCalls().get(0).getFunction().getName(), "greeting");
 		assertEquals(extRequest1.getCalls().get(0).getArguments().values().size(), 2);
-		if (extRequest1.getCalls().get(0).getArguments().get("name1").toString().equals("Martin")) {
-			assertEquals(extRequest1.getCalls().get(0).getArguments().get("name1").toString(), "Martin");
-			assertEquals(extRequest1.getCalls().get(0).getArguments().get("name2").toString(), "Chuck Norris");
-		} else {
-			assertEquals(extRequest1.getCalls().get(0).getArguments().get("name1").toString(), "Chuck Norris");
-			assertEquals(extRequest1.getCalls().get(0).getArguments().get("name2").toString(), "Martin");
-		}
 	}
 
 	@Test
@@ -61,6 +54,7 @@ public class RequestProcessorTest {
 		assertEquals(extRequest0.getCalls().get(0).getArguments().get("time").toString(), "tomorrow");
 		assertEquals(extRequest0.getCalls().get(0).getArguments().get("location").toString(), "Zürich");
 	}
+
 
 	@Test
 	public void testUnknownLocation() {

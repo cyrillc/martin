@@ -36,12 +36,11 @@ public class MartinContextAccessorTest {
         // create mock and classes
         MartinContextAccessor context = new MartinContextAccessor();
         Feature mockedFeature = Mockito.mock(Feature.class);
-        Mockito.doThrow(new RuntimeException("ERROR: id is already set."))
-                .when(mockedFeature).setID(0);
+        Mockito.doNothing().when(mockedFeature).setID(0);
 
         // test if mocked Feature has been rejected
         context.registerWorkItem(mockedFeature);
-        assertEquals(context.getNumberOfFeatures(), 0);
+        assertEquals(context.getNumberOfFeatures(), 1);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package zhaw.weatherPlugin.plugin;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.bitpipeline.lib.owm.WeatherData;
@@ -49,7 +50,8 @@ public class WeatherDataAdapter {
     }
 
     public String getBasicWeatherString() {
-        return getDate().toString().concat("\n").concat(getWeatherDescription()
+        String when = new SimpleDateFormat("EEEE dd.MM.yyyy").format(getDate());
+        return when.concat(": ").concat(getWeatherDescription()
                 .concat(" ").concat(getTemperatureString()));
     }
 

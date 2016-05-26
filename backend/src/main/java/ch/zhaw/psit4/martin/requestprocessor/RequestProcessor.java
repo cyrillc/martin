@@ -1,26 +1,32 @@
 package ch.zhaw.psit4.martin.requestprocessor;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ch.zhaw.psit4.martin.api.typefactory.BaseTypeFactory;
-import ch.zhaw.psit4.martin.api.types.EBaseType;
-import ch.zhaw.psit4.martin.api.types.IBaseType;
+import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.types.BaseTypeInstanciationException;
+import ch.zhaw.psit4.martin.api.types.IBaseType;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
-import ch.zhaw.psit4.martin.common.Sentence;
-import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
+import ch.zhaw.psit4.martin.language.typefactory.BaseTypeFactory;
+import ch.zhaw.psit4.martin.models.MFunction;
+import ch.zhaw.psit4.martin.models.MKeyword;
+import ch.zhaw.psit4.martin.models.MParameter;
+import ch.zhaw.psit4.martin.models.MPlugin;
+import ch.zhaw.psit4.martin.models.MRequest;
+import ch.zhaw.psit4.martin.models.MResponse;
 import ch.zhaw.psit4.martin.models.repositories.MKeywordRepository;
 import ch.zhaw.psit4.martin.timing.TimingInfoLogger;
 import ch.zhaw.psit4.martin.timing.TimingInfoLoggerFactory;
-import ch.zhaw.psit4.martin.common.Phrase;
-import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
+import edu.stanford.nlp.pipeline.AnnotationPipeline;
 
 /**
  * This class is responible for extending a request to a computer readable
@@ -30,12 +36,11 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
  * @version 0.1
  **/
 public class RequestProcessor {
-
 	@Autowired
 	private MKeywordRepository keywordRepository;
 
 	@Autowired
-	private StanfordCoreNLPClient stanfordNLP;
+	private AnnotationPipeline annotationPipeline;
 
 	private static final Log LOG = LogFactory.getLog(RequestProcessor.class);
 	private static final TimingInfoLogger TIMING_LOG = TimingInfoLoggerFactory.getInstance();
@@ -51,16 +56,16 @@ public class RequestProcessor {
 	 */
 	public ExtendedRequest extend(MRequest request, MResponse response) {
 		TIMING_LOG.logStart(this.getClass().getSimpleName());
-		
+
 		ExtendedRequest extendedRequest = new ExtendedRequest(request, response);
-		List<PossibleCall> possibleCalls = new ArrayList<>();
 
 		TIMING_LOG.logEnd(this.getClass().getSimpleName());
-		Sentence sentence = new Sentence(extendedRequest.getRequest().getCommand(), stanfordNLP);
+		AnnotatedSentence sentence = new AnnotatedSentence(extendedRequest.getRequest().getCommand(),
+				annotationPipeline);
 		TIMING_LOG.logStart(this.getClass().getSimpleName());
 
 		// Find possible Calls by keywords
-		addPossibleCallsWithKeywords(possibleCalls, sentence.getWords());
+		List<PossibleCall> possibleCalls = getPossibleCallsWithKeywords(sentence.getWords());
 
 		// Resolve parameters
 		resolveParameters(possibleCalls, sentence);
@@ -72,13 +77,15 @@ public class RequestProcessor {
 		extendedRequest.setSentence(sentence);
 
 		for (PossibleCall possibleCall : possibleCalls) {
-			// Create Call
-			Call call = new Call();
-			call.setPlugin(possibleCall.getPlugin());
-			call.setFunction(possibleCall.getFunction());
-			call.setParameters(possibleCall.getParameters());
+			if (isCallValid(possibleCall)) {
+				// Create Call
+				Call call = new Call();
+				call.setPlugin(possibleCall.getPlugin());
+				call.setFunction(possibleCall.getFunction());
+				call.setParameters(possibleCall.getParameters());
 
-			extendedRequest.addCall(call);
+				extendedRequest.addCall(call);
+			}
 		}
 
 		TIMING_LOG.logEnd(this.getClass().getSimpleName());
@@ -95,7 +102,8 @@ public class RequestProcessor {
 	 *            words to be matched with the keywords.
 	 * @return the extended list
 	 */
-	private List<PossibleCall> addPossibleCallsWithKeywords(List<PossibleCall> possibleCalls, List<String> words) {
+	private List<PossibleCall> getPossibleCallsWithKeywords(List<String> words) {
+		List<PossibleCall> possibleCalls = new ArrayList<>();
 
 		for (String word : words) {
 
@@ -143,67 +151,83 @@ public class RequestProcessor {
 	 * @return A list of PossibleResults with their corresponding parameters
 	 *         filled as good as possible
 	 */
-	public List<PossibleCall> resolveParameters(List<PossibleCall> possibleCalls, Sentence sentence) {
-		for (PossibleCall possibleCall : possibleCalls) {
+	public List<PossibleCall> resolveParameters(List<PossibleCall> possibleCalls, AnnotatedSentence sentence) {
+		for (PossibleCall possibleCall : possibleCalls) {			
 			MFunction function = possibleCall.getFunction();
+			
+			// Sort Parameters by 'id' then 'required'
+			List<MParameter> parameterList = new ArrayList<>(function.getParameters());
+			parameterList.sort((MParameter p1, MParameter p2) -> p1.getId() - p2.getId());
+			parameterList.sort((MParameter p1, MParameter p2) -> Boolean.compare(!p1.isRequired(), !p2.isRequired()));
 
-			for (MParameter parameter : function.getParameters()) {
-				// Create instance of IMartinType for requested type
-				IBaseType parameterValue = getParameterValue(parameter, sentence);
-				possibleCall.addParameter(parameter.getName(), parameterValue);
+			// Reset pop-state, so all parameters parameters are available again
+			sentence.resetPopState();
+			
+			LOG.info("Resolving '" + function.getPlugin().getName() + "->" + function.getName() + " ( " + parameterList.toString() + " )' ");
+
+			for (MParameter parameter : parameterList) {
+				// Get the value for the current parameter
+				IBaseType parameterValue = getParameterValue(parameter, sentence,
+						possibleCall.getMatchingKeywords().values());
+
+				// Add it to the possible call
+				if (parameterValue != null) {
+					possibleCall.addParameter(parameter.getName(), parameterValue);
+				}
+
 			}
 		}
 
 		return possibleCalls;
 	}
 
-	public IBaseType getParameterValue(MParameter parameter, Sentence sentence) {
+	public IBaseType getParameterValue(MParameter parameter, AnnotatedSentence sentence,
+			Collection<MKeyword> matchingKeywords) {
+
+		IBaseType parameterValue = null;
+		
+		sentence.generateNominalModifierPhrases(matchingKeywords);
+		
 		try {
 
-			Integer possibilitiesLeft;
-			do {
-				// Perform Name Entity Recognition
-				String data = "";
+			while (ParameterExtractor.hasMoreParameterValues(sentence, parameter)) {
+				Phrase parameterPhrase = ParameterExtractor.extractParameter(parameter, sentence);
 
-				if (EBaseType.TIMESTAMP.equals(EBaseType.fromClassName(parameter.getType()))) {
-					// Timestamp consists of Date and Time
-					Phrase date = sentence.popPhraseOfType(EBaseType.DATE);
-					Phrase time = sentence.popPhraseOfType(EBaseType.TIME);
-
-					possibilitiesLeft = sentence.getPhrasesOfType(EBaseType.DATE).size()
-							+ sentence.getPhrasesOfType(EBaseType.TIME).size();
-
-					data = (date.getValue() + " " + time.getValue()).trim();
-				} else {
-					// All the rest can be resolved directly
-					Phrase phrase = sentence.popPhraseOfType(EBaseType.fromClassName(parameter.getType()));
-
-					possibilitiesLeft = sentence.getPhrasesOfType(EBaseType.fromClassName(parameter.getType())).size();
-
-					if (phrase != null) {
-						data = phrase.getValue();
-					}
+				if (parameterPhrase == null) {
+					throw new Exception("parameter not present");
 				}
 
-				if (!"".equals(data)) {
-					TIMING_LOG.logEnd(this.getClass().getSimpleName());
-					try {
-						IBaseType parameterValue = BaseTypeFactory
-								.fromType(EBaseType.fromClassName(parameter.getType()), data);
-						LOG.info("\n Parameter found via Name Entity Recognition: " + parameterValue.toJson());
-						TIMING_LOG.logStart(this.getClass().getSimpleName());
-						return parameterValue;
-					} catch (BaseTypeInstanciationException e) {
-						TIMING_LOG.logStart(this.getClass().getSimpleName());
-						LOG.debug(e);
-					}
+				TIMING_LOG.logEnd(this.getClass().getSimpleName());
+				try {
+					parameterValue = BaseTypeFactory.fromPhrase(parameterPhrase, sentence);
+					TIMING_LOG.logStart(this.getClass().getSimpleName());
+					return parameterValue;
+				} catch (BaseTypeInstanciationException e) {
+					LOG.debug(e);
 				}
-			} while (possibilitiesLeft > 0);
+			}
+
 		} catch (Exception e) {
-			LOG.debug(e);
-			LOG.error("The IMartinType '" + parameter.getType() + "' could not be found.");
+			LOG.error(e);
+			LOG.error("The Parameter " + parameter.getName() + " of type '" + parameter.getType()
+					+ "' could not be found.");
 		}
-		return null;
+		return parameterValue;
 	}
 
+
+
+	private boolean isCallValid(PossibleCall possibleCall) {
+		// Check if all required parameters are filled
+		for (MParameter parameter : possibleCall.getFunction().getParameters()) {
+			String parameterName = parameter.getName();
+			Map<String, IBaseType> currentParameters = possibleCall.getParameters();
+
+			if (parameter.isRequired() && currentParameters.get(parameterName) == null) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

@@ -21,7 +21,7 @@
             <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="command" type="VARCHAR(100)">
+            <column name="command" type="MEDIUMTEXT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -39,7 +39,7 @@
             <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="responsetext" type="VARCHAR(500)"/>
+            <column name="responsetext" type="MEDIUMTEXT"/>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="response_id" baseTableName="history_item" constraintName="fk_history_items_response" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="response"/>

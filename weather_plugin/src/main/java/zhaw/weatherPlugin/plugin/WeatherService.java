@@ -32,8 +32,7 @@ public class WeatherService {
             ResponseStatusAdapter response = client.currentWeatherAtCity(city);
             if (response.hasWeatherData()) {
                 WeatherDataAdapter data = response.getWeatherData();
-                return "Weather in " + city + " : "
-                        + data.getBasicWeatherString();
+                return data.getBasicWeatherString();
             } else {
                 return null;
             }
@@ -63,8 +62,7 @@ public class WeatherService {
             if (response.hasForecast()) {
                 WeatherDataAdapter data;
                 data = response.searchClosestForecastFrom(time);
-                return "Weather in " + city + " : "
-                        + data.getBasicWeatherString();
+                return data.getBasicWeatherString();
             } else {
                 return null;
             }
@@ -84,8 +82,7 @@ public class WeatherService {
             if (response.hasForecast()) {
                 WeatherDataAdapter data;
                 data = response.getForecastForDate(day);
-                return "Weather in " + city + " : "
-                        + data.getBasicWeatherString();
+                return (data != null) ? data.getBasicWeatherString() : null;
             } else {
                 return null;
             }

@@ -47,12 +47,21 @@
 		entity-manager-factory-ref="myEmf" />
 
 
-
-	<!-- JAVA CLASSES -->
+	<!-- EVENT HANDLING WITH REACTOR-->
+<!-- 	<bean id="EventBus" class="reactor.bus.EventBus">
+	</bean>
+ -->	<!-- JAVA CLASSES -->
 
 	<!-- package aiController -->
 	<bean id="AIControllerFacade" class="ch.zhaw.psit4.martin.aiController.AIControllerFacade">
 	</bean>
+
+	<bean id="outputQueueThread" class="java.lang.Thread" init-method="start"
+		destroy-method="interrupt">
+		<constructor-arg ref="MOutputQueueThread" />
+	</bean>
+
+	<bean id="MOutputQueueThread" class="ch.zhaw.psit4.martin.aiController.MOutputQueueThread"></bean>
 
 	<!-- package boot -->
 
@@ -84,8 +93,8 @@
 	<bean id="PluginDataAccessor"
 		class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginDataAccessor">
 	</bean>
-	
-	<bean id="PluginInstaller" 
+
+	<bean id="PluginInstaller"
 		class="ch.zhaw.psit4.martin.pluginlib.filesystem.PluginInstaller">
 		<constructor-arg value="jar" />
 	</bean>
@@ -93,11 +102,14 @@
 	<!-- package requestProcessor -->
 	<bean id="RequestProcessor" class="ch.zhaw.psit4.martin.requestprocessor.RequestProcessor">
 	</bean>
-	<bean id="NaturalLanguageAnalysisUtilities"
-		class="ch.zhaw.psit4.martin.requestprocessor.utils.NaturalLanguageAnalysisUtilities">
-	</bean>
+	
 
-	<bean id="StanfordCoreNLPClient" class="edu.stanford.nlp.pipeline.StanfordCoreNLPClient"
-		factory-bean="NaturalLanguageAnalysisUtilities" factory-method="bootStanfordNLPClient">
+
+	<!-- package language.analysis -->
+	<bean id="NaturalLanguageAnalysisUtilities"
+		class="ch.zhaw.psit4.martin.language.analyis.NaturalLanguageAnalysisUtilities">
+	</bean>
+	<bean id="AnnotationPipeline" class="edu.stanford.nlp.pipeline.AnnotationPipeline"
+		factory-bean="NaturalLanguageAnalysisUtilities" factory-method="bootStanfordNLP">
 	</bean>
 </beans>

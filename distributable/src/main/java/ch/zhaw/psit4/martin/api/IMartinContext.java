@@ -1,27 +1,37 @@
 package ch.zhaw.psit4.martin.api;
 
+import java.util.List;
+
+import ch.zhaw.psit4.martin.api.types.MEventData;
+import ch.zhaw.psit4.martin.api.types.output.MOutput;
+import reactor.bus.Event;
+import reactor.fn.Consumer;
+
 /**
  * The MArtIn Context provided to MArtIn Plugins.
  * 
- * This class handles communication of a plugin with the main 
- * application by providing the application with an 
- * object, that MArtIn is aware of.
+ * This class handles communication of a plugin with the main application by providing the
+ * application with an object, that MArtIn is aware of.
  *
  * @version 0.0.1-SNAPSHOT
  */
 public interface IMartinContext {
+    
     /**
-     * Plugin id of the core module, defined in it's plugin.xml class attribute
-     */
-    public static final String CORE_PLUGIN_ID = "ch.zhaw.psit4.martin.api";
-    /*
-     * Plugin extention point that is distributed to module programmers
-     */
-    public static final String EXTPOINT_ID = "PluginService";
-    
-    
-    /**Registers a work item in the context.
+     * Registers a work item in the context.
+     * 
      * @param item The item to register.
      */
     public void registerWorkItem(Feature item);
+    
+    /**
+     * Adds an output to the queue to be send to clients.
+     * 
+     * @param output The list of outputs to send
+     */
+    public void addToOutputQueue(List<MOutput> output);
+
+    void throwEvent(MEventData event);
+
+    void registerOnTopic(String topic, MEventListener listener);
 }
