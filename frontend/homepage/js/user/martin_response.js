@@ -20,15 +20,17 @@ var MartinResponseRenderer = {
         // Render View
         var event_html = nunjucksConfiguration(event, "event.html", direction);
 
+        // Show the parts
+        showHtmlParts(event_html, animation_duration);
 
         // Render the timing-chart
+        // Must happen after the parts has been showed
         if (event.request.timed) {
             var chart_element = event_html.find(".timing-chart")[0];
             this.renderTimingChart(chart_element);
         }
 
-        // Show the parts
-        showHtmlParts(event_html, animation_duration);
+        
     },
 
     renderTimingChart: function (el) {
