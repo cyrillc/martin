@@ -39,11 +39,6 @@ var MartinResponseRenderer = {
     renderPushMessage: function (event, direction = "prepend", animation_duration = 400) {
         var push_html = nunjucksConfiguration(event, "pushMessage.html", direction);
 
-        // Play audio
-        var audio_file = new Audio($(push_html.find(".output-type-audio")).text());
-        audio_file.play();
-
-
         showHtmlParts(push_html, animation_duration);
     }
 };
@@ -56,12 +51,20 @@ var nunjucksConfiguration = function (event, viewHtmlString, direction) {
     } else {
         $("#martin-responses").append(view_html);
     }
+
+    // Play audio
+    try {
+        var audio_file = new Audio($(view_html.find(".output-type-audio")).text());
+        audio_file.play();
+    } catch (err) {
+        console.log('No Audio Files found');
+    }
     return view_html;
-}
+};
 
 var showHtmlParts = function (viewHtml, animationDuration) {
     $(viewHtml).slideDown({
         duration: animationDuration,
         easing: "easeInOutQuart"
     });
-}
+};

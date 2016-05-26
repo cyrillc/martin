@@ -99,6 +99,7 @@ $(document).ready(function () {
         $.get(exampleCommandsUrl, function (receivedExampleCommands) {
             var exampleCommandsRenderer = new ExampleCommandsRenderer(receivedExampleCommands);
             exampleCommandsRenderer.renderCommands();
+            registerClickEvents();
 
 
         }).always(function () {
@@ -129,29 +130,35 @@ var checkTimingFlag = function (textInput) {
         wantTimingInformation = false;
     }
     return textInput;
-}
+};
 
 // function to move through history with *UP* and *DOWN* arrows
 var getPreviousCommand = function (index) {
     $('#commandInput').val(History.commands[index - 1]);
-}
+};
 
 
 var registerOnServerEvent = function (url) {
     var source = new EventSource(url);
     source.onmessage = function (event) {
         MartinResponseRenderer.renderPushMessage(JSON.parse(event.data));
-        console.log('Push message received');
-    }
-}
+    };
+};
 
 
 var registerForCommandResponse = function (url) {
     var source = new EventSource(url);
     source.onmessage = function (event) {
         MartinResponseRenderer.renderEvent(JSON.parse(event.data));
-    }
-}
+    };
+};
+
+var registerClickEvents = function () {
+    $('.exampleCommand').click(function (event) {
+        $('#commandInput').val($(event.target).text()).focus();
+
+    }).tooltip();
+};
 
 
 
