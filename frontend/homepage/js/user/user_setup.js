@@ -72,6 +72,13 @@ var sendCommand = function () {
     // send GET request with data and show response on page
     $.get(backendUrl, command, function (response) {
         // Nothing to do at the moment...
+        response.responses.forEach(function(element) {
+            if (element.type == 'TEXT') {
+                console.log('tts activated: '+ element.value);
+                var tts = new SpeechSynthesisUtterance(element.value);
+                speechSynthesis.speak(tts);
+            }
+        }, this);
 
         $("#martinResponsesContainer").animate({ scrollTop: 0 }, {
             duration: 1400,
