@@ -1,6 +1,6 @@
 package ch.zhaw.psit4.martin.language.analysis;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +12,6 @@ import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
-import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ch.zhaw.psit4.martin.api.language.parts.Phrase;
 import ch.zhaw.psit4.martin.api.types.BaseTypeInstanciationException;
-import ch.zhaw.psit4.martin.api.types.EBaseType;
 import ch.zhaw.psit4.martin.api.types.IBaseType;
 import ch.zhaw.psit4.martin.common.Call;
 import ch.zhaw.psit4.martin.common.ExtendedRequest;
@@ -78,7 +77,7 @@ public class RequestProcessor {
 		extendedRequest.setSentence(sentence);
 
 		for (PossibleCall possibleCall : possibleCalls) {
-			if(isCallValid(possibleCall)){
+			if (isCallValid(possibleCall)) {
 				// Create Call
 				Call call = new Call();
 				call.setPlugin(possibleCall.getPlugin());
@@ -86,7 +85,7 @@ public class RequestProcessor {
 				call.setParameters(possibleCall.getParameters());
 
 				extendedRequest.addCall(call);
-			}	
+			}
 		}
 
 		TIMING_LOG.logEnd(this.getClass().getSimpleName());
@@ -153,17 +152,29 @@ public class RequestProcessor {
 	 *         filled as good as possible
 	 */
 	public List<PossibleCall> resolveParameters(List<PossibleCall> possibleCalls, AnnotatedSentence sentence) {
-		for (PossibleCall possibleCall : possibleCalls) {
+		for (PossibleCall possibleCall : possibleCalls) {			
 			MFunction function = possibleCall.getFunction();
+			
+			// Sort Parameters by 'id' then 'required'
+			List<MParameter> parameterList = new ArrayList<>(function.getParameters());
+			parameterList.sort((MParameter p1, MParameter p2) -> p1.getId() - p2.getId());
+			parameterList.sort((MParameter p1, MParameter p2) -> Boolean.compare(!p1.isRequired(), !p2.isRequired()));
 
-			for (MParameter parameter : function.getParameters()) {
-				// Create instance of IMartinType for requested type
+			// Reset pop-state, so all parameters parameters are available again
+			sentence.resetPopState();
+			
+			LOG.info("Resolving '" + function.getPlugin().getName() + "->" + function.getName() + " ( " + parameterList.toString() + " )' ");
+
+			for (MParameter parameter : parameterList) {
+				// Get the value for the current parameter
 				IBaseType parameterValue = getParameterValue(parameter, sentence,
 						possibleCall.getMatchingKeywords().values());
-				if(parameterValue != null){
+
+				// Add it to the possible call
+				if (parameterValue != null) {
 					possibleCall.addParameter(parameter.getName(), parameterValue);
 				}
-				
+
 			}
 		}
 
@@ -174,11 +185,13 @@ public class RequestProcessor {
 			Collection<MKeyword> matchingKeywords) {
 
 		IBaseType parameterValue = null;
+		
+		sentence.generateNominalModifierPhrases(matchingKeywords);
+		
 		try {
 
-			while (sentenceHasMoreParameterValues(sentence, parameter)) {
-				Phrase parameterPhrase = ParameterExtractor.extractParameter(parameter, sentence, matchingKeywords);
-				
+			while (ParameterExtractor.hasMoreParameterValues(sentence, parameter)) {
+				Phrase parameterPhrase = ParameterExtractor.extractParameter(parameter, sentence);
 
 				if (parameterPhrase == null) {
 					throw new Exception("parameter not present");
@@ -187,41 +200,34 @@ public class RequestProcessor {
 				TIMING_LOG.logEnd(this.getClass().getSimpleName());
 				try {
 					parameterValue = BaseTypeFactory.fromPhrase(parameterPhrase, sentence);
-					LOG.info("\n Parameter found via Name Entity Recognition: " + parameterValue.toString());
 					TIMING_LOG.logStart(this.getClass().getSimpleName());
 					return parameterValue;
 				} catch (BaseTypeInstanciationException e) {
-					TIMING_LOG.logStart(this.getClass().getSimpleName());
 					LOG.debug(e);
 				}
 			}
 
 		} catch (Exception e) {
-			LOG.debug(e);
-			LOG.error("The IMartinType '" + parameter.getType() + "' could not be found.");
+			LOG.error(e);
+			LOG.error("The Parameter " + parameter.getName() + " of type '" + parameter.getType()
+					+ "' could not be found.");
 		}
 		return parameterValue;
 	}
 
-	private boolean sentenceHasMoreParameterValues(AnnotatedSentence sentence, MParameter parameter) {
-		Integer parametersLeft = 0;
 
-		parametersLeft = sentence.getPhrasesOfType(EBaseType.fromClassName(parameter.getType())).size();
-		
-		return parametersLeft > 0 ? true : false;
-	}
-	
-	private boolean isCallValid(PossibleCall possibleCall){
+
+	private boolean isCallValid(PossibleCall possibleCall) {
 		// Check if all required parameters are filled
-		for(MParameter parameter : possibleCall.getFunction().getParameters()){
+		for (MParameter parameter : possibleCall.getFunction().getParameters()) {
 			String parameterName = parameter.getName();
 			Map<String, IBaseType> currentParameters = possibleCall.getParameters();
-			
-			if(parameter.isRequired() && currentParameters.get(parameterName) == null){
+
+			if (parameter.isRequired() && currentParameters.get(parameterName) == null) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 }

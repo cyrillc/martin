@@ -34,6 +34,7 @@ public class TimerThread implements Runnable {
 			context.addToOutputQueue(outputs);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+			LOG.debug(e);
 		}
 		
 	}

@@ -99,5 +99,20 @@ public class MParameter extends BaseModel {
         parameterKeywords.add(keyword);
         keyword.addParameter(this);
     }
+    
+    @Override
+    public String toString(){
+    	String[] typeParts = type.split(".");
+    	
+    	if(typeParts.length > 0){
+    		if(this.required){
+        		return "(!)" + typeParts[typeParts.length - 1] + " " + this.name;
+        	} else {
+        		return "(?)" + typeParts[typeParts.length - 1] + " " + this.name;
+        	}
+    	} else {
+    		return "(!)" + this.name;
+    	}
+    }
 
 }

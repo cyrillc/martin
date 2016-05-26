@@ -1,12 +1,13 @@
 package ch.zhaw.psit4.martin.aiController;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,12 +25,13 @@ import ch.zhaw.psit4.martin.common.ExtendedRequest;
 import ch.zhaw.psit4.martin.common.LiquibaseTestFramework;
 import ch.zhaw.psit4.martin.frontend.FrontendController;
 import ch.zhaw.psit4.martin.language.analyis.AnnotatedSentence;
-import ch.zhaw.psit4.martin.models.*;
+import ch.zhaw.psit4.martin.models.MHistoryItem;
+import ch.zhaw.psit4.martin.models.MRequest;
+import ch.zhaw.psit4.martin.models.MResponse;
 import ch.zhaw.psit4.martin.models.repositories.MHistoryItemRepository;
 import ch.zhaw.psit4.martin.pluginlib.IPluginLibrary;
 import ch.zhaw.psit4.martin.requestprocessor.RequestProcessor;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
-import edu.stanford.nlp.pipeline.StanfordCoreNLPClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:Beans.xml", "classpath:Beans-unit-tests.xml" })

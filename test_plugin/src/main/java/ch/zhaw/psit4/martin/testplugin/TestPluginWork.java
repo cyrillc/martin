@@ -12,65 +12,48 @@ import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 
 public class TestPluginWork extends Feature {
 
-    public TestPluginWork(long requestID) {
-        super(requestID);
-    }
+	public TestPluginWork(long requestID) {
+		super(requestID);
+	}
 
-    private MPerson person1;
-    private MPerson person2;
-    private static String MY_NAME = "Martin";
+	private Boolean person1IsMe = false;
+	private MPerson person1;
+	private MPerson person2;
 
-    @Override
-    public void initialize(Map<String, IBaseType> args) throws Exception {
-        person1 = (MPerson) args.get("name1");
+	private static String MY_NAME = "Martin";
 
-        if (args.get("name2") != null) {
-            person2 = (MPerson) args.get("name2");
-        }
-    }
+	@Override
+	public void initialize(Map<String, IBaseType> args) throws Exception {
+		person1 = (MPerson) args.get("name1");
 
-    @Override
-    public List<MOutput> execute() throws Exception {
-        testOutputQueue();
-        
-        
-        List<MOutput> ret = new ArrayList<>();
-        if (person1 == null || person2 == null) {
-            if (person1 != null && !person1.toString().equalsIgnoreCase(MY_NAME)) {
-                ret.add(createOutputText("Who is " + person1 + "?"));
-            }
-            else if (person2 != null && !person2.toString().equalsIgnoreCase(MY_NAME)) {
-                ret.add(createOutputText("Who is " + person2 + "?"));
-            } else {
-                ret.add(createOutputText("Hello my friend!"));
-            }
-        } else if (person1.toString().equalsIgnoreCase(MY_NAME)) {
-            ret.add(createOutputText("Hello " + person2 + ", it's me " + person1 + "!"));
-        } else if (person2.toString().equalsIgnoreCase(MY_NAME)) {
-            ret.add(createOutputText("Hello " + person1 + ", it's me " + person2 + "!"));
-        } else {
-            ret.add(createOutputText("Hello " + person1 + " and " + person2 + "!"));
-        }
-        return ret;
-    }
+		if (person1.toString().equalsIgnoreCase(MY_NAME)) {
+			person1IsMe = true;
+		}
 
-    private void testOutputQueue() {
-        List<MOutput> ret1 = new ArrayList<>();
-        List<MOutput> ret2 = new ArrayList<>();
-        List<MOutput> ret3 = new ArrayList<>();
-        
-        ret1.add(createOutputText("Hello 1"));
-        ret1.add(createOutputText("Hello 2"));
-        ret2.add(createOutputText("Hello 3"));
-        ret3.add(createOutputText("Hello 4"));
-        ret1.add(createOutputText("Hello 5"));
+		if (args.get("name2") != null) {
+			person2 = (MPerson) args.get("name2");
 
-        TestPlugin.context.addToOutputQueue(ret1);
-        TestPlugin.context.addToOutputQueue(ret2);
-        TestPlugin.context.addToOutputQueue(ret3);
-    }
+			if (person2.toString().equalsIgnoreCase(MY_NAME)) {
+				person1 = person2;
+				person2 = (MPerson) args.get("name2");
+			}
+		}
+	}
 
-    private MOutput createOutputText(String text) {
-        return new MOutput(MOutputType.TEXT, text);
-    }
+	@Override
+	public List<MOutput> execute() throws Exception {
+		List<MOutput> answer = new ArrayList<>();
+
+		if (person2 == null && !person1IsMe) {
+			answer.add(new MOutput(MOutputType.TEXT, "Who is " + person1 + "?"));
+		} else if (person2 == null && person1IsMe) {
+			answer.add(new MOutput(MOutputType.TEXT, "Hello my friend!"));
+		} else if (person1IsMe) {
+			answer.add(new MOutput(MOutputType.TEXT, "Hello " + person2 + ", it's me " + person1 + "!"));
+		} else {
+			answer.add(new MOutput(MOutputType.TEXT, "Hello " + person1 + " and " + person2 + "!"));
+		}
+
+		return answer;
+	}
 }
