@@ -20,7 +20,7 @@ public class PicturePlugin implements MartinPlugin {
         this.context = context;
         this.active = true;
         this.listener = new PicturePush(context);
-        context.registerOnTopic("time", listener);
+        context.registerOnTopic("PICTURE_PUSH", listener);
     }
 
 

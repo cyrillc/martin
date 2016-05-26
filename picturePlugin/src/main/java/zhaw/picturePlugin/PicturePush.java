@@ -23,7 +23,7 @@ public class PicturePush extends MEventListener {
         ImageSearch imageSearch = new ImageSearch();
         List<MOutput> response = new ArrayList<>();
         try {
-            String image = imageSearch.getImage("clockwork");
+            String image = imageSearch.getImage(event.getValue());
             response.add(new MOutput(MOutputType.IMAGE, image));
             context.addToOutputQueue(response);
         } catch (IOException e) {

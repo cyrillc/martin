@@ -81,7 +81,7 @@ public class MartinContextAccessor implements IMartinContext {
     
     @Override
     public void registerOnTopic(String topic, MEventListener listener ){
-       eventBus.on($(topic),listener);
+       eventBus.on($(topic),new MEventAdapter(listener));
        LOG.info(listener.toString()+" has registered for the topic \""+topic+"\"");
     }
     
