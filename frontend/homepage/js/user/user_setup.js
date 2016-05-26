@@ -72,6 +72,11 @@ var sendCommand = function () {
     // send GET request with data and show response on page
     $.get(backendUrl, command, function (response) {
         // Nothing to do at the moment...
+
+        $("#martinResponsesContainer").animate({ scrollTop: 0 }, {
+            duration: 1400,
+            easing: "easeOutBounce"
+        });
     }).always(function () {
         // hides thinking Area
         $('.thinking').slideUp({
