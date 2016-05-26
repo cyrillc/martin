@@ -46,7 +46,7 @@ var visuallyUnpressButton = function () {
 // sending a command to the backend of MArtIn using an Ajax request
 var sendCommand = function () {
     // shows MArtIn thingking Area
-    $('.thinking').slideDown({
+    $('.thinking').stop().slideDown({
         duration: 400,
         easing: "easeInOutQuart"
     });
@@ -79,7 +79,7 @@ var sendCommand = function () {
         });
     }).always(function () {
         // hides thinking Area
-        $('.thinking').slideUp({
+        $('.thinking').stop().slideUp({
             duration: 400,
             easing: "easeInOutQuart"
         });
