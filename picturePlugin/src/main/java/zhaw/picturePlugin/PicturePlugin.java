@@ -4,6 +4,7 @@ package zhaw.picturePlugin;
 import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.MartinPlugin;
+import zhaw.picturePlugin.PictureWork;
 
 
 
