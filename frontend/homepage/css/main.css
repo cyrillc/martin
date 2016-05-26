@@ -137,6 +137,11 @@ h1 {
     font-weight: bold;
     font-size: 16px;
     margin-bottom: 5px;
+    display: table;
+}
+
+.exampleCommand {
+    cursor: pointer;
 }
 
 .callDescription, .martin-response {
