@@ -11,12 +11,15 @@ public class PicturePlugin implements MartinPlugin {
 
     private IMartinContext context;
     private boolean active;
+    private PicturePush listener;
 
 
     @Override
     public void activate(IMartinContext context) throws Exception {
         this.context = context;
         this.active = true;
+        this.listener = new PicturePush(context);
+        context.registerOnTopic("time", listener);
     }
 
 

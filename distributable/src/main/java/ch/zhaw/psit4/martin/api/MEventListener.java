@@ -8,10 +8,8 @@ public abstract class MEventListener implements Consumer<Event<MEventData>> {
 
     @Override
     public void accept(Event<MEventData> event) {
-        this.handleEvent(event);
+        this.handleEvent(event.getData());
     }
 
-    public abstract void handleEvent(Event<MEventData> event);
-        
-
+    public abstract void handleEvent(MEventData event);
 }
