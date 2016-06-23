@@ -72,13 +72,17 @@ var sendCommand = function () {
     // send GET request with data and show response on page
     $.get(backendUrl, command, function (response) {
         // Nothing to do at the moment...
-        response.responses.forEach(function(element) {
-            if (element.type == 'TEXT') {
-                console.log('tts activated: ' + element.value);
-                if (element.value.length < 100) {
-                    var tts = new SpeechSynthesisUtterance(element.value);
-                    speechSynthesis.speak(tts);
+        response.responses.forEach(function (element) {
+            try {
+                if (element.type == 'TEXT') {
+                    if (element.value.length < 50) {
+                        console.log('tts activated: ' + element.value);
+                        var tts = new SpeechSynthesisUtterance(element.value);
+                        speechSynthesis.speak(tts);
+                    }
                 }
+            } catch (error) {
+                console.log("Text to Speech Error");
             }
         }, this);
 
