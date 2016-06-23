@@ -74,9 +74,11 @@ var sendCommand = function () {
         // Nothing to do at the moment...
         response.responses.forEach(function(element) {
             if (element.type == 'TEXT') {
-                console.log('tts activated: '+ element.value);
-                var tts = new SpeechSynthesisUtterance(element.value);
-                speechSynthesis.speak(tts);
+                console.log('tts activated: ' + element.value);
+                if (element.value.length < 100) {
+                    var tts = new SpeechSynthesisUtterance(element.value);
+                    speechSynthesis.speak(tts);
+                }
             }
         }, this);
 
