@@ -72,19 +72,28 @@ var sendCommand = function () {
     // send GET request with data and show response on page
     $.get(backendUrl, command, function (response) {
         // Nothing to do at the moment...
+
+        var completeResponseText = '';
         response.responses.forEach(function (element) {
             try {
                 if (element.type == 'TEXT') {
-                    if (element.value.length < 50) {
-                        console.log('tts activated: ' + element.value);
-                        var tts = new SpeechSynthesisUtterance(element.value);
-                        speechSynthesis.speak(tts);
-                    }
+                    completeResponseText += element.value + ' ';
                 }
             } catch (error) {
-                console.log("Text to Speech Error");
+                console.log("Error Compiler Repsonse Text");
             }
         }, this);
+
+        try {
+            if (completeResponseText.length < 100 && completeResponseText.length > 2) {
+                console.log('tts activated: ' + completeResponseText);
+                var tts = new SpeechSynthesisUtterance(completeResponseText);
+                speechSynthesis.speak(tts);
+            }
+        } catch (error) {
+            console.log("Text to Speech Error");
+
+        }
 
         $("#martinResponsesContainer").animate({ scrollTop: 0 }, {
             duration: 1400,
