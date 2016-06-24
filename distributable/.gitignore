@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-/target/
-=======
-/target/
+!/target/
 !*.jar
->>>>>>> refs/heads/martin-api_t66_fabiadan
+
