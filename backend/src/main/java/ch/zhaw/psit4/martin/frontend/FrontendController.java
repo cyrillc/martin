@@ -231,7 +231,7 @@ public class FrontendController {
     public SseEmitter registerForServerSentEvents() throws IOException {
         SseEmitter emitter = new SseEmitter(1000000L);
         pushMessageEmitters.add(emitter);
-        emitter.onCompletion(() -> pushMessageEmitters.remove(emitter));
+        //emitter.onCompletion(() -> pushMessageEmitters.remove(emitter));
         return emitter;
     }
     

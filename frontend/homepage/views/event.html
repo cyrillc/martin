@@ -11,7 +11,7 @@
 	<div class="response">
 		<!-- <span class="date">{{ event.response.formattedDate }}</span> -->
 		{% for response in event.response.responses %}
-			{% include "outputTypes/" + response.type + ".html" %}
+			{% include "outputTypes/" + response.type.toLowerCase() + ".html" %}
 		{% endfor %}
 	</div>
 </div>

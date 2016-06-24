@@ -46,7 +46,7 @@ var visuallyUnpressButton = function () {
 // sending a command to the backend of MArtIn using an Ajax request
 var sendCommand = function () {
     // shows MArtIn thingking Area
-    $('.thinking').slideDown({
+    $('.thinking').stop().slideDown({
         duration: 400,
         easing: "easeInOutQuart"
     });
@@ -72,6 +72,13 @@ var sendCommand = function () {
     // send GET request with data and show response on page
     $.get(backendUrl, command, function (response) {
         // Nothing to do at the moment...
+        response.responses.forEach(function(element) {
+            if (element.type == 'TEXT') {
+                console.log('tts activated: '+ element.value);
+                var tts = new SpeechSynthesisUtterance(element.value);
+                speechSynthesis.speak(tts);
+            }
+        }, this);
 
         $("#martinResponsesContainer").animate({ scrollTop: 0 }, {
             duration: 1400,
@@ -79,7 +86,7 @@ var sendCommand = function () {
         });
     }).always(function () {
         // hides thinking Area
-        $('.thinking').slideUp({
+        $('.thinking').stop().slideUp({
             duration: 400,
             easing: "easeInOutQuart"
         });

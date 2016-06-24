@@ -47,8 +47,10 @@
 		entity-manager-factory-ref="myEmf" />
 
 
-
-	<!-- JAVA CLASSES -->
+	<!-- EVENT HANDLING WITH REACTOR-->
+<!-- 	<bean id="EventBus" class="reactor.bus.EventBus">
+	</bean>
+ -->	<!-- JAVA CLASSES -->
 
 	<!-- package aiController -->
 	<bean id="AIControllerFacade" class="ch.zhaw.psit4.martin.aiController.AIControllerFacade">

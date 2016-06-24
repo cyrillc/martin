@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.zhaw.psit4.martin.api.IMartinContext;
+import ch.zhaw.psit4.martin.api.types.MEventData;
 import ch.zhaw.psit4.martin.api.types.output.MOutput;
 import ch.zhaw.psit4.martin.api.types.output.MOutputType;
 
@@ -26,6 +27,8 @@ public class TimerThread implements Runnable {
 			Thread.sleep(waitTimeInMilliseconds);
 			
 			List<MOutput> outputs = new ArrayList<>();
+			context.throwEvent(new MEventData("time", ""+waitTimeInMilliseconds/1000+"s sind abgelaufen."));
+			context.throwEvent(new MEventData("PICTURE_PUSH", "time"));
 			outputs.add(new MOutput(MOutputType.TEXT, "Peep, peeep, peeeeeeeeeeep!"));
 			outputs.add(new MOutput(MOutputType.AUDIO, "http://www.orangefreesounds.com/wp-content/uploads/2015/04/Cuckoo-bird-sound.mp3"));
 		
