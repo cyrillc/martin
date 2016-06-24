@@ -6,6 +6,8 @@ import java.util.Date;
 
 import org.json.JSONException;
 
+import ch.zhaw.psit4.martin.api.IMartinContext;
+import ch.zhaw.psit4.martin.api.types.MEventData;
 import zhaw.weatherPlugin.plugin.exception.WeatherPluginException;
 import zhaw.weatherPlugin.plugin.response.ResponseForecast16Adapter;
 import zhaw.weatherPlugin.plugin.response.ResponseForecastAdapter;
@@ -18,6 +20,12 @@ public class WeatherService {
     public WeatherService() {
         client = new OwmClientAdapter();
     }
+    
+    public void showPicture(IMartinContext context, String weatherCondition){
+    	if(context != null){
+        	context.throwEvent(new MEventData("PICTURE_PUSH", weatherCondition + " weather"));
+        }
+    }
 
     /**
      * This method return the current Weather at the given city
@@ -27,12 +35,13 @@ public class WeatherService {
      *         is not found.
      * @throws WeatherPluginException
      */
-    public String getWeatherAtCity(String city) throws WeatherPluginException {
+    public String getWeatherAtCity(IMartinContext context, String city) throws WeatherPluginException {
         try {
             ResponseStatusAdapter response = client.currentWeatherAtCity(city);
             if (response.hasWeatherData()) {
                 WeatherDataAdapter data = response.getWeatherData();
-                return data.getBasicWeatherString();
+                showPicture(context, data.getWeatherDescription());
+                return data.getBasicWeatherString(city);
             } else {
                 return null;
             }
@@ -54,7 +63,7 @@ public class WeatherService {
      *         found.
      * @throws WeatherPluginException
      */
-    public String getForecastAtCityForSpecificTime(String city, Date time)
+    public String getForecastAtCityForSpecificTime(IMartinContext context, String city, Date time)
             throws WeatherPluginException {
         try {
             ResponseForecastAdapter response;
@@ -62,7 +71,8 @@ public class WeatherService {
             if (response.hasForecast()) {
                 WeatherDataAdapter data;
                 data = response.searchClosestForecastFrom(time);
-                return data.getBasicWeatherString();
+                showPicture(context, data.getWeatherDescription());
+                return data.getBasicWeatherString(city);
             } else {
                 return null;
             }
@@ -73,7 +83,7 @@ public class WeatherService {
         }
     }
 
-    public String getForecastAtCityForDay(String city, Date day)
+    public String getForecastAtCityForDay(IMartinContext context, String city, Date day)
             throws WeatherPluginException {
 
         try {
@@ -82,7 +92,8 @@ public class WeatherService {
             if (response.hasForecast()) {
                 WeatherDataAdapter data;
                 data = response.getForecastForDate(day);
-                return (data != null) ? data.getBasicWeatherString() : null;
+                showPicture(context, data.getWeatherDescription());
+                return (data != null) ? data.getBasicWeatherString(city) : null;
             } else {
                 return null;
             }
@@ -104,13 +115,13 @@ public class WeatherService {
      *         found.
      * @throws WeatherPluginException
      */
-    public String getForecastAtCityInXHours(String city, int hours)
+    public String getForecastAtCityInXHours(IMartinContext context, String city, int hours)
             throws WeatherPluginException {
         if (hours < 0) {
             return null;
         }
         Date searchedDate = getDateInXHours(hours);
-        return getForecastAtCityForSpecificTime(city, searchedDate);
+        return getForecastAtCityForSpecificTime(context, city, searchedDate);
     }
 
     private Date getDateInXHours(int hours) {

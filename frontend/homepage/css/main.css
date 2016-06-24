@@ -111,6 +111,17 @@ h1 {
     margin-bottom: 40px;
 }
 
+.martin-search-field input {
+    font-size: 20px;
+    height: 40px;
+    font-weight: 200;
+    //letter-spacing: 2px;
+}
+
+.martin-search-field button {
+    height: 40px;
+}
+
 #martinResponsesContainer {
     max-height: 800px;
     overflow-y: auto;
@@ -266,6 +277,10 @@ div.possible-commands-loading {
     position: relative;
 }
 
+.martin-statement .request-container {
+    position: relative;
+}
+
 .martin-statement .request i{
     color: #aaa;
 }
@@ -279,6 +294,7 @@ div.possible-commands-loading {
     overflow: hidden;
     min-height: 20px;
     position: relative;
+    margin-bottom: 20px;
 }
 
 .martin-statement .pushMsg .output-type-text{
@@ -292,7 +308,7 @@ div.possible-commands-loading {
 .output-type-heading {
     border-bottom: 1px solid #e7e7e7;
     border-top: 1px solid #e7e7e7;
-    border-right: 3px solid#e7e7e7;
+    border-right: 3px solid#14cc66;
     text-align: left;
     padding: 10px;
     position: relative;
@@ -319,13 +335,13 @@ div.possible-commands-loading {
 
 .output-type-text {
     padding: 10px;
-    border-right: 3px solid #e7e7e7;
+    border-right: 3px solid #14cc66;
 }
 
 .output-type-timing-info {
     width: 100%;
     padding: 10px;
-    border-right: 3px solid #e7e7e7;
+    border-right: 3px solid #14cc66;
 }
 
 .output-type-audio {

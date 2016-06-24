@@ -45,10 +45,10 @@ public class WeatherServiceTest {
     @Test
     public void canReturnWeatherofAKnownCity() {
         when(responseStatusMock.hasWeatherData()).thenReturn(true);
-        when(weatherDataMock.getBasicWeatherString()).thenReturn("megaGoood!");
+        when(weatherDataMock.getBasicWeatherString(any())).thenReturn("megaGoood!");
 
         try {
-            String weather = service.getWeatherAtCity("testcity");
+            String weather = service.getWeatherAtCity(null, "testcity");
             assertNotNull(weather);
         } catch (WeatherPluginException e) {
             fail();
@@ -61,7 +61,7 @@ public class WeatherServiceTest {
         try {
             when(responseStatusMock.hasWeatherData()).thenReturn(false);
 
-            String weather = service.getWeatherAtCity("testcity");
+            String weather = service.getWeatherAtCity(null, "testcity");
             assertNull(weather);
         } catch (WeatherPluginException e) {
             fail();
@@ -73,7 +73,7 @@ public class WeatherServiceTest {
         try {
             when(responseForecastMock.hasForecast()).thenReturn(false);
 
-            String weather = service.getForecastAtCityInXHours("testcity", 12);
+            String weather = service.getForecastAtCityInXHours(null, "testcity", 12);
             assertNull(weather);
         } catch (WeatherPluginException e) {
             fail();

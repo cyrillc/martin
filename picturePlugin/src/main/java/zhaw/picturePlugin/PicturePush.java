@@ -1,6 +1,5 @@
 package zhaw.picturePlugin;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,14 +18,18 @@ public class PicturePush extends MEventListener {
         this.context = context;
     }
     @Override
-    public void handleEvent(MEventData event) {
+    public void handleEvent(MEventData event){
         ImageSearch imageSearch = new ImageSearch();
         List<MOutput> response = new ArrayList<>();
+        String image;
         try {
-            String image = imageSearch.getImage(event.getValue());
+        	image = imageSearch.getImageFromPixelBay(event.getValue());
+			if(image == ""){
+				image = imageSearch.getImage(event.getValue());
+			}
             response.add(new MOutput(MOutputType.IMAGE, image));
             context.addToOutputQueue(response);
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

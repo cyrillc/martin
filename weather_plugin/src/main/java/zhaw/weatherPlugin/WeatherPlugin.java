@@ -1,6 +1,5 @@
 package zhaw.weatherPlugin;
 
-import ch.zhaw.psit4.martin.api.Feature;
 import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.MartinPlugin;
 
@@ -19,7 +18,8 @@ public class WeatherPlugin implements MartinPlugin {
     public void initializeRequest(String feature, long requestID) throws Exception {
         if(active) {
             if(feature.equals("weather")){
-                Feature work = new WeatherWork(requestID);
+            	WeatherWork work = new WeatherWork(requestID);
+            	work.context = this.context;
                 context.registerWorkItem(work);      
             }
         }

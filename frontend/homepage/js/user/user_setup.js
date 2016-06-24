@@ -85,7 +85,7 @@ var sendCommand = function () {
         }, this);
 
         try {
-            if (completeResponseText.length < 100 && completeResponseText.length > 2) {
+            if (completeResponseText.length < 200 && completeResponseText.length > 2) {
                 console.log('tts activated: ' + completeResponseText);
                 var tts = new SpeechSynthesisUtterance(completeResponseText);
                 speechSynthesis.speak(tts);

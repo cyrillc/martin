@@ -33,7 +33,10 @@ public class PictureWork extends Feature {
 		String apiResponse = null;
 		response.add(new MOutput(MOutputType.HEADING, "Picture of " + imageType));
 		if (!this.imageType.isEmpty()) {
-			apiResponse = image.getImage(imageType);
+			apiResponse = image.getImageFromPixelBay(imageType);
+			if(apiResponse == ""){
+				apiResponse = image.getImage(imageType);
+			}
 			if (apiResponse == null) {
 				apiResponse = "No picture found for " + imageType;
 				response.add(new MOutput(MOutputType.TEXT, apiResponse));

@@ -20,7 +20,7 @@
 			value="ch.zhaw.psit4.martin.testplugin.TestPlugin" />
 		<parameter id="name" value="Test Plugin" />
 		<parameter id="description"
-			value="A plugin to test the pPlugin system." />
+			value="A plugin to test the plugin system." />
 		<parameter id="author" value="Daniel Fabian" />
 		<parameter id="e-mail" value="jtek.fdlt@gmail.com" />
 		<parameter id="date" value="2016-04-25" />

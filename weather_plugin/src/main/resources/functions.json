@@ -38,7 +38,7 @@
                     "Call" : "What's the weather tomorrow in Zürich?",
                     "Description" : "Gets the weather for a location and time."
                 },{
-                    "Call" : "Tell me the weather for the next two weeks.",
+                    "Call" : "Tell me the weather for the next three days.",
                     "Description" : "Gets the weather for the next two weeks."
                 }
             ]

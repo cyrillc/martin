@@ -9,6 +9,7 @@ import org.joda.time.Interval;
 import org.joda.time.DateTime;
 
 import ch.zhaw.psit4.martin.api.Feature;
+import ch.zhaw.psit4.martin.api.IMartinContext;
 import ch.zhaw.psit4.martin.api.types.IBaseType;
 import ch.zhaw.psit4.martin.api.types.MDuration;
 import ch.zhaw.psit4.martin.api.types.MLocation;
@@ -23,6 +24,7 @@ public class WeatherWork extends Feature {
 	private String city;
 	private Instant time;
 	private Interval interval;
+	public IMartinContext context;
 
 	public WeatherWork(long requestID) {
 		super(requestID);
@@ -55,17 +57,17 @@ public class WeatherWork extends Feature {
 		response.add(new MOutput(MOutputType.HEADING, "Weather"));
 
 		if (this.time == null && this.interval == null) {
-			apiResponse = weatherService.getWeatherAtCity(this.city);
+			apiResponse = weatherService.getWeatherAtCity(context, this.city);
 			response.add(new MOutput(MOutputType.TEXT, apiResponse));
 		} else if(this.interval == null) {
-			apiResponse = weatherService.getForecastAtCityForDay(this.city, this.time.toDate());
+			apiResponse = weatherService.getForecastAtCityForDay(context, this.city, this.time.toDate());
 			response.add(new MOutput(MOutputType.TEXT, apiResponse));
 		} else {
 		    DateTime start = interval.getStart();
-		    apiResponse = weatherService.getForecastAtCityForDay(this.city, start.toDate());
+		    apiResponse = weatherService.getForecastAtCityForDay(context, this.city, start.toDate());
 		    int i = 1;
-		    while(start.plusDays(i).isBefore(interval.getEnd())){
-		        apiResponse = weatherService.getForecastAtCityForDay(this.city, start.plusDays(i).toDate());
+		    while(start.plusDays(i).isBefore(interval.getEnd().plus(1))){
+		        apiResponse = weatherService.getForecastAtCityForDay(context, this.city, start.plusDays(i).toDate());
 		        response.add(new MOutput(MOutputType.TEXT, apiResponse));
 		        i++;
 		    }

@@ -83,10 +83,10 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1>Talk to MArtIn</h1>
-                    <div class="input-group martin-search-field">
-                        <input id="commandInput" type="text" class="form-control" autofocus="true">
+                    <div class="input-group martin-search-field col-lg-offset-2 col-lg-8 talk-field">
+                        <input id="commandInput" type="text" class="form-control" autofocus="true" placeholder="Ask something!">
                         <div class="input-group-btn">
-                            <button id="sendCommand" class="btn btn-default" type="button" onclick="sendCommand();">Go!</button>
+                            <button id="sendCommand" class="btn btn-default" type="button" onclick="sendCommand();">Send</button>
                         </div>
                     </div>
                     <div id="timingContainer"></div>
@@ -112,7 +112,7 @@
                         <img class="loading-image" src="img/MArtIn-Loading-Gif-Transparent.gif" alt="Loading Animation" />
                     </div>
                 </div>
-                <div id="possibleCommandsContainer" class="col-lg-offset-3 col-lg-6">
+                <div id="possibleCommandsContainer" class="col-lg-offset-2 col-lg-8">
                     <div id="possibleCommands"></div>
                 </div>
             </div>
