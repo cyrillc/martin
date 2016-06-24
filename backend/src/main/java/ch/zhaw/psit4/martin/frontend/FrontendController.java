@@ -110,7 +110,7 @@ public class FrontendController {
                 SseEmitter sseEmitter = iter.next();
                 try {
                     sseEmitter.send(outputs, MediaType.APPLICATION_JSON_UTF8);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     sseEmitter.complete();
                     iter.remove();
                     LOG.info("Failed to send ServerSentEvent");
