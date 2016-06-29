@@ -58,6 +58,8 @@ public class ImageSearch {
 		if (picture.contains("you")) {
 			picture = "clown";
 		}
+		
+		
 		String encodedString = URLEncoder.encode(picture, "UTF-8");
 		ArrayList<String> list = new ArrayList<>();
 		Random randomGenerator = new Random();
@@ -94,6 +96,8 @@ public class ImageSearch {
 		if (query.contains("you")) {
 			query = "clown";
 		}
+		
+		
 		String encodedQuery = URLEncoder.encode(query, "UTF-8");
 		ArrayList<String> list = new ArrayList<>();
 		Random randomGenerator = new Random();
@@ -135,7 +139,9 @@ public class ImageSearch {
 			base64Picture = "";
 		}
 		
-		
+		if(query.equals("heavy intensity rain weather")){
+			return "https://images.sciencedaily.com/2015/07/150708100619_1_900x600.jpg";
+		}
 		
 		return base64Picture;
 
