@@ -3,7 +3,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ch.zhaw.psit4.martin.plugins.timer</groupId>
 	<artifactId>timer</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>martin-plugin-timer</name>
 
 	<parent>
