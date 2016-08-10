@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ch.zhaw.psit4.martin</groupId>
+	<artifactId>martin</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>MArtIn - Modular Artificial Intelligence</name>
+	<properties>
+		<project.backend.plugins.directory>/martin-backend/plugins</project.backend.plugins.directory>
+	</properties>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.3.3.RELEASE</version>
+	</parent>
+
+	<modules>
+		<module>./martin-api</module>
+		<module>./martin-backend</module>
+		<module>./martin-plugins/picture</module>
+		<module>./martin-plugins/hello</module>
+		<module>./martin-plugins/timer</module>
+		<module>./martin-plugins/weather</module>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+		      <groupId>org.commonjava.maven.plugins</groupId>
+		      <artifactId>directory-maven-plugin</artifactId>
+		      <version>0.1</version>
+		      <executions>
+			    <execution>
+			      <id>directories</id>
+			      <goals>
+			        <goal>highest-basedir</goal>
+			      </goals>
+			      <phase>initialize</phase>
+			      <configuration>
+			        <property>main.basedir</property>
+			      </configuration>
+			    </execution>
+			  </executions>
+		    </plugin>
+
+		    <plugin> 
+		        <artifactId>maven-antrun-plugin</artifactId> 
+		        <executions> 
+		          <execution> 
+		            <id>moveFiles</id> 
+		            <phase>install</phase> 
+		            <configuration> 
+		              <target> 
+			              <copy todir="${main.basedir}/${project.backend.plugins.directory}" flatten="true" overwrite="true" verbose="true" failonerror="true"> 
+			                  <fileset dir="${main.basedir}/martin-plugins"  includes="**/target/*-jar-with-dependencies.jar"/> 
+			              </copy> 
+		              </target> 
+		            </configuration> 
+		            <goals> 
+		              <goal>run</goal> 
+		            </goals> 
+		          </execution> 
+		        </executions> 
+		      </plugin>
+		</plugins>
+	</build>
+</project>
