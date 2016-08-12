@@ -3,11 +3,16 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ch.zhaw.psit4.martin</groupId>
 	<artifactId>martin</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${project.version}</version>
 	<packaging>pom</packaging>
 	<name>MArtIn - Modular Artificial Intelligence</name>
 	<properties>
-		<project.backend.plugins.directory>/martin-backend/plugins</project.backend.plugins.directory>
+		<project.version>1.0.2</project.version>
+		<project.dist.directory>/dist</project.dist.directory>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	    <java.version>1.8</java.version>
+	    <maven.compiler.source>1.8</maven.compiler.source>
+	    <maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
 	<parent>
@@ -44,26 +49,42 @@
 			    </execution>
 			  </executions>
 		    </plugin>
-
-		    <plugin> 
-		        <artifactId>maven-antrun-plugin</artifactId> 
-		        <executions> 
-		          <execution> 
-		            <id>moveFiles</id> 
-		            <phase>install</phase> 
-		            <configuration> 
-		              <target> 
-			              <copy todir="${main.basedir}/${project.backend.plugins.directory}" flatten="true" overwrite="true" verbose="true" failonerror="true"> 
-			                  <fileset dir="${main.basedir}/martin-plugins"  includes="**/target/*-jar-with-dependencies.jar"/> 
-			              </copy> 
-		              </target> 
-		            </configuration> 
-		            <goals> 
-		              <goal>run</goal> 
-		            </goals> 
-		          </execution> 
-		        </executions> 
-		      </plugin>
 		</plugins>
 	</build>
+
+
+
+	<profiles>
+      <profile>
+      <id>children</id>
+      <activation>
+        <file>
+            <exists>src</exists>
+        </file>
+    </activation>
+      <build>
+      <plugins>
+		      <plugin>
+		        <artifactId>maven-assembly-plugin</artifactId>
+		        <executions>
+		          <execution>
+		            <phase>package</phase>
+		            <goals>
+		              <goal>single</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+		        <configuration>
+		          <descriptorRefs>
+		            <descriptorRef>jar-with-dependencies</descriptorRef>
+		          </descriptorRefs>
+		          <failOnError>false</failOnError>
+		          <appendAssemblyId>false</appendAssemblyId>
+		          <outputDirectory>${main.basedir}/${project.dist.directory}</outputDirectory>
+		        </configuration>
+		      </plugin>
+      </plugins>
+      </build>
+      </profile>
+   </profiles>
 </project>

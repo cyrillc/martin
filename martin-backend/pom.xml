@@ -4,11 +4,12 @@
 	<groupId>ch.zhaw.psit4.martin-backend</groupId>
 	<artifactId>martin-backend</artifactId>
 	<name>martin-backend</name>
+	<version>${project.version}</version>
 
 	<parent>
 		<groupId>ch.zhaw.psit4.martin</groupId>
 		<artifactId>martin</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>${project.version}</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -16,7 +17,7 @@
 		<dependency>
 			<groupId>ch.zhaw.psit4.martin-api</groupId>
 			<artifactId>martin-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- SPRING -->
@@ -203,6 +204,22 @@
 					<logging>warning</logging>
 				</configuration>
 			</plugin>
+			<plugin>
+		        <artifactId>maven-assembly-plugin</artifactId>
+		        <executions>
+		          <execution>
+		            <phase>package</phase>
+		            <goals>
+		              <goal>single</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+		        <configuration>
+		          <descriptorRefs>
+		            <descriptorRef>jar-with-dependencies</descriptorRef>
+		          </descriptorRefs>
+		        </configuration>
+		      </plugin>
 		</plugins>
 	</build>
 
