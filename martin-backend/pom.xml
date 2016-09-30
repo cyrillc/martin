@@ -18,6 +18,8 @@
 			<groupId>ch.zhaw.psit4.martin-api</groupId>
 			<artifactId>martin-api</artifactId>
 			<version>${project.version}</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../${project.dist.directory}/martin-api-${project.version}.jar</systemPath>
 		</dependency>
 
 		<!-- SPRING -->
